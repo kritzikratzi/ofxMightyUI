@@ -1,0 +1,20 @@
+a mini ui library for openframeworks. 
+-------------------------------------
+
+
+first things first: 
+currently this is not usable by anyone but me, i guess. 
+all code is released under the wtfpl: 
+http://sam.zoy.org/wtfpl/
+
+in the long run this is supposed to be a very very small 
+ui library that runs cross-platform (mac os+ios at least)
+with multitouch support. 
+
+the library aims to only provide a minimal set of elements 
+needed for basic interactive artworks:
+sliders, segmented controls, buttons, labels, 
+toolbars/navigation bars, internal windows, textfields
+
+there's no intention to ever add more complex widgets than that, 
+if that's what you need this library is not for you. 
