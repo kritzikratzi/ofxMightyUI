@@ -18,11 +18,14 @@
 namespace mui{
 	class Helpers{
 	public: 
+		static void enableRetinaHack(); 
 		static ofImage * getImage( string what ); 
 		static ofTrueTypeFont * getFont( int size ); 
 		static void roundedRect(float x, float y, float w, float h, float r); 
 		static void quadraticBezierVertex( float cpx, float cpy, float x, float y, float prevX, float prevY); 
 		static void drawStringWithShadow( std::string s, int x, int y, int fontSize, int r, int g, int b ); 
+		
+		static bool retinaMode; 
 	private: 
 		static std::map<std::string, ofImage*> images;
 		static std::map<int, ofTrueTypeFont*> fonts;

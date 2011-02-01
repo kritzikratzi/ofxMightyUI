@@ -8,14 +8,27 @@
 
 #include "InternalWindow.h"
 
+
+//--------------------------------------------------------------
+void mui::InternalWindow::init( std::string title ){
+	label = new Label( title, 0, 0, width, 44 ); 
+	label->horizontalAlign = Center; 
+	label->verticalAlign = Middle; 
+	label->fg.r = label->fg.g = label->fg.b = 255; 
+	label->fontSize = 16; 
+	label->commit(); 
+	
+	add( label ); 
+}
+
 //--------------------------------------------------------------
 void mui::InternalWindow::update(){
+	label->width = width; 
 }
 
 
 //--------------------------------------------------------------
 void mui::InternalWindow::draw(){	
-	Helpers::drawStringWithShadow( "Adjustments", 100, 30, 16, 255, 255, 255 ); 
 }
 
 
@@ -23,7 +36,9 @@ void mui::InternalWindow::draw(){
 void mui::InternalWindow::drawBackground(){
 	ofSetColor( 255, 255, 255, 200 ); 
 	ofFill(); 
-	Helpers::roundedRect( 0, 0, width, height, radius ); 
+	Helpers::roundedRect( 0, 0, width, height, radius );
+	ofNoFill(); 
+	//Helpers::roundedRect( 1, 22, width-2, height-22, radius ); 
 	
 	ofSetColor( 255, 255, 255 ); 
 	Helpers::getImage( "titlebar_left" )->draw( 0, 0, 5, 44 ); 

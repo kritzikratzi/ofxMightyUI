@@ -10,9 +10,10 @@
 #ifndef MUI_NODE
 #define MUI_NODE
 
+#include <vector>
 #include "ofMain.h"
 #include "ofxiPhone.h"
-#include <vector>
+
 
 
 namespace mui{
@@ -29,7 +30,7 @@ namespace mui{
 		bool opaque; 
 		vector<mui::Container*> aaa;
 		
-		Container( float x_, float y_, float width_, float height_ ) : x(x_), y(y_), width(width_), height(height_), opaque(false){};
+		Container( float x_, float y_, float width_, float height_ ) : x(x_), y(y_), width(width_), height(height_), opaque(false) {};
 		~Container(){}
 		
 		void add( Container * c ); 

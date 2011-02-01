@@ -6,6 +6,9 @@
 
 #include "ButtonPopup.h"
 #include "MUI.h"
+#include "poco/Delegate.h"
+
+#include "CppTweener.h" 
 
 class testApp : public ofxiPhoneApp {
 	
@@ -25,9 +28,17 @@ public:
 	void gotMemoryWarning();
 	void deviceOrientationChanged(int newOrientation);
 
+	void onButtonPress( const void* sender, ofTouchEventArgs &args ); 
 	
-	ButtonPopup popup; 
-	mui::Root *root; 
+	//ButtonPopup popup;
+	tween::Tweener tweener; 
+	
+	mui::Root *root;
+	mui::InternalWindow * window; 
+	mui::Slider * slider; 
+	mui::Button * button; 
+	
+	long wastedTime; 
 };
 
 

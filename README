@@ -3,9 +3,21 @@ a mini ui library for openframeworks.
 
 
 first things first: 
-currently this is not usable by anyone but me, i guess. 
-all code is released under the wtfpl: 
+this is very much a work in progress. the following sorta works: 
+- windows 
+- sliders 
+- buttons
+it's all butt ugly though. also slow! 
+
+
+licensing: 
+- CppTweener: MIT License, http://code.google.com/p/tweener/
+- image assets in data/mui: cc-sa-by, http://www.teehanlax.com/blog/2010/08/12/iphone-4-gui-psd-retina-display/
+- lato-regular type: sil open font license, http://www.fontsquirrel.com/fonts/lato
+ 
+the rest is released under the wtfpl: 
 http://sam.zoy.org/wtfpl/
+
 
 in the long run this is supposed to be a very very small 
 ui library that runs cross-platform (mac os+ios at least)
@@ -16,5 +28,6 @@ needed for basic interactive artworks:
 sliders, segmented controls, buttons, labels, 
 toolbars/navigation bars, internal windows, textfields
 
-there's no intention to ever add more complex widgets than that, 
-if that's what you need this library is not for you. 
+the library is  (and most likely won't be suitable)
+as neither a proper gui replacement or as a scenegraph. 
+there's already lots of other people doing that.  

@@ -16,25 +16,57 @@ void testApp::setup(){
 	//iPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
 	
 	ofBackground(127,127,127);
+	ofSetFrameRate( 60 ); 
 	
-	root = new mui::Root(); 
+	// do this first: 
+	//mui::Helpers::enableRetinaHack(); 
 	
-	mui::Slider * slider = new mui::Slider( 20, 20, 100, 100, 0, 1, 0.5 );
 	
-	mui::InternalWindow * window = new mui::InternalWindow( 100, 300, 300, 300 ); 
-	window->add( slider ); 
+	root = new mui::Root();
+	
+	window = new mui::InternalWindow( "Adjustments", 0, 0, 300, 300 ); 
 	root->add( window ); 
+	
+	slider = new mui::Slider( 20, 20, 250, 100, 0, 1, 0.5 );
+	window->add( slider ); 
+	
+	button = new mui::Button( "Button", 20, 240, 70, 30 ); 
+	button->onPress += Poco::Delegate<testApp, ofTouchEventArgs>( this, &testApp::onButtonPress );
+	window->add( button ); 
 }
 
 //--------------------------------------------------------------
+void testApp::onButtonPress( const void* sender, ofTouchEventArgs &args ){
+	tween::TweenerParam param(200, tween::QUAD, tween::EASE_OUT);
+	bool small = slider->width == 250; 
+    param.addProperty(&(slider->width), small? 150:250 ); 
+    param.addProperty(&(window->width), small? 200:300 ); 
+    param.addProperty(&(window->height), small? 200:300 ); 
+    param.addProperty(&(button->y), small?140:240 ); 
+    tweener.addTween(param); 
+}
+
+
+
+//--------------------------------------------------------------
 void testApp::update(){
+	long start = ofGetSystemTime(); 
 	root->handleUpdate(); 
+	wastedTime += ofGetSystemTime() - start; 
+	tweener.step( ofGetSystemTime() );
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
+	long start = ofGetSystemTime(); 
 	root->handleDraw(); 
-	popup.draw(); 
+	wastedTime += ofGetSystemTime() - start; 
+	
+	if( ofGetFrameNum() % 100 == 0 ){
+		cout << "avg time wasted: " << ( wastedTime/100 ) << " milliseconds per iteration" << endl; 
+		wastedTime = 0; 
+	}
+	
 }
 
 //--------------------------------------------------------------

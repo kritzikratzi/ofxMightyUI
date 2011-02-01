@@ -11,6 +11,21 @@
 
 std::map<std::string, ofImage*> mui::Helpers::images; 
 std::map<int, ofTrueTypeFont*> mui::Helpers::fonts; 
+bool mui::Helpers::retinaMode = false; 
+
+/**
+ * not much magic need for that retina hack. 
+ * look inside Label.cpp and and Root.cpp, nothing else should be affected.  
+ * btw - if you do decide to enable retina mode you can consider this mui-library 
+ * to also calculate in points, not in pixels. 
+ */
+void mui::Helpers::enableRetinaHack(){
+	if( images.size() > 0 || fonts.size() > 0 ){
+		cout << "oooooooo . retina mode is most likely gonna be all fucked up!" << endl; 
+	}
+	
+	retinaMode = true; 
+}
 
 ofImage * mui::Helpers::getImage( std::string name ){
 
@@ -19,7 +34,8 @@ ofImage * mui::Helpers::getImage( std::string name ){
 	if( iter == images.end() ){
 		cout << "Image: " << name << " not loaded yet, doing this now!" << endl; 
 		ofImage * img = new ofImage(); 
-		img->loadImage( "mui/normal/" + name + ".png" ); 
+		if( retinaMode ) img->loadImage( "mui/retina/" + name + ".png" ); 
+		else img->loadImage( "mui/normal/" + name + ".png" ); 
 		images[name] = img; 
 		return img; 
 	}

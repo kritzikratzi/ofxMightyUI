@@ -10,7 +10,7 @@
 #include "Slider.h"
 
 
-int mui::Slider::paddingLR = 12; 
+int mui::Slider::paddingLR = 11; 
 
 
 //--------------------------------------------------------------
@@ -21,8 +21,8 @@ void mui::Slider::draw(){
 	
 	// draw bg... 
 	// Helpers::getImage( "slider_inactive_left" )->draw( 0, startY ); // not needed! 
-	Helpers::getImage( "slider_inactive_center" )->draw( 5, startY, width - 10, 9 ); 
-	Helpers::getImage( "slider_inactive_right")->draw( width - 6, startY, 5, 9 ); 
+	Helpers::getImage( "slider_inactive_center" )->draw( 5, startY, width - 8, 9 ); 
+	Helpers::getImage( "slider_inactive_right")->draw( width - 5, startY, 5, 9 ); 
 	Helpers::getImage( "slider_active_left" )->draw( 0, startY, 5, 9 ); 
 	if( x > 5 ) 
 		Helpers::getImage( "slider_active_center" )->draw( 5, startY, x - 5, 9 ); 

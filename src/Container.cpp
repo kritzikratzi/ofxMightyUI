@@ -48,19 +48,19 @@ bool mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
 	touch.x -= x;
 	touch.y -= y;
 	
-	cout << "do kids care?" << touch.x << ", " << touch.y << "--" << endl; 
+	//cout << "do kids care?" << touch.x << ", " << touch.y << "--" << endl; 
 	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
-		cout << "maybe" << endl; 
+		//cout << "maybe" << endl; 
 		std::vector<Container*>::iterator it = aaa.begin();
 		while( it != aaa.end() ) {
 			if( (*it)->handleTouchDown( touch ) ){
-				cout << "one kid did care!" << endl; 
+				//cout << "one kid did care!" << endl; 
 				return true; 
 			}
 			
 			++it;
 		}
-		cout << "kids don't care!" << endl; 
+		//cout << "kids don't care!" << endl; 
 
 		if( touchDown( touch ) ){
 			startedInside[touch.id] = true;
