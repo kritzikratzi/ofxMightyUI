@@ -27,12 +27,31 @@ void testApp::setup(){
 	window = new mui::InternalWindow( "Adjustments", 0, 0, 300, 300 ); 
 	root->add( window ); 
 	
-	slider = new mui::Slider( 20, 20, 250, 100, 0, 1, 0.5 );
+	slider = new mui::Slider( 20, 60, 250, 20, 0, 1, 0.5 );
+	//slider2 = new mui::Slider( 20, 90, 250, 20, 0, 1, 0.5 );
 	window->add( slider ); 
+	//window->add( slider2 ); 
 	
 	button = new mui::Button( "Button", 20, 240, 70, 30 ); 
 	button->onPress += Poco::Delegate<testApp, ofTouchEventArgs>( this, &testApp::onButtonPress );
 	window->add( button ); 
+	
+	
+	window2 = new mui::InternalWindow( "Scrolling", 300, 0, 300, 300 ); 
+	scrollPane = new mui::ScrollPane( 10, 50, 280, 240 ); 
+	ofColor fg; 
+	fg.r = fg.g = fg.b = 0; 
+	for( int i = 0; i < 10; i++ ){
+		labels[i] = new mui::Label( "i'm a label:" + ofToString( i, 0 ), 0, i*50, 280, 50 ); 
+		labels[i]->fg = fg; 
+		labels[i]->commit(); 
+		scrollPane->add( labels[i] ); 
+	}
+	scrollPane->commit(); 
+	window2->add( scrollPane ); 
+	
+	root->add( window2 ); 
+	
 }
 
 //--------------------------------------------------------------

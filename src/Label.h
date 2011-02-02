@@ -20,7 +20,7 @@ namespace mui{
 	class Label : public Container{
 	public: 
 		Label( std::string text_ = "Label", float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 ) 
-		: Container( x_, y_, width_, height_ ), text( text_), fontSize( 12 ) {};  
+		: Container( x_, y_, width_, height_ ), text( text_), fontSize( 12 ), horizontalAlign(Left), verticalAlign(Middle) {};  
 		
 		
 		HorizontalAlign horizontalAlign; 

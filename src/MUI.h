@@ -26,6 +26,7 @@ namespace mui{
 
 #include "Helpers.h"
 #include "Container.h"
+#include "ScrollPane.h"
 #include "Label.h"
 #include "Root.h"
 #include "Slider.h"

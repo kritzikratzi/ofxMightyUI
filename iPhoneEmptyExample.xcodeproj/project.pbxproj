@@ -28,6 +28,7 @@
 		BA3AD12612F236F3009DF34D /* CppTweener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA3AD12512F236F3009DF34D /* CppTweener.cpp */; };
 		BA3AD16112F2407D009DF34D /* Slider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA3AD16012F2407D009DF34D /* Slider.cpp */; };
 		BA40ED5E12B99C70004FA193 /* ButtonPopup.mm in Sources */ = {isa = PBXBuildFile; fileRef = BA40ED5D12B99C70004FA193 /* ButtonPopup.mm */; };
+		BAA9820C12F98BCF00AA0CF7 /* ScrollPane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAA9820B12F98BCF00AA0CF7 /* ScrollPane.cpp */; };
 		BADEE3DF12F4925A0029E037 /* EmptyContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADEE3DE12F4925A0029E037 /* EmptyContainer.cpp */; };
 		BADEE43F12F4A7300029E037 /* Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADEE43E12F4A7300029E037 /* Helpers.cpp */; };
 		BADEE56212F5B8A50029E037 /* InternalWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADEE56112F5B8A50029E037 /* InternalWindow.cpp */; };
@@ -95,6 +96,8 @@
 		BA3AD1BA12F33AD8009DF34D /* MUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MUI.h; sourceTree = "<group>"; };
 		BA40ED5C12B99C70004FA193 /* ButtonPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ButtonPopup.h; sourceTree = "<group>"; };
 		BA40ED5D12B99C70004FA193 /* ButtonPopup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ButtonPopup.mm; sourceTree = "<group>"; };
+		BAA9820A12F98BCF00AA0CF7 /* ScrollPane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollPane.h; sourceTree = "<group>"; };
+		BAA9820B12F98BCF00AA0CF7 /* ScrollPane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollPane.cpp; sourceTree = "<group>"; };
 		BADEE3DD12F4925A0029E037 /* EmptyContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyContainer.h; sourceTree = "<group>"; };
 		BADEE3DE12F4925A0029E037 /* EmptyContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmptyContainer.cpp; sourceTree = "<group>"; };
 		BADEE43D12F4A7300029E037 /* Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Helpers.h; sourceTree = "<group>"; };
@@ -312,6 +315,8 @@
 				BADEE65912F607A40029E037 /* Label.cpp */,
 				BA0235B912F7A81A0062CCC9 /* Button.h */,
 				BA0235BA12F7A81A0062CCC9 /* Button.cpp */,
+				BAA9820A12F98BCF00AA0CF7 /* ScrollPane.h */,
+				BAA9820B12F98BCF00AA0CF7 /* ScrollPane.cpp */,
 			);
 			name = ofxMUI;
 			sourceTree = "<group>";
@@ -671,6 +676,7 @@
 				BADEE56212F5B8A50029E037 /* InternalWindow.cpp in Sources */,
 				BADEE65A12F607A40029E037 /* Label.cpp in Sources */,
 				BA0235BB12F7A81A0062CCC9 /* Button.cpp in Sources */,
+				BAA9820C12F98BCF00AA0CF7 /* ScrollPane.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

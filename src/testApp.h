@@ -36,7 +36,12 @@ public:
 	mui::Root *root;
 	mui::InternalWindow * window; 
 	mui::Slider * slider; 
-	mui::Button * button; 
+	mui::Slider * slider2; 
+	mui::Button * button;
+	
+	mui::InternalWindow * window2; 
+	mui::ScrollPane * scrollPane; 
+	mui::Label * labels[10]; 
 	
 	long wastedTime; 
 };
