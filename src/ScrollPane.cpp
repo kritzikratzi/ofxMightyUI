@@ -27,6 +27,11 @@ void mui::ScrollPane::commit(){
 	std::vector<Container*>::iterator it = aaa.begin(); 
 	float minX, minY, maxX, maxY; 
 	
+	minX = 0; 
+	minY = 0; 
+	maxX = 0; 
+	maxY = 0; 
+	
 	while( it != aaa.end() ) {
 		minX = fminf( (*it)->x, minX ); 
 		minY = fminf( (*it)->y, minX ); 
@@ -42,7 +47,7 @@ void mui::ScrollPane::commit(){
 	maxScrollX = fmaxf( 0, maxX - width ); 
 	maxScrollY = fmaxf( 0, maxY - height );
 	
-	cout << "commit scrollpane: " << minScrollY << ", " << maxScrollY << maxY << endl; 
+	cout << "commit scrollpane: " << minScrollX << ", " << maxScrollX << "," << maxX << endl; 
 }
 
 //--------------------------------------------------------------
@@ -58,7 +63,7 @@ void mui::ScrollPane::update(){
 //--------------------------------------------------------------
 void mui::ScrollPane::draw(){
 	ofSetColor( 255, 0, 0 ); 
-	ofRect( scrollX, scrollY, width, height ); 	
+	ofRect( 0, 0, width, height ); 	
 }
 
 
