@@ -35,6 +35,7 @@ void mui::Slider::draw(){
 //--------------------------------------------------------------
 bool mui::Slider::touchDown( ofTouchEventArgs &touch ){
 	if( fabsf( height/2 - touch.y ) < 2*paddingLR ){
+		cout << "accepting touch down, txy=" << touch.x << ", " << touch.y << endl; 
 		touchMoved( touch ); 
 		return true;
 	}
@@ -46,20 +47,22 @@ bool mui::Slider::touchDown( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 bool mui::Slider::touchMoved( ofTouchEventArgs &touch ){
+	cout << "accepting touch moved, txy=" << touch.x << ", " << touch.y << endl; 
 	value = fminf( max, fmaxf( min, screenToValue( touch.x ) ) ); 
-	return false; 
+	return true; 
 }
 
 
 //--------------------------------------------------------------
 bool mui::Slider::touchUp( ofTouchEventArgs &touch ){
-	return false; 
+	cout << "accepting touch up, txy=" << touch.x << ", " << touch.y << endl; 
+	return true; 
 }
 
 
 //--------------------------------------------------------------
 bool mui::Slider::touchDoubleTap( ofTouchEventArgs &touch ){
-	return false; 
+	return true; 
 }
 
 //--------------------------------------------------------------

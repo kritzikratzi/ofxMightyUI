@@ -28,9 +28,9 @@ void testApp::setup(){
 	root->add( window ); 
 	
 	slider = new mui::Slider( 20, 60, 250, 20, 0, 1, 0.5 );
-	//slider2 = new mui::Slider( 20, 90, 250, 20, 0, 1, 0.5 );
+	slider2 = new mui::Slider( 20, 100, 250, 20, 0, 1, 0.5 );
 	window->add( slider ); 
-	//window->add( slider2 ); 
+	window->add( slider2 ); 
 	
 	button = new mui::Button( "Button", 20, 240, 70, 30 ); 
 	button->onPress += Poco::Delegate<testApp, ofTouchEventArgs>( this, &testApp::onButtonPress );
@@ -59,6 +59,7 @@ void testApp::onButtonPress( const void* sender, ofTouchEventArgs &args ){
 	tween::TweenerParam param(200, tween::QUAD, tween::EASE_OUT);
 	bool small = slider->width == 250; 
     param.addProperty(&(slider->width), small? 150:250 ); 
+    param.addProperty(&(slider2->width), small? 150:250 ); 
     param.addProperty(&(window->width), small? 200:300 ); 
     param.addProperty(&(window->height), small? 200:300 ); 
     param.addProperty(&(button->y), small?140:240 ); 

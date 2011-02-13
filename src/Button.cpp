@@ -62,19 +62,22 @@ bool mui::Button::touchDown( ofTouchEventArgs &touch ){
 	if( pressed ) return false; 
 	
 	pressed = true; 
-	onPress( this, touch ); 
 	return true; 
 }
 
 
 //--------------------------------------------------------------
 bool mui::Button::touchMoved( ofTouchEventArgs &touch ){
-	return true; 
+	return false; 
 }
 
 
 //--------------------------------------------------------------
 bool mui::Button::touchUp( ofTouchEventArgs &touch ){
+	if( pressed && touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
+		onPress( this, touch );
+	}
+
 	pressed = false; 
 	return true; 
 }

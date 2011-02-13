@@ -81,7 +81,18 @@ void mui::ScrollPane::handleDraw(){
 	if( !opaque ) drawBackground(); 
 	draw(); 
 	
+	//TODO: find global x/y quicker! 
+	float globalX = x, globalY = y; 
+	Container * c = parent; 
+	while( c != NULL ){ globalX += c->x; globalY += c->y; c = c->parent;}
+	//TODO: clarify next line! 
+	//maybe this is an ios-setup specific solution
+	globalY = ofGetHeight()-globalY-height; 
+	glEnable( GL_SCISSOR_TEST ); 
+	glScissor( globalX, globalY, width, height ); 
+	
 	ofTranslate( -currentScrollX, -currentScrollY ); 
+	
 	std::vector<Container*>::iterator it = aaa.begin();
 	while( it != aaa.end() ){
 		// todo: skip drawing the invisible thingies
@@ -90,6 +101,7 @@ void mui::ScrollPane::handleDraw(){
 	}
 	
 	ofPopMatrix(); 
+	glDisable( GL_SCISSOR_TEST ); 
 }
 
 
@@ -111,8 +123,8 @@ bool mui::ScrollPane::touchDown( ofTouchEventArgs &touch ){
 bool mui::ScrollPane::touchMoved( ofTouchEventArgs &touch ){
 	cout << "touch moved!" << scrollY << endl; 
 	if( pressed ){
-		scrollX += ( touch.x - pressedX ); 
-		scrollY += ( touch.y - pressedY ); 
+		scrollX -= ( touch.x - pressedX ); 
+		scrollY -= ( touch.y - pressedY ); 
 		pressedX = touch.x; 
 		pressedY = touch.y; 
 		

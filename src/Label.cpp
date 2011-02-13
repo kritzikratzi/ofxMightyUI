@@ -95,5 +95,6 @@ bool mui::Label::touchDoubleTap( ofTouchEventArgs &touch ){
 void mui::Label::commit(){
 	// magic trick #2
 	ofTrueTypeFont * font = Helpers::getFont( Helpers::retinaMode?(fontSize*2):fontSize );
+	cout << "font=" << font << endl; 
 	boundingBox = font->getStringBoundingBox( text, 0, 0 );
 }

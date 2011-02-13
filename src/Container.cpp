@@ -11,6 +11,7 @@
 
 void mui::Container::add( Container * c ){
 	aaa.push_back( c ); 
+	c->parent = this; 
 }
 
 void mui::Container::drawBackground(){
