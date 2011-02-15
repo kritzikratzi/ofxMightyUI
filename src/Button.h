@@ -12,7 +12,6 @@
 #ifndef MUI_BUTTON
 #define MUI_BUTTON
 
-#include "MUI.h"
 #include "poco/BasicEvent.h"
 
 namespace mui{

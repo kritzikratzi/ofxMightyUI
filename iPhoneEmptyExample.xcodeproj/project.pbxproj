@@ -33,6 +33,7 @@
 		BADEE43F12F4A7300029E037 /* Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADEE43E12F4A7300029E037 /* Helpers.cpp */; };
 		BADEE56212F5B8A50029E037 /* InternalWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADEE56112F5B8A50029E037 /* InternalWindow.cpp */; };
 		BADEE65A12F607A40029E037 /* Label.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADEE65912F607A40029E037 /* Label.cpp */; };
+		BAF41BE613083ACF00B2FB16 /* BarButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAF41BE513083ACF00B2FB16 /* BarButton.cpp */; };
 		BB16EBD20F2B2A9500518274 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD10F2B2A9500518274 /* OpenGLES.framework */; };
 		BB16EBD90F2B2AB500518274 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB16EBD80F2B2AB500518274 /* QuartzCore.framework */; };
 		BB24DD8F10DA77E000E9C588 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = BB24DD8C10DA77E000E9C588 /* Default.png */; };
@@ -106,6 +107,8 @@
 		BADEE56112F5B8A50029E037 /* InternalWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InternalWindow.cpp; sourceTree = "<group>"; };
 		BADEE65812F607A40029E037 /* Label.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Label.h; sourceTree = "<group>"; };
 		BADEE65912F607A40029E037 /* Label.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Label.cpp; sourceTree = "<group>"; };
+		BAF41BE413083ACF00B2FB16 /* BarButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BarButton.h; sourceTree = "<group>"; };
+		BAF41BE513083ACF00B2FB16 /* BarButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BarButton.cpp; sourceTree = "<group>"; };
 		BB16EBD10F2B2A9500518274 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BB16EBD80F2B2AB500518274 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		BB24DD8C10DA77E000E9C588 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
@@ -317,6 +320,8 @@
 				BA0235BA12F7A81A0062CCC9 /* Button.cpp */,
 				BAA9820A12F98BCF00AA0CF7 /* ScrollPane.h */,
 				BAA9820B12F98BCF00AA0CF7 /* ScrollPane.cpp */,
+				BAF41BE413083ACF00B2FB16 /* BarButton.h */,
+				BAF41BE513083ACF00B2FB16 /* BarButton.cpp */,
 			);
 			name = ofxMUI;
 			sourceTree = "<group>";
@@ -677,6 +682,7 @@
 				BADEE65A12F607A40029E037 /* Label.cpp in Sources */,
 				BA0235BB12F7A81A0062CCC9 /* Button.cpp in Sources */,
 				BAA9820C12F98BCF00AA0CF7 /* ScrollPane.cpp in Sources */,
+				BAF41BE613083ACF00B2FB16 /* BarButton.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

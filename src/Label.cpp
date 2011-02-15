@@ -18,7 +18,7 @@
  *     left top corner of your container, not top left corner of your application. 
  */
 
-#include "Label.h"
+#include "MUI.h"
 
 //--------------------------------------------------------------
 void mui::Label::update(){
@@ -36,12 +36,11 @@ void mui::Label::draw(){
 	else w = width, h=height; 
 	
 	if( horizontalAlign == Left ) renderX = -boundingBox.x;
-	else if( horizontalAlign == Center ) renderX = -boundingBox.x + w/2 - boundingBox.width/2;
+	else if( horizontalAlign == Center ) renderX = -boundingBox.x/2 + w/2 - boundingBox.width/2;
 	else if( horizontalAlign == Right ) renderX = -boundingBox.x + w - boundingBox.width; 
 	if( verticalAlign == Top ) renderY = - boundingBox.y; 
 	else if( verticalAlign == Middle ) renderY = -boundingBox.y + h/2 - boundingBox.height/2; 
 	else if( verticalAlign == Bottom ) renderY = -boundingBox.y + h - boundingBox.height; 
-	
 	
 	ofTrueTypeFont * font; 
 	
@@ -56,6 +55,7 @@ void mui::Label::draw(){
 	
 	ofSetColor( fg.r, fg.g, fg.b ); 
 	font->drawString( text, renderX, renderY ); 
+	
 	
 	if( Helpers::retinaMode ){
 		ofPopMatrix(); 
@@ -95,6 +95,8 @@ bool mui::Label::touchDoubleTap( ofTouchEventArgs &touch ){
 void mui::Label::commit(){
 	// magic trick #2
 	ofTrueTypeFont * font = Helpers::getFont( Helpers::retinaMode?(fontSize*2):fontSize );
-	cout << "font=" << font << endl; 
 	boundingBox = font->getStringBoundingBox( text, 0, 0 );
+	
+	// NASTY HACK#158
+	// boundingBox.x = 0; 
 }

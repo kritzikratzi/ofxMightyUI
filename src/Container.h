@@ -10,12 +10,6 @@
 #ifndef MUI_NODE
 #define MUI_NODE
 
-#include <vector>
-#include "ofMain.h"
-#include "ofxiPhone.h"
-
-
-
 namespace mui{
 	class Container : public ofxMultiTouchListener{
 	public: 
@@ -28,7 +22,7 @@ namespace mui{
 		ofColor bg;
 		
 		bool opaque; 
-		vector<mui::Container*> aaa;
+		vector<mui::Container*> children;
 		Container * parent; 
 		
 		Container( float x_, float y_, float width_, float height_ ) : x(x_), y(y_), width(width_), height(height_), opaque(false), parent(NULL) {

@@ -18,7 +18,8 @@
  *     left top corner of your container, not top left corner of your application. 
  */
 
-#include "Button.h"
+
+#include "MUI.h"
 
 
 //--------------------------------------------------------------
@@ -35,6 +36,8 @@ void mui::Button::init( std::string title ){
 
 //--------------------------------------------------------------
 void mui::Button::update(){
+	label->width = width; 
+	label->height = height; 
 }
 
 

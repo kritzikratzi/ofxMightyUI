@@ -18,13 +18,13 @@
  *     left top corner of your container, not top left corner of your application. 
  */
 
-#include "ScrollPane.h"
+#include "MUI.h"
 
 
 //--------------------------------------------------------------
 void mui::ScrollPane::commit(){
 	// figure out min/max values... 
-	std::vector<Container*>::iterator it = aaa.begin(); 
+	std::vector<Container*>::iterator it = children.begin(); 
 	float minX, minY, maxX, maxY; 
 	
 	minX = 0; 
@@ -32,7 +32,7 @@ void mui::ScrollPane::commit(){
 	maxX = 0; 
 	maxY = 0; 
 	
-	while( it != aaa.end() ) {
+	while( it != children.end() ) {
 		minX = fminf( (*it)->x, minX ); 
 		minY = fminf( (*it)->y, minX ); 
 		maxY = fmaxf( (*it)->x + (*it)->width, maxX );
@@ -93,8 +93,8 @@ void mui::ScrollPane::handleDraw(){
 	
 	ofTranslate( -currentScrollX, -currentScrollY ); 
 	
-	std::vector<Container*>::iterator it = aaa.begin();
-	while( it != aaa.end() ){
+	std::vector<Container*>::iterator it = children.begin();
+	while( it != children.end() ){
 		// todo: skip drawing the invisible thingies
 		(*it)->handleDraw(); 
 		++it;

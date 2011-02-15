@@ -6,8 +6,8 @@
  *  Copyright 2011 __MyCompanyName__. All rights reserved.
  */
 
-#include "InternalWindow.h"
-
+#include "MUI.h"
+#include <algorithm>
 
 //--------------------------------------------------------------
 void mui::InternalWindow::init( std::string title ){
@@ -24,6 +24,19 @@ void mui::InternalWindow::init( std::string title ){
 //--------------------------------------------------------------
 void mui::InternalWindow::update(){
 	label->width = width; 
+	
+	if( leftBarButton != NULL ){
+		leftBarButton->width = leftBarButton->label->boundingBox.width + 10; 
+		leftBarButton->height = 30; 
+		leftBarButton->x = leftBarButton->y = 7;
+	}
+	
+	if( rightBarButton != NULL ){
+		rightBarButton->width = rightBarButton->label->boundingBox.width + 10; 
+		rightBarButton->height = 30; 
+		rightBarButton->x = width - 7 - rightBarButton->width; 
+		rightBarButton->y = 7;
+	}
 }
 
 
@@ -44,6 +57,31 @@ void mui::InternalWindow::drawBackground(){
 	Helpers::getImage( "titlebar_left" )->draw( 0, 0, 5, 44 ); 
 	Helpers::getImage( "titlebar_center" )->draw( 5, 0, width - 9, 44 ); 
 	Helpers::getImage( "titlebar_right" )->draw( width-5, 0, 5, 44 ); 
+}
+
+
+//--------------------------------------------------------------
+void mui::InternalWindow::setLeftBarButton( BarButton * leftBarButton ){
+	if( this->leftBarButton != NULL ){
+		//children.remove( leftBarButton );
+		vector<Container*>::iterator it = find( children.begin(), children.end(), this->leftBarButton ); 
+		if( it != children.end() ) children.erase( it ); 
+	}
+	
+	add( leftBarButton ); 
+	this->leftBarButton = leftBarButton; 
+}
+
+
+//--------------------------------------------------------------
+void mui::InternalWindow::setRightBarButton( BarButton * rightBarButton ){
+	if( this->rightBarButton != NULL ){
+		vector<Container*>::iterator it = find( children.begin(), children.end(), this->rightBarButton ); 
+		if( it != children.end() ) children.erase( it ); 
+	}
+	
+	add( rightBarButton ); 
+	this->rightBarButton = rightBarButton; 
 }
 
 

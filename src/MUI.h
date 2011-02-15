@@ -9,6 +9,7 @@
 
 #define MUI_RETINA false
 #define MUI_FONT "mui/fonts/Lato-Regular.ttf"
+
 #ifndef MUI_CRAZY_IMPORTANT
 #define MUI_CRAZY_IMPORTANT
 
@@ -23,6 +24,10 @@ namespace mui{
 
 #endif
 
+#include <vector>
+#include "ofMain.h"
+#include "ofxiPhone.h"
+
 
 #include "Helpers.h"
 #include "Container.h"
@@ -30,5 +35,7 @@ namespace mui{
 #include "Label.h"
 #include "Root.h"
 #include "Slider.h"
-#include "InternalWindow.h"
 #include "Button.h"
+#include "BarButton.h"
+#include "EmptyContainer.h"
+#include "InternalWindow.h"

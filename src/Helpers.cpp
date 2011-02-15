@@ -7,7 +7,7 @@
  *
  */
 
-#include "Helpers.h"
+#include "MUI.h"
 
 std::map<std::string, ofImage*> mui::Helpers::images; 
 std::map<int, ofTrueTypeFont*> mui::Helpers::fonts; 

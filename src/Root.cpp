@@ -7,7 +7,7 @@
  *
  */
 
-#include "Root.h"
+#include "MUI.h"
 
 
 void mui::Root::handleDraw(){
@@ -15,7 +15,6 @@ void mui::Root::handleDraw(){
 	ofSetLineWidth( 1 ); 
 	ofSetColor( 255, 255, 255 ); 
 	ofEnableAlphaBlending(); 
-	
 	if( Helpers::retinaMode ){
 		ofPushMatrix(); 
 		ofScale( 2, 2, 1 ); 

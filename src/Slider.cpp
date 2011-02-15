@@ -7,7 +7,7 @@
  *
  */
 
-#include "Slider.h"
+#include "MUI.h"
 
 
 int mui::Slider::paddingLR = 11; 
@@ -18,10 +18,11 @@ void mui::Slider::draw(){
 	ofSetColor( 255, 255, 255 ); 
 	float x = valueToScreen( value ); 
 	float startY = (int)( height/2 - 9.0/2 );
-	
 	// draw bg... 
 	// Helpers::getImage( "slider_inactive_left" )->draw( 0, startY ); // not needed! 
-	Helpers::getImage( "slider_inactive_center" )->draw( 5, startY, width - 8, 9 ); 
+	ofEnableTextureEdgeHack(); 
+	Helpers::getImage( "slider_inactive_center" )->draw( 5, startY, width - 10, 9 ); 
+	ofDisableTextureEdgeHack(); 
 	Helpers::getImage( "slider_inactive_right")->draw( width - 5, startY, 5, 9 ); 
 	Helpers::getImage( "slider_active_left" )->draw( 0, startY, 5, 9 ); 
 	if( x > 5 ) 

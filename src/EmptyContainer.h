@@ -12,8 +12,6 @@
 #ifndef MUI_EMPTY_CONTAINER
 #define MUI_EMPTY_CONTAINER
 
-#include "MUI.h"
-
 namespace mui{
 	class EmptyContainer : public Container{
 	public: 

@@ -1,5 +1,5 @@
 /*
- *  EmptyContainer.cpp
+ *  BarButton.cpp
  *  iPhoneEmptyExample
  *
  *  Created by hansi on 29.01.11.
@@ -21,41 +21,23 @@
 #include "MUI.h"
 
 //--------------------------------------------------------------
-void mui::EmptyContainer::update(){
+void mui::BarButton::initBarButton(){
+	label->fontSize = 10; 
+	label->commit(); 
 }
 
 
 //--------------------------------------------------------------
-void mui::EmptyContainer::draw(){
-	ofSetColor( 255, 0, 0 ); 
-	ofRect( 0, 0, width, height ); 
-}
-
-
-//--------------------------------------------------------------
-void mui::EmptyContainer::drawBackground(){
-}
-
-
-//--------------------------------------------------------------
-bool mui::EmptyContainer::touchDown( ofTouchEventArgs &touch ){
-	return false; 
-}
-
-
-//--------------------------------------------------------------
-bool mui::EmptyContainer::touchMoved( ofTouchEventArgs &touch ){
-	return false; 
-}
-
-
-//--------------------------------------------------------------
-bool mui::EmptyContainer::touchUp( ofTouchEventArgs &touch ){
-	return false; 
-}
-
-
-//--------------------------------------------------------------
-bool mui::EmptyContainer::touchDoubleTap( ofTouchEventArgs &touch ){
-	return false; 
+	void mui::BarButton::drawBackground(){
+	ofSetColor( 255, 255, 255 ); 
+	if( pressed ){
+		Helpers::getImage( "barbutton_left_active" )->draw( 0, 0, 5, 30 ); 
+		Helpers::getImage( "barbutton_center_active" )->draw( 5, 0, width-10, 30 ); 
+		Helpers::getImage( "barbutton_right_active" )->draw( width-5, 0, 5, 30 ); 
+	}
+	else{
+		Helpers::getImage( "barbutton_left" )->draw( 0, 0, 5, 30 ); 
+		Helpers::getImage( "barbutton_center" )->draw( 5, 0, width-10, 30 ); 
+		Helpers::getImage( "barbutton_right" )->draw( width-5, 0, 5, 30 ); 
+	}
 }

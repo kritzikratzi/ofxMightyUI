@@ -7,10 +7,10 @@
  *
  */
 
-#include "Container.h"
+#include "MUI.h"
 
 void mui::Container::add( Container * c ){
-	aaa.push_back( c ); 
+	children.push_back( c ); 
 	c->parent = this; 
 }
 
@@ -25,8 +25,8 @@ void mui::Container::handleDraw(){
 	if( !opaque ) drawBackground(); 
 	draw(); 
 	
-	std::vector<Container*>::iterator it = aaa.begin();
-	while( it != aaa.end() ) {
+	std::vector<Container*>::iterator it = children.begin();
+	while( it != children.end() ) {
 		(*it)->handleDraw(); 
 		++it;
 	}
@@ -38,8 +38,8 @@ void mui::Container::handleDraw(){
 void mui::Container::handleUpdate(){
 	update(); 
 	
-	std::vector<Container*>::iterator it = aaa.begin();
-	while( it != aaa.end() ) {
+	std::vector<Container*>::iterator it = children.begin();
+	while( it != children.end() ) {
 		(*it)->handleUpdate(); 
 		++it;
 	}
@@ -52,8 +52,8 @@ bool mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
 	//cout << "do kids care?" << touch.x << ", " << touch.y << "--" << endl; 
 	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
 		//cout << "maybe" << endl; 
-		std::vector<Container*>::iterator it = aaa.begin();
-		while( it != aaa.end() ) {
+		std::vector<Container*>::iterator it = children.begin();
+		while( it != children.end() ) {
 			if( (*it)->handleTouchDown( touch ) ){
 				//cout << "one kid did care!" << endl; 
 				return true; 
@@ -84,8 +84,8 @@ bool mui::Container::handleTouchMoved( ofTouchEventArgs &touch ){
 		}
 	}
 	else{
-		std::vector<Container*>::iterator it = aaa.begin();
-		while( it != aaa.end() ) {
+		std::vector<Container*>::iterator it = children.begin();
+		while( it != children.end() ) {
 			if( (*it)->handleTouchMoved( touch ) ){
 				return true; 
 			}
@@ -110,8 +110,8 @@ bool mui::Container::handleTouchDoubleTap( ofTouchEventArgs &touch ){
 		}
 	}
 	else{
-		std::vector<Container*>::iterator it = aaa.begin();
-		while( it != aaa.end() ) {
+		std::vector<Container*>::iterator it = children.begin();
+		while( it != children.end() ) {
 			if( (*it)->handleTouchDoubleTap( touch ) ){
 				return true; 
 			}
@@ -138,8 +138,8 @@ bool mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
 		}
 	}
 	else{
-		std::vector<Container*>::iterator it = aaa.begin();
-		while( it != aaa.end() ) {
+		std::vector<Container*>::iterator it = children.begin();
+		while( it != children.end() ) {
 			if( (*it)->handleTouchUp( touch ) ){
 				return true; 
 			}

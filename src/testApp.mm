@@ -27,6 +27,11 @@ void testApp::setup(){
 	window = new mui::InternalWindow( "Adjustments", 0, 0, 300, 300 ); 
 	root->add( window ); 
 	
+	barLeft = new mui::BarButton( "Left" ); 
+	barRight = new mui::BarButton( "Right" ); 
+	window->setLeftBarButton( barLeft ); 
+	window->setRightBarButton( barRight ); 
+	
 	slider = new mui::Slider( 20, 60, 250, 20, 0, 1, 0.5 );
 	slider2 = new mui::Slider( 20, 100, 250, 20, 0, 1, 0.5 );
 	window->add( slider ); 

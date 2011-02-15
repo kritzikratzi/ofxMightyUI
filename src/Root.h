@@ -10,9 +10,6 @@
 #ifndef MUI_ROOT
 #define MUI_ROOT
 
-
-#include "MUI.h"
-
 namespace mui{
 
 	class Root : public Container {

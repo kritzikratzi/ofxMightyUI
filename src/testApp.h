@@ -42,7 +42,8 @@ public:
 	mui::InternalWindow * window2; 
 	mui::ScrollPane * scrollPane; 
 	mui::Label * labels[10]; 
-	
+	mui::BarButton * barLeft; 
+	mui::BarButton * barRight; 
 	long wastedTime; 
 };
 
