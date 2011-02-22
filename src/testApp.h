@@ -36,7 +36,7 @@ public:
 	mui::Root *root;
 	mui::InternalWindow * window; 
 	mui::Slider * slider; 
-	mui::Slider * slider2; 
+	mui::SliderWithLabel * slider2; 
 	mui::Button * button;
 	
 	mui::InternalWindow * window2; 

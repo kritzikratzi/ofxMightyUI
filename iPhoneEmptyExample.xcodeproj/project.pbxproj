@@ -23,6 +23,7 @@
 		5E2568A710ED26CD00A9501C /* PocoUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688310ED26CC00A9501C /* PocoUtil.a */; };
 		5E2568A810ED26CD00A9501C /* PocoXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688410ED26CC00A9501C /* PocoXML.a */; };
 		BA0235BB12F7A81A0062CCC9 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA0235BA12F7A81A0062CCC9 /* Button.cpp */; };
+		BA091823131426F80094D0FF /* SliderWithLabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA091822131426F80094D0FF /* SliderWithLabel.cpp */; };
 		BA3AD12012F235A6009DF34D /* Root.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA3AD11F12F235A6009DF34D /* Root.cpp */; };
 		BA3AD12312F235C0009DF34D /* Container.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA3AD12212F235C0009DF34D /* Container.cpp */; };
 		BA3AD12612F236F3009DF34D /* CppTweener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA3AD12512F236F3009DF34D /* CppTweener.cpp */; };
@@ -86,6 +87,8 @@
 		5E25688410ED26CC00A9501C /* PocoXML.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = PocoXML.a; path = ../../../libs/poco/lib/osx/PocoXML.a; sourceTree = SOURCE_ROOT; };
 		BA0235B912F7A81A0062CCC9 /* Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Button.h; sourceTree = "<group>"; };
 		BA0235BA12F7A81A0062CCC9 /* Button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Button.cpp; sourceTree = "<group>"; };
+		BA091821131426F80094D0FF /* SliderWithLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SliderWithLabel.h; sourceTree = "<group>"; };
+		BA091822131426F80094D0FF /* SliderWithLabel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SliderWithLabel.cpp; sourceTree = "<group>"; };
 		BA3AD11E12F235A6009DF34D /* Root.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Root.h; sourceTree = "<group>"; };
 		BA3AD11F12F235A6009DF34D /* Root.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Root.cpp; sourceTree = "<group>"; };
 		BA3AD12112F235C0009DF34D /* Container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Container.h; sourceTree = "<group>"; };
@@ -322,6 +325,8 @@
 				BAA9820B12F98BCF00AA0CF7 /* ScrollPane.cpp */,
 				BAF41BE413083ACF00B2FB16 /* BarButton.h */,
 				BAF41BE513083ACF00B2FB16 /* BarButton.cpp */,
+				BA091821131426F80094D0FF /* SliderWithLabel.h */,
+				BA091822131426F80094D0FF /* SliderWithLabel.cpp */,
 			);
 			name = ofxMUI;
 			sourceTree = "<group>";
@@ -683,6 +688,7 @@
 				BA0235BB12F7A81A0062CCC9 /* Button.cpp in Sources */,
 				BAA9820C12F98BCF00AA0CF7 /* ScrollPane.cpp in Sources */,
 				BAF41BE613083ACF00B2FB16 /* BarButton.cpp in Sources */,
+				BA091823131426F80094D0FF /* SliderWithLabel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

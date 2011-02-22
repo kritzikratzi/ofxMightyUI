@@ -39,3 +39,4 @@ namespace mui{
 #include "BarButton.h"
 #include "EmptyContainer.h"
 #include "InternalWindow.h"
+#include "SliderWithLabel.h"

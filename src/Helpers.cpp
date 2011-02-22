@@ -93,3 +93,21 @@ void mui::Helpers::quadraticBezierVertex(float cpx, float cpy, float x, float y,
 	// finally call cubic Bezier curve function
 	ofBezierVertex(cp1x, cp1y, cp2x, cp2y, x, y);
 };
+
+ofColor rgb( int r, int g, int b ){
+	ofColor color; 
+	color.r = r; 
+	color.g = g; 
+	color.b = b; 
+	
+	return color; 
+}
+
+ofColor rgb( int rgbVal ){
+	ofColor color; 
+	color.r = (rgbVal&0xFF0000)>>16; 
+	color.g = (rgbVal&0x00FF00)>>8; 
+	color.b = rgbVal&0xFF; 
+	
+	return color; 
+}

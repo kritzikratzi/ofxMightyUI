@@ -33,7 +33,7 @@ void testApp::setup(){
 	window->setRightBarButton( barRight ); 
 	
 	slider = new mui::Slider( 20, 60, 250, 20, 0, 1, 0.5 );
-	slider2 = new mui::Slider( 20, 100, 250, 20, 0, 1, 0.5 );
+	slider2 = new mui::SliderWithLabel( 20, 100, 250, 20, 0, 1, 0.5, 2 );
 	window->add( slider ); 
 	window->add( slider2 ); 
 	
@@ -52,11 +52,10 @@ void testApp::setup(){
 		labels[i]->commit(); 
 		scrollPane->add( labels[i] ); 
 	}
-	scrollPane->commit(); 
-	window2->add( scrollPane ); 
+	scrollPane->commit();
+	window2->add( scrollPane );
 	
-	root->add( window2 ); 
-	
+	root->add( window2 );
 }
 
 //--------------------------------------------------------------
