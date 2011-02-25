@@ -4,10 +4,13 @@ a mini ui library for openframeworks.
 
 first things first: 
 this is very much a work in progress. the following sorta works: 
-- windows 
-- sliders 
+- windows (draggable, with titles and optional left/right toolbar buttons)
+- labels (with all sorts of alignments)
+- sliders (multitouch enabled, optionally with value labels)
 - buttons
-it's all butt ugly though. also slow! 
+- textfields (operating system textfield is overlayed during editing so it allows copy&paste)
+- scrollpanes
+it's all butt ugly though. also eventually slow! 
 
 
 licensing: 
