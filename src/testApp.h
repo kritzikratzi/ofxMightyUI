@@ -38,7 +38,7 @@ public:
 	mui::Slider * slider; 
 	mui::SliderWithLabel * slider2; 
 	mui::Button * button;
-	
+	mui::TextField * textField; 
 	mui::InternalWindow * window2; 
 	mui::ScrollPane * scrollPane; 
 	mui::Label * labels[10]; 

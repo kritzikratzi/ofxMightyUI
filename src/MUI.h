@@ -28,6 +28,12 @@ namespace mui{
 #include "ofMain.h"
 #include "ofxiPhone.h"
 
+#ifdef TARGET_OS_IPHONE
+#include "NativeIOS.h"
+#elif MUI_BE_INSANE
+#else
+#error No native textfield implementation for this platform. You can define MUI_BE_INSANE to skip over this error if you know you're not using textfields. 
+#endif
 
 #include "Helpers.h"
 #include "Container.h"
@@ -40,3 +46,4 @@ namespace mui{
 #include "EmptyContainer.h"
 #include "InternalWindow.h"
 #include "SliderWithLabel.h"
+#include "TextField.h"

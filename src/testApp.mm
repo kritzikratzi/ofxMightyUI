@@ -39,18 +39,22 @@ void testApp::setup(){
 	
 	button = new mui::Button( "Button", 20, 240, 70, 30 ); 
 	button->onPress += Poco::Delegate<testApp, ofTouchEventArgs>( this, &testApp::onButtonPress );
-	window->add( button ); 
+	window->add( button );
 	
 	
 	window2 = new mui::InternalWindow( "Scrolling", 300, 0, 300, 300 ); 
-	scrollPane = new mui::ScrollPane( 10, 50, 280, 240 ); 
+	scrollPane = new mui::ScrollPane( 10, 50, 280, 240 );
+	
+	textField = new mui::TextField( "hey!", 0, 0, 270, 30 ); 
+	scrollPane->add( textField ); 
+	
 	ofColor fg; 
 	fg.r = fg.g = fg.b = 0; 
 	for( int i = 0; i < 10; i++ ){
-		labels[i] = new mui::Label( "i'm a label:" + ofToString( i, 0 ), 0, i*50, 270, 50 ); 
+		labels[i] = new mui::Label( "i'm a label:" + ofToString( i, 0 ), 0, i*50 + 50, 270, 50 ); 
 		labels[i]->fg = fg; 
-		labels[i]->commit(); 
-		scrollPane->add( labels[i] ); 
+		labels[i]->commit();
+		scrollPane->add( labels[i] );
 	}
 	scrollPane->commit();
 	window2->add( scrollPane );

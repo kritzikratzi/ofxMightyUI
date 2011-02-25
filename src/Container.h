@@ -22,10 +22,11 @@ namespace mui{
 		ofColor bg;
 		
 		bool opaque; 
+		bool visible; 
 		vector<mui::Container*> children;
 		Container * parent; 
 		
-		Container( float x_, float y_, float width_, float height_ ) : x(x_), y(y_), width(width_), height(height_), opaque(false), parent(NULL) {
+		Container( float x_, float y_, float width_, float height_ ) : x(x_), y(y_), width(width_), height(height_), opaque(false), parent(NULL), visible(true) {
 			for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
 				startedInside[i] = false; 
 			}
@@ -50,6 +51,8 @@ namespace mui{
 		virtual bool handleTouchMoved( ofTouchEventArgs &touch );
 		virtual bool handleTouchUp( ofTouchEventArgs &touch );
 		virtual bool handleTouchDoubleTap( ofTouchEventArgs &touch );
+		
+		virtual ofPoint getGlobalPosition(); 
 		
 	private: 
 		bool startedInside[OF_MAX_TOUCHES];

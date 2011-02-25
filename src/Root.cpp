@@ -9,6 +9,16 @@
 
 #include "MUI.h"
 
+mui::Root * mui::Root::INSTANCE = NULL;
+
+void mui::Root::init(){
+	cout << "init root!" << endl; 
+	#ifdef TARGET_OS_IPHONE
+	cout << "target ios!" << endl; 
+	NativeIOS::init(); 
+	#endif
+}
+
 
 void mui::Root::handleDraw(){
 	ofFill(); 
@@ -16,8 +26,8 @@ void mui::Root::handleDraw(){
 	ofSetColor( 255, 255, 255 ); 
 	ofEnableAlphaBlending(); 
 	if( Helpers::retinaMode ){
-		ofPushMatrix(); 
-		ofScale( 2, 2, 1 ); 
+		ofPushMatrix();
+		ofScale( 2, 2, 1 );
 	}
 	
 	Container::handleDraw();
@@ -32,6 +42,10 @@ void mui::Root::handleDraw(){
 
 
 bool mui::Root::handleTouchDown( ofTouchEventArgs &touch ){
+	#ifdef TARGET_OS_IPHONE
+	NativeIOS::hide(); 
+	#endif
+	
 	// really? this creates a copy? 
 	if( Helpers::retinaMode ){
 		ofTouchEventArgs copyToMessWith = touch; 
@@ -86,3 +100,11 @@ bool mui::Root::handleTouchDoubleTap( ofTouchEventArgs &touch ){
 		return Container::handleTouchDoubleTap( touch ); 
 	}
 }
+
+void mui::Root::showTextField( TextField * tf ){
+	#ifdef TARGET_OS_IPHONE
+	NativeIOS::showTextField( tf ); 
+	#endif
+}
+
+

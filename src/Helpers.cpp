@@ -70,7 +70,7 @@ void mui::Helpers::drawStringWithShadow( std::string s, int x, int y, int fontSi
 }
 
 
-void mui::Helpers::roundedRect(float x, float y, float w, float h, float r) {
+void mui::Helpers::roundedRect(float x, float y, float w, float h, float r){
     ofBeginShape();
 	ofVertex(x+r, y);
 	ofVertex(x+w-r, y);

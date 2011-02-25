@@ -19,6 +19,8 @@ void mui::Container::drawBackground(){
 
 
 void mui::Container::handleDraw(){
+	if( !visible ) return; 
+	
 	ofPushMatrix(); 
 	ofTranslate( x, y ); 
 	
@@ -46,6 +48,8 @@ void mui::Container::handleUpdate(){
 }
 
 bool mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
+	if( !visible ) return false; 
+
 	touch.x -= x;
 	touch.y -= y;
 	
@@ -75,6 +79,8 @@ bool mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
 }
 
 bool mui::Container::handleTouchMoved( ofTouchEventArgs &touch ){
+	if( !visible ) return false; 
+
 	touch.x -= x;
 	touch.y -= y;
 	
@@ -101,6 +107,8 @@ bool mui::Container::handleTouchMoved( ofTouchEventArgs &touch ){
 }
 
 bool mui::Container::handleTouchDoubleTap( ofTouchEventArgs &touch ){
+	if( !visible ) return false; 
+
 	touch.x -= x;
 	touch.y -= y;
 	
@@ -127,6 +135,8 @@ bool mui::Container::handleTouchDoubleTap( ofTouchEventArgs &touch ){
 }
 
 bool mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
+	if( !visible ) return false; 
+	
 	touch.x -= x;
 	touch.y -= y;
 	
@@ -152,5 +162,24 @@ bool mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
 	touch.y += y; 
 	
 	return false; 
+}
+
+ofPoint mui::Container::getGlobalPosition(){
+	ofPoint result; 
+	
+	float x = 0; 
+	float y = 0; 
+	
+	Container * parent = this; 
+	while( parent != NULL ){
+		x += parent->x; 
+		y += parent->y; 
+		parent = parent->parent; 
+	}
+	
+	result.x = x; 
+	result.y = y; 
+	
+	return result; 
 }
 

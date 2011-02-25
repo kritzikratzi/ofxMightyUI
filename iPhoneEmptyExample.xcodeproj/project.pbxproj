@@ -24,6 +24,10 @@
 		5E2568A810ED26CD00A9501C /* PocoXML.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E25688410ED26CC00A9501C /* PocoXML.a */; };
 		BA0235BB12F7A81A0062CCC9 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA0235BA12F7A81A0062CCC9 /* Button.cpp */; };
 		BA091823131426F80094D0FF /* SliderWithLabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA091822131426F80094D0FF /* SliderWithLabel.cpp */; };
+		BA091882131811DF0094D0FF /* TextField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA091881131811DF0094D0FF /* TextField.cpp */; };
+		BA0918C9131818680094D0FF /* NativeIOSWrapper.xib in Resources */ = {isa = PBXBuildFile; fileRef = BA0918C8131818680094D0FF /* NativeIOSWrapper.xib */; };
+		BA0918CC131818750094D0FF /* NativeIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = BA0918CB131818750094D0FF /* NativeIOS.mm */; };
+		BA09199713183D080094D0FF /* NativeIOSWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = BA09199613183D080094D0FF /* NativeIOSWrapper.mm */; };
 		BA3AD12012F235A6009DF34D /* Root.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA3AD11F12F235A6009DF34D /* Root.cpp */; };
 		BA3AD12312F235C0009DF34D /* Container.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA3AD12212F235C0009DF34D /* Container.cpp */; };
 		BA3AD12612F236F3009DF34D /* CppTweener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA3AD12512F236F3009DF34D /* CppTweener.cpp */; };
@@ -89,6 +93,13 @@
 		BA0235BA12F7A81A0062CCC9 /* Button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Button.cpp; sourceTree = "<group>"; };
 		BA091821131426F80094D0FF /* SliderWithLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SliderWithLabel.h; sourceTree = "<group>"; };
 		BA091822131426F80094D0FF /* SliderWithLabel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SliderWithLabel.cpp; sourceTree = "<group>"; };
+		BA091880131811DF0094D0FF /* TextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextField.h; sourceTree = "<group>"; };
+		BA091881131811DF0094D0FF /* TextField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextField.cpp; sourceTree = "<group>"; };
+		BA0918C8131818680094D0FF /* NativeIOSWrapper.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NativeIOSWrapper.xib; sourceTree = "<group>"; };
+		BA0918CA131818750094D0FF /* NativeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeIOS.h; sourceTree = "<group>"; };
+		BA0918CB131818750094D0FF /* NativeIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeIOS.mm; sourceTree = "<group>"; };
+		BA09199513183D080094D0FF /* NativeIOSWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeIOSWrapper.h; sourceTree = "<group>"; };
+		BA09199613183D080094D0FF /* NativeIOSWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeIOSWrapper.mm; sourceTree = "<group>"; };
 		BA3AD11E12F235A6009DF34D /* Root.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Root.h; sourceTree = "<group>"; };
 		BA3AD11F12F235A6009DF34D /* Root.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Root.cpp; sourceTree = "<group>"; };
 		BA3AD12112F235C0009DF34D /* Container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Container.h; sourceTree = "<group>"; };
@@ -299,9 +310,22 @@
 			path = ../../../libs/poco/lib/osx;
 			sourceTree = SOURCE_ROOT;
 		};
+		BA0918C71318183A0094D0FF /* native */ = {
+			isa = PBXGroup;
+			children = (
+				BA0918C8131818680094D0FF /* NativeIOSWrapper.xib */,
+				BA0918CA131818750094D0FF /* NativeIOS.h */,
+				BA0918CB131818750094D0FF /* NativeIOS.mm */,
+				BA09199513183D080094D0FF /* NativeIOSWrapper.h */,
+				BA09199613183D080094D0FF /* NativeIOSWrapper.mm */,
+			);
+			name = native;
+			sourceTree = "<group>";
+		};
 		BA3AD10812F22B1B009DF34D /* ofxMUI */ = {
 			isa = PBXGroup;
 			children = (
+				BA0918C71318183A0094D0FF /* native */,
 				BA3AD11E12F235A6009DF34D /* Root.h */,
 				BA3AD11F12F235A6009DF34D /* Root.cpp */,
 				BA3AD12112F235C0009DF34D /* Container.h */,
@@ -327,6 +351,8 @@
 				BAF41BE513083ACF00B2FB16 /* BarButton.cpp */,
 				BA091821131426F80094D0FF /* SliderWithLabel.h */,
 				BA091822131426F80094D0FF /* SliderWithLabel.cpp */,
+				BA091880131811DF0094D0FF /* TextField.h */,
+				BA091881131811DF0094D0FF /* TextField.cpp */,
 			);
 			name = ofxMUI;
 			sourceTree = "<group>";
@@ -648,6 +674,7 @@
 				BB24DD8F10DA77E000E9C588 /* Default.png in Resources */,
 				BB24DD9010DA77E000E9C588 /* Icon.png in Resources */,
 				BB24DDCA10DA781C00E9C588 /* ofxiphone-Info.plist in Resources */,
+				BA0918C9131818680094D0FF /* NativeIOSWrapper.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -689,6 +716,9 @@
 				BAA9820C12F98BCF00AA0CF7 /* ScrollPane.cpp in Sources */,
 				BAF41BE613083ACF00B2FB16 /* BarButton.cpp in Sources */,
 				BA091823131426F80094D0FF /* SliderWithLabel.cpp in Sources */,
+				BA091882131811DF0094D0FF /* TextField.cpp in Sources */,
+				BA0918CC131818750094D0FF /* NativeIOS.mm in Sources */,
+				BA09199713183D080094D0FF /* NativeIOSWrapper.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
