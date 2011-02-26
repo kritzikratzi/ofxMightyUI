@@ -28,6 +28,7 @@
 		BA0918C9131818680094D0FF /* NativeIOSWrapper.xib in Resources */ = {isa = PBXBuildFile; fileRef = BA0918C8131818680094D0FF /* NativeIOSWrapper.xib */; };
 		BA0918CC131818750094D0FF /* NativeIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = BA0918CB131818750094D0FF /* NativeIOS.mm */; };
 		BA09199713183D080094D0FF /* NativeIOSWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = BA09199613183D080094D0FF /* NativeIOSWrapper.mm */; };
+		BA091B6D131989BC0094D0FF /* SegmentedSelect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA091B6C131989BC0094D0FF /* SegmentedSelect.cpp */; };
 		BA3AD12012F235A6009DF34D /* Root.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA3AD11F12F235A6009DF34D /* Root.cpp */; };
 		BA3AD12312F235C0009DF34D /* Container.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA3AD12212F235C0009DF34D /* Container.cpp */; };
 		BA3AD12612F236F3009DF34D /* CppTweener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA3AD12512F236F3009DF34D /* CppTweener.cpp */; };
@@ -100,6 +101,8 @@
 		BA0918CB131818750094D0FF /* NativeIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeIOS.mm; sourceTree = "<group>"; };
 		BA09199513183D080094D0FF /* NativeIOSWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeIOSWrapper.h; sourceTree = "<group>"; };
 		BA09199613183D080094D0FF /* NativeIOSWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeIOSWrapper.mm; sourceTree = "<group>"; };
+		BA091B6B131989BC0094D0FF /* SegmentedSelect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SegmentedSelect.h; sourceTree = "<group>"; };
+		BA091B6C131989BC0094D0FF /* SegmentedSelect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SegmentedSelect.cpp; sourceTree = "<group>"; };
 		BA3AD11E12F235A6009DF34D /* Root.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Root.h; sourceTree = "<group>"; };
 		BA3AD11F12F235A6009DF34D /* Root.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Root.cpp; sourceTree = "<group>"; };
 		BA3AD12112F235C0009DF34D /* Container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Container.h; sourceTree = "<group>"; };
@@ -353,6 +356,8 @@
 				BA091822131426F80094D0FF /* SliderWithLabel.cpp */,
 				BA091880131811DF0094D0FF /* TextField.h */,
 				BA091881131811DF0094D0FF /* TextField.cpp */,
+				BA091B6B131989BC0094D0FF /* SegmentedSelect.h */,
+				BA091B6C131989BC0094D0FF /* SegmentedSelect.cpp */,
 			);
 			name = ofxMUI;
 			sourceTree = "<group>";
@@ -719,6 +724,7 @@
 				BA091882131811DF0094D0FF /* TextField.cpp in Sources */,
 				BA0918CC131818750094D0FF /* NativeIOS.mm in Sources */,
 				BA09199713183D080094D0FF /* NativeIOSWrapper.mm in Sources */,
+				BA091B6D131989BC0094D0FF /* SegmentedSelect.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -43,7 +43,8 @@ public:
 	mui::ScrollPane * scrollPane; 
 	mui::Label * labels[10]; 
 	mui::BarButton * barLeft; 
-	mui::BarButton * barRight; 
+	mui::BarButton * barRight;
+	mui::SegmentedSelect * segmentedSelect; 
 	long wastedTime; 
 };
 

@@ -48,10 +48,16 @@ void testApp::setup(){
 	textField = new mui::TextField( "hey!", 0, 0, 270, 30 ); 
 	scrollPane->add( textField ); 
 	
+	segmentedSelect = new mui::SegmentedSelect( 0, 30, 270, 30 ); 
+	segmentedSelect->addLabel( "Sin" ); 
+	segmentedSelect->addLabel( "Cos" ); 
+	segmentedSelect->addLabel( "Tan" ); 
+	scrollPane->add( segmentedSelect ); 
+	
 	ofColor fg; 
 	fg.r = fg.g = fg.b = 0; 
 	for( int i = 0; i < 10; i++ ){
-		labels[i] = new mui::Label( "i'm a label:" + ofToString( i, 0 ), 0, i*50 + 50, 270, 50 ); 
+		labels[i] = new mui::Label( "i'm a label:" + ofToString( i, 0 ), 0, i*50 + 60, 270, 50 ); 
 		labels[i]->fg = fg; 
 		labels[i]->commit();
 		scrollPane->add( labels[i] );

@@ -111,3 +111,12 @@ ofColor rgb( int rgbVal ){
 	
 	return color; 
 }
+
+ofRectangle mui::Helpers::alignBox( Container * container, float width, float height, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign ){
+	return ofRectangle( 
+		horizontalAlign == Left? 0 : ( horizontalAlign == Right? (container->width - width) : ((container->width-width)/2)), 
+		verticalAlign == Top? 0 : ( verticalAlign == Bottom? (container->height - height) : ((container->height-height)/2)), 
+		width, 
+		height
+	); 
+}

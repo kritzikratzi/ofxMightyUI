@@ -19,7 +19,7 @@ namespace mui{
 	};
 	enum VerticalAlign{
 		Top, Bottom, Middle /* i wish i could support baseline, but it's not in ofTrueTypeFont yet! */
-	};
+	};	
 }
 
 #endif
@@ -47,3 +47,4 @@ namespace mui{
 #include "InternalWindow.h"
 #include "SliderWithLabel.h"
 #include "TextField.h"
+#include "SegmentedSelect.h"
