@@ -21,10 +21,16 @@
 #include "MUI.h"
 
 
+void mui::ScrollPane::init(){
+	view = new Container( 0, 0, width, height ); 
+	add( view ); 
+}
+
+
 //--------------------------------------------------------------
 void mui::ScrollPane::commit(){
 	// figure out min/max values... 
-	std::vector<Container*>::iterator it = children.begin(); 
+	std::vector<Container*>::iterator it = view->children.begin(); 
 	float minX, minY, maxX, maxY; 
 	
 	minX = 0; 
@@ -32,7 +38,7 @@ void mui::ScrollPane::commit(){
 	maxX = 0; 
 	maxY = 0; 
 	
-	while( it != children.end() ) {
+	while( it != view->children.end() ) {
 		minX = fminf( (*it)->x, minX ); 
 		minY = fminf( (*it)->y, minX ); 
 		maxY = fmaxf( (*it)->x + (*it)->width, maxX );
@@ -48,22 +54,35 @@ void mui::ScrollPane::commit(){
 	maxScrollY = fmaxf( 0, maxY - height );
 	
 	cout << "commit scrollpane: " << minScrollX << ", " << maxScrollX << "," << maxX << endl; 
+	view->width = fmaxf( width, maxScrollX ); 
+	view->height = fmax( height, maxScrollY ); 
+	cout << "view size = " << maxScrollX << ", " << maxScrollY << endl; 
 }
 
 //--------------------------------------------------------------
 void mui::ScrollPane::update(){
-	scrollX = fminf( maxScrollX, fmaxf( scrollX, minScrollX ) ); 
-	scrollY = fminf( maxScrollY, fmaxf( scrollY, minScrollY ) ); 
+	if( pressed ){
+		// TODO: this needs to be improved! 
+		scrollX = fminf( maxScrollX, fmaxf( scrollX, minScrollX ) ); 
+		scrollY = fminf( maxScrollY+50, fmaxf( scrollY, minScrollY-50 ) ); 
+	}
+	else{
+		scrollX = fminf( maxScrollX, fmaxf( scrollX, minScrollX ) ); 
+		scrollY = fminf( maxScrollY, fmaxf( scrollY, minScrollY ) ); 
+	}
 	
 	currentScrollX += ( scrollX - currentScrollX ) / 3; 
 	currentScrollY += ( scrollY - currentScrollY ) / 3; 
+	
+	view->x = -currentScrollX; 
+	view->y = -currentScrollY; 
 }
 
 
 //--------------------------------------------------------------
 void mui::ScrollPane::draw(){
-	ofSetColor( 255, 0, 0 ); 
-	ofRect( 0, 0, width, height ); 	
+	ofSetColor( 255, 0, 0 );
+	ofRect( 0, 0, width, height );
 }
 
 
@@ -75,33 +94,15 @@ void mui::ScrollPane::drawBackground(){
 //--------------------------------------------------------------
 // mostly a copy of Container::handleDraw
 void mui::ScrollPane::handleDraw(){
-	ofPushMatrix(); 
-	ofTranslate( x, y ); 
-	
-	if( !opaque ) drawBackground(); 
-	draw(); 
-	
-	//TODO: find global x/y quicker! 
-	float globalX = x, globalY = y; 
-	Container * c = parent; 
-	while( c != NULL ){ globalX += c->x; globalY += c->y; c = c->parent;}
+	glEnable( GL_SCISSOR_TEST ); 
+	ofPoint pos = getGlobalPosition(); 
 	//TODO: clarify next line! 
 	//maybe this is an ios-setup specific solution
-	globalY = ofGetHeight()-globalY-height; 
-	glEnable( GL_SCISSOR_TEST ); 
-	glScissor( globalX, globalY, width, height ); 
+	pos.y = ofGetHeight()-pos.y-height; 
+	glScissor( pos.x, pos.y, width, height ); 
 	
-	ofTranslate( -currentScrollX, -currentScrollY ); 
-	
-	std::vector<Container*>::iterator it = children.begin();
-	while( it != children.end() ){
-		// todo: skip drawing the invisible thingies
-		(*it)->handleDraw(); 
-		++it;
-	}
-	
-	ofPopMatrix(); 
-	glDisable( GL_SCISSOR_TEST ); 
+	Container::handleDraw(); 
+	glDisable( GL_SCISSOR_TEST );
 }
 
 

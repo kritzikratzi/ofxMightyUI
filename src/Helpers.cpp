@@ -120,3 +120,7 @@ ofRectangle mui::Helpers::alignBox( Container * container, float width, float he
 		height
 	); 
 }
+
+bool mui::Helpers::inside( Container * container, float x, float y ){
+	return x >= 0 && y >= 0 && x <= container->width && y <= container->height; 
+}

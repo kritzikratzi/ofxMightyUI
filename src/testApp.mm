@@ -46,13 +46,13 @@ void testApp::setup(){
 	scrollPane = new mui::ScrollPane( 10, 50, 280, 240 );
 	
 	textField = new mui::TextField( "hey!", 0, 0, 270, 30 ); 
-	scrollPane->add( textField ); 
+	scrollPane->view->add( textField ); 
 	
 	segmentedSelect = new mui::SegmentedSelect( 0, 30, 270, 30 ); 
 	segmentedSelect->addLabel( "Sin" ); 
 	segmentedSelect->addLabel( "Cos" ); 
 	segmentedSelect->addLabel( "Tan" ); 
-	scrollPane->add( segmentedSelect ); 
+	scrollPane->view->add( segmentedSelect ); 
 	
 	ofColor fg; 
 	fg.r = fg.g = fg.b = 0; 
@@ -60,7 +60,7 @@ void testApp::setup(){
 		labels[i] = new mui::Label( "i'm a label:" + ofToString( i, 0 ), 0, i*50 + 60, 270, 50 ); 
 		labels[i]->fg = fg; 
 		labels[i]->commit();
-		scrollPane->add( labels[i] );
+		scrollPane->view->add( labels[i] );
 	}
 	scrollPane->commit();
 	window2->add( scrollPane );

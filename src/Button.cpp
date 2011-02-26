@@ -62,6 +62,7 @@ void mui::Button::drawBackground(){
 
 //--------------------------------------------------------------
 bool mui::Button::touchDown( ofTouchEventArgs &touch ){
+	cout << "touch down on button!" << label->text << endl; 
 	if( pressed ) return false; 
 	
 	pressed = true; 

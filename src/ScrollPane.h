@@ -20,13 +20,18 @@ namespace mui{
 			canScrollX(true), canScrollY(true), scrollX(0), scrollY(0), 
 			maxScrollX(0), maxScrollY(0), minScrollX(0), minScrollY(0), 
 			currentScrollX(0), currentScrollY(0), 
-			pressed(false)
-			{};
+			pressed(false), 
+			view( NULL )
+			{ init(); };
 		
 		float scrollX, scrollY; 
 		float minScrollX, minScrollY; 
 		float maxScrollX, maxScrollY; 
 		bool canScrollX, canScrollY; 
+		
+		Container * view;
+		
+		virtual void init(); 
 		
 		virtual void commit(); 
 		virtual void update();
