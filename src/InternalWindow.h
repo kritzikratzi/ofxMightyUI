@@ -19,11 +19,12 @@ namespace mui{
 	class InternalWindow : public Container{
 	public: 
 		InternalWindow( std::string title_ = "Window", float x_ = 0, float y_ = 0, float width_ = 300, float height_ = 300, float radius_ = 10 )
-		: Container( x_, y_, width_, height_ ), radius(radius_), leftBarButton( NULL ), rightBarButton( NULL ) { init( title_ ); };
+		: Container( x_, y_, width_, height_ ), radius(radius_), leftBarButton( NULL ), rightBarButton( NULL ), view( NULL ) { init( title_ ); };
 		
 		Label * label; 
 		BarButton * leftBarButton; 
 		BarButton * rightBarButton; 
+		Container * view; 
 		
 		virtual void init( std::string title );
 		virtual void update();

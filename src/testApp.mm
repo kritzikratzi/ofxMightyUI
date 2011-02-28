@@ -66,18 +66,22 @@ void testApp::setup(){
 	window2->add( scrollPane );
 	
 	root->add( window2 );
+	 
+	
+	loadWindow = new LoadWindow(); 
+	root->add( loadWindow ); 
 }
 
 //--------------------------------------------------------------
 void testApp::onButtonPress( const void* sender, ofTouchEventArgs &args ){
-	tween::TweenerParam param(200, tween::QUAD, tween::EASE_OUT);
+	/*tween::TweenerParam param(200, tween::QUAD, tween::EASE_OUT);
 	bool small = slider->width == 250; 
     param.addProperty(&(slider->width), small? 150:250 ); 
     param.addProperty(&(slider2->width), small? 150:250 ); 
     param.addProperty(&(window->width), small? 200:300 ); 
     param.addProperty(&(window->height), small? 200:300 ); 
     param.addProperty(&(button->y), small?140:240 ); 
-    tweener.addTween(param); 
+    tweener.addTween(param); */
 }
 
 

@@ -19,15 +19,20 @@ void mui::InternalWindow::init( std::string title ){
 	label->commit(); 
 	
 	add( label ); 
+	
+	view = new Container( 0, 44, width, height - 44 ); 
+	add( view ); 
 }
 
 //--------------------------------------------------------------
 void mui::InternalWindow::update(){
-	label->width = width; 
+	label->width = width;
+	view->width = width;
+	view->height = height - 44;
 	
 	if( leftBarButton != NULL ){
-		leftBarButton->width = leftBarButton->label->boundingBox.width + 10; 
-		leftBarButton->height = 30; 
+		leftBarButton->width = leftBarButton->label->boundingBox.width + 10;
+		leftBarButton->height = 30;
 		leftBarButton->x = leftBarButton->y = 7;
 	}
 	

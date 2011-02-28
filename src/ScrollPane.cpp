@@ -81,8 +81,6 @@ void mui::ScrollPane::update(){
 
 //--------------------------------------------------------------
 void mui::ScrollPane::draw(){
-	ofSetColor( 255, 0, 0 );
-	ofRect( 0, 0, width, height );
 }
 
 
@@ -108,7 +106,6 @@ void mui::ScrollPane::handleDraw(){
 
 //--------------------------------------------------------------
 bool mui::ScrollPane::touchDown( ofTouchEventArgs &touch ){
-	cout << "touch down!" << endl; 
 	if( !pressed ){
 		pressedX = touch.x; 
 		pressedY = touch.y; 

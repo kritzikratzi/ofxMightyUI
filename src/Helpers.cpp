@@ -94,23 +94,47 @@ void mui::Helpers::quadraticBezierVertex(float cpx, float cpy, float x, float y,
 	ofBezierVertex(cp1x, cp1y, cp2x, cp2y, x, y);
 };
 
-ofColor rgb( int r, int g, int b ){
+ofColor mui::Helpers::rgb( int r, int g, int b, int a ){
 	ofColor color; 
 	color.r = r; 
 	color.g = g; 
 	color.b = b; 
+	color.a = a; 
 	
 	return color; 
 }
 
-ofColor rgb( int rgbVal ){
+ofColor mui::Helpers::rgb( int rgbVal, int a ){
 	ofColor color; 
 	color.r = (rgbVal&0xFF0000)>>16; 
 	color.g = (rgbVal&0x00FF00)>>8; 
 	color.b = rgbVal&0xFF; 
+	color.a = a; 
 	
 	return color; 
 }
+
+ofColor mui::Helpers::rgba( int rgbVal ){
+	ofColor color; 
+	color.a = (rgbVal&0xFF000000)>>24; 
+	color.r = (rgbVal&0xFF0000)>>16; 
+	color.g = (rgbVal&0xFF00)>>8; 
+	color.b = rgbVal&0xFF; 
+	
+	return color; 
+}
+
+
+ofColor mui::Helpers::grey( int g, int a ){
+	ofColor color; 
+	color.r = g; 
+	color.g = g; 
+	color.b = g; 
+	color.a = a; 
+	
+	return color; 
+}
+
 
 ofRectangle mui::Helpers::alignBox( Container * container, float width, float height, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign ){
 	return ofRectangle( 

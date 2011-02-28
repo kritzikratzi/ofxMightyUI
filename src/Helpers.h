@@ -25,8 +25,10 @@ namespace mui{
 		static void roundedRect(float x, float y, float w, float h, float r); 
 		static void quadraticBezierVertex( float cpx, float cpy, float x, float y, float prevX, float prevY); 
 		static void drawStringWithShadow( std::string s, int x, int y, int fontSize, int r, int g, int b ); 
-		static ofColor rgb( int r, int g, int b ); 
-		static ofColor rgb( int rgb ); 
+		static ofColor rgb( int r, int g, int b, int a = 255 ); 
+		static ofColor rgb( int rgb, int a = 255 ); 
+		static ofColor rgba( int rgba ); 
+		static ofColor grey( int g, int a = 255 ); 
 		static bool retinaMode;
 		static ofRectangle alignBox( Container * container, float width, float height, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign ); 
 		static bool inside( Container * container, float x, float y ); 

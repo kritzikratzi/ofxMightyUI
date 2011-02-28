@@ -98,5 +98,5 @@ void mui::Label::commit(){
 	boundingBox = font->getStringBoundingBox( text, 0, 0 );
 	
 	// NASTY HACK#158
-	// boundingBox.x = 0; 
+	boundingBox.x = 0; 
 }

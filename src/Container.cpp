@@ -27,8 +27,8 @@ void mui::Container::handleDraw(){
 	if( !opaque ) drawBackground(); 
 	draw(); 
 	
-	std::vector<Container*>::iterator it = children.begin();
-	while( it != children.end() ) {
+	std::vector<Container*>::reverse_iterator it = children.rbegin();
+	while( it != children.rend() ) {
 		(*it)->handleDraw(); 
 		++it;
 	}

@@ -7,7 +7,7 @@
 #include "ButtonPopup.h"
 #include "MUI.h"
 #include "poco/Delegate.h"
-
+#include "LoadWindow.h"
 #include "CppTweener.h" 
 
 class testApp : public ofxiPhoneApp {
@@ -34,6 +34,7 @@ public:
 	tween::Tweener tweener; 
 	
 	mui::Root *root;
+	
 	mui::InternalWindow * window; 
 	mui::Slider * slider; 
 	mui::SliderWithLabel * slider2; 
@@ -44,8 +45,10 @@ public:
 	mui::Label * labels[10]; 
 	mui::BarButton * barLeft; 
 	mui::BarButton * barRight;
-	mui::SegmentedSelect * segmentedSelect; 
-	long wastedTime; 
+	mui::SegmentedSelect * segmentedSelect;
+
+	LoadWindow * loadWindow; 
+	
+	
+	long wastedTime;
 };
-
-

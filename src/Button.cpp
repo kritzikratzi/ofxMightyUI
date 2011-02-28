@@ -48,15 +48,18 @@ void mui::Button::draw(){
 
 //--------------------------------------------------------------
 void mui::Button::drawBackground(){
-	ofFill(); 
-	ofSetColor( bg.r, bg.g, bg.b ); 
-	Helpers::roundedRect( 0, 0, width, height, 5 ); 
-	if( pressed ){
-		ofSetColor( bg.r/2, bg.g/2, bg.b/2 ); 
+	if( bg.a > 0 ){
+		ofFill(); 
+		ofSetColor( bg.r, bg.g, bg.b, bg.a ); 
+		Helpers::roundedRect( 0, 0, width, height, 5 ); 
+
+		if( pressed ){
+			ofSetColor( bg.r/2, bg.g/2, bg.b/2, bg.a ); 
+		}
+		
+		ofNoFill();
+		Helpers::roundedRect( 0, 0, width, height, 5 ); 
 	}
-	
-	ofNoFill(); 
-	Helpers::roundedRect( 0, 0, width, height, 5 ); 
 }
 
 
