@@ -23,7 +23,7 @@ namespace mui{
 		: Container( x_, y_, width_, height_ ), pressed(false) { init( title_ ); };
 		
 		Label * label; 
-		bool pressed; 
+		bool pressed;
 		Poco::BasicEvent<ofTouchEventArgs> onPress;
 		
 		virtual void init( std::string title );
@@ -33,8 +33,11 @@ namespace mui{
 		
 		virtual void touchDown( ofTouchEventArgs &touch ); 
 		virtual void touchMoved( ofTouchEventArgs &touch ); 
+		virtual void touchMovedOutside( ofTouchEventArgs &touch ); 
 		virtual void touchUp( ofTouchEventArgs &touch ); 
+		virtual void touchUpOutside( ofTouchEventArgs &touch ); 
 		virtual void touchDoubleTap( ofTouchEventArgs &touch ); 
+		virtual void touchCanceled( ofTouchEventArgs &touch ); 
 		
 	
 	};

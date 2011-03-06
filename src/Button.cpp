@@ -67,26 +67,42 @@ void mui::Button::drawBackground(){
 
 //--------------------------------------------------------------
 void mui::Button::touchDown( ofTouchEventArgs &touch ){
-	pressed = true; 
+	pressed = true;
 }
 
 
 //--------------------------------------------------------------
 void mui::Button::touchMoved( ofTouchEventArgs &touch ){
+	pressed = true; 
+}
+
+
+//--------------------------------------------------------------
+void mui::Button::touchMovedOutside( ofTouchEventArgs &touch ){
+	pressed = false; 
 }
 
 
 //--------------------------------------------------------------
 void mui::Button::touchUp( ofTouchEventArgs &touch ){
-	if( pressed && touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
-		cout << "action on button!" << label->text << endl; 
-		onPress( this, touch );
-	}
+	cout << "touch up!!!" << label->text << endl; 
+	onPress( this, touch );
+	pressed = false; 
+}
 
+
+//--------------------------------------------------------------
+void mui::Button::touchUpOutside( ofTouchEventArgs &touch ){
 	pressed = false; 
 }
 
 
 //--------------------------------------------------------------
 void mui::Button::touchDoubleTap( ofTouchEventArgs &touch ){
+}
+
+
+//--------------------------------------------------------------
+void mui::Button::touchCanceled( ofTouchEventArgs &touch ){
+	pressed = false; 
 }

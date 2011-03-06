@@ -32,12 +32,12 @@ void testApp::setup(){
 	window->setLeftBarButton( barLeft ); 
 	window->setRightBarButton( barRight ); 
 	
-	slider = new mui::Slider( 20, 60, 250, 20, 0, 1, 0.5 );
-	slider2 = new mui::SliderWithLabel( 20, 100, 250, 20, 0, 1, 0.5, 2 );
+	slider = new mui::Slider( 20, 20, 250, 20, 0, 1, 0.5 );
+	slider2 = new mui::SliderWithLabel( 20, 60, 250, 20, 0, 1, 0.5, 2 );
 	window->view->add( slider );
 	window->view->add( slider2 );
 	
-	button = new mui::Button( "Button", 20, 240, 70, 30 ); 
+	button = new mui::Button( "Button", 20, 200, 70, 30 ); 
 	button->onPress += Poco::Delegate<testApp, ofTouchEventArgs>( this, &testApp::onButtonPress );
 	window->view->add( button );
 	
@@ -74,22 +74,22 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::onButtonPress( const void* sender, ofTouchEventArgs &args ){
-	/*tween::TweenerParam param(200, tween::QUAD, tween::EASE_OUT);
+	tween::TweenerParam param(200, tween::QUAD, tween::EASE_OUT);
 	bool small = slider->width == 250; 
     param.addProperty(&(slider->width), small? 150:250 ); 
     param.addProperty(&(slider2->width), small? 150:250 ); 
     param.addProperty(&(window->width), small? 200:300 ); 
     param.addProperty(&(window->height), small? 200:300 ); 
-    param.addProperty(&(button->y), small?140:240 ); 
-    tweener.addTween(param); */
+    param.addProperty(&(button->y), small?100:200 ); 
+    tweener.addTween(param);
 }
 
 
 
 //--------------------------------------------------------------
 void testApp::update(){
-	long start = ofGetSystemTime(); 
-	root->handleUpdate(); 
+	long start = ofGetSystemTime();
+	root->handleUpdate();
 	wastedTime += ofGetSystemTime() - start; 
 	tweener.step( ofGetSystemTime() );
 }

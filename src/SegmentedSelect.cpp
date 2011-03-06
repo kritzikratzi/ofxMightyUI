@@ -32,12 +32,16 @@ void mui::SegmentedButton::drawBackground(){
 	ofSetColor( 255, 255, 255 ); 
 	if( selected || pressed ){
 		if( roundedLeft ) Helpers::getImage( "segment_left_active" )->draw( 0, 0, 5, 29 ); 
+		ofEnableTextureEdgeHack(); 
 		Helpers::getImage( "segment_center_active" )->draw( roundedLeft?5:0, 0, width-((roundedLeft?5:0)+(roundedRight?5:0)), 29 ); 
+		ofDisableTextureEdgeHack(); 
 		if( roundedRight ) Helpers::getImage( "segment_right_active" )->draw( width-5, 0, 5, 29 ); 
 	}
 	else{
 		if( roundedLeft ) Helpers::getImage( "segment_left" )->draw( 0, 0, 5, 29 ); 
+		ofEnableTextureEdgeHack(); 
 		Helpers::getImage( "segment_center" )->draw( roundedLeft?5:0, 0, width-((roundedLeft?5:0)+(roundedRight?5:0)), 29 ); 
+		ofDisableTextureEdgeHack(); 
 		if( roundedRight ) Helpers::getImage( "segment_right" )->draw( width-5, 0, 5, 29 ); 
 	}
 	
