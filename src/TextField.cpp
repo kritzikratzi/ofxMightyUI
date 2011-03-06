@@ -39,25 +39,21 @@ void mui::TextField::drawBackground(){
 
 
 //--------------------------------------------------------------
-bool mui::TextField::touchDown( ofTouchEventArgs &touch ){
-	return true; 
+void mui::TextField::touchDown( ofTouchEventArgs &touch ){
 }
 
 
 //--------------------------------------------------------------
-bool mui::TextField::touchMoved( ofTouchEventArgs &touch ){
-	return false; 
+void mui::TextField::touchMoved( ofTouchEventArgs &touch ){
 }
 
 
 //--------------------------------------------------------------
-bool mui::TextField::touchUp( ofTouchEventArgs &touch ){
+void mui::TextField::touchUp( ofTouchEventArgs &touch ){
 	Root::INSTANCE->showTextField( this );
-	return true; 
 }
 
 
 //--------------------------------------------------------------
-bool mui::TextField::touchDoubleTap( ofTouchEventArgs &touch ){
-	return false; 
+void mui::TextField::touchDoubleTap( ofTouchEventArgs &touch ){
 }

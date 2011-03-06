@@ -25,10 +25,11 @@ namespace mui{
 		virtual void update(){}; 
 		virtual void draw(); 
 		
-		virtual bool touchDown( ofTouchEventArgs &touch ); 
-		virtual bool touchMoved( ofTouchEventArgs &touch ); 
-		virtual bool touchUp( ofTouchEventArgs &touch ); 
-		virtual bool touchDoubleTap( ofTouchEventArgs &touch ); 
+		virtual void touchDown( ofTouchEventArgs &touch ); 
+		virtual void touchMoved( ofTouchEventArgs &touch ); 
+		virtual void touchMovedOutside( ofTouchEventArgs &touch ); 
+		virtual void touchUp( ofTouchEventArgs &touch ); 
+		virtual void touchDoubleTap( ofTouchEventArgs &touch ); 
 		
 		
 		virtual float screenToValue( float x ); 

@@ -38,24 +38,20 @@ void mui::EmptyContainer::drawBackground(){
 
 
 //--------------------------------------------------------------
-bool mui::EmptyContainer::touchDown( ofTouchEventArgs &touch ){
-	return false; 
+void mui::EmptyContainer::touchDown( ofTouchEventArgs &touch ){
 }
 
 
 //--------------------------------------------------------------
-bool mui::EmptyContainer::touchMoved( ofTouchEventArgs &touch ){
-	return false; 
+void mui::EmptyContainer::touchMoved( ofTouchEventArgs &touch ){
 }
 
 
 //--------------------------------------------------------------
-bool mui::EmptyContainer::touchUp( ofTouchEventArgs &touch ){
-	return false; 
+void mui::EmptyContainer::touchUp( ofTouchEventArgs &touch ){
 }
 
 
 //--------------------------------------------------------------
-bool mui::EmptyContainer::touchDoubleTap( ofTouchEventArgs &touch ){
-	return false; 
+void mui::EmptyContainer::touchDoubleTap( ofTouchEventArgs &touch ){
 }

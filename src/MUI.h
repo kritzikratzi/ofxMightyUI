@@ -9,6 +9,8 @@
 
 #define MUI_RETINA false
 #define MUI_FONT "mui/fonts/Lato-Regular.ttf"
+#define MUI_DEBUG_DRAW true
+
 
 #ifndef MUI_CRAZY_IMPORTANT
 #define MUI_CRAZY_IMPORTANT

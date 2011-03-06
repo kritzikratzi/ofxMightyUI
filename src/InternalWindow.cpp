@@ -18,10 +18,13 @@ void mui::InternalWindow::init( std::string title ){
 	label->fontSize = 16; 
 	label->commit(); 
 	
+	name = string("internalwindow-") + title; 
+	
 	add( label ); 
 	
 	view = new Container( 0, 44, width, height - 44 ); 
 	add( view ); 
+	view->name = "view-" + title; 
 }
 
 //--------------------------------------------------------------
@@ -91,36 +94,37 @@ void mui::InternalWindow::setRightBarButton( BarButton * rightBarButton ){
 
 
 //--------------------------------------------------------------
-bool mui::InternalWindow::touchDown( ofTouchEventArgs &touch ){
+void mui::InternalWindow::touchDown( ofTouchEventArgs &touch ){
 	if( touch.y <= 44 ){
+		cout << "TRIPPLE YES" << endl;
 		dragX = touch.x; 
 		dragY = touch.y; 
-		return true; 
 	}
-	
-	return false; 
 }
 
 
 //--------------------------------------------------------------
-bool mui::InternalWindow::touchMoved( ofTouchEventArgs &touch ){
+void mui::InternalWindow::touchMoved( ofTouchEventArgs &touch ){
+	cout << "moved: " << touch.x << ", " << touch.y << endl;
 	int deltaX = touch.x - dragX; 
 	int deltaY = touch.y - dragY; 
 	x += deltaX; 
 	y += deltaY; 
-	//dragX += deltaX; 
-	//dragY += deltaY; 
-	return true; 
 }
 
 
 //--------------------------------------------------------------
-bool mui::InternalWindow::touchUp( ofTouchEventArgs &touch ){
-	return false; 
+void mui::InternalWindow::touchMovedOutside( ofTouchEventArgs &touch ){
+	cout << "handling outside!" << endl; 
+	touchMoved( touch );
 }
 
 
 //--------------------------------------------------------------
-bool mui::InternalWindow::touchDoubleTap( ofTouchEventArgs &touch ){
-	return false; 
+void mui::InternalWindow::touchUp( ofTouchEventArgs &touch ){
+}
+
+
+//--------------------------------------------------------------
+void mui::InternalWindow::touchDoubleTap( ofTouchEventArgs &touch ){
 }

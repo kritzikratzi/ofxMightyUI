@@ -27,6 +27,12 @@ void mui::Container::handleDraw(){
 	if( !opaque ) drawBackground(); 
 	draw(); 
 	
+	if( MUI_DEBUG_DRAW ){
+		ofNoFill(); 
+		ofSetColor( 255, 0, 0 );
+		ofRect( 0, 0, width, height ); 
+	}
+	
 	std::vector<Container*>::reverse_iterator it = children.rbegin();
 	while( it != children.rend() ) {
 		(*it)->handleDraw(); 
@@ -47,121 +53,166 @@ void mui::Container::handleUpdate(){
 	}
 }
 
-bool mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
-	if( !visible ) return false; 
+mui::Container * mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
+	if( !visible ) return NULL; 
 
-	touch.x -= x;
-	touch.y -= y;
+	
+	string depth = ""; 
+	Container * p = this; 
+	while( p->parent != NULL ) p = p->parent, depth = "  " + depth; 
 	
 	//cout << "do kids care?" << touch.x << ", " << touch.y << "--" << endl; 
-	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
-		//cout << "maybe" << endl; 
-		std::vector<Container*>::iterator it = children.begin();
-		while( it != children.end() ) {
-			if( (*it)->handleTouchDown( touch ) ){
-				//cout << "one kid did care!" << endl; 
-				return true; 
-			}
-			
-			++it;
-		}
-		//cout << "kids don't care!" << endl; 
-
-		if( touchDown( touch ) ){
-			startedInside[touch.id] = true;
-			return true; 
-		}
-	}
-	
-	touch.x += x;
-	touch.y += y;
-	return false; 
-}
-
-bool mui::Container::handleTouchMoved( ofTouchEventArgs &touch ){
-	if( !visible ) return false; 
-
-	touch.x -= x;
-	touch.y -= y;
-	
-	if( startedInside[touch.id] ){
-		if( touchMoved( touch ) ){
-			return true; 
-		}
-	}
-	else{
-		std::vector<Container*>::iterator it = children.begin();
-		while( it != children.end() ) {
-			if( (*it)->handleTouchMoved( touch ) ){
-				return true; 
-			}
-			
-			++it;
-		}
-	}
-	
-	touch.x += x; 
-	touch.y += y; 
-	
-	return false; 
-}
-
-bool mui::Container::handleTouchDoubleTap( ofTouchEventArgs &touch ){
-	if( !visible ) return false; 
-
-	touch.x -= x;
-	touch.y -= y;
-	
-	if( startedInside[touch.id] ){
-		if( touchDoubleTap( touch ) ){
-			return true; 
-		}
-	}
-	else{
-		std::vector<Container*>::iterator it = children.begin();
-		while( it != children.end() ) {
-			if( (*it)->handleTouchDoubleTap( touch ) ){
-				return true; 
-			}
-			
-			++it;
-		}
-	}
-	
-	touch.x += x; 
-	touch.y += y; 
-	
-	return false; 
-}
-
-bool mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
-	if( !visible ) return false; 
-	
-	touch.x -= x;
-	touch.y -= y;
-	
-	if( startedInside[touch.id] ){
-		startedInside[touch.id] = false;
+	if( touch.x >= x && touch.x <= x+width && touch.y >= y && touch.y <= y+height ){
+		cout << depth << "> checking kids for: " << this->toString() << endl; 
+		float x = this->x; 
+		float y = this->y; 
+		Container * touched; 
 		
-		if( touchUp( touch ) ){
-			return true; 
-		}
-	}
-	else{
+		touch.x -= x;
+		touch.y -= y;
+		
 		std::vector<Container*>::iterator it = children.begin();
-		while( it != children.end() ) {
-			if( (*it)->handleTouchUp( touch ) ){
-				return true; 
+		while( it != children.end() ){
+			touched = (*it)->handleTouchDown( touch ); 
+			if( touched != NULL ){
+				// that container is touched! 
+				touch.x += x;
+				touch.y += y;
+				return touched;
 			}
 			
 			++it;
 		}
+		
+		cout << depth << "> kids didn't care, myself? " << this->toString() << endl; 
+		if( !ignoreEvents ){
+			if( singleTouchId == -1 ){
+				singleTouchId = touch.id; 
+			}
+			
+			if( !singleTouch || ( singleTouch && singleTouchId == touch.id ) ){
+				touchDown( touch ); 
+			}
+			
+			return this; 
+		}
 	}
 	
-	touch.x += x; 
-	touch.y += y; 
+	return NULL; 
+}
+
+mui::Container * mui::Container::handleTouchMoved( ofTouchEventArgs &touch ){
+	if( !visible ) return NULL; 
 	
-	return false; 
+	
+	//cout << "do kids care?" << touch.x << ", " << touch.y << "--" << endl; 
+	if( touch.x >= x && touch.x <= x+width && touch.y >= y && touch.y <= y+height ){
+		float x = this->x;
+		float y = this->y;
+		Container * touched;
+		
+		touch.x -= x;
+		touch.y -= y;
+		
+		std::vector<Container*>::iterator it = children.begin();
+		while( it != children.end() ) {
+			touched = (*it)->handleTouchMoved( touch ); 
+			if( touched != NULL ){
+				// that container is touched! 
+				touch.x += x;
+				touch.y += y;
+				return touched;
+			}
+			
+			++it;
+		}
+		
+		if( !ignoreEvents ){
+			if( !singleTouch || ( singleTouch && singleTouchId == touch.id ) ){
+				touchMoved( touch );
+			}
+			
+			return this; 
+		}
+	}
+	
+	return NULL;
+}
+
+mui::Container * mui::Container::handleTouchDoubleTap( ofTouchEventArgs &touch ){
+	if( !visible ) return NULL; 
+	
+	
+	//cout << "do kids care?" << touch.x << ", " << touch.y << "--" << endl; 
+	if( touch.x >= x && touch.x <= x+width && touch.y >= y && touch.y <= y+height ){
+		float x = this->x;
+		float y = this->y;
+		Container * touched; 
+		
+		touch.x -= x;
+		touch.y -= y;
+		
+		std::vector<Container*>::iterator it = children.begin();
+		while( it != children.end() ) {
+			touched = (*it)->handleTouchDoubleTap( touch ); 
+			if( touched != NULL ){
+				// that container is touched! 
+				touch.x += x;
+				touch.y += y;
+				return touched;
+			}
+			
+			++it;
+		}
+		
+		if( !ignoreEvents ){
+			if( !singleTouch || ( singleTouch && singleTouchId == touch.id ) ){
+				touchDoubleTap( touch ); 
+			}
+			
+			return this; 
+		}
+	}
+	
+	return NULL; 
+}
+
+mui::Container * mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
+	if( !visible ) return NULL; 
+	
+	
+	//cout << "do kids care?" << touch.x << ", " << touch.y << "--" << endl; 
+	if( touch.x >= x && touch.x <= x+width && touch.y >= y && touch.y <= y+height ){
+		float x = this->x; 
+		float y = this->y; 
+		Container * touched; 
+		
+		touch.x -= x;
+		touch.y -= y;
+		
+		std::vector<Container*>::iterator it = children.begin();
+		while( it != children.end() ) {
+			touched = (*it)->handleTouchUp( touch ); 
+			if( touched != NULL ){
+				// that container is touched! 
+				touch.x += x;
+				touch.y += y;
+				return touched;
+			}
+			
+			++it;
+		}
+		
+		if( !ignoreEvents ){
+			if( !singleTouch || ( singleTouch && singleTouchId == touch.id ) ){
+				touchUp( touch ); 
+				singleTouchId = -1;
+			}
+			return this; 
+		}
+	}
+	
+	return NULL; 
 }
 
 ofPoint mui::Container::getGlobalPosition(){
@@ -181,5 +232,18 @@ ofPoint mui::Container::getGlobalPosition(){
 	result.y = y; 
 	
 	return result; 
+}
+
+
+string mui::Container::toString(){
+	return 
+		string("Container") + 
+		"[ name=" + name + 
+		", x=" + ofToString( x, 0 ) + 
+		", y=" + ofToString( y, 0 ) +
+		", y=" + ofToString( y, 0 ) +
+		", w=" + ofToString( width, 0 ) +
+		", h=" + ofToString( height, 0 ) + 
+		"]"; 
 }
 

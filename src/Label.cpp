@@ -69,29 +69,6 @@ void mui::Label::drawBackground(){
 
 
 //--------------------------------------------------------------
-bool mui::Label::touchDown( ofTouchEventArgs &touch ){
-	return false; 
-}
-
-
-//--------------------------------------------------------------
-bool mui::Label::touchMoved( ofTouchEventArgs &touch ){
-	return false; 
-}
-
-
-//--------------------------------------------------------------
-bool mui::Label::touchUp( ofTouchEventArgs &touch ){
-	return false; 
-}
-
-
-//--------------------------------------------------------------
-bool mui::Label::touchDoubleTap( ofTouchEventArgs &touch ){
-	return false; 
-}
-
-//--------------------------------------------------------------
 void mui::Label::commit(){
 	// magic trick #2
 	ofTrueTypeFont * font = Helpers::getFont( Helpers::retinaMode?(fontSize*2):fontSize );

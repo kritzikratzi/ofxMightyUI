@@ -43,10 +43,10 @@ namespace mui{
 		virtual void drawBackground();
 		
 		virtual void onButtonPress( const void* sender, ofTouchEventArgs &args ); 
-		virtual bool touchDown( ofTouchEventArgs &touch ); 
-		virtual bool touchMoved( ofTouchEventArgs &touch ); 
-		virtual bool touchUp( ofTouchEventArgs &touch ); 
-		virtual bool touchDoubleTap( ofTouchEventArgs &touch ); 
+		virtual void touchDown( ofTouchEventArgs &touch ); 
+		virtual void touchMoved( ofTouchEventArgs &touch ); 
+		virtual void touchUp( ofTouchEventArgs &touch ); 
+		virtual void touchDoubleTap( ofTouchEventArgs &touch ); 
 		
 	private: 
 	};

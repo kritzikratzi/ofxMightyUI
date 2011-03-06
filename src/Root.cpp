@@ -41,70 +41,91 @@ void mui::Root::handleDraw(){
 
 
 
-bool mui::Root::handleTouchDown( ofTouchEventArgs &touch ){
+mui::Container * mui::Root::handleTouchDown( ofTouchEventArgs &touch ){
 	#ifdef TARGET_OS_IPHONE
 	NativeIOS::hide(); 
 	#endif
 	
-	// really? this creates a copy? 
+	ofTouchEventArgs copy = touch; 
+	fixTouchPosition( touch, copy, NULL ); 
+	
+	return ( respondingContainer[touch.id] = Container::handleTouchDown( copy ) ); 
+}
+
+mui::Container * mui::Root::handleTouchMoved( ofTouchEventArgs &touch ){
+	ofTouchEventArgs copy = touch; 
+	fixTouchPosition( touch, copy, NULL ); 
+	Container * touched = Container::handleTouchMoved( copy ); 
+	
+	cout << "RESPONDER FOR FINGER = " << respondingContainer[touch.id] << "; tocuhed=" << touched << endl; 
+	if( touched != respondingContainer[touch.id] && respondingContainer[touch.id] != NULL ){
+		cout << "handling touch outside!" << endl;
+		fixTouchPosition( touch, copy, respondingContainer[touch.id] ); 
+		respondingContainer[touch.id]->touchMovedOutside( copy ); 
+	}
+	
+	return touched;
+}
+
+mui::Container * mui::Root::handleTouchUp( ofTouchEventArgs &touch ){
+	ofTouchEventArgs copy = touch; 
+	fixTouchPosition( touch, copy, NULL ); 
+	Container * touched = Container::handleTouchUp( copy ); 
+	
+	if( touched != respondingContainer[touch.id] && respondingContainer[touch.id] != NULL ){
+		fixTouchPosition( touch, copy, respondingContainer[touch.id] ); 
+		respondingContainer[touch.id]->touchUpOutside( copy ); 
+		respondingContainer[touch.id]->singleTouchId = -1; 
+	}
+	
+	return touched; 	
+}
+
+mui::Container * mui::Root::handleTouchDoubleTap( ofTouchEventArgs &touch ){
+	ofTouchEventArgs copy = touch; 
+	fixTouchPosition( touch, copy, NULL ); 
+
+	return Container::handleTouchDoubleTap( copy ); 
+}
+
+
+void mui::Root::fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &copy, Container * container ){
 	if( Helpers::retinaMode ){
-		ofTouchEventArgs copyToMessWith = touch; 
-		copyToMessWith.x /= 2; 
-		copyToMessWith.y /= 2; 
-		
-		return Container::handleTouchDown( copyToMessWith ); 
+		copy.x = touch.x/2; 
+		copy.y = touch.y/2;
 	}
 	else{
-		return Container::handleTouchDown( touch ); 
+		copy.x = touch.x; 
+		copy.y = touch.y; 
+	}
+	
+	if( container != NULL ){
+		ofPoint pos = container->getGlobalPosition();
+		cout << "pos pos pos: " << pos.x << ", " << pos.y << endl; 
+		copy.x -= pos.x;
+		copy.y -= pos.y;
 	}
 }
 
-bool mui::Root::handleTouchMoved( ofTouchEventArgs &touch ){
-	// really? this creates a copy? 
-	if( Helpers::retinaMode ){
-		ofTouchEventArgs copyToMessWith = touch; 
-		copyToMessWith.x /= 2; 
-		copyToMessWith.y /= 2; 
-		
-		return Container::handleTouchMoved( copyToMessWith ); 
-	}
-	else{
-		return Container::handleTouchMoved( touch ); 
-	}
-}
 
-bool mui::Root::handleTouchUp( ofTouchEventArgs &touch ){
-	// really? this creates a copy? 
-	if( Helpers::retinaMode ){
-		ofTouchEventArgs copyToMessWith = touch; 
-		copyToMessWith.x /= 2; 
-		copyToMessWith.y /= 2; 
-		
-		return Container::handleTouchUp( copyToMessWith ); 
-	}
-	else{
-		return Container::handleTouchUp( touch ); 
-	}
-}
 
-bool mui::Root::handleTouchDoubleTap( ofTouchEventArgs &touch ){
-	// really? this creates a copy? 
-	if( Helpers::retinaMode ){
-		ofTouchEventArgs copyToMessWith = touch; 
-		copyToMessWith.x /= 2; 
-		copyToMessWith.y /= 2; 
-		
-		return Container::handleTouchDoubleTap( copyToMessWith ); 
-	}
-	else{
-		return Container::handleTouchDoubleTap( touch ); 
-	}
-}
 
 void mui::Root::showTextField( TextField * tf ){
 	#ifdef TARGET_OS_IPHONE
 	NativeIOS::showTextField( tf ); 
 	#endif
+}
+
+
+bool mui::Root::becomeResponder( Container * c, ofTouchEventArgs &touch ){
+	if( respondingContainer[touch.id] != NULL ){
+		respondingContainer[touch.id]->touchCanceled( touch ); 
+		respondingContainer[touch.id]->singleTouchId = -1; 
+	}
+	
+	respondingContainer[touch.id] = c; 
+	
+	return true; 
 }
 
 

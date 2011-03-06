@@ -117,24 +117,20 @@ void mui::SegmentedSelect::onButtonPress( const void* sender, ofTouchEventArgs &
 
 
 //--------------------------------------------------------------
-bool mui::SegmentedSelect::touchDown( ofTouchEventArgs &touch ){
-	return false; 
+void mui::SegmentedSelect::touchDown( ofTouchEventArgs &touch ){
 }
 
 
 //--------------------------------------------------------------
-bool mui::SegmentedSelect::touchMoved( ofTouchEventArgs &touch ){
-	return false; 
+void mui::SegmentedSelect::touchMoved( ofTouchEventArgs &touch ){
 }
 
 
 //--------------------------------------------------------------
-bool mui::SegmentedSelect::touchUp( ofTouchEventArgs &touch ){
-	return false; 
+void mui::SegmentedSelect::touchUp( ofTouchEventArgs &touch ){
 }
 
 
 //--------------------------------------------------------------
-bool mui::SegmentedSelect::touchDoubleTap( ofTouchEventArgs &touch ){
-	return false; 
+void mui::SegmentedSelect::touchDoubleTap( ofTouchEventArgs &touch ){
 }

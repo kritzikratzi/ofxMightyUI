@@ -33,10 +33,11 @@ namespace mui{
 		virtual void setLeftBarButton( BarButton * leftBarButton ); 
 		virtual void setRightBarButton( BarButton * rightBarButton ); 
 		
-		virtual bool touchDown( ofTouchEventArgs &touch );
-		virtual bool touchMoved( ofTouchEventArgs &touch );
-		virtual bool touchUp( ofTouchEventArgs &touch );
-		virtual bool touchDoubleTap( ofTouchEventArgs &touch );
+		virtual void touchDown( ofTouchEventArgs &touch );
+		virtual void touchMoved( ofTouchEventArgs &touch );
+		virtual void touchMovedOutside( ofTouchEventArgs &touch );
+		virtual void touchUp( ofTouchEventArgs &touch );
+		virtual void touchDoubleTap( ofTouchEventArgs &touch );
 		
 		float radius;
 		int dragX, dragY; 

@@ -11,22 +11,32 @@
 #define MUI_ROOT
 
 namespace mui{
-	class TextField; 
+	typedef  Container* (Container::*PrimaryHandler)( ofTouchEventArgs& );
+	typedef  void (Container::*SecondaryHandler)( ofTouchEventArgs& );
+
 	
+	class TextField; 
 	class Root : public Container {
 	public: 
-		Root() : Container( 0, 0, ofGetWidth(), ofGetHeight() ){ INSTANCE = this; init(); };
+		Root() : Container( 0, 0, ofGetWidth(), ofGetHeight() ){ INSTANCE = this; ignoreEvents = true; init(); };
+		
+		Container * respondingContainer[OF_MAX_TOUCHES]; // think of the responder as the elements received touchDown events.
 		
 		virtual void init(); 
 		virtual void handleDraw(); 
-		virtual bool handleTouchDown( ofTouchEventArgs &touch );
-		virtual bool handleTouchMoved( ofTouchEventArgs &touch );
-		virtual bool handleTouchUp( ofTouchEventArgs &touch );
-		virtual bool handleTouchDoubleTap( ofTouchEventArgs &touch );
+		virtual Container * handleTouchDown( ofTouchEventArgs &touch );
+		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
+		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
+		virtual Container * handleTouchDoubleTap( ofTouchEventArgs &touch );
 		
+		virtual bool becomeResponder( Container * container, ofTouchEventArgs &touch ); 
 		virtual void showTextField( TextField * tf );
 		
 		static mui::Root * INSTANCE;
+		
+	private: 
+		Container * handle( ofTouchEventArgs &touch, PrimaryHandler handler, SecondaryHandler secondaryHandler ); 
+		void fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &copy, Container * c ); 
 	};
 }
 

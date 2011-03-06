@@ -32,6 +32,8 @@ void mui::Button::init( std::string title ){
 	label->commit(); 
 	bg.r = bg.g = bg.b = 125; 
 	add( label ); 
+	
+	name = "button-" + title; 
 }
 
 //--------------------------------------------------------------
@@ -64,33 +66,27 @@ void mui::Button::drawBackground(){
 
 
 //--------------------------------------------------------------
-bool mui::Button::touchDown( ofTouchEventArgs &touch ){
-	cout << "touch down on button!" << label->text << endl; 
-	if( pressed ) return false; 
-	
+void mui::Button::touchDown( ofTouchEventArgs &touch ){
 	pressed = true; 
-	return true; 
 }
 
 
 //--------------------------------------------------------------
-bool mui::Button::touchMoved( ofTouchEventArgs &touch ){
-	return false; 
+void mui::Button::touchMoved( ofTouchEventArgs &touch ){
 }
 
 
 //--------------------------------------------------------------
-bool mui::Button::touchUp( ofTouchEventArgs &touch ){
+void mui::Button::touchUp( ofTouchEventArgs &touch ){
 	if( pressed && touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
+		cout << "action on button!" << label->text << endl; 
 		onPress( this, touch );
 	}
 
 	pressed = false; 
-	return true; 
 }
 
 
 //--------------------------------------------------------------
-bool mui::Button::touchDoubleTap( ofTouchEventArgs &touch ){
-	return true; 
+void mui::Button::touchDoubleTap( ofTouchEventArgs &touch ){
 }

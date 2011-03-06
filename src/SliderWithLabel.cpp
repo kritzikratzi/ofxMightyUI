@@ -41,27 +41,3 @@ void mui::SliderWithLabel::draw(){
 //--------------------------------------------------------------
 void mui::SliderWithLabel::drawBackground(){
 }
-
-
-//--------------------------------------------------------------
-bool mui::SliderWithLabel::touchDown( ofTouchEventArgs &touch ){
-	return false; 
-}
-
-
-//--------------------------------------------------------------
-bool mui::SliderWithLabel::touchMoved( ofTouchEventArgs &touch ){
-	return false; 
-}
-
-
-//--------------------------------------------------------------
-bool mui::SliderWithLabel::touchUp( ofTouchEventArgs &touch ){
-	return false; 
-}
-
-
-//--------------------------------------------------------------
-bool mui::SliderWithLabel::touchDoubleTap( ofTouchEventArgs &touch ){
-	return false; 
-}

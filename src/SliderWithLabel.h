@@ -37,12 +37,7 @@ namespace mui{
 		virtual void update();
 		virtual void draw();
 		virtual void drawBackground();
-		
-		virtual bool touchDown( ofTouchEventArgs &touch ); 
-		virtual bool touchMoved( ofTouchEventArgs &touch ); 
-		virtual bool touchUp( ofTouchEventArgs &touch ); 
-		virtual bool touchDoubleTap( ofTouchEventArgs &touch ); 
-		
+
 	private: 
 		float oldValue; 
 	};

@@ -40,15 +40,24 @@ namespace mui{
 		
 		virtual void handleDraw();
 		
-		virtual bool touchDown( ofTouchEventArgs &touch ); 
-		virtual bool touchMoved( ofTouchEventArgs &touch ); 
-		virtual bool touchUp( ofTouchEventArgs &touch ); 
-		virtual bool touchDoubleTap( ofTouchEventArgs &touch ); 
+		virtual void touchDown( ofTouchEventArgs &touch ); 
+		virtual void touchMoved( ofTouchEventArgs &touch ); 
+		virtual void touchMovedOutside( ofTouchEventArgs &touch );
+		virtual void touchUp( ofTouchEventArgs &touch ); 
+		virtual void touchUpOutside( ofTouchEventArgs &touch ); 
+		virtual void touchDoubleTap( ofTouchEventArgs &touch ); 
+
+		virtual Container * handleTouchDown( ofTouchEventArgs &touch );
+		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
+		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
 		
 	private: 
 		float currentScrollX, currentScrollY; 
 		bool pressed; 
 		float pressedX, pressedY; 
+		
+		bool watchingTouch[OF_MAX_TOUCHES]; 
+		ofPoint touchStart[OF_MAX_TOUCHES]; 
 	};
 };
 

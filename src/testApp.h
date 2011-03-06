@@ -51,4 +51,5 @@ public:
 	
 	
 	long wastedTime;
+	int avgWastedTime; 
 };

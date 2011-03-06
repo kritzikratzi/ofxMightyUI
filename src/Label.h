@@ -17,8 +17,10 @@
 namespace mui{
 	class Label : public Container{
 	public: 
-		Label( std::string text_ = "Label", float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 ) 
-		: Container( x_, y_, width_, height_ ), text( text_), fontSize( 12 ), horizontalAlign(Left), verticalAlign(Middle) { commit(); };  
+		Label( std::string text_ = "Label", float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 ) : 
+		Container( x_, y_, width_, height_ ), 
+		text( text_), fontSize( 12 ), horizontalAlign(Left), verticalAlign(Middle)
+		{ ignoreEvents = true; commit(); };  
 		
 		
 		HorizontalAlign horizontalAlign; 
@@ -32,12 +34,6 @@ namespace mui{
 		virtual void update();
 		virtual void draw();
 		virtual void drawBackground();
-		
-		virtual bool touchDown( ofTouchEventArgs &touch ); 
-		virtual bool touchMoved( ofTouchEventArgs &touch ); 
-		virtual bool touchUp( ofTouchEventArgs &touch ); 
-		virtual bool touchDoubleTap( ofTouchEventArgs &touch ); 
-		
 		
 		virtual void commit(); // call this after you made changes to any variables (changing x/y is okay without doing a commit() ). doing text-maths too insane to do on every frame! 
 		

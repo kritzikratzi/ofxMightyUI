@@ -22,8 +22,13 @@
 
 
 void mui::ScrollPane::init(){
+	for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
+		watchingTouch[i] = false; 
+	}
+	
 	view = new Container( 0, 0, width, height ); 
 	add( view ); 
+	
 }
 
 
@@ -105,46 +110,79 @@ void mui::ScrollPane::handleDraw(){
 
 
 //--------------------------------------------------------------
-bool mui::ScrollPane::touchDown( ofTouchEventArgs &touch ){
-	if( !pressed ){
-		pressedX = touch.x; 
-		pressedY = touch.y; 
-		pressed = true; 
-		return true; 
-	}
-	
-	return false;
+void mui::ScrollPane::touchDown( ofTouchEventArgs &touch ){
+	pressedX = touch.x;
+	pressedY = touch.y; 
+	pressed = true; 
 }
 
 
 //--------------------------------------------------------------
-bool mui::ScrollPane::touchMoved( ofTouchEventArgs &touch ){
-	cout << "touch moved!" << scrollY << endl; 
+void mui::ScrollPane::touchMoved( ofTouchEventArgs &touch ){
 	if( pressed ){
 		scrollX -= ( touch.x - pressedX ); 
 		scrollY -= ( touch.y - pressedY ); 
 		pressedX = touch.x; 
 		pressedY = touch.y; 
-		
-		return true; 
 	}
-	
-	return false; 
 }
 
 
 //--------------------------------------------------------------
-bool mui::ScrollPane::touchUp( ofTouchEventArgs &touch ){
-	if( pressed ){
-		pressed = false; 
-		return true; 
-	}
-	
-	return false; 
+void mui::ScrollPane::touchMovedOutside( ofTouchEventArgs &touch ){
+	touchMoved( touch ); 
 }
 
 
 //--------------------------------------------------------------
-bool mui::ScrollPane::touchDoubleTap( ofTouchEventArgs &touch ){
-	return false; 
+void mui::ScrollPane::touchUp( ofTouchEventArgs &touch ){
+	pressed = false;
+}
+
+
+//--------------------------------------------------------------
+void mui::ScrollPane::touchUpOutside( ofTouchEventArgs &touch ){
+	pressed = false;
+}
+
+
+//--------------------------------------------------------------
+void mui::ScrollPane::touchDoubleTap( ofTouchEventArgs &touch ){
+}
+
+
+
+//--------------------------------------------------------------
+mui::Container * mui::ScrollPane::handleTouchDown( ofTouchEventArgs &touch ){
+	if( !pressed ){
+		watchingTouch[touch.id] = true;
+		touchStart[touch.id] = touch.x;
+		touchStart[touch.id] = touch.y;
+	}
+	
+	return Container::handleTouchDown( touch ); 
+}
+
+
+//--------------------------------------------------------------
+mui::Container * mui::ScrollPane::handleTouchMoved( ofTouchEventArgs &touch ){
+	if( watchingTouch[touch.id] && touch.x ){
+		if( ofDist( touchStart[touch.id].x, touchStart[touch.id].y, touch.x, touch.y ) > 10 ){
+			// steal focus! 
+			touchDown( touch ); // fake a touchdown
+//			startedInside[touch.id] = true;
+			Root::INSTANCE->becomeResponder( this, touch );
+			watchingTouch[touch.id] = false;
+		}
+	}
+
+	return Container::handleTouchMoved( touch );
+}
+
+
+//--------------------------------------------------------------
+mui::Container * mui::ScrollPane::handleTouchUp( ofTouchEventArgs &touch ){
+	watchingTouch[touch.id] = false;
+	
+	return Container::handleTouchUp( touch ); 
 }

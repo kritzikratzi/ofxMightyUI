@@ -25,34 +25,34 @@ void testApp::setup(){
 	root = new mui::Root();
 	
 	window = new mui::InternalWindow( "Adjustments", 0, 0, 300, 300 ); 
-	root->add( window ); 
+	root->add( window );
 	
-	barLeft = new mui::BarButton( "Left" ); 
+	barLeft = new mui::BarButton( "Left" );
 	barRight = new mui::BarButton( "Right" ); 
 	window->setLeftBarButton( barLeft ); 
 	window->setRightBarButton( barRight ); 
 	
 	slider = new mui::Slider( 20, 60, 250, 20, 0, 1, 0.5 );
 	slider2 = new mui::SliderWithLabel( 20, 100, 250, 20, 0, 1, 0.5, 2 );
-	window->add( slider ); 
-	window->add( slider2 ); 
+	window->view->add( slider );
+	window->view->add( slider2 );
 	
 	button = new mui::Button( "Button", 20, 240, 70, 30 ); 
 	button->onPress += Poco::Delegate<testApp, ofTouchEventArgs>( this, &testApp::onButtonPress );
-	window->add( button );
+	window->view->add( button );
 	
 	
 	window2 = new mui::InternalWindow( "Scrolling", 300, 0, 300, 300 ); 
-	scrollPane = new mui::ScrollPane( 10, 50, 280, 240 );
+	scrollPane = new mui::ScrollPane( 10, 0, 280, 240 );
 	
 	textField = new mui::TextField( "hey!", 0, 0, 270, 30 ); 
-	scrollPane->view->add( textField ); 
+	scrollPane->view->add( textField );
 	
-	segmentedSelect = new mui::SegmentedSelect( 0, 30, 270, 30 ); 
-	segmentedSelect->addLabel( "Sin" ); 
-	segmentedSelect->addLabel( "Cos" ); 
-	segmentedSelect->addLabel( "Tan" ); 
-	scrollPane->view->add( segmentedSelect ); 
+	segmentedSelect = new mui::SegmentedSelect( 0, 30, 270, 30 );
+	segmentedSelect->addLabel( "Sin" );
+	segmentedSelect->addLabel( "Cos" );
+	segmentedSelect->addLabel( "Tan" );
+	scrollPane->view->add( segmentedSelect );
 	
 	ofColor fg; 
 	fg.r = fg.g = fg.b = 0; 
@@ -63,13 +63,13 @@ void testApp::setup(){
 		scrollPane->view->add( labels[i] );
 	}
 	scrollPane->commit();
-	window2->add( scrollPane );
+	window2->view->add( scrollPane );
 	
 	root->add( window2 );
 	 
 	
 	loadWindow = new LoadWindow(); 
-	root->add( loadWindow ); 
+	//root->add( loadWindow ); 
 }
 
 //--------------------------------------------------------------
@@ -101,9 +101,12 @@ void testApp::draw(){
 	wastedTime += ofGetSystemTime() - start; 
 	
 	if( ofGetFrameNum() % 100 == 0 ){
-		cout << "avg time wasted: " << ( wastedTime/100 ) << " milliseconds per iteration" << endl; 
+		//cout << "avg time wasted: " << ( wastedTime/100 ) << " milliseconds per iteration" << endl; 
+		avgWastedTime = wastedTime/100; 
 		wastedTime = 0; 
 	}
+	ofSetColor( 255, 255, 255 ); 
+	mui::Helpers::getFont( 12 )->drawString( ofToString( avgWastedTime, 0 ) + " ms/frame", 10, 1000 ); 
 	
 }
 
