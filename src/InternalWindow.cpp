@@ -95,17 +95,13 @@ void mui::InternalWindow::setRightBarButton( BarButton * rightBarButton ){
 
 //--------------------------------------------------------------
 void mui::InternalWindow::touchDown( ofTouchEventArgs &touch ){
-	if( touch.y <= 44 ){
-		cout << "TRIPPLE YES" << endl;
-		dragX = touch.x; 
-		dragY = touch.y; 
-	}
+	dragX = touch.x; 
+	dragY = touch.y; 
 }
 
 
 //--------------------------------------------------------------
 void mui::InternalWindow::touchMoved( ofTouchEventArgs &touch ){
-	cout << "moved: " << touch.x << ", " << touch.y << endl;
 	int deltaX = touch.x - dragX; 
 	int deltaY = touch.y - dragY; 
 	x += deltaX; 
@@ -115,7 +111,6 @@ void mui::InternalWindow::touchMoved( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::InternalWindow::touchMovedOutside( ofTouchEventArgs &touch ){
-	cout << "handling outside!" << endl; 
 	touchMoved( touch );
 }
 

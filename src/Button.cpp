@@ -85,7 +85,6 @@ void mui::Button::touchMovedOutside( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::Button::touchUp( ofTouchEventArgs &touch ){
-	cout << "touch up!!!" << label->text << endl; 
 	onPress( this, touch );
 	pressed = false; 
 }

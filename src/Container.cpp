@@ -14,10 +14,12 @@ void mui::Container::add( Container * c ){
 	c->parent = this; 
 }
 
+//--------------------------------------------------------------
 void mui::Container::drawBackground(){
 }
 
 
+//--------------------------------------------------------------
 void mui::Container::handleDraw(){
 	if( !visible ) return; 
 	
@@ -43,6 +45,7 @@ void mui::Container::handleDraw(){
 }
 
 
+//--------------------------------------------------------------
 void mui::Container::handleUpdate(){
 	update(); 
 	
@@ -53,6 +56,8 @@ void mui::Container::handleUpdate(){
 	}
 }
 
+
+//--------------------------------------------------------------
 mui::Container * mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
 	if( !visible ) return NULL; 
 
@@ -61,30 +66,25 @@ mui::Container * mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
 	Container * p = this; 
 	while( p->parent != NULL ) p = p->parent, depth = "  " + depth; 
 	
-	//cout << "do kids care?" << touch.x << ", " << touch.y << "--" << endl; 
-	if( touch.x >= x && touch.x <= x+width && touch.y >= y && touch.y <= y+height ){
-		cout << depth << "> checking kids for: " << this->toString() << endl; 
-		float x = this->x; 
-		float y = this->y; 
+	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
+		float x, y; 
 		Container * touched; 
-		
-		touch.x -= x;
-		touch.y -= y;
 		
 		std::vector<Container*>::iterator it = children.begin();
 		while( it != children.end() ){
+			touch.x -= ( x = (*it)->x ); 
+			touch.y -= ( y = (*it)->y ); 
 			touched = (*it)->handleTouchDown( touch ); 
+			touch.x += x; 
+			touch.y += y; 
+			
 			if( touched != NULL ){
-				// that container is touched! 
-				touch.x += x;
-				touch.y += y;
 				return touched;
 			}
 			
 			++it;
 		}
 		
-		cout << depth << "> kids didn't care, myself? " << this->toString() << endl; 
 		if( !ignoreEvents ){
 			if( singleTouchId == -1 ){
 				singleTouchId = touch.id; 
@@ -101,26 +101,26 @@ mui::Container * mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
 	return NULL; 
 }
 
+
+//--------------------------------------------------------------
 mui::Container * mui::Container::handleTouchMoved( ofTouchEventArgs &touch ){
 	if( !visible ) return NULL; 
 	
 	
-	//cout << "do kids care?" << touch.x << ", " << touch.y << "--" << endl; 
-	if( touch.x >= x && touch.x <= x+width && touch.y >= y && touch.y <= y+height ){
-		float x = this->x;
-		float y = this->y;
+	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
+		float x, y; 
 		Container * touched;
-		
-		touch.x -= x;
-		touch.y -= y;
 		
 		std::vector<Container*>::iterator it = children.begin();
 		while( it != children.end() ) {
+			touch.x -= ( x = (*it)->x ); 
+			touch.y -= ( y = (*it)->y ); 
 			touched = (*it)->handleTouchMoved( touch ); 
+			touch.x += x; 
+			touch.y += y; 
+			
 			if( touched != NULL ){
 				// that container is touched! 
-				touch.x += x;
-				touch.y += y;
 				return touched;
 			}
 			
@@ -139,26 +139,26 @@ mui::Container * mui::Container::handleTouchMoved( ofTouchEventArgs &touch ){
 	return NULL;
 }
 
+
+//--------------------------------------------------------------
 mui::Container * mui::Container::handleTouchDoubleTap( ofTouchEventArgs &touch ){
 	if( !visible ) return NULL; 
 	
 	
-	//cout << "do kids care?" << touch.x << ", " << touch.y << "--" << endl; 
-	if( touch.x >= x && touch.x <= x+width && touch.y >= y && touch.y <= y+height ){
-		float x = this->x;
-		float y = this->y;
+	if( touch.x >= x && touch.x <= width && touch.y >= 0 && touch.y <= height ){
+		float x, y; 
 		Container * touched; 
-		
-		touch.x -= x;
-		touch.y -= y;
 		
 		std::vector<Container*>::iterator it = children.begin();
 		while( it != children.end() ) {
+			touch.x -= ( x = (*it)->x ); 
+			touch.y -= ( y = (*it)->y ); 
 			touched = (*it)->handleTouchDoubleTap( touch ); 
+			touch.x += x; 
+			touch.y += y; 
+			
 			if( touched != NULL ){
 				// that container is touched! 
-				touch.x += x;
-				touch.y += y;
 				return touched;
 			}
 			
@@ -177,26 +177,26 @@ mui::Container * mui::Container::handleTouchDoubleTap( ofTouchEventArgs &touch )
 	return NULL; 
 }
 
+
+//--------------------------------------------------------------
 mui::Container * mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
 	if( !visible ) return NULL; 
 	
 	
-	//cout << "do kids care?" << touch.x << ", " << touch.y << "--" << endl; 
-	if( touch.x >= x && touch.x <= x+width && touch.y >= y && touch.y <= y+height ){
-		float x = this->x; 
-		float y = this->y; 
+	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
+		float x, y; 
 		Container * touched; 
-		
-		touch.x -= x;
-		touch.y -= y;
 		
 		std::vector<Container*>::iterator it = children.begin();
 		while( it != children.end() ) {
+			touch.x -= ( x = (*it)->x ); 
+			touch.y -= ( y = (*it)->y ); 
 			touched = (*it)->handleTouchUp( touch ); 
+			touch.x += x; 
+			touch.y += y; 
+
 			if( touched != NULL ){
 				// that container is touched! 
-				touch.x += x;
-				touch.y += y;
 				return touched;
 			}
 			
@@ -208,6 +208,7 @@ mui::Container * mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
 				touchUp( touch ); 
 				singleTouchId = -1;
 			}
+			
 			return this; 
 		}
 	}
@@ -215,6 +216,8 @@ mui::Container * mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
 	return NULL; 
 }
 
+
+//--------------------------------------------------------------
 ofPoint mui::Container::getGlobalPosition(){
 	ofPoint result; 
 	
@@ -235,6 +238,7 @@ ofPoint mui::Container::getGlobalPosition(){
 }
 
 
+//--------------------------------------------------------------
 string mui::Container::toString(){
 	return 
 		string("Container") + 

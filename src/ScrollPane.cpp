@@ -19,14 +19,17 @@
  */
 
 #include "MUI.h"
-
+#include <math.h>
 
 void mui::ScrollPane::init(){
+	singleTouch = false; 
+	
 	for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
 		watchingTouch[i] = false; 
 	}
 	
 	view = new Container( 0, 0, width, height ); 
+	view->ignoreEvents = true; 
 	add( view ); 
 	
 }
@@ -58,29 +61,32 @@ void mui::ScrollPane::commit(){
 	maxScrollX = fmaxf( 0, maxX - width ); 
 	maxScrollY = fmaxf( 0, maxY - height );
 	
-	cout << "commit scrollpane: " << minScrollX << ", " << maxScrollX << "," << maxX << endl; 
+	wantsToScrollX = maxScrollX != 0 || minScrollX != 0; 
+	wantsToScrollY = maxScrollY != 0 || minScrollY != 0; 
+	
 	view->width = fmaxf( width, maxScrollX ); 
 	view->height = fmax( height, maxScrollY ); 
-	cout << "view size = " << maxScrollX << ", " << maxScrollY << endl; 
 }
 
 //--------------------------------------------------------------
 void mui::ScrollPane::update(){
 	if( pressed ){
-		// TODO: this needs to be improved! 
-		scrollX = fminf( maxScrollX, fmaxf( scrollX, minScrollX ) ); 
-		scrollY = fminf( maxScrollY+50, fmaxf( scrollY, minScrollY-50 ) ); 
+		scrollX = ofClamp( scrollX, minScrollX - MUI_SCROLLPANE_BLEED*2, maxScrollX + MUI_SCROLLPANE_BLEED*2 );
+		scrollY = ofClamp( scrollY, minScrollY - MUI_SCROLLPANE_BLEED*2, maxScrollY + MUI_SCROLLPANE_BLEED*2 );
+		
+		currentScrollX += ( getScrollTarget( scrollX, minScrollX, maxScrollX ) - currentScrollX )/3;
+		currentScrollY += ( getScrollTarget( scrollY, minScrollY, maxScrollY ) - currentScrollY )/3;
 	}
 	else{
-		scrollX = fminf( maxScrollX, fmaxf( scrollX, minScrollX ) ); 
-		scrollY = fminf( maxScrollY, fmaxf( scrollY, minScrollY ) ); 
+		scrollX = ofClamp( scrollX, minScrollX, maxScrollX ); 
+		scrollY = ofClamp( scrollY, minScrollX, maxScrollY ); 
+		
+		currentScrollX += ( scrollX - currentScrollX )/3; 
+		currentScrollY += ( scrollY - currentScrollY )/3;
 	}
-	
-	currentScrollX += ( scrollX - currentScrollX ) / 3; 
-	currentScrollY += ( scrollY - currentScrollY ) / 3; 
-	
-	view->x = -currentScrollX; 
-	view->y = -currentScrollY; 
+
+	view->x = -currentScrollX;
+	view->y = -currentScrollY;
 }
 
 
@@ -120,8 +126,8 @@ void mui::ScrollPane::touchDown( ofTouchEventArgs &touch ){
 //--------------------------------------------------------------
 void mui::ScrollPane::touchMoved( ofTouchEventArgs &touch ){
 	if( pressed ){
-		scrollX -= ( touch.x - pressedX ); 
-		scrollY -= ( touch.y - pressedY ); 
+		if( canScrollX && wantsToScrollX ) scrollX -= ( touch.x - pressedX ); 
+		if( canScrollY && wantsToScrollY ) scrollY -= ( touch.y - pressedY ); 
 		pressedX = touch.x; 
 		pressedY = touch.y; 
 	}
@@ -143,6 +149,7 @@ void mui::ScrollPane::touchUp( ofTouchEventArgs &touch ){
 //--------------------------------------------------------------
 void mui::ScrollPane::touchUpOutside( ofTouchEventArgs &touch ){
 	pressed = false;
+	watchingTouch[touch.id] = false;	
 }
 
 
@@ -156,8 +163,8 @@ void mui::ScrollPane::touchDoubleTap( ofTouchEventArgs &touch ){
 mui::Container * mui::ScrollPane::handleTouchDown( ofTouchEventArgs &touch ){
 	if( !pressed ){
 		watchingTouch[touch.id] = true;
-		touchStart[touch.id] = touch.x;
-		touchStart[touch.id] = touch.y;
+		touchStart[touch.id].x = touch.x;
+		touchStart[touch.id].y = touch.y;
 	}
 	
 	return Container::handleTouchDown( touch ); 
@@ -166,11 +173,12 @@ mui::Container * mui::ScrollPane::handleTouchDown( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 mui::Container * mui::ScrollPane::handleTouchMoved( ofTouchEventArgs &touch ){
-	if( watchingTouch[touch.id] && touch.x ){
-		if( ofDist( touchStart[touch.id].x, touchStart[touch.id].y, touch.x, touch.y ) > 10 ){
+	if( watchingTouch[touch.id] ){
+		if(( canScrollX && wantsToScrollX && fabsf( touchStart[touch.id].x - touch.x ) > 20 ) || 
+		   ( canScrollY && wantsToScrollY && fabsf( touchStart[touch.id].y - touch.y ) > 20 )
+		){
 			// steal focus! 
 			touchDown( touch ); // fake a touchdown
-//			startedInside[touch.id] = true;
 			Root::INSTANCE->becomeResponder( this, touch );
 			watchingTouch[touch.id] = false;
 		}
@@ -185,4 +193,18 @@ mui::Container * mui::ScrollPane::handleTouchUp( ofTouchEventArgs &touch ){
 	watchingTouch[touch.id] = false;
 	
 	return Container::handleTouchUp( touch ); 
+}
+
+
+//--------------------------------------------------------------
+float mui::ScrollPane::getScrollTarget( float value, float min, float max ){
+	if( value < min ){
+		return min - MUI_SCROLLPANE_BLEED * powf(sinf( PI/2*fminf( 2*MUI_SCROLLPANE_BLEED, min - value )/MUI_SCROLLPANE_BLEED/2 ), 1);
+	}
+	else if( value < max ){
+		return value; 
+	}
+	else{
+		return max + MUI_SCROLLPANE_BLEED * powf(sinf( PI/2*fminf( 2*MUI_SCROLLPANE_BLEED, value - max )/MUI_SCROLLPANE_BLEED/2 ), 1);
+	}
 }

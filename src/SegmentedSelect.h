@@ -13,7 +13,7 @@
 #define MUI_SEGMENTED_SELECTED
 
 namespace mui{
-	class SegmentedSelect; 
+	class SegmentedSelect;
 
 	class SegmentedButton : public Button{
 	public: 

@@ -10,6 +10,8 @@
 #define MUI_RETINA false
 #define MUI_FONT "mui/fonts/Lato-Regular.ttf"
 #define MUI_DEBUG_DRAW false
+#define MUI_SCROLLPANE_BLEED 30
+
 
 
 #ifndef MUI_CRAZY_IMPORTANT
@@ -21,7 +23,7 @@ namespace mui{
 	};
 	enum VerticalAlign{
 		Top, Bottom, Middle /* i wish i could support baseline, but it's not in ofTrueTypeFont yet! */
-	};	
+	};
 }
 
 #endif

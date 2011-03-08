@@ -35,16 +35,12 @@ void mui::Slider::draw(){
 
 //--------------------------------------------------------------
 void mui::Slider::touchDown( ofTouchEventArgs &touch ){
-	cout << "touch down on slider!!!" << endl; 
-	if( fabsf( height/2 - touch.y ) < 2*paddingLR ){
-		touchMoved( touch ); 
-	}
+	touchMoved( touch ); 
 }
 
 
 //--------------------------------------------------------------
 void mui::Slider::touchMoved( ofTouchEventArgs &touch ){
-	cout << "accepting touch moved, txy=" << touch.x << ", " << touch.y << endl; 
 	value = fminf( max, fmaxf( min, screenToValue( touch.x ) ) ); 
 }
 
@@ -57,7 +53,6 @@ void mui::Slider::touchMovedOutside( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::Slider::touchUp( ofTouchEventArgs &touch ){
-	cout << "accepting touch up, txy=" << touch.x << ", " << touch.y << endl; 
 }
 
 

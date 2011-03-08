@@ -62,6 +62,7 @@ void testApp::setup(){
 		labels[i]->commit();
 		scrollPane->view->add( labels[i] );
 	}
+	//scrollPane->canScrollX = false; 
 	scrollPane->commit();
 	window2->view->add( scrollPane );
 	
