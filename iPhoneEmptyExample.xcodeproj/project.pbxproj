@@ -35,6 +35,7 @@
 		BA3AD12612F236F3009DF34D /* CppTweener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA3AD12512F236F3009DF34D /* CppTweener.cpp */; };
 		BA3AD16112F2407D009DF34D /* Slider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA3AD16012F2407D009DF34D /* Slider.cpp */; };
 		BA40ED5E12B99C70004FA193 /* ButtonPopup.mm in Sources */ = {isa = PBXBuildFile; fileRef = BA40ED5D12B99C70004FA193 /* ButtonPopup.mm */; };
+		BA457FB41325E5D9002F2E2D /* ofxFBOTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA457FB21325E5D9002F2E2D /* ofxFBOTexture.cpp */; };
 		BAA9820C12F98BCF00AA0CF7 /* ScrollPane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BAA9820B12F98BCF00AA0CF7 /* ScrollPane.cpp */; };
 		BADEE3DF12F4925A0029E037 /* EmptyContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADEE3DE12F4925A0029E037 /* EmptyContainer.cpp */; };
 		BADEE43F12F4A7300029E037 /* Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BADEE43E12F4A7300029E037 /* Helpers.cpp */; };
@@ -117,6 +118,8 @@
 		BA3AD1BA12F33AD8009DF34D /* MUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MUI.h; sourceTree = "<group>"; };
 		BA40ED5C12B99C70004FA193 /* ButtonPopup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ButtonPopup.h; sourceTree = "<group>"; };
 		BA40ED5D12B99C70004FA193 /* ButtonPopup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ButtonPopup.mm; sourceTree = "<group>"; };
+		BA457FB21325E5D9002F2E2D /* ofxFBOTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxFBOTexture.cpp; sourceTree = "<group>"; };
+		BA457FB31325E5D9002F2E2D /* ofxFBOTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxFBOTexture.h; sourceTree = "<group>"; };
 		BAA9820A12F98BCF00AA0CF7 /* ScrollPane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollPane.h; sourceTree = "<group>"; };
 		BAA9820B12F98BCF00AA0CF7 /* ScrollPane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollPane.cpp; sourceTree = "<group>"; };
 		BADEE3DD12F4925A0029E037 /* EmptyContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyContainer.h; sourceTree = "<group>"; };
@@ -374,6 +377,23 @@
 			name = ofxMUI;
 			sourceTree = "<group>";
 		};
+		BA457FB01325E5D9002F2E2D /* ofxFBO */ = {
+			isa = PBXGroup;
+			children = (
+				BA457FB11325E5D9002F2E2D /* src */,
+			);
+			path = ofxFBO;
+			sourceTree = "<group>";
+		};
+		BA457FB11325E5D9002F2E2D /* src */ = {
+			isa = PBXGroup;
+			children = (
+				BA457FB21325E5D9002F2E2D /* ofxFBOTexture.cpp */,
+				BA457FB31325E5D9002F2E2D /* ofxFBOTexture.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		BB16E9930F2B1E5900518274 /* libs */ = {
 			isa = PBXGroup;
 			children = (
@@ -611,6 +631,7 @@
 		E4D8928411527878007E1F53 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				BA457FB01325E5D9002F2E2D /* ofxFBO */,
 				BA091C6D131C10660094D0FF /* sample */,
 				BA3AD10812F22B1B009DF34D /* ofxMUI */,
 				E4D8928511527878007E1F53 /* main.mm */,
@@ -739,6 +760,7 @@
 				BA09199713183D080094D0FF /* NativeIOSWrapper.mm in Sources */,
 				BA091B6D131989BC0094D0FF /* SegmentedSelect.cpp in Sources */,
 				BA091C4E131C0D180094D0FF /* LoadWindow.cpp in Sources */,
+				BA457FB41325E5D9002F2E2D /* ofxFBOTexture.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -872,6 +894,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "src/ofxFBO/src//**";
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos4.2;
@@ -943,6 +966,7 @@
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
 				GCC_WARN_PROTOTYPE_CONVERSION = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "src/ofxFBO/src//**";
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
@@ -960,6 +984,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "src/ofxFBO/src//**";
 				PREBINDING = NO;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos4.2;

@@ -30,9 +30,11 @@ namespace mui{
 		ofRectangle boundingBox; 
 		int renderX; 
 		int renderY; 
+		ofxFBOTexture fbo;
 		
 		virtual void update();
 		virtual void draw();
+		virtual void render();
 		virtual void drawBackground();
 		
 		virtual void commit(); // call this after you made changes to any variables (changing x/y is okay without doing a commit() ). doing text-maths too insane to do on every frame! 

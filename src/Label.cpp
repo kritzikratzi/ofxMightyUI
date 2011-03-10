@@ -27,39 +27,26 @@ void mui::Label::update(){
 
 //--------------------------------------------------------------
 void mui::Label::draw(){
+//	// magic trick #1:	
+//	int w, h; 
+//	if( Helpers::retinaMode ) w = 2*width, h = 2*height; 
+//	else w = width, h=height; 
+//	
+	ofRectangle size = Helpers::alignBox( this, fbo.getWidth(), fbo.getHeight(), horizontalAlign, verticalAlign ); 
+	
+	ofSetColor( 255, 255, 255 ); 
+	fbo.draw( size.x, size.y, size.width, size.height ); 
+}
+
+
+//--------------------------------------------------------------
+void mui::Label::render(){
 	// old, maybe new again one day. 
 	//Helpers::drawStringWithShadow( text, renderX, renderY, fontSize, fg.r, fg.g, fg.b );
 	
-	// magic trick #1: 
-	int w, h; 
-	if( Helpers::retinaMode ) w = 2*width, h = 2*height; 
-	else w = width, h=height; 
 	
 	if( horizontalAlign == Left ) renderX = -boundingBox.x;
-	else if( horizontalAlign == Center ) renderX = -boundingBox.x/2 + w/2 - boundingBox.width/2;
-	else if( horizontalAlign == Right ) renderX = -boundingBox.x + w - boundingBox.width; 
 	if( verticalAlign == Top ) renderY = - boundingBox.y; 
-	else if( verticalAlign == Middle ) renderY = -boundingBox.y + h/2 - boundingBox.height/2; 
-	else if( verticalAlign == Bottom ) renderY = -boundingBox.y + h - boundingBox.height; 
-	
-	ofTrueTypeFont * font; 
-	
-	if( Helpers::retinaMode ){
-		ofPushMatrix(); 
-		ofScale( 0.5, 0.5, 1 );
-		font = Helpers::getFont( fontSize*2 );
-	}
-	else{
-		font = Helpers::getFont( fontSize ); 
-	}
-	
-	ofSetColor( fg.r, fg.g, fg.b ); 
-	font->drawString( text, renderX, renderY ); 
-	
-	
-	if( Helpers::retinaMode ){
-		ofPopMatrix(); 
-	}
 }
 
 
@@ -74,6 +61,37 @@ void mui::Label::commit(){
 	ofTrueTypeFont * font = Helpers::getFont( Helpers::retinaMode?(fontSize*2):fontSize );
 	boundingBox = font->getStringBoundingBox( text, 0, 0 );
 	
+	
 	// NASTY HACK#158
-	boundingBox.x = 0; 
+	boundingBox.x = 0;
+	
+	int w = boundingBox.width; 
+	int h = boundingBox.height; 
+	
+	// magic trick #1:	
+	if( Helpers::retinaMode ) w *= 2, h *= 2; 
+	
+	if( fbo.getWidth() != w || fbo.getHeight() != h ) fbo.allocate( w, h, GL_RGBA ); 
+	fbo.clear( 0, 0, 0, 0 ); 
+	
+	//////////////////////
+	// RENDER! 
+	//////////////////////
+	fbo.begin(); 
+	
+	if( Helpers::retinaMode ){
+		ofPushMatrix(); 
+		ofScale( 0.5, 0.5, 1 );
+	}
+	
+	ofSetColor( fg.r, fg.g, fg.b ); 
+	font->drawString( text, -boundingBox.x, -boundingBox.y ); 
+	
+	if( Helpers::retinaMode ){
+		ofPopMatrix(); 
+	}
+	
+	
+	
+	fbo.end();
 }

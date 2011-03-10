@@ -31,6 +31,7 @@ namespace mui{
 #include <vector>
 #include "ofMain.h"
 #include "ofxiPhone.h"
+#include "ofxFBOTexture.h"
 
 #ifdef TARGET_OS_IPHONE
 #include "NativeIOS.h"
