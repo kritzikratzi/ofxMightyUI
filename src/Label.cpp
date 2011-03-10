@@ -35,7 +35,9 @@ void mui::Label::draw(){
 	ofRectangle size = Helpers::alignBox( this, fbo.getWidth(), fbo.getHeight(), horizontalAlign, verticalAlign ); 
 	
 	ofSetColor( 255, 255, 255 ); 
-	fbo.draw( size.x, size.y, size.width, size.height ); 
+	glBlendFunc( GL_ONE, GL_ONE_MINUS_SRC_ALPHA ); 
+	fbo.draw( (int)size.x, (int)size.y, size.width, size.height );
+	ofEnableAlphaBlending(); 
 }
 
 
@@ -79,13 +81,19 @@ void mui::Label::commit(){
 	//////////////////////
 	fbo.begin(); 
 	
+	#ifdef TARGET_OPENGLES
+	glBlendFuncSeparateOES(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);  //oriol added to get rid of halos
+	#else
+	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA); //oriol added to get rid of halos
+	#endif
+	
 	if( Helpers::retinaMode ){
 		ofPushMatrix(); 
 		ofScale( 0.5, 0.5, 1 );
 	}
 	
 	ofSetColor( fg.r, fg.g, fg.b ); 
-	font->drawString( text, -boundingBox.x, -boundingBox.y ); 
+	font->drawString( text, -(int)boundingBox.x, -(int)boundingBox.y ); 
 	
 	if( Helpers::retinaMode ){
 		ofPopMatrix(); 

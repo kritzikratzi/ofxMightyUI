@@ -16,7 +16,7 @@ namespace mui{
 	class TextField : public Label{
 	public: 
 		TextField( std::string text_ = "Label", float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 )
-		: Label( text_, x_, y_, width_, height_ ){};
+		: Label( text_, x_, y_, width_, height_ ){ ignoreEvents = false; };
 		
 		virtual void update();
 		virtual void draw();
