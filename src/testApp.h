@@ -4,7 +4,6 @@
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
 
-#include "ButtonPopup.h"
 #include "MUI.h"
 #include "poco/Delegate.h"
 #include "LoadWindow.h"

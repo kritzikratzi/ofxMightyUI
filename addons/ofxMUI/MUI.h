@@ -40,6 +40,12 @@ namespace mui{
 #error No native textfield implementation for this platform. You can define MUI_BE_INSANE to skip over this error if you know you're not using textfields. 
 #endif
 
+
+#ifndef OF_MAX_TOUCHES 
+#warning OF_MAX_TOUCHES not defined, assuming 20.
+#define OF_MAX_TOUCHES 20
+#endif
+
 #include "Helpers.h"
 #include "Container.h"
 #include "ScrollPane.h"
