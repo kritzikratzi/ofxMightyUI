@@ -18,6 +18,10 @@ namespace mui{
 		
 		static void showTextField( TextField * tf );
 		static void hide();
+		static void update(); 
+		
+		static void adjustRootPosition( int keyboardHeight );  // don't call this either, mui::NativeIOSWrapper does!
+		
 	private:
 		static TextField * textField; 
 	};

@@ -24,7 +24,7 @@ void testApp::setup(){
 	
 	root = new mui::Root();
 	
-	window = new mui::InternalWindow( "Adjustments", 0, 0, 300, 300 ); 
+	window = new mui::InternalWindow( "Adjustments", 0, 400, 300, 300 ); 
 	root->add( window );
 	
 	barLeft = new mui::BarButton( "Left" );
@@ -42,7 +42,7 @@ void testApp::setup(){
 	window->view->add( button );
 	
 	
-	window2 = new mui::InternalWindow( "Scrolling", 300, 0, 300, 300 ); 
+	window2 = new mui::InternalWindow( "Scrolling", 300, 800, 300, 300 ); 
 	scrollPane = new mui::ScrollPane( 10, 0, 280, 240 );
 	
 	textField = new mui::TextField( "hey!", 0, 0, 270, 30 ); 
@@ -75,14 +75,14 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::onButtonPress( const void* sender, ofTouchEventArgs &args ){
-	tween::TweenerParam param(200, tween::QUAD, tween::EASE_OUT);
 	bool small = slider->width == 250; 
-    param.addProperty(&(slider->width), small? 150:250 ); 
-    param.addProperty(&(slider2->width), small? 150:250 ); 
-    param.addProperty(&(window->width), small? 200:300 ); 
-    param.addProperty(&(window->height), small? 200:300 ); 
-    param.addProperty(&(button->y), small?100:200 ); 
-    tweener.addTween(param);
+	root->prepareAnimation(200);
+    root->animate(slider->width, small? 150:250 ); 
+    root->animate(slider2->width, small? 150:250 ); 
+    root->animate(window->width, small? 200:300 ); 
+    root->animate(window->height, small? 200:300 ); 
+	root->animate(button->y, small?100:200 ); 
+	root->commitAnimation(); 
 }
 
 

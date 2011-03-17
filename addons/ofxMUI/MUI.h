@@ -32,6 +32,7 @@ namespace mui{
 #include "ofMain.h"
 #include "ofxiPhone.h"
 #include "ofxFBOTexture.h"
+#include "CppTweener.h"
 
 #ifdef TARGET_OS_IPHONE
 #include "NativeIOS.h"

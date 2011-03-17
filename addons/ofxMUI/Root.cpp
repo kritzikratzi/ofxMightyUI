@@ -24,6 +24,13 @@ void mui::Root::init(){
 	#endif
 }
 
+void mui::Root::handleUpdate(){
+	tweener.step( ofGetSystemTime() );
+	#ifdef TARGET_OS_IPHONE
+	NativeIOS::update(); 
+	#endif
+	Container::handleUpdate();
+}
 
 //--------------------------------------------------------------
 void mui::Root::handleDraw(){
@@ -145,4 +152,21 @@ bool mui::Root::becomeResponder( Container * c, ofTouchEventArgs &touch ){
 	return true; 
 }
 
+
+//--------------------------------------------------------------
+void mui::Root::prepareAnimation( int milliseconds, int type, int direction ){
+	param = tween::TweenerParam( milliseconds, type, direction );
+}
+
+
+//--------------------------------------------------------------
+void mui::Root::animate( float &variable, float targetValue ){
+    param.addProperty( &variable, targetValue ); 
+}
+
+
+//--------------------------------------------------------------
+void mui::Root::commitAnimation(){
+    tweener.addTween( param );
+}
 

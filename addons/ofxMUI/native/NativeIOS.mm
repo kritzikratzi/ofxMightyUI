@@ -22,9 +22,17 @@ void mui::NativeIOS::init(){
 	[ofxiPhoneGetUIWindow() addSubview:mui_native_ios.view];
 }
 
+void mui::NativeIOS::update(){
+	if( textField != NULL ){
+		ofPoint position = textField->getGlobalPosition(); 
+		mui_native_ios.view.frame = CGRectMake( position.x, position.y, textField->width, textField->height );
+	}
+}
+
+
 
 void mui::NativeIOS::showTextField( TextField * tf ){
-	hide(); 
+	hide();
 	
 	tf->visible = false; 
 	
@@ -41,13 +49,29 @@ void mui::NativeIOS::showTextField( TextField * tf ){
 }
 
 
+void mui::NativeIOS::adjustRootPosition( int keyboardHeight ){
+	if( textField != NULL ){
+		ofPoint position = textField->getGlobalPosition(); 
+		if( position.y + textField->height > ofGetHeight() - keyboardHeight ){
+			Root::INSTANCE->prepareAnimation( 200 );
+			Root::INSTANCE->animate( Root::INSTANCE->y, Root::INSTANCE->y - position.y - textField->height + ofGetHeight() - keyboardHeight );
+			Root::INSTANCE->commitAnimation(); 
+		}
+	}
+}
+
+
 void mui::NativeIOS::hide(){
 	if( textField != NULL ){
 		textField->visible = true; 
 		textField->text = string( [mui_native_ios->textField.text UTF8String] );
-		textField->commit(); 
+		textField->commit();
 		
-		[mui_native_ios->textField resignFirstResponder]; 
+		[mui_native_ios->textField resignFirstResponder];
 		mui_native_ios.view.hidden = true;
+		
+		Root::INSTANCE->prepareAnimation( 300 ); 
+		Root::INSTANCE->animate( Root::INSTANCE->y, 0 );
+		Root::INSTANCE->commitAnimation();
 	}
 }

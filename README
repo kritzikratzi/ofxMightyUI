@@ -10,6 +10,7 @@ this is very much a work in progress. the following sorta works:
 - buttons
 - textfields (operating system textfield is overlayed during editing so it allows copy&paste)
 - scrollpanes
+- segmented buttons (the equivalent of radio buttons in a way)
 it's all butt ugly though. also eventually slow! 
 
 
@@ -17,6 +18,7 @@ licensing:
 - CppTweener: MIT License, http://code.google.com/p/tweener/
 - image assets in data/mui: cc-sa-by, http://www.teehanlax.com/blog/2010/08/12/iphone-4-gui-psd-retina-display/
 - lato-regular type: sil open font license, http://www.fontsquirrel.com/fonts/lato
+- ofxFBO: not mentioned, need to check! 
  
 the rest is released under the wtfpl: 
 http://sam.zoy.org/wtfpl/
