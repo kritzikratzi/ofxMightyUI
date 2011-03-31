@@ -11,6 +11,7 @@
 #define MUI_NODE
 
 namespace mui{
+	class Layout; 
 	class Container : public ofxMultiTouchListener{
 	public: 
 		float x;
@@ -31,11 +32,12 @@ namespace mui{
 		
 		vector<mui::Container*> children;
 		Container * parent; 
+		Layout * layoutManager; 
 		
 		//bool startedInside[OF_MAX_TOUCHES]; // don't use this. unless you're you really want to. 
 		
 		Container( float x_, float y_, float width_, float height_ ) : 
-		x(x_), y(y_), width(width_), height(height_), opaque(false), parent(NULL), visible(true), ignoreEvents(false), singleTouch(true), name( "" ), singleTouchId( -1 ){
+		x(x_), y(y_), width(width_), height(height_), opaque(false), parent(NULL), layoutManager(NULL), visible(true), ignoreEvents(false), singleTouch(true), name( "" ), singleTouchId( -1 ){
 			//for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
 			//	startedInside[i] = false; 
 			//}
@@ -48,6 +50,7 @@ namespace mui{
 		virtual void draw(){};
 		virtual void drawBackground(); 
 		
+		virtual void layout(); 
 		virtual void handleDraw(); 
 		virtual void handleUpdate();
 		
@@ -66,7 +69,6 @@ namespace mui{
 		
 		virtual ofPoint getGlobalPosition(); 
 		virtual string toString(); 
-		
 	private: 
 	};
 };

@@ -9,10 +9,20 @@
 
 #include "MUI.h"
 
+//--------------------------------------------------------------
 void mui::Container::add( Container * c ){
 	children.push_back( c ); 
 	c->parent = this; 
 }
+
+
+//--------------------------------------------------------------
+void mui::Container::layout(){
+	if( layoutManager != NULL ){
+		layoutManager->layout( this ); 
+	}
+}
+
 
 //--------------------------------------------------------------
 void mui::Container::drawBackground(){

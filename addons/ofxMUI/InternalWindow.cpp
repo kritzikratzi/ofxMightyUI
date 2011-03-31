@@ -30,8 +30,10 @@ void mui::InternalWindow::init( std::string title ){
 //--------------------------------------------------------------
 void mui::InternalWindow::update(){
 	label->width = width;
-	view->width = width;
-	view->height = height - 44;
+	view->x = padding; 
+	view->y = 44 + padding; 
+	view->width = width - 2*padding; ;
+	view->height = height - 44 - 2*padding;
 	
 	if( leftBarButton != NULL ){
 		leftBarButton->width = leftBarButton->label->boundingBox.width + 10;

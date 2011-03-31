@@ -49,6 +49,8 @@ namespace mui{
 
 #include "Helpers.h"
 #include "Container.h"
+#include "Layout.h"
+#include "ContainerWithGrid.h"
 #include "ScrollPane.h"
 #include "Label.h"
 #include "Root.h"

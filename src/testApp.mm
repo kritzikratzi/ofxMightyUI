@@ -24,7 +24,8 @@ void testApp::setup(){
 	
 	root = new mui::Root();
 	
-	window = new mui::InternalWindow( "Adjustments", 0, 400, 300, 300 ); 
+	window = new mui::InternalWindow( "Adjustments", 0, 400, 300, 300 );
+	window->view->layoutManager = new mui::RowLayout();
 	root->add( window );
 	
 	barLeft = new mui::BarButton( "Left" );
@@ -32,8 +33,8 @@ void testApp::setup(){
 	window->setLeftBarButton( barLeft ); 
 	window->setRightBarButton( barRight ); 
 	
-	slider = new mui::Slider( 20, 20, 250, 20, 0, 1, 0.5 );
-	slider2 = new mui::SliderWithLabel( 20, 60, 250, 20, 0, 1, 0.5, 2 );
+	slider = new mui::Slider( -1, -1, 250, 20, 0, 1, 0.5 );
+	slider2 = new mui::SliderWithLabel( -1, -1, 250, 20, 0, 1, 0.5, 2 );
 	window->view->add( slider );
 	window->view->add( slider2 );
 	
@@ -41,30 +42,35 @@ void testApp::setup(){
 	button->onPress += Poco::Delegate<testApp, ofTouchEventArgs>( this, &testApp::onButtonPress );
 	window->view->add( button );
 	
+	window->view->layout();
+	
 	
 	window2 = new mui::InternalWindow( "Scrolling", 300, 800, 300, 300 ); 
-	scrollPane = new mui::ScrollPane( 10, 0, 280, 240 );
+	window2->view->layoutManager = new mui::RowLayout();
+	scrollPane = new mui::ScrollPane( -1, -1, 280, 240 );
 	
-	textField = new mui::TextField( "hey!", 0, 0, 270, 30 ); 
+	textField = new mui::TextField( "hey!", -1, -1, 270, 30 ); 
 	scrollPane->view->add( textField );
 	
-	segmentedSelect = new mui::SegmentedSelect( 0, 30, 270, 30 );
+	segmentedSelect = new mui::SegmentedSelect( -1, -1, 270, 30 );
 	segmentedSelect->addLabel( "Sin" );
 	segmentedSelect->addLabel( "Cos" );
 	segmentedSelect->addLabel( "Tan" );
 	scrollPane->view->add( segmentedSelect );
-	
+	scrollPane->view->layoutManager = new mui::RowLayout(); 
 	ofColor fg; 
 	fg.r = fg.g = fg.b = 0; 
 	for( int i = 0; i < 10; i++ ){
-		labels[i] = new mui::Label( "i'm a label:" + ofToString( i, 0 ), 0, i*50 + 60, 270, 50 ); 
+		labels[i] = new mui::Label( "i'm a label:" + ofToString( i, 0 ), -1, -1, 270, 50 );
 		labels[i]->fg = fg; 
 		labels[i]->commit();
 		scrollPane->view->add( labels[i] );
 	}
 	//scrollPane->canScrollX = false; 
+	scrollPane->view->layout(); 
 	scrollPane->commit();
 	window2->view->add( scrollPane );
+	window2->view->layout(); 
 	
 	root->add( window2 );
 	 

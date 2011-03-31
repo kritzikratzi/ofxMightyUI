@@ -73,6 +73,7 @@ void mui::Label::commit(){
 	// magic trick #1:	
 	if( Helpers::retinaMode ) w *= 2, h *= 2; 
 	
+	ofPushMatrix(); 
 	if( fbo.getWidth() != w || fbo.getHeight() != h ) fbo.allocate( w, h, GL_RGBA ); 
 	fbo.clear( 0, 0, 0, 0 ); 
 	
@@ -102,4 +103,5 @@ void mui::Label::commit(){
 	
 	
 	fbo.end();
+	ofPopMatrix(); 
 }
