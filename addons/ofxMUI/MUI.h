@@ -34,7 +34,7 @@
 // works with ofTrueTypeFont and ofxTrueTypeFontFS
 // enable the include in case of the FS font...
 #define MUI_FONT_TYPE ofxTrueTypeFontFS
-#include "ofxFontStash/ofxTrueTypeFontFS.h"
+#include "../ofxFontStash/ofxTrueTypeFontFS.h"
 
 #define MUI_FONT_SIZE 12
 
