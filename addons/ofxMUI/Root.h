@@ -9,6 +9,7 @@
 
 #ifndef MUI_ROOT
 #define MUI_ROOT
+#define ROOT Root::INSTANCE
 
 namespace mui{
 	typedef  Container* (Container::*PrimaryHandler)( ofTouchEventArgs& );
@@ -32,7 +33,10 @@ namespace mui{
 		
 		virtual bool becomeResponder( Container * container, ofTouchEventArgs &touch );
 		virtual void showTextField( TextField * tf );
-		
+		virtual void hideTextFields();
+		virtual void safeRemoveAndDelete( Container * c ); 
+		virtual void safeRemove( Container * c );
+		virtual void removeFromResponders( Container * c ); 
 		
 		virtual void prepareAnimation( int milliseconds, int type = tween::QUAD, int direction = tween::EASE_OUT ); 
 		virtual void animate( float &variable, float targetValue ); 
@@ -43,9 +47,13 @@ namespace mui{
 	private: 
 		Container * handle( ofTouchEventArgs &touch, PrimaryHandler handler, SecondaryHandler secondaryHandler ); 
 		void fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &copy, Container * c ); 
-
+        void handleRemovals(); 
+        
 		tween::TweenerParam param;
 		tween::Tweener tweener;
+        
+        vector<Container*> safeRemoveAndDeleteList; 
+        vector<Container*> safeRemoveList; 
 	};
 }
 

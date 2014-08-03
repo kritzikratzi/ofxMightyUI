@@ -30,9 +30,9 @@ void mui::Button::init( std::string title ){
 	label->fg.r = label->fg.g = label->fg.b = 255; 
 	label->fontSize = 12; 
 	label->commit(); 
-	bg.r = bg.g = bg.b = 125; 
+	bg = ofColor( 128, 50 );
 	add( label ); 
-	
+	opaque = true; 
 	name = "button-" + title; 
 }
 
@@ -53,14 +53,17 @@ void mui::Button::drawBackground(){
 	if( bg.a > 0 ){
 		ofFill(); 
 		ofSetColor( bg.r, bg.g, bg.b, bg.a ); 
-		Helpers::roundedRect( 0, 0, width, height, 5 ); 
+		//Helpers::roundedRect( 0, 0, width, height, 5 );
+		ofRect( 0, 0, width, height ); 
 
 		if( pressed ){
 			ofSetColor( bg.r/2, bg.g/2, bg.b/2, bg.a ); 
 		}
 		
-		ofNoFill();
-		Helpers::roundedRect( 0, 0, width, height, 5 ); 
+		/*ofNoFill();
+		Helpers::roundedRect( 0, 0, width, height, 5 );
+        
+        ofFill(); */
 	}
 }
 
@@ -85,8 +88,8 @@ void mui::Button::touchMovedOutside( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::Button::touchUp( ofTouchEventArgs &touch ){
+	pressed = false;
 	onPress( this, touch );
-	pressed = false; 
 }
 
 

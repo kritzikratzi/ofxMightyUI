@@ -21,6 +21,16 @@
 #include "MUI.h"
 
 //--------------------------------------------------------------
+void mui::TextField::setText( string value ){
+    if( text.compare( value ) != 0 ){
+        text = value; 
+        commit(); 
+        onChange( this, text );     
+    }
+}
+
+
+//--------------------------------------------------------------
 void mui::TextField::update(){
 	Label::update(); 
 }
@@ -51,6 +61,7 @@ void mui::TextField::touchMoved( ofTouchEventArgs &touch ){
 //--------------------------------------------------------------
 void mui::TextField::touchUp( ofTouchEventArgs &touch ){
 	Root::INSTANCE->showTextField( this );
+	onPress( this, touch );
 }
 
 

@@ -2,17 +2,25 @@
  *  ScrollPane.h
  *  iPhoneEmptyExample
  *  
- *  Use this as a starting point for a new element! 
- * 
- *  Created by hansi on 29.01.11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
- *
+ * um.. the scrol pane :) 
+ * use scrollpane->view->add to add elements. 
+ * after that call scrollpane->commit() to 
+ * compute the new boundaries. this will not happen 
+ * automatically. 
  */
 
 #ifndef MUI_SCROLL_PANE
 #define MUI_SCROLL_PANE
 
 namespace mui{
+    class ScrollPane;
+    
+    class ScrollPaneView : public Container{
+    public:
+        ScrollPaneView( float x, float y, float w, float h ) : Container( x, y, w, h ){};
+        virtual void handleDraw();
+    };
+    
 	class ScrollPane : public Container{
 	public: 
 		ScrollPane( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 ) 
@@ -22,27 +30,37 @@ namespace mui{
 			maxScrollX(0), maxScrollY(0), minScrollX(0), minScrollY(0), 
 			currentScrollX(0), currentScrollY(0), 
 			pressed(false), 
-			view( NULL )
+			view( NULL ), 
+            animating(false), animatingToBase(false), animatingMomentum(false), 
+            onScreenTest(false)
 			{ init(); };
-		
-		float scrollX, scrollY; 
+		~ScrollPane(); 
+		float scrollX, scrollY; // intended
+		float currentScrollX, currentScrollY; // actually
+
 		float minScrollX, minScrollY; 
 		float maxScrollX, maxScrollY; 
 		bool canScrollX, canScrollY; 
 		
-		Container * view;
+		ScrollPaneView * view;
+        
+		bool onScreenTest;
 		
 		virtual void init(); 
 		
 		virtual void commit(); 
+		virtual ofRectangle getViewBoundingBox();
 		virtual void update();
 		virtual void draw();
 		virtual void drawBackground();
-		
 		virtual void handleDraw();
+
+		void beginBaseAnimation( float toX, float toY );
+		void beginMomentumAnimation();
 		
-		virtual void touchDown( ofTouchEventArgs &touch ); 
-		virtual void touchMoved( ofTouchEventArgs &touch ); 
+		virtual void updateTouchVelocity( ofTouchEventArgs &touch );
+		virtual void touchDown( ofTouchEventArgs &touch );
+		virtual void touchMoved( ofTouchEventArgs &touch );
 		virtual void touchMovedOutside( ofTouchEventArgs &touch );
 		virtual void touchUp( ofTouchEventArgs &touch ); 
 		virtual void touchUpOutside( ofTouchEventArgs &touch ); 
@@ -54,15 +72,26 @@ namespace mui{
 		
 		
 	private: 
-		virtual inline float getScrollTarget( float value, float min, float max ); 
+//		virtual inline float getScrollTarget( float value, float min, float max ); 
 		
-		float currentScrollX, currentScrollY; 
 		bool pressed; 
 		float pressedX, pressedY; 
 		bool wantsToScrollX, wantsToScrollY; 
+        float initialX, initialY; // positions before drag start
 		
 		bool watchingTouch[OF_MAX_TOUCHES]; 
 		ofPoint touchStart[OF_MAX_TOUCHES]; 
+        
+        long lastTouchTime; // time last touched in us
+        float velX, velY; // current velocity of touch 
+        float touchStartX, touchStartY; 
+        
+        // are we animating and if yes, in which way? 
+        bool animating, animatingToBase, animatingMomentum; 
+        long animationStartTime; 
+        long lastAnimationTime; 
+        float animateX, animateY; // variables used during animation
+        float animateToX, animateToY;
 	};
 };
 

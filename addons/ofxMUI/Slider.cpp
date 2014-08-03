@@ -21,7 +21,7 @@ void mui::Slider::draw(){
 	// draw bg... 
 	// Helpers::getImage( "slider_inactive_left" )->draw( 0, startY ); // not needed! 
 	ofEnableTextureEdgeHack(); 
-	Helpers::getImage( "slider_inactive_center" )->draw( 5, startY, width - 10, 9 ); 
+	Helpers::getImage( "slider_inactive_center" )->draw( 4, startY, width - 9, 9 );
 	ofDisableTextureEdgeHack(); 
 	Helpers::getImage( "slider_inactive_right")->draw( width - 5, startY, 5, 9 ); 
 	Helpers::getImage( "slider_active_left" )->draw( 0, startY, 5, 9 ); 
@@ -41,7 +41,8 @@ void mui::Slider::touchDown( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::Slider::touchMoved( ofTouchEventArgs &touch ){
-	value = fminf( max, fmaxf( min, screenToValue( touch.x ) ) ); 
+	value = fminf( max, fmaxf( min, screenToValue( touch.x ) ) );
+    onChange( this, touch );
 }
 
 

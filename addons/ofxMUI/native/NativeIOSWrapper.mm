@@ -30,10 +30,12 @@
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    // assign a UITouch object to the current touch
-    //UITouch *touch = [[event allTouches] anyObject];
-	//cout << "AHA!" << endl; 
-	mui::NativeIOS::hide(); 
+    UITouch *touch = [touches anyObject];
+    if( touch.view == self.view ){
+        mui::NativeIOS::hide();
+    }
+    else{
+    }
 }
 
 

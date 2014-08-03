@@ -12,12 +12,19 @@
 #ifndef MUI_TEXTFIELD
 #define MUI_TEXTFIELD
 
+#include "Poco/Mutex.h"
+
 namespace mui{
 	class TextField : public Label{
 	public: 
 		TextField( std::string text_ = "Label", float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 )
 		: Label( text_, x_, y_, width_, height_ ){ ignoreEvents = false; };
 		
+		Poco::BasicEvent<string> onChange;
+		Poco::BasicEvent<ofTouchEventArgs> onPress;
+
+        virtual void setText( string value ); 
+        
 		virtual void update();
 		virtual void draw();
 		virtual void drawBackground();

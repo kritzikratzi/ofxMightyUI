@@ -21,7 +21,7 @@ mui::Root * mui::Root::INSTANCE = NULL;
 void mui::Root::init(){
 	#ifdef TARGET_OS_IPHONE
 	NativeIOS::init(); 
-	#endif
+	#endif	
 }
 
 void mui::Root::handleUpdate(){
@@ -30,6 +30,8 @@ void mui::Root::handleUpdate(){
 	NativeIOS::update(); 
 	#endif
 	Container::handleUpdate();
+    
+    handleRemovals();
 }
 
 //--------------------------------------------------------------
@@ -38,18 +40,21 @@ void mui::Root::handleDraw(){
 	ofSetLineWidth( 1 ); 
 	ofSetColor( 255, 255, 255 ); 
 	ofEnableAlphaBlending();
-	if( Helpers::retinaMode ){
-		ofPushMatrix();
-		ofScale( 2, 2, 1 );
-	}
+//TMP
+//	if( Helpers::retinaMode ){
+//		ofPushMatrix();
+//		ofScale( 2, 2, 1 );
+//	}
 	
 	Container::handleDraw();
 	
-	if( Helpers::retinaMode ){
-		ofPopMatrix(); 
-	}
+//	if( Helpers::retinaMode ){
+//		ofPopMatrix();
+//	}
 	
 	ofDisableAlphaBlending(); 
+    
+    handleRemovals(); 
 }
 
 
@@ -73,11 +78,12 @@ mui::Container * mui::Root::handleTouchDown( ofTouchEventArgs &touch ){
 mui::Container * mui::Root::handleTouchMoved( ofTouchEventArgs &touch ){
 	ofTouchEventArgs copy = touch; 
 	fixTouchPosition( touch, copy, NULL ); 
-	Container * touched = Container::handleTouchMoved( copy ); 
-	
+	Container * touched = Container::handleTouchMoved( copy );
+    
 	if( touched != respondingContainer[touch.id] && respondingContainer[touch.id] != NULL ){
-		fixTouchPosition( touch, copy, respondingContainer[touch.id] ); 
-		respondingContainer[touch.id]->touchMovedOutside( copy ); 
+        copy = Helpers::translateTouch( touch, this, respondingContainer[touch.id] );
+        copy = Helpers::translateTouch( touch, this, respondingContainer[touch.id] );
+        respondingContainer[touch.id]->touchMovedOutside( copy );
 	}
 	
 	return touched;
@@ -91,11 +97,14 @@ mui::Container * mui::Root::handleTouchUp( ofTouchEventArgs &touch ){
 	Container * touched = Container::handleTouchUp( copy ); 
 	
 	if( touched != respondingContainer[touch.id] && respondingContainer[touch.id] != NULL ){
-		fixTouchPosition( touch, copy, respondingContainer[touch.id] ); 
-		respondingContainer[touch.id]->touchUpOutside( copy ); 
-		respondingContainer[touch.id]->singleTouchId = -1; 
+		fixTouchPosition( touch, copy, respondingContainer[touch.id] );
+		Container *c = respondingContainer[touch.id];
+		respondingContainer[touch.id]->touchUpOutside( copy );
+		c->singleTouchId = -1;
 	}
 	
+    respondingContainer[touch.id] = NULL; 
+    
 	return touched; 	
 }
 
@@ -111,13 +120,19 @@ mui::Container * mui::Root::handleTouchDoubleTap( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::Root::fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &copy, Container * container ){
-	if( Helpers::retinaMode ){
+// TMP
+// DISABLE RETINA STUFF, ALREADY HANDLED BY OF
+	if( Helpers::retinaMode && false ){
 		copy.x = touch.x/2; 
 		copy.y = touch.y/2;
+        copy.xspeed = touch.xspeed/2;
+        copy.yspeed = touch.yspeed/2; 
 	}
 	else{
 		copy.x = touch.x; 
 		copy.y = touch.y; 
+        copy.xspeed = touch.xspeed; 
+        copy.yspeed = touch.yspeed; 
 	}
 	
 	if( container != NULL ){
@@ -137,20 +152,59 @@ void mui::Root::showTextField( TextField * tf ){
 	#endif
 }
 
+void mui::Root::hideTextFields(){
+    #ifdef TARGET_OS_IPHONE
+    NativeIOS::hide(); 
+    #endif
+}
+
 
 //--------------------------------------------------------------
 bool mui::Root::becomeResponder( Container * c, ofTouchEventArgs &touch ){
+	// the trivial case ...
+	if( c != NULL && c == respondingContainer[touch.id] )
+		return true;
+	
+	// notify previous owner,
+	// cancel if it doesn't allow transfering focus
 	if( respondingContainer[touch.id] != NULL ){
+        if( respondingContainer[touch.id]->focusTransferable == false )
+            return false; 
+        
 		respondingContainer[touch.id]->touchCanceled( touch ); 
 		respondingContainer[touch.id]->singleTouchId = -1; 
 	}
 	
-	respondingContainer[touch.id] = c; 
-	respondingContainer[touch.id]->singleTouchId = touch.id; 
-	
+	// alright, install new owner
+	respondingContainer[touch.id] = c;
+	if( respondingContainer[touch.id] != NULL ){
+		respondingContainer[touch.id]->singleTouchId = touch.id;
+	}
+
 	
 	return true; 
 }
+
+
+//--------------------------------------------------------------
+void mui::Root::safeRemove( Container * c ){
+    safeRemoveList.push_back( c ); 
+}
+
+//--------------------------------------------------------------
+void mui::Root::safeRemoveAndDelete( mui::Container *c ){
+    safeRemoveAndDeleteList.push_back( c ); 
+}
+
+//--------------------------------------------------------------
+void mui::Root::removeFromResponders( Container * c ){
+	for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
+		if( respondingContainer[i] == c ){
+			respondingContainer[i] = NULL;
+		}
+	}
+}
+
 
 
 //--------------------------------------------------------------
@@ -168,5 +222,23 @@ void mui::Root::animate( float &variable, float targetValue ){
 //--------------------------------------------------------------
 void mui::Root::commitAnimation(){
     tweener.addTween( param );
+}
+
+void mui::Root::handleRemovals(){
+    vector<Container*>::iterator it = safeRemoveList.begin(); 
+    while( it != safeRemoveList.end() ){
+        (*it)->remove();
+        ++it; 
+    }
+    
+    it = safeRemoveAndDeleteList.begin(); 
+    while( it != safeRemoveAndDeleteList.end() ){
+        (*it)->remove();
+        delete (*it); 
+        ++it; 
+    }
+    
+    safeRemoveList.clear(); 
+    safeRemoveAndDeleteList.clear(); 
 }
 

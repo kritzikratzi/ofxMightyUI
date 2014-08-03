@@ -32,11 +32,28 @@ void mui::Label::draw(){
 //	if( Helpers::retinaMode ) w = 2*width, h = 2*height; 
 //	else w = width, h=height; 
 //	
-	ofRectangle size = Helpers::alignBox( this, fbo.getWidth(), fbo.getHeight(), horizontalAlign, verticalAlign ); 
+
+    //	ofRectangle size = Helpers::alignBox( this, fbo.getWidth(), fbo.getHeight(), horizontalAlign, verticalAlign ); 
+	ofRectangle size = Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign ); 
 	
 	ofSetColor( 255, 255, 255 ); 
 	glBlendFunc( GL_ONE, GL_ONE_MINUS_SRC_ALPHA ); 
-	fbo.draw( (int)size.x, (int)size.y, size.width, size.height );
+//	fbo.draw( (int)size.x, (int)size.y, size.width, size.height );
+    ofSetColor( fg.r, fg.g, fg.b );
+	if( Helpers::retinaMode ){
+		MUI_FONT_TYPE * font = Helpers::getFont( 2*fontSize );
+		ofPushMatrix();
+		ofTranslate( (int)(size.x-boundingBox.x), (int)(size.y-(int)boundingBox.y) );
+		ofScale( 0.5, 0.5 );
+		font->drawString( displayText, 0, 0 );
+		ofPopMatrix();
+	}
+	else{
+		MUI_FONT_TYPE * font = Helpers::getFont( Helpers::retinaMode?(fontSize*2):fontSize );
+		font->drawString( displayText, (int)(size.x-boundingBox.x), (int)(size.y-(int)boundingBox.y) );
+	}
+	
+
 	ofEnableAlphaBlending(); 
 }
 
@@ -54,22 +71,46 @@ void mui::Label::render(){
 
 //--------------------------------------------------------------
 void mui::Label::drawBackground(){
+    Container::drawBackground(); 
 }
 
 
+ofRectangle mui::Label::box( float t, float r, float b, float l ){
+	ofRectangle size = Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign );
+	return ofRectangle( size.x - boundingBox.x - l, size.y - boundingBox.y - t, boundingBox.width + l + r, boundingBox.height + t + b );
+}
 //--------------------------------------------------------------
 void mui::Label::commit(){
 	// magic trick #2
-	ofTrueTypeFont * font = Helpers::getFont( Helpers::retinaMode?(fontSize*2):fontSize );
+	// MUI_FONT_TYPE * font = Helpers::getFont( Helpers::retinaMode?(fontSize*2):fontSize );
+	// magic trick #2.2: fuck retina, we compute the bounding box at normal size!
+	MUI_FONT_TYPE * font = Helpers::getFont( fontSize );
 	boundingBox = font->getStringBoundingBox( text, 0, 0 );
 	
 	
 	// NASTY HACK#158
 	boundingBox.x = 0;
-	
-	int w = boundingBox.width; 
-	int h = boundingBox.height; 
-	
+
+    if( ellipsisMode ){
+        if( boundingBox.width > width && text.length() > 3 ){
+            int len = text.length() - 3;
+            while( boundingBox.width > width && len >= 0 ){
+                displayText = text.substr(0, len ) + "...";
+                boundingBox = font->getStringBoundingBox( displayText, 0, 0 ); 
+                len --; 
+            }
+        }
+        else{
+            displayText = text;
+        }
+    }
+    else{
+        displayText = text;
+    }
+    
+	int w = floorf(boundingBox.width) + 1; 
+	int h = floorf(boundingBox.height); 
+/*	
 	// magic trick #1:	
 	if( Helpers::retinaMode ) w *= 2, h *= 2; 
 	
@@ -103,5 +144,5 @@ void mui::Label::commit(){
 	
 	
 	fbo.end();
-	ofPopMatrix(); 
+	ofPopMatrix(); */
 }

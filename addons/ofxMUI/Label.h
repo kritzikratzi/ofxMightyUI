@@ -18,8 +18,8 @@ namespace mui{
 	class Label : public Container{
 	public: 
 		Label( std::string text_ = "Label", float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 ) : 
-		Container( x_, y_, width_, height_ ), 
-		text( text_), fontSize( 12 ), horizontalAlign(Left), verticalAlign(Middle)
+		Container( x_, y_, width_, height_ ), ellipsisMode(false),
+		text( text_), fontSize( MUI_FONT_SIZE ), horizontalAlign(Left), verticalAlign(Middle)
 		{ ignoreEvents = true; commit(); };  
 		
 		
@@ -30,16 +30,23 @@ namespace mui{
 		ofRectangle boundingBox; 
 		int renderX; 
 		int renderY; 
-		ofxFBOTexture fbo;
-		
+		//ofxFBOTexture fbo;
+		bool ellipsisMode;
+        
 		virtual void update();
 		virtual void draw();
 		virtual void render();
 		virtual void drawBackground();
 		
-		virtual void commit(); // call this after you made changes to any variables (changing x/y is okay without doing a commit() ). doing text-maths too insane to do on every frame! 
+		virtual void commit(); // call this after you made changes to any variables (changing x/y is okay without doing a commit() ). doing text-maths too insane to do on every frame!
 		
+		virtual ofRectangle box( float tblr = 0 ){ return box( tblr, tblr, tblr, tblr ); }
+		virtual ofRectangle box( float tb, float lr ){ return box( tb, lr, tb, lr ); }
+		virtual ofRectangle box( float t, float lr, float b ){ return box( t, lr, b, lr ); }
+		virtual ofRectangle box( float t, float r, float b, float l );
+
 	private: 
+        std::string displayText; 
 	};
 };
 

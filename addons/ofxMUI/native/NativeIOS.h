@@ -23,7 +23,8 @@ namespace mui{
 		static void adjustRootPosition( int keyboardHeight );  // don't call this either, mui::NativeIOSWrapper does!
 		
 	private:
-		static TextField * textField; 
+		static TextField * textField;
+
 	};
 	
 	

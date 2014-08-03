@@ -33,6 +33,7 @@ namespace mui{
 		float defaultValue;
 		Slider * slider;
 		Label * label;
+        
 		
 		virtual void update();
 		virtual void draw();

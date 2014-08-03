@@ -27,7 +27,9 @@ namespace mui{
 		bool ignoreEvents; // false by default. if set to true this thing will never receive events, children of this container however will still receive events. 
 		bool singleTouch; // true by default. if set to true a container will remember the first finger touching down and then discard all other events.
 		int singleTouchId; // either -1 or the id of the active touch. take this into account for single-touch containers before injecting events (i.e. you shouldn't ever really need this)
-		
+		bool focusTransferable; // can the focus travel on to another parent?
+		bool allowSubpixelTranslations; // translate by subpixels also? (default)
+		bool drawDirty; // force drawing clipped objects in scrollpanes. 
 		string name;
 		
 		vector<mui::Container*> children;
@@ -36,16 +38,18 @@ namespace mui{
 		
 		//bool startedInside[OF_MAX_TOUCHES]; // don't use this. unless you're you really want to. 
 		
-		Container( float x_, float y_, float width_, float height_ ) : 
-		x(x_), y(y_), width(width_), height(height_), opaque(false), parent(NULL), layoutManager(NULL), visible(true), ignoreEvents(false), singleTouch(true), name( "" ), singleTouchId( -1 ){
+		Container( float x_, float y_, float width_ = 10, float height_ = 10 ) : 
+		x(x_), y(y_), width(width_), height(height_), opaque(false), parent(NULL), layoutManager(NULL), visible(true), ignoreEvents(false), singleTouch(true), name( "" ), singleTouchId( -1 ), focusTransferable(true),bg(0,0,0,0), allowSubpixelTranslations(true), drawDirty(false){
 			//for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
 			//	startedInside[i] = false; 
 			//}
 		};
-		~Container(){}
+		~Container();
 		
-		void add( Container * c ); 
-		
+		void add( Container * c, int index = -1 ); 
+		void remove( Container * c ); 
+		void remove(); 
+        
 		virtual void update(){};
 		virtual void draw(){};
 		virtual void drawBackground(); 
@@ -66,8 +70,10 @@ namespace mui{
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
 		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
 		virtual Container * handleTouchDoubleTap( ofTouchEventArgs &touch );
-		
-		virtual ofPoint getGlobalPosition(); 
+
+		virtual bool hasFocus();
+		virtual bool hasFocus( ofTouchEventArgs &touch );
+		virtual ofPoint getGlobalPosition();
 		virtual string toString(); 
 	private: 
 	};

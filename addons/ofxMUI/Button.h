@@ -1,12 +1,14 @@
 /*
  *  Button.h
- *  iPhoneEmptyExample
  *  
- *  Use this as a starting point for a new element! 
- * 
- *  Created by hansi on 29.01.11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
- *
+ *  yyyy, a button! 
+ 
+ void onEvent(const void* pSender, ofTouchEventArgs& arg)
+ {
+ std::cout << "onEvent: " << arg << std::endl;
+ }
+ 
+ then do button.onPress += Delegate<YourClass,ofTouchEventArgs>( this, %YourClass::yourEventFunc ); 
  */
 
 #ifndef MUI_BUTTON
@@ -30,7 +32,7 @@ namespace mui{
 		virtual void update();
 		virtual void draw();
 		virtual void drawBackground();
-		
+
 		virtual void touchDown( ofTouchEventArgs &touch ); 
 		virtual void touchMoved( ofTouchEventArgs &touch ); 
 		virtual void touchMovedOutside( ofTouchEventArgs &touch ); 

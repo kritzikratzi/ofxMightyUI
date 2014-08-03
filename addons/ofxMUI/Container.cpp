@@ -10,11 +10,42 @@
 #include "MUI.h"
 
 //--------------------------------------------------------------
-void mui::Container::add( Container * c ){
-	children.push_back( c ); 
-	c->parent = this; 
+mui::Container::~Container(){
+	cout << "~Container " << name << endl;
+	ROOT->removeFromResponders( this );
 }
 
+
+//--------------------------------------------------------------
+void mui::Container::add( Container * c, int index ){
+    if( index == -1 ){
+        children.push_back( c ); 
+        c->parent = this; 
+    }
+    else{
+        vector<Container*>::iterator it = children.begin(); 
+        it += index; 
+        children.insert( it, c ); 
+        c->parent = this; 
+    }
+}
+
+//--------------------------------------------------------------
+void mui::Container::remove( Container * c ){
+    vector<Container*>::iterator it = find( children.begin(), children.end(), c );
+	ROOT->removeFromResponders( c ); 
+    if( it != children.end() ){
+        children.erase( it ); 
+    }
+}
+
+//--------------------------------------------------------------
+void mui::Container::remove(){
+	ROOT->removeFromResponders( this );
+    if( parent != NULL ){
+        parent->remove( this ); 
+    }
+}
 
 //--------------------------------------------------------------
 void mui::Container::layout(){
@@ -26,6 +57,12 @@ void mui::Container::layout(){
 
 //--------------------------------------------------------------
 void mui::Container::drawBackground(){
+    if( bg.a > 0 ){
+		ofFill(); 
+        ofSetColor( bg ); 
+        ofRect( 0, 0, width, height ); 
+        ofSetColor( 255 ); 
+    }
 }
 
 
@@ -33,10 +70,11 @@ void mui::Container::drawBackground(){
 void mui::Container::handleDraw(){
 	if( !visible ) return; 
 	
-	ofPushMatrix(); 
-	ofTranslate( x, y ); 
+	ofPushMatrix();
+	if( allowSubpixelTranslations ) ofTranslate( x, y );
+	else ofTranslate( (int)x, (int)y );
 	
-	if( !opaque ) drawBackground(); 
+	if( opaque ) drawBackground(); 
 	draw(); 
 	
 	if( MUI_DEBUG_DRAW ){
@@ -47,7 +85,7 @@ void mui::Container::handleDraw(){
 	
 	std::vector<Container*>::reverse_iterator it = children.rbegin();
 	while( it != children.rend() ) {
-		(*it)->handleDraw(); 
+        (*it)->handleDraw();
 		++it;
 	}
 
@@ -61,6 +99,7 @@ void mui::Container::handleUpdate(){
 	
 	std::vector<Container*>::iterator it = children.begin();
 	while( it != children.end() ) {
+        //Container * child = (*it); // just for debugging ... 
 		(*it)->handleUpdate(); 
 		++it;
 	}
@@ -72,9 +111,9 @@ mui::Container * mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
 	if( !visible ) return NULL; 
 
 	
-	string depth = ""; 
-	Container * p = this; 
-	while( p->parent != NULL ) p = p->parent, depth = "  " + depth; 
+	//string depth = ""; 
+	//Container * p = this; 
+	//while( p->parent != NULL ) p = p->parent, depth = "  " + depth; 
 	
 	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
 		float x, y; 
@@ -226,6 +265,21 @@ mui::Container * mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
 	return NULL; 
 }
 
+
+//--------------------------------------------------------------
+bool mui::Container::hasFocus(){
+	for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
+		if( Root::INSTANCE->respondingContainer[i] == this )
+			return true;
+	}
+	
+	return false;
+}
+
+//--------------------------------------------------------------
+bool mui::Container::hasFocus( ofTouchEventArgs &touch ){
+    return Root::INSTANCE->respondingContainer[touch.id] == this; 
+}
 
 //--------------------------------------------------------------
 ofPoint mui::Container::getGlobalPosition(){
