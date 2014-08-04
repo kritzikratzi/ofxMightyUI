@@ -7,6 +7,8 @@
  *
  */
 
+#pragma once
+
 // retina mode on or off? 
 // this will be dynamic one day, 
 // but you can safely use the define for querying
@@ -91,3 +93,5 @@ namespace mui{
 #include "SliderWithLabel.h"
 #include "TextField.h"
 #include "SegmentedSelect.h"
+
+void mui_init(); 
