@@ -55,13 +55,14 @@ void mui::NativeIOS::showTextField( TextField * tf ){
 		CGDataProviderRef fontDataProvider = CGDataProviderCreateWithFilename([fpath UTF8String]);
 		CGFontRef customFont = CGFontCreateWithDataProvider(fontDataProvider);
 		CGDataProviderRelease(fontDataProvider);
-		NSString *fontName = (NSString *)CGFontCopyFullName(customFont);
+//		NSString *fontName = (NSString *)CGFontCopyFullName(customFont);
+//		NSString * fontName = (__bridge NSString *)CGFontCopyFullName(customFont);
 		CFErrorRef error = NULL;
 		CTFontManagerRegisterGraphicsFont(customFont, &error);
 		if (error != NULL)
 		{
 			CFStringRef errorDesc = CFErrorCopyDescription(error);
-			NSLog(@"Contact not saved: %@", errorDesc);
+			NSLog(@"Font not loaded: %@", errorDesc);
 			CFRelease(errorDesc);
 		}
 		

@@ -29,7 +29,8 @@ In XCode:
 
 - Add the folder ofxMightyUI/addons to your XCode project
 - Go to Project>Targets>emptyExample>Build Phases>Link Binary with Libraries. Click the '+' icon and add the CoreText framework. 
-
+- Go to Project>Targets>emptyExample>Build Phases>Run Script and add <br>
+  	```cp -rf ofxMightyUI/bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app"```
 
 Usage
 -------
