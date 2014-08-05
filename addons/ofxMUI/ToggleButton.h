@@ -27,7 +27,8 @@ namespace mui{
 		Label * label;
 		bool pressed;
 		bool selected;
-		ofColor bgSelected;
+		ofColor selectedBg;
+		ofColor selectedFg;
 		Poco::BasicEvent<ofTouchEventArgs> onPress;
 		
 		virtual void init( std::string title );

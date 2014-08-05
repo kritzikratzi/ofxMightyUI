@@ -30,25 +30,22 @@ void mui::ToggleButton::init( std::string title ){
 	label->fg.r = label->fg.g = label->fg.b = 255;
 	label->fontSize = 12;
 	label->commit();
-	bg.r = bg.g = bg.b = 125;
-	bg.a = 0;
 	add( label );
 	opaque = true;
 	name = "togglebutton-" + title;
+	
+	bg = ofColor(125,50);
+	fg = ofColor( 125 );
+	
+	selectedBg = ofColor(255);
+	selectedFg = ofColor(0);
 }
 
 //--------------------------------------------------------------
 void mui::ToggleButton::update(){
 	label->width = width;
 	label->height = height;
-	if( selected ){
-		bg = ofColor( 255 );
-		label->fg = ofColor( 0 );
-	}
-	else{
-		bg = ofColor( 125, 50 );
-		label->fg = ofColor( 255 );
-	}
+	label->fg = selected?selectedFg:fg;
 }
 
 
@@ -59,22 +56,11 @@ void mui::ToggleButton::draw(){
 
 //--------------------------------------------------------------
 void mui::ToggleButton::drawBackground(){
+	ofColor bg = selected?selectedBg:this->bg;
 	if( bg.a > 0 ){
 		ofFill();
-		ofSetColor( bg.r, bg.g, bg.b, bg.a );
-		//Helpers::roundedRect( 0, 0, width, height, 5 );
+		ofSetColor( bg );
 		ofRect( 0, 0, width, height );
-		
-		if( pressed ){
-//			ofSetColor( bg.r/2, bg.g/2, bg.b/2, bg.a );
-		}
-		else if( selected ){
-		}
-		
-		/*ofNoFill();
-		 Helpers::roundedRect( 0, 0, width, height, 5 );
-		 
-		 ofFill(); */
 	}
 }
 
