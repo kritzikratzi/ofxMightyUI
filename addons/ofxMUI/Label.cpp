@@ -108,10 +108,11 @@ void mui::Label::commit(){
         displayText = text;
     }
     
-	int w = floorf(boundingBox.width) + 1; 
-	int h = floorf(boundingBox.height); 
-/*	
-	// magic trick #1:	
+/*
+	int w = floorf(boundingBox.width) + 1;
+	int h = floorf(boundingBox.height);
+ 
+	// magic trick #1:
 	if( Helpers::retinaMode ) w *= 2, h *= 2; 
 	
 	ofPushMatrix(); 
