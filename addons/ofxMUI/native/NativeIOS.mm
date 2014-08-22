@@ -91,7 +91,7 @@ void mui::NativeIOS::showTextField( TextField * tf ){
 
 	[mui_native_ios->textField setTextColor: [UIColor colorWithRed:tf->fg.r/255.0 green:tf->fg.g/255.0 blue:tf->fg.b/255.0 alpha:tf->fg.a/255.0 ]];
 	[mui_native_ios->textField setBackgroundColor:[UIColor colorWithRed:0 green:1 blue:0 alpha:1]];
-	[mui_native_ios->textField setText:[NSString stringWithCString: tf->text.c_str()]];
+	[mui_native_ios->textField setText:[NSString stringWithCString: tf->text.c_str() encoding:NSUTF8StringEncoding]];
 	[mui_native_ios->textField becomeFirstResponder];
 	//[mui_native_ios->textField selectAll:mui_native_ios->textField];
 	[mui_native_ios->textField setClearButtonMode:UITextFieldViewModeWhileEditing];
