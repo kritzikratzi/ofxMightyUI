@@ -119,8 +119,8 @@ mui::Container * mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
 		float x, y; 
 		Container * touched; 
 		
-		std::vector<Container*>::iterator it = children.begin();
-		while( it != children.end() ){
+		std::vector<Container*>::reverse_iterator it = children.rbegin();
+		while( it != children.rend() ){
 			touch.x -= ( x = (*it)->x ); 
 			touch.y -= ( y = (*it)->y ); 
 			touched = (*it)->handleTouchDown( touch ); 
@@ -160,8 +160,8 @@ mui::Container * mui::Container::handleTouchMoved( ofTouchEventArgs &touch ){
 		float x, y; 
 		Container * touched;
 		
-		std::vector<Container*>::iterator it = children.begin();
-		while( it != children.end() ) {
+		std::vector<Container*>::reverse_iterator it = children.rbegin();
+		while( it != children.rend() ) {
 			touch.x -= ( x = (*it)->x ); 
 			touch.y -= ( y = (*it)->y ); 
 			touched = (*it)->handleTouchMoved( touch ); 
@@ -198,8 +198,8 @@ mui::Container * mui::Container::handleTouchDoubleTap( ofTouchEventArgs &touch )
 		float x, y; 
 		Container * touched; 
 		
-		std::vector<Container*>::iterator it = children.begin();
-		while( it != children.end() ) {
+		std::vector<Container*>::reverse_iterator it = children.rbegin();
+		while( it != children.rend() ) {
 			touch.x -= ( x = (*it)->x ); 
 			touch.y -= ( y = (*it)->y ); 
 			touched = (*it)->handleTouchDoubleTap( touch ); 
@@ -236,8 +236,8 @@ mui::Container * mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
 		float x, y; 
 		Container * touched; 
 		
-		std::vector<Container*>::iterator it = children.begin();
-		while( it != children.end() ) {
+		std::vector<Container*>::reverse_iterator it = children.rbegin();
+		while( it != children.rend() ) {
 			touch.x -= ( x = (*it)->x ); 
 			touch.y -= ( y = (*it)->y ); 
 			touched = (*it)->handleTouchUp( touch ); 

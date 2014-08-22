@@ -37,8 +37,8 @@ void mui::ScrollPaneView::handleDraw(){
 		ofRect( 0, 0, width, height );
 	}
 	
-	std::vector<Container*>::reverse_iterator it = children.rbegin();
-	while( it != children.rend() ) {
+	std::vector<Container*>::iterator it = children.begin();
+	while( it != children.end() ) {
 		// TODO: GIANT rectangles are not account for
 		Container * c = (*it);
 		bool inside =
@@ -288,7 +288,7 @@ void mui::ScrollPane::touchUp( ofTouchEventArgs &touch ){
 		}
 		else if( currentScrollX > maxScrollX || currentScrollY > maxScrollY || currentScrollX < minScrollX || currentScrollY < minScrollY )
 			beginBaseAnimation( ofClamp( currentScrollX, minScrollX, maxScrollX ), ofClamp( currentScrollY, minScrollY, maxScrollY ) ); 
-		else if( ( canScrollX && ABS( velX ) > 30 ) || ( canScrollY && ABS( velY ) ) > 30 ){
+		else if( ( canScrollX && ABS( velX ) > 30 ) || ( canScrollY && ABS( velY ) > 30 ) ){
 			beginMomentumAnimation();
 		}
 	}
