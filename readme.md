@@ -1,27 +1,28 @@
 ofxMightyUI
 ===========
 
+A handy UI addon for [openFrameworks](http://www.openframeworks.cc). 
 
 Features
 --------
 
-this is very much a work in progress. the following sorta works: 
+This is very much a work in progress. The following works: 
 
-- windows (draggable, with titles and optional left/right toolbar buttons)
-- labels (with all sorts of alignments)
-- sliders (multitouch enabled, optionally with value labels)
-- buttons
-- textfields (operating system textfield is overlayed during editing so it allows copy&paste)
-- scrollpanes
-- segmented buttons (the equivalent of radio buttons in a way)
-it's all butt ugly though. also eventually slow! 
-- retina support 
+- Windows (draggable, with titles and optional left/right toolbar buttons)
+- Labels (with all sorts of alignments)
+- Sliders (multitouch enabled, optionally with value labels)
+- Buttons
+- Textfields (operating system textfield is overlayed during editing so it allows copy&paste)
+- Scrollpanes
+- Segmented buttons (the equivalent of radio buttons in a way)
+It's all a bit ugly still. Also eventually slow! 
+- Retina support 
 
 
 Setup
 -----
 The included project is broken at the moment (sorry). 
-To get up and running grab the empty example from OF080. I suggest you add mui as a submodule: 
+To get up and running grab the empty example from OF080. I suggest you add ofxMightyUI as a submodule: 
 
 	git submodule add git@github.com:kritzikratzi/ofxMightyUI.git
 	
@@ -40,24 +41,27 @@ There's an example in the `src/` folder.
 Licensing 
 ---------
 
-- CppTweener: MIT License, http://code.google.com/p/tweener/
-- image assets in data/mui: cc-sa-by, http://www.teehanlax.com/blog/2010/08/12/iphone-4-gui-psd-retina-display/
-- lato-regular type: sil open font license, http://www.fontsquirrel.com/fonts/lato
-- ofxFBO: not mentioned, need to check! 
+Third party software/assets used: 
+
+- [CppTweener](http://code.google.com/p/tweener/): MIT License
+- [iPhone4 GUI for Photoshop](http://www.teehanlax.com/blog/2010/08/12/iphone-4-gui-psd-retina-display/) cc-sa-by
+- [Lato Regular font](http://www.fontsquirrel.com/fonts/lato): Sil open font license
+- [ofxFBO](https://code.google.com/p/kyle/source/browse/trunk/openframeworks/addons/ofxFbo/src/ofxFbo.h?r=83): not mentioned, need to check! 
  
-the rest is released under the wtfpl: 
-http://sam.zoy.org/wtfpl/
+The project itself is released under [WTFPL](http://sam.zoy.org/wtfpl/). 
 
+About
+-----
 
-in the long run this is supposed to be a very very small 
-ui library that runs cross-platform (mac os+ios at least)
+In the long run this is supposed to be a small but flexible 
+UI library that runs cross-platform
 with multitouch support. 
 
-the library aims to only provide a minimal set of elements 
+The library aims to only provide a minimal set of elements 
 needed for basic interactive artworks:
 sliders, segmented controls, buttons, labels, 
 toolbars/navigation bars, internal windows, textfields
 
-the library is  (and most likely won't be suitable)
-as neither a proper gui replacement or as a scenegraph. 
-there's already lots of other people doing that.  
+ofxMightyUI is (and most likely won't be suitable)
+as neither a proper GUI replacement or as a scenegraph. 
+there's already lots of other people doing that. I think. 
