@@ -11,6 +11,7 @@
 #define ofxFBO_MAX_RENDERBUFFER_SIZE GL_MAX_RENDERBUFFER_SIZE_OES
 
 #else
+#include <gl\GLee.h>
 #define ofxFBO_FBO "GL_EXT_framebuffer_object"
 #define ofxFBO_BLIT "GL_EXT_framebuffer_blit"
 #define ofxFBO_MULTISAMPLE "GL_EXT_framebuffer_multisample"

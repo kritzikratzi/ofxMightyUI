@@ -10,11 +10,10 @@
 
 #pragma once
 
-
-#include "ofTrueTypeFont.h"
 #include "ofxFontStash.h"
 #include <map>
 
+class ofTrueTypeFont;
 
 class ofxTrueTypeFontFS : public ofTrueTypeFont{
 	

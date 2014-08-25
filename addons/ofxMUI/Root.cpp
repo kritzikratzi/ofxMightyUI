@@ -19,15 +19,19 @@ mui::Root * mui::Root::INSTANCE = NULL;
 
 //--------------------------------------------------------------
 void mui::Root::init(){
-	#ifdef TARGET_OS_IPHONE
-	NativeIOS::init(); 
-	#endif	
+	#if TARGET_OS_IPHONE
+	NativeIOS::init();
+//	#elif TARGET_OS_MAC
+//	NativeOSX::init();
+	#endif
 }
 
 void mui::Root::handleUpdate(){
 	tweener.step( ofGetSystemTime() );
-	#ifdef TARGET_OS_IPHONE
-	NativeIOS::update(); 
+	#if TARGET_OS_IPHONE
+	NativeIOS::update();
+//	#elif TARGET_OS_MAC
+//	NativeOSX::init();
 	#endif
 	Container::handleUpdate();
     
@@ -61,8 +65,10 @@ void mui::Root::handleDraw(){
 
 //--------------------------------------------------------------
 mui::Container * mui::Root::handleTouchDown( ofTouchEventArgs &touch ){
-	#ifdef TARGET_OS_IPHONE
-	NativeIOS::hide(); 
+	#if TARGET_OS_IPHONE
+	NativeIOS::hide();
+//	#elif TARGET_OS_MAC
+//	NativeOSX::hide();
 	#endif
 	
 	ofTouchEventArgs copy = touch; 
@@ -147,14 +153,18 @@ void mui::Root::fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &cop
 
 //--------------------------------------------------------------
 void mui::Root::showTextField( TextField * tf ){
-	#ifdef TARGET_OS_IPHONE
-	NativeIOS::showTextField( tf ); 
+	#if TARGET_OS_IPHONE
+	NativeIOS::showTextField( tf );
+//	#elif TARGET_OS_MAC
+//	NativeOSX::showTextField( tf );
 	#endif
 }
 
 void mui::Root::hideTextFields(){
-    #ifdef TARGET_OS_IPHONE
-    NativeIOS::hide(); 
+    #if TARGET_OS_IPHONE
+    NativeIOS::hide();
+//	#elif TARGET_OS_MAC
+//	NativeOSX::hide();
     #endif
 }
 

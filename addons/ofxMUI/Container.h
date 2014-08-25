@@ -12,7 +12,7 @@
 
 namespace mui{
 	class Layout; 
-	class Container : public ofxMultiTouchListener{
+	class Container{
 	public: 
 		float x;
 		float y;

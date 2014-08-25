@@ -59,17 +59,26 @@ namespace mui{
 
 #include <vector>
 #include "ofMain.h"
-#include "ofxiPhone.h"
 #include "ofxFBOTexture.h"
 #include "CppTweener.h"
 #include <Poco/BasicEvent.h>
 #include <Poco/Delegate.h>
 
-#ifdef TARGET_OS_IPHONE
-#include "NativeIOS.h"
+#if TARGET_OS_IPHONE
+	#include "ofxiPhone.h"
+	#include "NativeIOS.h"
+
+	#ifndef OF_MAX_TOUCHES
+		#warning OF_MAX_TOUCHES not defined, assuming 20.
+		#define OF_MAX_TOUCHES 20
+	#endif
+//#elif TARGET_OS_MAC
+//	#include "NativeOSX.h"
+#elif TARGET_OS_MAC
+	#warning don't use textfields, lol
 #elif MUI_BE_INSANE
 #else
-#error No native textfield implementation for this platform. You can define MUI_BE_INSANE to skip over this error if you know you're not using textfields. 
+	#error No native textfield implementation for this platform. You can define MUI_BE_INSANE to skip over this error if you know you're not using textfields.
 #endif
 
 

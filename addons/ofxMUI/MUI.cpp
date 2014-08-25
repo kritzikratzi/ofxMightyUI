@@ -8,11 +8,14 @@
  */
 
 #include "MUI.h"
-#include "ofAppiOSWindow.h"
+#if TARGET_OS_IPHONE
+	#include "ofAppiOSWindow.h"
+#endif
 
 void mui_init(){
-	#ifdef TARGET_OS_IPHONE
+	#if TARGET_OS_IPHONE
 	ofAppiOSWindow * w = ofAppiOSWindow::getInstance();
 	if( w->isRetinaEnabled() ) mui::Helpers::enableRetinaHack();
 	#endif
+	//TODO: allow retina in osx too! 
 }
