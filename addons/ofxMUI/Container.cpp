@@ -12,7 +12,7 @@
 //--------------------------------------------------------------
 mui::Container::~Container(){
 	cout << "~Container " << name << endl;
-	ROOT->removeFromResponders( this );
+	MUI_ROOT->removeFromResponders( this );
 }
 
 
@@ -33,7 +33,7 @@ void mui::Container::add( Container * c, int index ){
 //--------------------------------------------------------------
 void mui::Container::remove( Container * c ){
     vector<Container*>::iterator it = find( children.begin(), children.end(), c );
-	ROOT->removeFromResponders( c ); 
+	MUI_ROOT->removeFromResponders( c );
     if( it != children.end() ){
         children.erase( it ); 
     }
@@ -41,7 +41,7 @@ void mui::Container::remove( Container * c ){
 
 //--------------------------------------------------------------
 void mui::Container::remove(){
-	ROOT->removeFromResponders( this );
+	MUI_ROOT->removeFromResponders( this );
     if( parent != NULL ){
         parent->remove( this ); 
     }

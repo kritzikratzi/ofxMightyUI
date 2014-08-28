@@ -25,18 +25,105 @@ The included project is broken at the moment (sorry).
 To get up and running grab the empty example from OF080. I suggest you add ofxMightyUI as a submodule: 
 
 	git submodule add git@github.com:kritzikratzi/ofxMightyUI.git
-	
-In XCode:
+
+To update to a newer of ofxMightyUI run
+
+	git submodule foreach git pull
+
+**iOS**
 
 - Add the folder ofxMightyUI/addons to your XCode project
 - Go to Project>Targets>emptyExample>Build Phases>Link Binary with Libraries. Click the '+' icon and add the CoreText framework. 
 - Go to Project>Targets>emptyExample>Build Phases>Run Script and add <br>
   	```cp -rf ofxMightyUI/bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app"```
 
+**MacOS X**
+
+- Add the folder ofxMightyUI/addons to your XCode project, don't add ofxEasyRetina. 
+- Go to Project>Targets>emptyExample>Build Phases>Run Script and add <br>
+  	```cp -rf ofxMightyUI/bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources"```
+
+
 Usage
 -------
-There's an example in the `src/` folder. 
+There's a longer example in the `src/` folder. 
 
+**testApp.h**
+
+	#include "MUI.h"
+	
+	class testApp{
+		// Root element to which you can add your UI elements
+		mui::Root *root;
+		
+		mui::Button * button;
+		mui::SliderWithLabel * slider; 
+		
+		// callback used for the button onPress
+		void onButtonPress( const void* sender, ofTouchEventArgs &args ); 
+	}
+	
+**testApp.cpp**
+
+	void testApp::setup(){	
+		...
+		
+		// create root element
+		root = new mui::Root();
+		
+		// create button and register add listener
+		button = new mui::Button( "Button", 20, 200, 70, 30 ); 
+		button->onPress += Poco::Delegate<testApp, ofTouchEventArgs>( this, &testApp::onButtonPress );
+		root->add( button ); 
+
+		// create slider
+		slider = new mui::SliderWithLabel( -1, -1, 250, 20, 0, 1, 0.5, 2 );
+	}
+	
+	//--------------------------------------------------------------
+	void testApp::update(){
+		root->handleUpdate();
+	}
+
+	//--------------------------------------------------------------
+	void testApp::draw(){
+		// do this last! 
+		root->handleDraw(); 
+		
+		// do something with slider->value
+	}
+	
+	//--------------------------------------------------------------
+	void testApp::touchDown(ofTouchEventArgs &touch){
+		if( root->handleTouchDown( touch ) ){
+			// touch was "used" by UI elements
+			return; 
+		}
+		
+		// continue as you would normally
+	}
+	
+	//--------------------------------------------------------------
+	void testApp::touchMoved(ofTouchEventArgs &touch){
+		root->handleTouchMoved( touch ); 
+	}
+	
+	//--------------------------------------------------------------
+	void testApp::touchUp(ofTouchEventArgs &touch){
+		root->handleTouchUp( touch ); 
+	}
+	
+	//--------------------------------------------------------------
+	void testApp::touchDoubleTap(ofTouchEventArgs &touch){
+		root->handleTouchDoubleTap( touch ); 
+	}
+	
+	//--------------------------------------------------------------
+	void testApp::onButtonPress( const void* sender, ofTouchEventArgs &args ){
+		if( sender == button ){
+			cout << "button pressed!" << endl; 
+		}
+	}
 
 Licensing 
 ---------

@@ -13,10 +13,11 @@ std::map<std::string, ofImage*> mui::Helpers::images;
 std::map<int, MUI_FONT_TYPE*> mui::Helpers::fonts;
 std::stack<ofRectangle> mui::Helpers::scissorStack;
 
-bool mui::Helpers::retinaMode = false; 
+bool mui::Helpers::retinaMode = false;
+Poco::Path mui::Helpers::dataPath = Poco::Path();
 
 /**
- * not much magic need for that retina hack. 
+ * not much magic need for that retina hack.
  * look inside Label.cpp and and Root.cpp, nothing else should be affected.  
  * btw - if you do decide to enable retina mode you can consider this mui-library 
  * to also calculate in points, not in pixels. 
@@ -29,6 +30,23 @@ void mui::Helpers::enableRetinaHack(){
 	retinaMode = true; 
 }
 
+std::string mui::Helpers::muiPath( std::string path ){
+	// pretty much copy&pasted from OF
+	Poco::Path outputPath;
+	Poco::Path inputPath(path);
+	string strippedDataPath = dataPath.toString();
+	strippedDataPath = ofFilePath::removeTrailingSlash(strippedDataPath);
+	if (inputPath.toString().find(strippedDataPath) != 0) {
+		outputPath = dataPath;
+		outputPath.resolve(inputPath);
+	} else {
+		outputPath = inputPath;
+	}
+	
+	return outputPath.absolute().toString();
+}
+
+
 ofImage * mui::Helpers::getImage( std::string name ){
 
 	std::map<std::string, ofImage*>::iterator iter = mui::Helpers::images.find( name ); 
@@ -36,8 +54,8 @@ ofImage * mui::Helpers::getImage( std::string name ){
 	if( iter == images.end() ){
 		cout << "Image: " << name << " not loaded yet, doing this now!" << endl; 
 		ofImage * img = new ofImage(); 
-		if( retinaMode ) img->loadImage( "mui/retina/" + name + ".png" ); 
-		else img->loadImage( "mui/normal/" + name + ".png" ); 
+		if( retinaMode ) img->loadImage( muiPath("mui/retina/" + name + ".png") );
+		else img->loadImage( muiPath("mui/normal/" + name + ".png") );
 		images[name] = img; 
 		return img; 
 	}
@@ -53,7 +71,7 @@ MUI_FONT_TYPE* mui::Helpers::getFont( int fontSize ){
 	if( iter == fonts.end() ){
 		cout << "Font: " << fontSize << " not loaded yet, doing this now!" << endl; 
 		MUI_FONT_TYPE * font = new MUI_FONT_TYPE();
-		font->loadFont( MUI_FONT, fontSize, true ); 
+		font->loadFont( muiPath(MUI_FONT), fontSize, true );
 		fonts[fontSize] = font; 
 		return font; 
 	}

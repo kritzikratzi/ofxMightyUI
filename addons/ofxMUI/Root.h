@@ -7,9 +7,9 @@
  *
  */
 
-#ifndef MUI_ROOT
-#define MUI_ROOT
-#define ROOT Root::INSTANCE
+#pragma once
+
+#define MUI_ROOT Root::INSTANCE
 
 namespace mui{
 	typedef  Container* (Container::*PrimaryHandler)( ofTouchEventArgs& );
@@ -57,5 +57,3 @@ namespace mui{
 	};
 }
 
-
-#endif

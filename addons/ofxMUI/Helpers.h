@@ -19,7 +19,8 @@ namespace mui{
 	class Helpers{
 	public: 
 		static void enableRetinaHack(); 
-		static ofImage * getImage( string what ); 
+		static string muiPath( string path );
+		static ofImage * getImage( string what );
 		static MUI_FONT_TYPE * getFont( int size ); // get a font for a specific pixel size
 		static void drawString( string s, float x = 0, float y = 0, int size = MUI_FONT_SIZE ); // draw retina friendly string
 		static void roundedRect(float x, float y, float w, float h, float r); 
@@ -39,12 +40,13 @@ namespace mui{
 		static bool inside( Container * container, float x, float y ); 
         static ofTouchEventArgs translateTouch( ofTouchEventArgs &touch, Container * src, Container * dest );
         static ofPoint translateCoords( float x, float y, Container * src, Container * dest ); 
-
+		static Poco::Path dataPath;
 	private:
 		static std::map<std::string, ofImage*> images;
 		static std::map<int, MUI_FONT_TYPE*> fonts;
-        static std::stack<ofRectangle> scissorStack; 
-	}; 
+        static std::stack<ofRectangle> scissorStack;
+		
+	};
 }
 
 
