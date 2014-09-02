@@ -134,11 +134,13 @@ int ofxTrueTypeFontFS::getNumCharacters(){
 //------------------------------------------------------------------------
 ofTTFCharacter ofxTrueTypeFontFS::getCharacterAsPoints(int character){
 	// how this is not an error is beyond me
+	return ofTTFCharacter(); 
 }
 
 //------------------------------------------------------------------------
 vector<ofTTFCharacter> getStringAsPoints(string str){
 	// same
+	return vector<ofTTFCharacter>(); 
 }
 
 //------------------------------------------------------------------------

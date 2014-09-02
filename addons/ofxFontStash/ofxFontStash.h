@@ -39,9 +39,13 @@
 
 #include "ofMain.h"
 
+#ifdef _WIN32
+#include "fontstash.h"
+#else
 extern "C" {
 	#include "fontstash.h"
 }
+#endif
 
 
 class ofxFontStash{
