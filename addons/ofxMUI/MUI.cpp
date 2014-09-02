@@ -12,6 +12,7 @@
 
 #if TARGET_OS_IPHONE
 	#include "ofAppiOSWindow.h"
+	#include <CoreFoundation/CoreFoundation.h>
 #endif
 
 void mui_init(){
@@ -22,7 +23,28 @@ void mui_init(){
 	//TODO: allow retina in osx too!
 	
 	Poco::Path appPath;
-	#if TARGET_OS_MAC
+	#if TARGET_OS_IPHONE
+		// http://www.cocoabuilder.com/archive/cocoa/193451-finding-out-executable-location-from-c-program.html
+		CFBundleRef bundle = CFBundleGetMainBundle();
+		CFURLRef    url  = CFBundleCopyExecutableURL(bundle); // CFBundleCopyResourcesDirectoryURL(bundle);
+		CFURLRef absolute = CFURLCopyAbsoluteURL(url);
+		CFStringRef path  = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
+		CFIndex    maxLength = CFStringGetMaximumSizeOfFileSystemRepresentation(path);
+		char        *result = (char*)malloc(maxLength);
+		
+		if(result) {
+			if(!CFStringGetFileSystemRepresentation(path,result, maxLength)) {
+				free(result);
+				result = NULL;
+			}
+		}
+		
+		CFRelease(path);
+		CFRelease(url);
+		CFRelease(absolute);
+		appPath = Poco::Path(result);
+		appPath = appPath.parent();
+	#elif TARGET_OS_MAC
 		// http://www.cocoabuilder.com/archive/cocoa/193451-finding-out-executable-location-from-c-program.html
 		CFBundleRef bundle = CFBundleGetMainBundle();
 		CFURLRef    url  = CFBundleCopyExecutableURL(bundle); // CFBundleCopyResourcesDirectoryURL(bundle);

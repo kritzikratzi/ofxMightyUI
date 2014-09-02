@@ -44,7 +44,7 @@ std::string mui::Helpers::muiPath( std::string path ){
 		outputPath = inputPath;
 	}
 	
-	return outputPath.absolute().toString();
+	return outputPath.toString();
 }
 
 
