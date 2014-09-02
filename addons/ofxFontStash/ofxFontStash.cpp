@@ -33,6 +33,7 @@
 
 #include <iostream>
 #include "ofxFontStash.h"
+#include "fontstash.h"
 #include "ofMain.h"
 
 ofxFontStash::ofxFontStash(){

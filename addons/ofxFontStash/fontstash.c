@@ -21,19 +21,14 @@
 // Oriol Ferrer Mesià made tiny modifications to make this render text flipped vertically
 // Also changed the include ifdefs
 
-/* 
-#ifdef __MACOSX__
-#include <OpenGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
-*/
 
 //oriol replacing platform includes to work better in OpenFrameworks
 //from http://stackoverflow.com/questions/5919996/how-to-detect-reliably-mac-os-x-ios-linux-windows-in-c-preprocessor
 #ifdef _WIN32
+	#include <windows.h>
 	#include <gl/gl.h>
 #elif _WIN64
+	#include <windows.h>
 	#include <gl/gl.h>
 #elif __APPLE__
 	#include "TargetConditionals.h"
@@ -363,7 +358,7 @@ void sth_add_glyph(struct sth_stash* stash,
 
 	// Alloc space for new glyph.
 	fnt->nglyphs++;
-	fnt->glyphs = realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph));
+	fnt->glyphs = (sth_glyph*) realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph));
 	if (!fnt->glyphs) return;
 
 	// Init glyph.
@@ -481,7 +476,7 @@ static struct sth_glyph* get_glyph(struct sth_stash* stash, struct sth_font* fnt
 	
 	// Alloc space for new glyph.
 	fnt->nglyphs++;
-	fnt->glyphs = realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph));
+	fnt->glyphs = (sth_glyph*)realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph));
 	if (!fnt->glyphs) return 0;
 
 	// Init glyph.
