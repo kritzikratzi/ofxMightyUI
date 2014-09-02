@@ -89,7 +89,7 @@ void mui::ScrollPane::commit(){
 	wantsToScrollY = maxScrollY != 0 || minScrollY != 0; 
 	
 	view->width = fmaxf( width, maxScrollX + width ); 
-	view->height = fmax( height, maxScrollY + height ); 
+	view->height = fmaxf( height, maxScrollY + height ); 
 }
 
 ofRectangle mui::ScrollPane::getViewBoundingBox(){

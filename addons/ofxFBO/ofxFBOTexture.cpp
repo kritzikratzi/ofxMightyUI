@@ -1,5 +1,6 @@
 
 
+#include "ofConstants.h"
 
 #include "ofxFBOTexture.h"
 
@@ -9,9 +10,13 @@
 #define ofxFBO_BLIT "GL_OES_framebuffer_blit"
 #define ofxFBO_MULTISAMPLE "GL_OES_framebuffer_multisample"
 #define ofxFBO_MAX_RENDERBUFFER_SIZE GL_MAX_RENDERBUFFER_SIZE_OES
-
+#elif _WIN32
+#define ofxFBO_FBO "GL_EXT_framebuffer_object"
+#define ofxFBO_BLIT "GL_EXT_framebuffer_blit"
+#define ofxFBO_MULTISAMPLE "GL_EXT_framebuffer_multisample"
+#define ofxFBO_MAX_RENDERBUFFER_SIZE GL_MAX_RENDERBUFFER_SIZE_EXT
 #else
-#include <gl\GLee.h>
+	#include <gl\GLee.h>
 #define ofxFBO_FBO "GL_EXT_framebuffer_object"
 #define ofxFBO_BLIT "GL_EXT_framebuffer_blit"
 #define ofxFBO_MULTISAMPLE "GL_EXT_framebuffer_multisample"

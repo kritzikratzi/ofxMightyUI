@@ -967,7 +967,7 @@ int stbtt_GetGlyphShape(const stbtt_fontinfo *info, int glyph_index, stbtt_verte
    if (numberOfContours > 0) {
       stbtt_uint8 flags=0,flagcount;
       stbtt_int32 ins, i,j=0,m,n, next_move, was_off=0, off, start_off=0, curve_end=0;
-      stbtt_int32 x,y,cx,cy,sx,sy, scx,scy;
+      stbtt_int32 x,y,cx,cy,sx,sy, scx=0,scy=0;
       stbtt_uint8 *points;
       endPtsOfContours = (data + g + 10);
       ins = ttUSHORT(data + g + 10 + numberOfContours * 2);

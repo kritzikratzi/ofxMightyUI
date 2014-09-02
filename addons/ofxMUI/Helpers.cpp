@@ -8,6 +8,7 @@
  */
 
 #include "MUI.h"
+#include <locale>
 
 std::map<std::string, ofImage*> mui::Helpers::images; 
 std::map<int, MUI_FONT_TYPE*> mui::Helpers::fonts;
@@ -61,7 +62,6 @@ ofImage * mui::Helpers::getImage( std::string name ){
 	}
 	
 	return iter->second;
-	return NULL; 
 }
 
 MUI_FONT_TYPE* mui::Helpers::getFont( int fontSize ){
@@ -229,10 +229,11 @@ ofColor mui::Helpers::grey( int g, int a ){
 // compares two strings with a strict weak order,
 // so stringLtString(a,a) will return false (obviously)
 bool mui::Helpers::stringLtString(string strA, string strB){
+	static std::locale loc;
     int N = MIN( strA.length(), strB.length() );
     for( int i = 0; i < N; i++ ){
-        char chA = std::toupper( strA[i] );
-        char chB = std::toupper( strB[i] );
+        char chA = std::toupper( strA[i], loc );
+        char chB = std::toupper( strB[i], loc );
         bool isLetterA = chA >= 'A' && chA <= 'Z';
         bool isLetterB = chB >= 'A' && chB <= 'Z';
         bool isDigitA = chA >= '0' && chA <= '9';

@@ -63,6 +63,19 @@ namespace mui{
 #include "CppTweener.h"
 #include <Poco/BasicEvent.h>
 #include <Poco/Delegate.h>
+#include <math.h>
+
+// wtf windows...  
+// https://code.google.com/p/py-lepton/source/browse/trunk/lepton/renderer.h?r=222
+#ifndef fminf
+	#define fminf(x, y) (((x) < (y)) ? (x) : (y))
+#endif
+#ifndef fmaxf
+	#define fmaxf(x, y) (((x) < (y)) ? (y) : (x))
+#endif
+#ifndef roundf
+#define roundf(x) (x >= 0.0f ? floorf(x + 0.5f) : ceilf(x - 0.5f))
+#endif
 
 #if TARGET_OS_IPHONE
 	#include "ofxiPhone.h"
@@ -76,6 +89,8 @@ namespace mui{
 //	#include "NativeOSX.h"
 #elif TARGET_OS_MAC
 	#warning don't use textfields, lol
+#elif TARGET_OS_WIN32
+	#pragma message ("don't use textfields!") 
 #elif MUI_BE_INSANE
 #else
 	#error No native textfield implementation for this platform. You can define MUI_BE_INSANE to skip over this error if you know you're not using textfields.
@@ -83,7 +98,7 @@ namespace mui{
 
 
 #ifndef OF_MAX_TOUCHES 
-#warning OF_MAX_TOUCHES not defined, assuming 20.
+#pragma message(" OF_MAX_TOUCHES not defined, assuming 20.")
 #define OF_MAX_TOUCHES 20
 #endif
 
