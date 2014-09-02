@@ -358,7 +358,11 @@ void sth_add_glyph(struct sth_stash* stash,
 
 	// Alloc space for new glyph.
 	fnt->nglyphs++;
-	fnt->glyphs = (sth_glyph*) realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph));
+	#ifdef _WIN32
+		fnt->glyphs = (sth_glyph*) realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph));
+	#else
+		fnt->glyphs = realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph));
+	#endif
 	if (!fnt->glyphs) return;
 
 	// Init glyph.
@@ -476,7 +480,11 @@ static struct sth_glyph* get_glyph(struct sth_stash* stash, struct sth_font* fnt
 	
 	// Alloc space for new glyph.
 	fnt->nglyphs++;
-	fnt->glyphs = (sth_glyph*)realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph));
+	#ifdef _WIN32
+		fnt->glyphs = (sth_glyph*)realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph));
+	#else
+		fnt->glyphs = realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph));
+	#endif
 	if (!fnt->glyphs) return 0;
 
 	// Init glyph.
