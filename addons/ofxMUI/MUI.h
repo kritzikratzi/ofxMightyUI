@@ -59,7 +59,7 @@ namespace mui{
 
 #include <vector>
 #include "ofMain.h"
-#include "ofxFBOTexture.h"
+//#include "ofxFBOTexture.h"
 #include "CppTweener.h"
 #include <Poco/BasicEvent.h>
 #include <Poco/Delegate.h>
@@ -90,7 +90,9 @@ namespace mui{
 #elif TARGET_OS_MAC
 	#warning don't use textfields, lol
 #elif TARGET_OS_WIN32
-	#pragma message ("don't use textfields!") 
+	#pragma message ("don't use textfields!")
+#elif __ANDROID__
+	#pragma message ( "don't use textfields!")
 #elif MUI_BE_INSANE
 #else
 	#error No native textfield implementation for this platform. You can define MUI_BE_INSANE to skip over this error if you know you're not using textfields.

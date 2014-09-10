@@ -44,6 +44,7 @@ std::string mui::Helpers::muiPath( std::string path ){
 		outputPath = inputPath;
 	}
 	
+	cout << "loading path: " << outputPath.toString() << " || " << outputPath.absolute().toString() << " || " << path << endl;
 	return outputPath.absolute().toString();
 }
 

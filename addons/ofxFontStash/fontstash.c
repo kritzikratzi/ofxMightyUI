@@ -41,6 +41,9 @@
 	#else
 		// Unsupported platform
 	#endif
+#elif __ANDROID__
+	#include <GLES/gl.h>
+	#include <GLES/glext.h>
 #elif __linux
 	#include <GL/gl.h>
 #elif __unix // all unices not caught above

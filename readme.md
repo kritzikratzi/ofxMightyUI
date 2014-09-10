@@ -52,6 +52,23 @@ To update to a newer of ofxMightyUI run
   		```xcopy /e /i /y "$(ProjectDir)..\..\..\export\vs\*.dll" "$(ProjectDir)bin"```<br>
   		```xcopy /e /i /y "$(ProjectDir)ofxMightyUI\bin\data\mui" "$(ProjectDir)bin\data\mui"```
 
+**Android**
+
+- Refresh your project view (press F5), the ofxMightyUI subproject should show up
+- Right click>Resource Configuration>Exclude From Build>Release and Debug for these folders: 
+	- ofxMightyUI/addons/ofxFBO
+	- ofxMightyUI/addons/ofxEasyRetina
+	- ofxMightyUI/addons/ofxMUI/native
+	- ofxMightyUI/addons/ofxMUI/native-osx
+	- ofxMightyUI/src
+	
+Also find the excludes section in config.make and add those same folders: 
+
+	PROJECT_EXCLUSIONS = $(PROJECT_ROOT)/ofxMightyUI/addons/ofxFBO
+	PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/ofxMightyUI/addons/ofxEasyRetina
+	PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/ofxMightyUI/addons/ofxMUI/native
+	PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/ofxMightyUI/addons/ofxMUI/native-osx
+	PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/ofxMightyUI/src
 
 Usage
 -------
