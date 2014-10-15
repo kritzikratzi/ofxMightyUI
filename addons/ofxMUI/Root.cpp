@@ -40,6 +40,7 @@ void mui::Root::handleUpdate(){
 
 //--------------------------------------------------------------
 void mui::Root::handleDraw(){
+	ofPushStyle();
 	ofFill(); 
 	ofSetLineWidth( 1 ); 
 	ofSetColor( 255, 255, 255 ); 
@@ -58,7 +59,8 @@ void mui::Root::handleDraw(){
 	
 	ofDisableAlphaBlending(); 
     
-    handleRemovals(); 
+    handleRemovals();
+	ofPopStyle();
 }
 
 

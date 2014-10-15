@@ -71,3 +71,11 @@ void mui_init(){
 	
 	mui::Helpers::dataPath = appPath.absolute();
 }
+
+
+string mui::MuiConfig::font = "mui/fonts/Minecraftia.ttf";
+bool mui::MuiConfig::debugDraw = false;
+int mui::MuiConfig::scrollPaneBleed = 30;
+int mui::MuiConfig::scrollToBaseDuration = 600;
+int mui::MuiConfig::scrollVelocityDecrease = 300;
+int mui::MuiConfig::fontSize = 12;
