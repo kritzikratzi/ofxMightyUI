@@ -194,7 +194,7 @@ mui::Container * mui::Container::handleTouchDoubleTap( ofTouchEventArgs &touch )
 	if( !visible ) return NULL; 
 	
 	
-	if( touch.x >= x && touch.x <= width && touch.y >= 0 && touch.y <= height ){
+	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
 		float x, y; 
 		Container * touched; 
 		

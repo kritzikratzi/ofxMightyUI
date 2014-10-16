@@ -17,8 +17,10 @@
 
 void mui_init(){
 	#if TARGET_OS_IPHONE
-	ofAppiOSWindow * w = ofAppiOSWindow::getInstance();
-	if( w->isRetinaEnabled() ) mui::Helpers::enableRetinaHack();
+	if( mui::MuiConfig::detectRetina ){
+		ofAppiOSWindow * w = ofAppiOSWindow::getInstance();
+		if( w->isRetinaEnabled() ) mui::Helpers::enableRetinaHack();
+	}
 	#endif
 	//TODO: allow retina in osx too!
 	
@@ -79,3 +81,4 @@ int mui::MuiConfig::scrollPaneBleed = 30;
 int mui::MuiConfig::scrollToBaseDuration = 600;
 int mui::MuiConfig::scrollVelocityDecrease = 300;
 int mui::MuiConfig::fontSize = 12;
+bool mui::MuiConfig::detectRetina = true;

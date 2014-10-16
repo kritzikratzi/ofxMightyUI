@@ -134,8 +134,11 @@ namespace mui{
 		// guessing around ...
 		static int scrollVelocityDecrease;
 		
-		// standard font siz
+		// standard font size
 		static int fontSize;
 		
+		// automaticaly detect retina on device like the ipad?
+		// this must be set before calling mui_init()
+		static bool detectRetina;
 	};
 }

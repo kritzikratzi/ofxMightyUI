@@ -128,9 +128,7 @@ mui::Container * mui::Root::handleTouchDoubleTap( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::Root::fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &copy, Container * container ){
-// TMP
-// DISABLE RETINA STUFF, ALREADY HANDLED BY OF
-	if( Helpers::retinaMode && false ){
+	if( Helpers::retinaMode ){
 		copy.x = touch.x/2; 
 		copy.y = touch.y/2;
         copy.xspeed = touch.xspeed/2;
