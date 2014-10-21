@@ -9,7 +9,6 @@
 
 #include "MUI.h"
 
-
 // TODO: the handleXX functions might return null, even if touchMovedOutside and touchUpOutside 
 //       delegated to containers. this shouldn't be the case. 
 
@@ -24,6 +23,7 @@ void mui::Root::init(){
 //	#elif TARGET_OS_MAC
 //	NativeOSX::init();
 	#endif
+	editing = NULL;
 }
 
 void mui::Root::handleUpdate(){
@@ -36,6 +36,16 @@ void mui::Root::handleUpdate(){
 	Container::handleUpdate();
     
     handleRemovals();
+	
+	static float lastX = 0;
+	static float lastY = 0;
+	if( editing != NULL && move ){
+		editing->x += ofGetMouseX() - lastX;
+		editing->y += ofGetMouseY() - lastY;
+	}
+	
+	lastX = ofGetMouseX();
+	lastY = ofGetMouseY();
 }
 
 //--------------------------------------------------------------
@@ -58,7 +68,39 @@ void mui::Root::handleDraw(){
 	
 	ofDisableAlphaBlending(); 
     
-    handleRemovals(); 
+    handleRemovals();
+	
+	if( editing != NULL ){
+		ofPushMatrix();
+		ofPoint pos = editing->getGlobalPosition();
+		ofTranslate( pos.x, pos.y );
+		if( move )
+			ofSetColor(255,0,0);
+		else
+			ofSetColor(255,255,0);
+		
+		ofNoFill();
+		ofRect(0, 0, editing->width, editing->height);
+		
+		ofPopMatrix();
+
+		ofPushMatrix();
+		ofTranslate(0, 200);
+		ofFill();
+		ofSetColor( 255, 100 );
+		ofRect( 0, 0, 300, 300 );
+		stringstream str;
+		Container * c = editing;
+		int lines = 0;
+		while( c != NULL ){
+			str << c->name << endl;
+			c = c->parent;
+		}
+		ofSetColor( 0 );
+		ofDrawBitmapString(str.str(), 10, 10 ); 
+		ofPopMatrix();
+		ofFill();
+	}
 }
 
 
@@ -146,6 +188,37 @@ void mui::Root::fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &cop
 		copy.x -= pos.x;
 		copy.y -= pos.y;
 	}
+}
+
+
+mui::Container * mui::Root::handleKeyPressed( int key ){
+	if( key == '\t' ){
+		ofTouchEventArgs touch;
+		touch.x = ofGetMouseX();
+		touch.y = ofGetMouseY();
+		ofTouchEventArgs copy = touch;
+		fixTouchPosition( touch, copy, NULL );
+		Container * c = getContainer(touch.x, touch.y);
+		
+		if( c == editing ){
+			editing = NULL;
+		}
+		else{
+			editing = c;
+		}
+		
+		move = false;
+		return this;
+	}
+	else if( key == 'm' && editing != NULL ){
+		move = !move;
+		return this;
+	}
+}
+
+
+mui::Container * mui::Root::handleKeyReleased( int key ){
+	
 }
 
 

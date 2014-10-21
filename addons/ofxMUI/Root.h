@@ -31,6 +31,9 @@ namespace mui{
 		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
 		virtual Container * handleTouchDoubleTap( ofTouchEventArgs &touch );
 		
+		virtual Container * handleKeyPressed( int key );
+		virtual Container * handleKeyReleased( int key );
+		
 		virtual bool becomeResponder( Container * container, ofTouchEventArgs &touch );
 		virtual void showTextField( TextField * tf );
 		virtual void hideTextFields();
@@ -53,7 +56,10 @@ namespace mui{
 		tween::Tweener tweener;
         
         vector<Container*> safeRemoveAndDeleteList; 
-        vector<Container*> safeRemoveList; 
+        vector<Container*> safeRemoveList;
+		
+		Container * editing;
+		bool move = false; 
 	};
 }
 

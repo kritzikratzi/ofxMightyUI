@@ -265,6 +265,36 @@ mui::Container * mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
 	return NULL; 
 }
 
+//--------------------------------------------------------------
+mui::Container * mui::Container::getContainer( float tx, float ty ){
+	if( tx >= 0 && tx <= width && ty >= 0 && ty <= height ){
+		float x, y;
+		Container * touched;
+		
+		std::vector<Container*>::reverse_iterator it = children.rbegin();
+		while( it != children.rend() ) {
+			tx -= ( x = (*it)->x );
+			ty -= ( y = (*it)->y );
+			touched = (*it)->getContainer( tx, ty );
+			tx += x;
+			ty += y;
+			
+			if( touched != NULL ){
+				// that container is touched!
+				return touched;
+			}
+			
+			++it;
+		}
+		
+		return this;
+	}
+	else{
+		return NULL;
+	}
+}
+
+
 
 //--------------------------------------------------------------
 bool mui::Container::hasFocus(){

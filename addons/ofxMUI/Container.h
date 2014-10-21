@@ -43,6 +43,8 @@ namespace mui{
 			//for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
 			//	startedInside[i] = false; 
 			//}
+			static int num = 0;
+			this->name = "Container-" + ofToString(++num);
 		};
 		~Container();
 		
@@ -71,6 +73,8 @@ namespace mui{
 		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
 		virtual Container * handleTouchDoubleTap( ofTouchEventArgs &touch );
 
+		virtual Container * getContainer( float x, float y );
+		
 		virtual bool hasFocus();
 		virtual bool hasFocus( ofTouchEventArgs &touch );
 		virtual ofPoint getGlobalPosition();
