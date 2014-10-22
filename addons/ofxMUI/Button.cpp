@@ -28,7 +28,7 @@ void mui::Button::init( std::string title ){
 	label->horizontalAlign = Center; 
 	label->verticalAlign = Middle; 
 	label->fg.r = label->fg.g = label->fg.b = 255; 
-	label->fontSize = 12; 
+	label->fontSize = 9;
 	label->commit(); 
 	bg = ofColor( 128, 50 );
 	add( label ); 

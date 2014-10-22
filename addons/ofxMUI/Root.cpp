@@ -50,6 +50,7 @@ void mui::Root::handleUpdate(){
 
 //--------------------------------------------------------------
 void mui::Root::handleDraw(){
+	ofPushStyle();
 	ofFill(); 
 	ofSetLineWidth( 1 ); 
 	ofSetColor( 255, 255, 255 ); 
@@ -69,7 +70,7 @@ void mui::Root::handleDraw(){
 	ofDisableAlphaBlending(); 
     
     handleRemovals();
-	
+
 	if( editing != NULL ){
 		ofPushMatrix();
 		ofPoint pos = editing->getGlobalPosition();
@@ -101,6 +102,8 @@ void mui::Root::handleDraw(){
 		ofPopMatrix();
 		ofFill();
 	}
+
+	ofPopStyle();
 }
 
 
@@ -168,9 +171,7 @@ mui::Container * mui::Root::handleTouchDoubleTap( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::Root::fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &copy, Container * container ){
-// TMP
-// DISABLE RETINA STUFF, ALREADY HANDLED BY OF
-	if( Helpers::retinaMode && false ){
+	if( Helpers::retinaMode ){
 		copy.x = touch.x/2; 
 		copy.y = touch.y/2;
         copy.xspeed = touch.xspeed/2;

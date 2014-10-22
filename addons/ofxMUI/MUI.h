@@ -9,28 +9,21 @@
 
 #pragma once
 
-// retina mode on or off? 
-// this will be dynamic one day, 
-// but you can safely use the define for querying
-#define MUI_RETINA false
-
 // default font
-#define MUI_FONT "mui/fonts/Minecraftia.ttf"
-
-// enable/disable debug drawing. this will put rectangles 
-// around each component
-#define MUI_DEBUG_DRAW false
+#define MUI_FONT MuiConfig::font
 
 // already deprecated, don't use
-#define MUI_SCROLLPANE_BLEED 30
+#define MUI_SCROLLPANE_BLEED mui::MuiConfig::scrollPaneBleed
 
 // time it takes for a scrollpane to scroll back to it's initial position, time in ms
 // should be 6*325, feels way too slow
-#define MUI_SCROLL_TO_BASE_DURATION 600
+#define MUI_SCROLL_TO_BASE_DURATION mui::MuiConfig::scrollToBaseDuration
 
 // rate at which the scroll velocity decreases, not sure about the unit, pixels/s?
 // guessing around ... 
-#define MUI_SCROLL_VELOCITY_DECREASE 300 
+#define MUI_SCROLL_VELOCITY_DECREASE mui::MuiConfig::scrollVelocityDecrease
+
+#define MUI_DEBUG_DRAW mui::MuiConfig::debugDraw
 
 // which font rendering thingie to use?
 // works with ofTrueTypeFont and ofxTrueTypeFontFS
@@ -59,7 +52,7 @@ namespace mui{
 
 #include <vector>
 #include "ofMain.h"
-//#include "ofxFBOTexture.h"
+#include "ofxFBOTexture.h"
 #include "CppTweener.h"
 #include <Poco/BasicEvent.h>
 #include <Poco/Delegate.h>
@@ -90,9 +83,7 @@ namespace mui{
 #elif TARGET_OS_MAC
 	#warning don't use textfields, lol
 #elif TARGET_OS_WIN32
-	#pragma message ("don't use textfields!")
-#elif __ANDROID__
-	#pragma message ( "don't use textfields!")
+	#pragma message ("don't use textfields!") 
 #elif MUI_BE_INSANE
 #else
 	#error No native textfield implementation for this platform. You can define MUI_BE_INSANE to skip over this error if you know you're not using textfields.
@@ -120,4 +111,34 @@ namespace mui{
 #include "TextField.h"
 #include "SegmentedSelect.h"
 
-void mui_init(); 
+void mui_init();
+
+namespace mui{
+	class MuiConfig{
+	public:
+		// default font
+		static string font;
+		
+		// enable/disable debug drawing. this will put rectangles
+		// around each component
+		static bool debugDraw;
+		
+		// already deprecated, don't use
+		static int scrollPaneBleed;
+		
+		// time it takes for a scrollpane to scroll back to it's initial position, time in ms
+		// should be 6*325, feels way too slow
+		static int scrollToBaseDuration;
+		
+		// rate at which the scroll velocity decreases, not sure about the unit, pixels/s?
+		// guessing around ...
+		static int scrollVelocityDecrease;
+		
+		// standard font size
+		static int fontSize;
+		
+		// automaticaly detect retina on device like the ipad?
+		// this must be set before calling mui_init()
+		static bool detectRetina;
+	};
+}
