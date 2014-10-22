@@ -36,7 +36,7 @@ namespace mui{
 		string selected; 
 		
 		virtual void addLabel( string text );
-		virtual void commit(); 
+		virtual void commit();
 		
 		virtual void update();
 		virtual void draw();

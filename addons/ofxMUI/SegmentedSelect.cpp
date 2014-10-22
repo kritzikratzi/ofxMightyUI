@@ -23,6 +23,9 @@
 
 //--------------------------------------------------------------
 void mui::SegmentedButton::initSegmentedButton(){
+	static int i;
+	this->name = "segmentedbutton-" + ofToString(++i);
+	
 	label->fontSize = 10; 
 	label->commit(); 
 }
