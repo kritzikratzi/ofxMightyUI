@@ -48,6 +48,10 @@ To update to a newer of ofxMightyUI run
 - Create a groups (filters) for ofxMightyUI and subgroups for ofxMUI and ofxFontStash
 - Add the .cpp and .h from those folders to their respective groups
 - Go to Project>Properties, choose "All configurations" from the dropdown on top
+- Go to C/C++>General and edit additional include directories. Add the following<br>
+		```ofxMightyUI\addons\ofxMUI```<br>
+		```ofxMightyUI\addons\ofxFontStash```
+
 - Go to Build Events>Post-Build Events and edit command line. <br>
   		```xcopy /e /i /y "$(ProjectDir)..\..\..\export\vs\*.dll" "$(ProjectDir)bin"```<br>
   		```xcopy /e /i /y "$(ProjectDir)ofxMightyUI\bin\data\mui" "$(ProjectDir)bin\data\mui"```
