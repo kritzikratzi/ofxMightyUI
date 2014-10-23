@@ -52,7 +52,7 @@ namespace mui{
 
 #include <vector>
 #include "ofMain.h"
-#include "ofxFBOTexture.h"
+//#include "ofxFBOTexture.h"
 #include "CppTweener.h"
 #include <Poco/BasicEvent.h>
 #include <Poco/Delegate.h>
