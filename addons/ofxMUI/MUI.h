@@ -140,5 +140,13 @@ namespace mui{
 		// automaticaly detect retina on device like the ipad?
 		// this must be set before calling mui_init()
 		static bool detectRetina;
+		static bool useRetinaAssets;
+		
+		// pixels per pixel.
+		static int scaleFactor;
+		
+		// path to the data folder (containing the mui folder)
+		static Poco::Path dataPath;
+
 	};
 }

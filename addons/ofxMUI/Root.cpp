@@ -41,6 +41,7 @@ void mui::Root::handleUpdate(){
 //--------------------------------------------------------------
 void mui::Root::handleDraw(){
 	ofPushStyle();
+	ofScale( mui::MuiConfig::scaleFactor, mui::MuiConfig::scaleFactor, mui::MuiConfig::scaleFactor );
 	ofFill(); 
 	ofSetLineWidth( 1 ); 
 	ofSetColor( 255, 255, 255 ); 
@@ -89,8 +90,10 @@ mui::Container * mui::Root::handleTouchMoved( ofTouchEventArgs &touch ){
 	Container * touched = Container::handleTouchMoved( copy );
     
 	if( touched != respondingContainer[touch.id] && respondingContainer[touch.id] != NULL ){
-        copy = Helpers::translateTouch( touch, this, respondingContainer[touch.id] );
-        copy = Helpers::translateTouch( touch, this, respondingContainer[touch.id] );
+		copy = touch;
+		fixTouchPosition( touch, copy, NULL );
+        copy = Helpers::translateTouch( copy, this, respondingContainer[touch.id] );
+        copy = Helpers::translateTouch( copy, this, respondingContainer[touch.id] );
         respondingContainer[touch.id]->touchMovedOutside( copy );
 	}
 	
@@ -128,18 +131,10 @@ mui::Container * mui::Root::handleTouchDoubleTap( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::Root::fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &copy, Container * container ){
-	if( Helpers::retinaMode ){
-		copy.x = touch.x/2; 
-		copy.y = touch.y/2;
-        copy.xspeed = touch.xspeed/2;
-        copy.yspeed = touch.yspeed/2; 
-	}
-	else{
-		copy.x = touch.x; 
-		copy.y = touch.y; 
-        copy.xspeed = touch.xspeed; 
-        copy.yspeed = touch.yspeed; 
-	}
+	copy.x = touch.x/mui::MuiConfig::scaleFactor;
+	copy.y = touch.y/mui::MuiConfig::scaleFactor;
+	copy.xspeed = touch.xspeed/mui::MuiConfig::scaleFactor;
+	copy.yspeed = touch.yspeed/mui::MuiConfig::scaleFactor;
 	
 	if( container != NULL ){
 		ofPoint pos = container->getGlobalPosition();

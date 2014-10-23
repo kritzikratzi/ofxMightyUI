@@ -40,8 +40,8 @@ void mui::Label::draw(){
 	glBlendFunc( GL_ONE, GL_ONE_MINUS_SRC_ALPHA ); 
 //	fbo.draw( (int)size.x, (int)size.y, size.width, size.height );
     ofSetColor( fg.r, fg.g, fg.b );
-	if( Helpers::retinaMode ){
-		MUI_FONT_TYPE * font = Helpers::getFont( 2*fontSize );
+	if( mui::MuiConfig::scaleFactor != 1 ){
+		MUI_FONT_TYPE * font = Helpers::getFont( mui::MuiConfig::scaleFactor*fontSize );
 		ofPushMatrix();
 		ofTranslate( (int)(size.x-boundingBox.x), (int)(size.y-(int)boundingBox.y) );
 		ofScale( 0.5, 0.5 );
@@ -49,7 +49,7 @@ void mui::Label::draw(){
 		ofPopMatrix();
 	}
 	else{
-		MUI_FONT_TYPE * font = Helpers::getFont( Helpers::retinaMode?(fontSize*2):fontSize );
+		MUI_FONT_TYPE * font = Helpers::getFont( mui::MuiConfig::scaleFactor );
 		font->drawString( displayText, (int)(size.x-boundingBox.x), (int)(size.y-(int)boundingBox.y) );
 	}
 	

@@ -18,7 +18,6 @@ namespace mui{
 	
 	class Helpers{
 	public: 
-		static void enableRetinaHack(); 
 		static string muiPath( string path );
 		static ofImage * getImage( string what );
 		static MUI_FONT_TYPE * getFont( int size ); // get a font for a specific pixel size
@@ -35,12 +34,10 @@ namespace mui{
 		static ofColor rgba( int rgba ); 
 		static ofColor grey( int g, int a = 255 );
         static bool stringLtString( string a, string b ); 
-		static bool retinaMode;
-		static ofRectangle alignBox( Container * container, float width, float height, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign ); 
+		static ofRectangle alignBox( Container * container, float width, float height, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign );
 		static bool inside( Container * container, float x, float y ); 
         static ofTouchEventArgs translateTouch( ofTouchEventArgs &touch, Container * src, Container * dest );
         static ofPoint translateCoords( float x, float y, Container * src, Container * dest ); 
-		static Poco::Path dataPath;
 	private:
 		static std::map<std::string, ofImage*> images;
 		static std::map<int, MUI_FONT_TYPE*> fonts;
