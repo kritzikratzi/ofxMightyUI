@@ -17,7 +17,9 @@ namespace mui{
     
     class ScrollPaneView : public Container{
     public:
-        ScrollPaneView( float x, float y, float w, float h ) : Container( x, y, w, h ){};
+        ScrollPaneView( float x, float y, float w, float h ) : Container( x, y, w, h ){
+			focusTransferable = false;
+		};
         virtual void handleDraw();
     };
     
@@ -31,8 +33,8 @@ namespace mui{
 			currentScrollX(0), currentScrollY(0), 
 			pressed(false), 
 			view( NULL ), 
-            animating(false), animatingToBase(false), animatingMomentum(false), 
-            onScreenTest(false)
+            animating(false), animatingToBase(false), animatingMomentum(false),
+			usePagingH(false), numPagesAdded(0)
 			{ init(); };
 		~ScrollPane(); 
 		float scrollX, scrollY; // intended
@@ -40,13 +42,11 @@ namespace mui{
 
 		float minScrollX, minScrollY; 
 		float maxScrollX, maxScrollY; 
-		bool canScrollX, canScrollY; 
+		bool canScrollX, canScrollY;
 		
 		ScrollPaneView * view;
         
-		bool onScreenTest;
-		
-		virtual void init(); 
+		virtual void init();
 		
 		virtual void commit(); 
 		virtual ofRectangle getViewBoundingBox();
@@ -58,6 +58,14 @@ namespace mui{
 		void beginBaseAnimation( float toX, float toY );
 		void beginMomentumAnimation();
 		
+		// use horizontal paging?
+		bool usePagingH;
+		
+		// create a new page.
+		Container * createPage();
+		ScrollPane * createPageWithScrollPane();
+		
+		
 		virtual void updateTouchVelocity( ofTouchEventArgs &touch );
 		virtual void touchDown( ofTouchEventArgs &touch );
 		virtual void touchMoved( ofTouchEventArgs &touch );
@@ -65,6 +73,7 @@ namespace mui{
 		virtual void touchUp( ofTouchEventArgs &touch ); 
 		virtual void touchUpOutside( ofTouchEventArgs &touch ); 
 		virtual void touchDoubleTap( ofTouchEventArgs &touch ); 
+		virtual void touchCanceled( ofTouchEventArgs &touch ); 
 
 		virtual Container * handleTouchDown( ofTouchEventArgs &touch );
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
@@ -92,6 +101,8 @@ namespace mui{
         long lastAnimationTime; 
         float animateX, animateY; // variables used during animation
         float animateToX, animateToY;
+		
+		int numPagesAdded;
 	};
 };
 

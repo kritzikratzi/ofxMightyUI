@@ -30,6 +30,7 @@ namespace mui{
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
 		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
 		virtual Container * handleTouchDoubleTap( ofTouchEventArgs &touch );
+		virtual Container * handleTouchCancelled( ofTouchEventArgs &touch );
 		
 		virtual bool becomeResponder( Container * container, ofTouchEventArgs &touch );
 		virtual void showTextField( TextField * tf );

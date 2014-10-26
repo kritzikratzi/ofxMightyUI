@@ -157,8 +157,8 @@ void mui::Helpers::orientedScissor( float x, float y, float w, float h ){
 
 void mui::Helpers::pushScissor( Container * c, float x, float y, float w, float h ){
     glEnable( GL_SCISSOR_TEST );
-    if( c != NULL && w == -9999 ) w = c->width;
-    if( c != NULL && h == -9999 ) h = c->height;
+    if( c != NULL && w == -9999 ) w = c->width+1;
+    if( c != NULL && h == -9999 ) h = c->height+1;
     
     ofPoint pos(x, y);
     

@@ -125,6 +125,21 @@ mui::Container * mui::Root::handleTouchDoubleTap( ofTouchEventArgs &touch ){
 	return Container::handleTouchDoubleTap( copy ); 
 }
 
+//--------------------------------------------------------------
+mui::Container * mui::Root::handleTouchCancelled( ofTouchEventArgs &touch ){
+	if( respondingContainer[touch.id] != NULL ){
+		respondingContainer[touch.id]->touchCanceled( touch );
+		respondingContainer[touch.id]->singleTouchId = -1;
+		mui::Container * c = respondingContainer[touch.id];
+		respondingContainer[touch.id] = NULL;
+		return c;
+	}
+	else{
+		return NULL;
+	}
+}
+
+
 
 //--------------------------------------------------------------
 void mui::Root::fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &copy, Container * container ){
