@@ -13,8 +13,7 @@
 #if TARGET_OS_IPHONE
 	#include "ofAppiOSWindow.h"
 	#include <CoreFoundation/CoreFoundation.h>
-#endif
-#if TARGET_OS_MAC
+#elif TARGET_OS_MAC
 	#include "ofAppGLFWWindow.h"
 #endif
 
@@ -22,7 +21,10 @@ void mui_init(){
 	#if TARGET_OS_IPHONE
 	if( mui::MuiConfig::detectRetina ){
 		ofAppiOSWindow * w = ofAppiOSWindow::getInstance();
-		if( w->isRetinaEnabled() ) mui::Helpers::enableRetinaHack();
+		if( w->isRetinaEnabled() ){
+			mui::MuiConfig::scaleFactor = 2;
+			mui::MuiConfig::useRetinaAssets = true;
+		}
 	}
 	#endif
 	//TODO: allow retina in osx too!

@@ -49,7 +49,7 @@ void mui::Label::draw(){
 		ofPopMatrix();
 	}
 	else{
-		MUI_FONT_TYPE * font = Helpers::getFont( mui::MuiConfig::scaleFactor );
+		MUI_FONT_TYPE * font = Helpers::getFont( fontSize );
 		font->drawString( displayText, (int)(size.x-boundingBox.x), (int)(size.y-(int)boundingBox.y) );
 	}
 	
