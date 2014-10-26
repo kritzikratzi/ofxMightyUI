@@ -14,6 +14,9 @@
 	#include "ofAppiOSWindow.h"
 	#include <CoreFoundation/CoreFoundation.h>
 #endif
+#if TARGET_OS_MAC
+	#include "ofAppGLFWWindow.h"
+#endif
 
 void mui_init(){
 	#if TARGET_OS_IPHONE
@@ -67,11 +70,18 @@ void mui_init(){
 		CFRelease(absolute);
 		appPath = Poco::Path(result);
 		appPath = appPath.parent().parent().pushDirectory("Resources");
+	
+		if( mui::MuiConfig::detectRetina ){
+			ofAppGLFWWindow * window = (ofAppGLFWWindow*)ofGetWindowPtr();
+			if( window != NULL ){
+				mui::MuiConfig::scaleFactor = window->getPixelScreenCoordScale();
+			}
+		}
 	#else
 		appPath = Poco::Path(ofToDataPath("", true));
 	#endif
 	
-	mui::Helpers::dataPath = appPath.absolute();
+	mui::MuiConfig::dataPath = appPath.absolute();
 }
 
 
@@ -82,3 +92,6 @@ int mui::MuiConfig::scrollToBaseDuration = 600;
 int mui::MuiConfig::scrollVelocityDecrease = 300;
 int mui::MuiConfig::fontSize = 12;
 bool mui::MuiConfig::detectRetina = true;
+bool mui::MuiConfig::useRetinaAssets = true;
+int mui::MuiConfig::scaleFactor = 1;
+Poco::Path mui::MuiConfig::dataPath = Poco::Path();
