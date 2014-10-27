@@ -12,6 +12,7 @@
 
 std::map<std::string, ofImage*> mui::Helpers::images; 
 std::map<int, MUI_FONT_TYPE*> mui::Helpers::fonts;
+std::map<string, MUI_FONT_TYPE*> mui::Helpers::customFonts;
 std::stack<ofRectangle> mui::Helpers::scissorStack;
 
 std::string mui::Helpers::muiPath( std::string path ){
@@ -61,11 +62,26 @@ MUI_FONT_TYPE* mui::Helpers::getFont( int fontSize ){
 	std::map<int, MUI_FONT_TYPE*>::iterator iter = mui::Helpers::fonts.find( fontSize );
 	
 	if( iter == fonts.end() ){
-		cout << "Font: " << fontSize << " not loaded yet, doing this now!" << endl; 
+		cout << "Font: " << fontSize << " not loaded yet, doing this now!" << endl;
 		MUI_FONT_TYPE * font = new MUI_FONT_TYPE();
 		font->loadFont( muiPath(MUI_FONT), fontSize, true );
-		fonts[fontSize] = font; 
-		return font; 
+		fonts[fontSize] = font;
+		return font;
+	}
+	
+	return iter->second;
+}
+
+MUI_FONT_TYPE* mui::Helpers::getFont( string customFont, int fontSize ){
+	string id = customFont + ofToString(fontSize);
+	std::map<string, MUI_FONT_TYPE*>::iterator iter = mui::Helpers::customFonts.find( id );
+	
+	if( iter == customFonts.end() ){
+		cout << "Font: " << fontSize << " not loaded yet, doing this now!" << endl;
+		MUI_FONT_TYPE * font = new MUI_FONT_TYPE();
+		font->loadFont( muiPath(customFont), fontSize, true );
+		customFonts[id] = font;
+		return font;
 	}
 	
 	return iter->second;
