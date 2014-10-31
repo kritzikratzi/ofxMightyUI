@@ -88,7 +88,9 @@ void mui::Label::commit(){
 	// magic trick #2
 	// MUI_FONT_TYPE * font = Helpers::getFont( Helpers::retinaMode?(fontSize*2):fontSize );
 	// magic trick #2.2: fuck retina, we compute the bounding box at normal size!
-	MUI_FONT_TYPE * font = Helpers::getFont( fontSize );
+	MUI_FONT_TYPE * font;
+	if( fontName == "" ) font = Helpers::getFont( fontSize );
+	else  font = Helpers::getFont( fontName, fontSize );
 	boundingBox = font->getStringBoundingBox( text, 0, 0 );
 	
 	

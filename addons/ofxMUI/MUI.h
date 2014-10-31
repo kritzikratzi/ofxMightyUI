@@ -110,6 +110,7 @@ namespace mui{
 #include "SliderWithLabel.h"
 #include "TextField.h"
 #include "SegmentedSelect.h"
+#include "Image.h"
 
 void mui_init();
 

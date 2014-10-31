@@ -146,6 +146,7 @@ mui::Container * mui::ScrollPane::createPage(){
 	return container;
 }
 
+//--------------------------------------------------------------
 mui::ScrollPane * mui::ScrollPane::createPageWithScrollPane(){
 	static int scrollPageCount = 0;
 	mui::ScrollPane * container = new mui::ScrollPane( width*numPagesAdded, 0, width, height );
@@ -157,6 +158,39 @@ mui::ScrollPane * mui::ScrollPane::createPageWithScrollPane(){
 	commit();
 	return container;
 }
+
+//--------------------------------------------------------------
+void mui::ScrollPane::nextPage(int inc){
+	cout << getPageNum() << endl; 
+	gotoPage( getPageNum() + inc);
+}
+
+//--------------------------------------------------------------
+void mui::ScrollPane::prevPage(int dec){
+	gotoPage( getPageNum() - dec);
+}
+
+//--------------------------------------------------------------
+void mui::ScrollPane::gotoPage( int page ){
+	page = ofClamp(page, 0, MAX(numPages()-1,0));
+	beginBaseAnimation(page*width, currentScrollY);
+}
+
+//--------------------------------------------------------------
+int mui::ScrollPane::getPageNum(){
+	if( animating && animatingToBase ){
+		return roundf(animateToX/width-0.499999f);
+	}
+	else{
+		return roundf(currentScrollX/width-0.499999f);
+	}
+}
+
+//--------------------------------------------------------------
+int mui::ScrollPane::numPages(){
+	return numPagesAdded;
+}
+
 
 //--------------------------------------------------------------
 void mui::ScrollPane::update(){
@@ -278,12 +312,12 @@ void mui::ScrollPane::touchMoved( ofTouchEventArgs &touch ){
 		float wantX = initialX - touch.x + touchStartX; 
 		float wantY = initialY - touch.y + touchStartY; 
 		
-		if( wantX > maxScrollX ) wantX = ( wantX + maxScrollX ) / 2; 
-		else if( wantX < minScrollX ) wantX = ( wantX + minScrollX ) / 2; 
+		if( wantX > maxScrollX ) wantX = ( wantX + 2*maxScrollX ) / 3;
+		else if( wantX < minScrollX ) wantX = ( wantX + 2*minScrollX ) / 3;
 		else scrollX = wantX; 
 		
-		if( wantY > maxScrollY ) wantY = ( wantY + maxScrollY ) / 2; 
-		else if( wantY < minScrollY ) wantY = ( wantY + minScrollY ) / 2; 
+		if( wantY > maxScrollY ) wantY = ( wantY + 2*maxScrollY ) / 3;
+		else if( wantY < minScrollY ) wantY = ( wantY + 2*minScrollY ) / 3;
 		else wantY = wantY; 
 		
 		if( canScrollX ) currentScrollX = wantX; 

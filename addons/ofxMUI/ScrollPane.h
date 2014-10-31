@@ -64,6 +64,13 @@ namespace mui{
 		// create a new page.
 		Container * createPage();
 		ScrollPane * createPageWithScrollPane();
+		virtual void nextPage(int inc = 1);
+		virtual void prevPage(int dec = 1);
+		virtual void gotoPage( int page );
+		virtual int getPageNum();
+		virtual int numPages();
+		
+		
 		
 		
 		virtual void updateTouchVelocity( ofTouchEventArgs &touch );
