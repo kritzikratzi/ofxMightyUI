@@ -69,9 +69,13 @@ void mui::Image::touchDoubleTap( ofTouchEventArgs &touch ){
 //--------------------------------------------------------------
 void mui::Image::autoHeight(){
 	ofRectangle rect = getDrawRect();
-	height = -rect.y + rect.height;
+	if( rect.width < width ){
+		height = rect.height*width/rect.width;
+	}
+//	height = -rect.y + rect.height;
 }
 
+//--------------------------------------------------------------
 ofRectangle mui::Image::getDrawRect(){
 	ofImage * img = NULL;
 	

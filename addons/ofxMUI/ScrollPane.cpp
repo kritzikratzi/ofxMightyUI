@@ -45,7 +45,8 @@ void mui::ScrollPaneView::handleDraw(){
 			Helpers::inside( parent, x+c->x, y+c->y ) ||
 			Helpers::inside( parent, x+c->x+c->width, y+c->y ) ||
 			Helpers::inside( parent, x+c->x, y+c->y+c->height ) ||
-			Helpers::inside( parent, x+c->x+c->width, y+c->y+c->height );
+			Helpers::inside( parent, x+c->x+c->width, y+c->y+c->height ) ||
+			Helpers::inside( parent, x+c->x+c->width/2, y+c->y+c->height/2 );
 
 		if( inside || c->drawDirty ){
 			c->handleDraw();
@@ -321,7 +322,7 @@ void mui::ScrollPane::touchMoved( ofTouchEventArgs &touch ){
 		else wantY = wantY; 
 		
 		if( canScrollX ) currentScrollX = wantX; 
-		if( canScrollY ) currentScrollY = wantY; 
+		if( canScrollY ) currentScrollY = wantY;
 		
 		updateTouchVelocity( touch ); 
 		pressedX = touch.x; 
