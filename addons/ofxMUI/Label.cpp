@@ -39,7 +39,7 @@ void mui::Label::draw(){
 	ofSetColor( 255, 255, 255 ); 
 	glBlendFunc( GL_ONE, GL_ONE_MINUS_SRC_ALPHA ); 
 //	fbo.draw( (int)size.x, (int)size.y, size.width, size.height );
-    ofSetColor( fg.r, fg.g, fg.b );
+    ofSetColor( fg.r, fg.g, fg.b, fg.a );
 	if( mui::MuiConfig::scaleFactor != 1 ){
 		MUI_FONT_TYPE * font;
 		if( fontName == "" ) font = Helpers::getFont( mui::MuiConfig::scaleFactor*fontSize );
