@@ -19,14 +19,14 @@ mui::Container::~Container(){
 //--------------------------------------------------------------
 void mui::Container::add( Container * c, int index ){
     if( index == -1 ){
-        children.push_back( c ); 
-        c->parent = this; 
+        children.push_back( c );
+        c->parent = this;
     }
     else{
-        vector<Container*>::iterator it = children.begin(); 
-        it += index; 
-        children.insert( it, c ); 
-        c->parent = this; 
+        vector<Container*>::iterator it = children.begin();
+        it += index;
+        children.insert( it, c );
+        c->parent = this;
     }
 }
 
@@ -35,7 +35,7 @@ void mui::Container::remove( Container * c ){
     vector<Container*>::iterator it = find( children.begin(), children.end(), c );
 	MUI_ROOT->removeFromResponders( c );
     if( it != children.end() ){
-        children.erase( it ); 
+        children.erase( it );
     }
 }
 
@@ -43,14 +43,14 @@ void mui::Container::remove( Container * c ){
 void mui::Container::remove(){
 	MUI_ROOT->removeFromResponders( this );
     if( parent != NULL ){
-        parent->remove( this ); 
+        parent->remove( this );
     }
 }
 
 //--------------------------------------------------------------
 void mui::Container::layout(){
 	if( layoutManager != NULL ){
-		layoutManager->layout( this ); 
+		layoutManager->layout( this );
 	}
 }
 
@@ -58,49 +58,49 @@ void mui::Container::layout(){
 //--------------------------------------------------------------
 void mui::Container::drawBackground(){
     if( bg.a > 0 ){
-		ofFill(); 
-        ofSetColor( bg ); 
-        ofRect( 0, 0, width, height ); 
-        ofSetColor( 255 ); 
+		ofFill();
+        ofSetColor( bg );
+        ofRect( 0, 0, width, height );
+        ofSetColor( 255 );
     }
 }
 
 
 //--------------------------------------------------------------
 void mui::Container::handleDraw(){
-	if( !visible ) return; 
+	if( !visible ) return;
 	
 	ofPushMatrix();
 	if( allowSubpixelTranslations ) ofTranslate( x, y );
 	else ofTranslate( (int)x, (int)y );
 	
-	if( opaque ) drawBackground(); 
-	draw(); 
+	if( opaque ) drawBackground();
+	draw();
 	
 	if( MUI_DEBUG_DRAW ){
-		ofNoFill(); 
+		ofNoFill();
 		ofSetColor( 255, 0, 0 );
-		ofRect( 0, 0, width, height ); 
+		ofRect( 0, 0, width, height );
 	}
 	
-	std::vector<Container*>::reverse_iterator it = children.rbegin();
-	while( it != children.rend() ) {
+	std::vector<Container*>::iterator it = children.begin();
+	while( it != children.end() ) {
         (*it)->handleDraw();
 		++it;
 	}
-
-	ofPopMatrix(); 
+    
+	ofPopMatrix();
 }
 
 
 //--------------------------------------------------------------
 void mui::Container::handleUpdate(){
-	update(); 
+	update();
 	
 	std::vector<Container*>::iterator it = children.begin();
 	while( it != children.end() ) {
-        //Container * child = (*it); // just for debugging ... 
-		(*it)->handleUpdate(); 
+        //Container * child = (*it); // just for debugging ...
+		(*it)->handleUpdate();
 		++it;
 	}
 }
@@ -108,24 +108,24 @@ void mui::Container::handleUpdate(){
 
 //--------------------------------------------------------------
 mui::Container * mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
-	if( !visible ) return NULL; 
-
+	if( !visible ) return NULL;
+    
 	
-	//string depth = ""; 
-	//Container * p = this; 
-	//while( p->parent != NULL ) p = p->parent, depth = "  " + depth; 
+	//string depth = "";
+	//Container * p = this;
+	//while( p->parent != NULL ) p = p->parent, depth = "  " + depth;
 	
 	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
-		float x, y; 
-		Container * touched; 
+		float x, y;
+		Container * touched;
 		
 		std::vector<Container*>::reverse_iterator it = children.rbegin();
 		while( it != children.rend() ){
-			touch.x -= ( x = (*it)->x ); 
-			touch.y -= ( y = (*it)->y ); 
-			touched = (*it)->handleTouchDown( touch ); 
-			touch.x += x; 
-			touch.y += y; 
+			touch.x -= ( x = (*it)->x );
+			touch.y -= ( y = (*it)->y );
+			touched = (*it)->handleTouchDown( touch );
+			touch.x += x;
+			touch.y += y;
 			
 			if( touched != NULL ){
 				return touched;
@@ -136,40 +136,40 @@ mui::Container * mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
 		
 		if( !ignoreEvents ){
 			if( singleTouchId == -1 ){
-				singleTouchId = touch.id; 
+				singleTouchId = touch.id;
 			}
 			
 			if( !singleTouch || ( singleTouch && singleTouchId == touch.id ) ){
-				touchDown( touch ); 
+				touchDown( touch );
 			}
 			
-			return this; 
+			return this;
 		}
 	}
 	
-	return NULL; 
+	return NULL;
 }
 
 
 //--------------------------------------------------------------
 mui::Container * mui::Container::handleTouchMoved( ofTouchEventArgs &touch ){
-	if( !visible ) return NULL; 
+	if( !visible ) return NULL;
 	
 	
 	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
-		float x, y; 
+		float x, y;
 		Container * touched;
 		
 		std::vector<Container*>::reverse_iterator it = children.rbegin();
 		while( it != children.rend() ) {
-			touch.x -= ( x = (*it)->x ); 
-			touch.y -= ( y = (*it)->y ); 
-			touched = (*it)->handleTouchMoved( touch ); 
-			touch.x += x; 
-			touch.y += y; 
+			touch.x -= ( x = (*it)->x );
+			touch.y -= ( y = (*it)->y );
+			touched = (*it)->handleTouchMoved( touch );
+			touch.x += x;
+			touch.y += y;
 			
 			if( touched != NULL ){
-				// that container is touched! 
+				// that container is touched!
 				return touched;
 			}
 			
@@ -181,7 +181,7 @@ mui::Container * mui::Container::handleTouchMoved( ofTouchEventArgs &touch ){
 				touchMoved( touch );
 			}
 			
-			return this; 
+			return this;
 		}
 	}
 	
@@ -191,23 +191,23 @@ mui::Container * mui::Container::handleTouchMoved( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 mui::Container * mui::Container::handleTouchDoubleTap( ofTouchEventArgs &touch ){
-	if( !visible ) return NULL; 
+	if( !visible ) return NULL;
 	
 	
 	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
-		float x, y; 
-		Container * touched; 
+		float x, y;
+		Container * touched;
 		
 		std::vector<Container*>::reverse_iterator it = children.rbegin();
 		while( it != children.rend() ) {
-			touch.x -= ( x = (*it)->x ); 
-			touch.y -= ( y = (*it)->y ); 
-			touched = (*it)->handleTouchDoubleTap( touch ); 
-			touch.x += x; 
-			touch.y += y; 
+			touch.x -= ( x = (*it)->x );
+			touch.y -= ( y = (*it)->y );
+			touched = (*it)->handleTouchDoubleTap( touch );
+			touch.x += x;
+			touch.y += y;
 			
 			if( touched != NULL ){
-				// that container is touched! 
+				// that container is touched!
 				return touched;
 			}
 			
@@ -216,36 +216,36 @@ mui::Container * mui::Container::handleTouchDoubleTap( ofTouchEventArgs &touch )
 		
 		if( !ignoreEvents ){
 			if( !singleTouch || ( singleTouch && singleTouchId == touch.id ) ){
-				touchDoubleTap( touch ); 
+				touchDoubleTap( touch );
 			}
 			
-			return this; 
+			return this;
 		}
 	}
 	
-	return NULL; 
+	return NULL;
 }
 
 
 //--------------------------------------------------------------
 mui::Container * mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
-	if( !visible ) return NULL; 
+	if( !visible ) return NULL;
 	
 	
 	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
-		float x, y; 
-		Container * touched; 
+		float x, y;
+		Container * touched;
 		
 		std::vector<Container*>::reverse_iterator it = children.rbegin();
 		while( it != children.rend() ) {
-			touch.x -= ( x = (*it)->x ); 
-			touch.y -= ( y = (*it)->y ); 
-			touched = (*it)->handleTouchUp( touch ); 
-			touch.x += x; 
-			touch.y += y; 
-
+			touch.x -= ( x = (*it)->x );
+			touch.y -= ( y = (*it)->y );
+			touched = (*it)->handleTouchUp( touch );
+			touch.x += x;
+			touch.y += y;
+            
 			if( touched != NULL ){
-				// that container is touched! 
+				// that container is touched!
 				return touched;
 			}
 			
@@ -254,15 +254,15 @@ mui::Container * mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
 		
 		if( !ignoreEvents ){
 			if( !singleTouch || ( singleTouch && singleTouchId == touch.id ) ){
-				touchUp( touch ); 
+				touchUp( touch );
 				singleTouchId = -1;
 			}
 			
-			return this; 
+			return this;
 		}
 	}
 	
-	return NULL; 
+	return NULL;
 }
 
 
@@ -278,40 +278,40 @@ bool mui::Container::hasFocus(){
 
 //--------------------------------------------------------------
 bool mui::Container::hasFocus( ofTouchEventArgs &touch ){
-    return Root::INSTANCE->respondingContainer[touch.id] == this; 
+    return Root::INSTANCE->respondingContainer[touch.id] == this;
 }
 
 //--------------------------------------------------------------
 ofPoint mui::Container::getGlobalPosition(){
-	ofPoint result; 
+	ofPoint result;
 	
-	float x = 0; 
-	float y = 0; 
+	float x = 0;
+	float y = 0;
 	
-	Container * parent = this; 
+	Container * parent = this;
 	while( parent != NULL ){
-		x += parent->x; 
-		y += parent->y; 
-		parent = parent->parent; 
+		x += parent->x;
+		y += parent->y;
+		parent = parent->parent;
 	}
 	
-	result.x = x; 
-	result.y = y; 
+	result.x = x;
+	result.y = y;
 	
-	return result; 
+	return result;
 }
 
 
 //--------------------------------------------------------------
 string mui::Container::toString(){
-	return 
-		string("Container") + 
-		"[ name=" + name + 
-		", x=" + ofToString( x, 0 ) + 
-		", y=" + ofToString( y, 0 ) +
-		", y=" + ofToString( y, 0 ) +
-		", w=" + ofToString( width, 0 ) +
-		", h=" + ofToString( height, 0 ) + 
-		"]"; 
+	return
+    string("Container") +
+    "[ name=" + name +
+    ", x=" + ofToString( x, 0 ) +
+    ", y=" + ofToString( y, 0 ) +
+    ", y=" + ofToString( y, 0 ) +
+    ", w=" + ofToString( width, 0 ) +
+    ", h=" + ofToString( height, 0 ) +
+    "]"; 
 }
 

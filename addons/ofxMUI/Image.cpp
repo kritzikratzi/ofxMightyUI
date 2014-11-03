@@ -2,7 +2,7 @@
 
 
 mui::Image::Image( string filename, float x_, float y_, float width_, float height_ )
-	: Container( x_, y_, width_, height_ ), imgRef(NULL),horizontalAlign(Center),verticalAlign(Middle),scaleMethod(ScaleMethodFitInside) {
+: Container( x_, y_, width_, height_ ), imgRef(NULL),horizontalAlign(Center),verticalAlign(Middle),scaleMethod(ScaleMethodFitInside) {
 	img.loadImage( filename );
 }
 
@@ -42,7 +42,10 @@ void mui::Image::draw(){
 		imgW *= scale;
 		imgH *= scale;
 		ofRectangle rect = Helpers::alignBox(this, imgW, imgH, horizontalAlign, verticalAlign);
+		ofSetColor( fg );
+		ofEnableAlphaBlending();
 		img->draw(rect);
+		ofDisableAlphaBlending();
 	}
 }
 
@@ -72,7 +75,7 @@ void mui::Image::autoHeight(){
 	if( rect.width < width ){
 		height = rect.height*width/rect.width;
 	}
-//	height = -rect.y + rect.height;
+    //	height = -rect.y + rect.height;
 }
 
 //--------------------------------------------------------------

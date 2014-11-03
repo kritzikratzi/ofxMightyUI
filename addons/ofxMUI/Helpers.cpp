@@ -58,7 +58,6 @@ ofImage * mui::Helpers::getImage( std::string name ){
 }
 
 MUI_FONT_TYPE* mui::Helpers::getFont( int fontSize ){
-	
 	std::map<int, MUI_FONT_TYPE*>::iterator iter = mui::Helpers::fonts.find( fontSize );
 	
 	if( iter == fonts.end() ){
