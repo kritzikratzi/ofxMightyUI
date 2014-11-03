@@ -301,6 +301,30 @@ ofPoint mui::Container::getGlobalPosition(){
 	return result;
 }
 
+bool mui::Container::isVisibleOnScreen( float border ){
+	ofPoint result;
+	
+	float x = 0;
+	float y = 0;
+	
+	Container * parent = this;
+	while( parent != NULL ){
+		if( parent->visible == false ) return false;
+		
+		x += parent->x;
+		y += parent->y;
+		parent = parent->parent;
+	}
+	
+	result.x = x;
+	result.y = y;
+	
+	ofRectangle me(x-border,y-border,width+2*border,height+2*border);
+	ofRectangle root(0,0,MUI_ROOT->width, MUI_ROOT->height );
+	
+	return me.intersects(root);
+}
+
 
 //--------------------------------------------------------------
 string mui::Container::toString(){

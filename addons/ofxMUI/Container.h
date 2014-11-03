@@ -74,6 +74,7 @@ namespace mui{
 		virtual bool hasFocus();
 		virtual bool hasFocus( ofTouchEventArgs &touch );
 		virtual ofPoint getGlobalPosition();
+		virtual bool isVisibleOnScreen(float border=0); // effectively visible on screen? border adds an additonal border around, so border<0 means isVisible return false if it's barely visible, border>0 means isVisible will return true even if the component is already slightly off screen.
 		virtual string toString(); 
 	private: 
 	};
