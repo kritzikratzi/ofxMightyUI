@@ -22,10 +22,10 @@ namespace mui{
 		virtual void autoHeight();
 		
 		// assign if you take care of memory stuff yourself
-		ofImage * imgRef;
+		ofTexture * texRef;
 		
 		// assign if you want it automatically
-		ofImage img;
+		ofTexture tex;
 		
 		HorizontalAlign horizontalAlign;
 		VerticalAlign verticalAlign;

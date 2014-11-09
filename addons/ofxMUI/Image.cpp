@@ -2,8 +2,8 @@
 
 
 mui::Image::Image( string filename, float x_, float y_, float width_, float height_ )
-: Container( x_, y_, width_, height_ ), imgRef(NULL),horizontalAlign(Center),verticalAlign(Middle),scaleMethod(ScaleMethodFitInside) {
-	img.loadImage( filename );
+: Container( x_, y_, width_, height_ ), texRef(NULL),horizontalAlign(Center),verticalAlign(Middle),scaleMethod(ScaleMethodFitInside) {
+	ofLoadImage(tex, filename);
 }
 
 //--------------------------------------------------------------
@@ -13,17 +13,17 @@ void mui::Image::update(){
 
 //--------------------------------------------------------------
 void mui::Image::draw(){
-	ofImage * img = NULL;
+	ofTexture * tex = NULL;
 	
-	if( imgRef != NULL ){
-		img = imgRef;
+	if( texRef != NULL ){
+		tex = texRef;
 	}
-	else if( this->img.isAllocated() ){
-		img = &this->img;
+	else if( this->tex.isAllocated() ){
+		tex = &this->tex;
 	}
 	
-	if( img != NULL && img->getWidth() > 0 && img->getHeight() > 0 ){
-		float imgW = img->getWidth(), imgH = img->getHeight();
+	if( tex != NULL && tex->getWidth() > 0 && tex->getHeight() > 0 ){
+		float imgW = tex->getWidth(), imgH = tex->getHeight();
 		float imgRatio = imgW/imgH;
 		float ratio = width/height;
 		float scale = 1;
@@ -44,7 +44,7 @@ void mui::Image::draw(){
 		ofRectangle rect = Helpers::alignBox(this, imgW, imgH, horizontalAlign, verticalAlign);
 		ofSetColor( fg );
 		ofEnableAlphaBlending();
-		img->draw(rect);
+		tex->draw(rect);
 		ofDisableAlphaBlending();
 	}
 }
@@ -80,17 +80,17 @@ void mui::Image::autoHeight(){
 
 //--------------------------------------------------------------
 ofRectangle mui::Image::getDrawRect(){
-	ofImage * img = NULL;
+	ofTexture * tex = NULL;
 	
-	if( imgRef != NULL ){
-		img = imgRef;
+	if( texRef != NULL ){
+		tex = texRef;
 	}
-	else if( this->img.isAllocated() ){
-		img = &this->img;
+	else if( this->tex.isAllocated() ){
+		tex = &this->tex;
 	}
 	
-	if( img != NULL && img->getWidth() > 0 && img->getHeight() > 0 ){
-		float imgW = img->getWidth(), imgH = img->getHeight();
+	if( tex != NULL && tex->getWidth() > 0 && tex->getHeight() > 0 ){
+		float imgW = tex->getWidth(), imgH = tex->getHeight();
 		float imgRatio = imgW/imgH;
 		float ratio = width/height;
 		float scale = 1;
