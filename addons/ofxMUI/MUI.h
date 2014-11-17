@@ -83,7 +83,9 @@ namespace mui{
 #elif TARGET_OS_MAC
 	#warning don't use textfields, lol
 #elif TARGET_OS_WIN32
-	#pragma message ("don't use textfields!") 
+	#pragma message ("don't use textfields!")
+#elif defined(__ANDROID_API__)
+	#warning No ofxMui textfield implementation for android yet!
 #elif MUI_BE_INSANE
 #else
 	#error No native textfield implementation for this platform. You can define MUI_BE_INSANE to skip over this error if you know you're not using textfields.
