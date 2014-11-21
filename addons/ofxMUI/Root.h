@@ -39,6 +39,8 @@ namespace mui{
 		virtual void safeRemove( Container * c );
 		virtual void removeFromResponders( Container * c ); 
 		
+		virtual void reloadTextures();
+
 		virtual void prepareAnimation( int milliseconds, int type = tween::QUAD, int direction = tween::EASE_OUT ); 
 		virtual void animate( float &variable, float targetValue ); 
 		virtual void commitAnimation();

@@ -267,6 +267,22 @@ mui::Container * mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
 
 
 //--------------------------------------------------------------
+void mui::Container::reloadTextures(){
+
+}
+
+//--------------------------------------------------------------
+void mui::Container::handleReloadTextures(){
+	reloadTextures();
+
+	std::vector<Container*>::iterator it = children.begin();
+	while( it != children.end() ) {
+	    (*it)->handleReloadTextures();
+		++it;
+	}
+}
+
+//--------------------------------------------------------------
 bool mui::Container::hasFocus(){
 	for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
 		if( Root::INSTANCE->respondingContainer[i] == this )

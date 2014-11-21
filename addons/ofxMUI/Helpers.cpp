@@ -15,6 +15,37 @@ std::map<int, MUI_FONT_TYPE*> mui::Helpers::fonts;
 std::map<string, MUI_FONT_TYPE*> mui::Helpers::customFonts;
 std::stack<ofRectangle> mui::Helpers::scissorStack;
 
+void mui::Helpers::clearCaches(){
+	for(std::map<std::string, ofImage*>::iterator iterator = images.begin(); iterator != images.end(); iterator++) {
+		ofImage *img = iterator->second;
+		img->clear();
+		delete img;
+	}
+	images.clear();
+
+
+
+	#if MUI_FONT_TYPE == ofxTrueTypeFontFS
+		ofxTrueTypeFontFS::clearCaches();
+		fonts.clear();
+		customFonts.clear();
+	#else
+		for(std::map<std::string, MUI_FONT_TYPE*>::iterator iterator = fonts.begin(); iterator != fonts.end(); iterator++) {
+			MUI_FONT_TYPE *font = iterator->second;
+			font->clear();
+			delete font;
+		}
+		for(std::map<std::string, MUI_FONT_TYPE*>::iterator iterator = customFonts.begin(); iterator != customFonts.end(); iterator++) {
+			MUI_FONT_TYPE *font = iterator->second;
+			font->clear();
+			delete font;
+		}
+		fonts.clear();
+		customFonts.clear();
+	#endif
+
+}
+
 std::string mui::Helpers::muiPath( std::string path ){
 	// pretty much copy&pasted from OF
 	Poco::Path outputPath;

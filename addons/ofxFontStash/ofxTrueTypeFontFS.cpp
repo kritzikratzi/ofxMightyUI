@@ -154,3 +154,10 @@ void ofxTrueTypeFontFS::unbind(){
 }
 
 
+void ofxTrueTypeFontFS::clearCaches(){
+	for(std::map<std::string, ofxFontStash*>::iterator iterator = fonts.begin(); iterator != fonts.end(); iterator++) {
+		ofxFontStash *font = iterator->second;
+		delete font;
+	}
+	fonts.clear();
+}

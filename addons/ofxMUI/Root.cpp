@@ -224,6 +224,10 @@ void mui::Root::removeFromResponders( Container * c ){
 	}
 }
 
+void mui::Root::reloadTextures(){
+	mui::Helpers::clearCaches();
+}
+
 
 
 //--------------------------------------------------------------

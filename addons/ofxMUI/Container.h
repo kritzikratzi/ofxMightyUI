@@ -71,6 +71,9 @@ namespace mui{
 		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
 		virtual Container * handleTouchDoubleTap( ofTouchEventArgs &touch );
 
+		virtual void reloadTextures();
+		virtual void handleReloadTextures();
+
 		virtual bool hasFocus();
 		virtual bool hasFocus( ofTouchEventArgs &touch );
 		virtual ofPoint getGlobalPosition();

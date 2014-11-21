@@ -18,6 +18,7 @@ namespace mui{
 	
 	class Helpers{
 	public: 
+		static void clearCaches();
 		static string muiPath( string path );
 		static ofImage * getImage( string what );
 		static MUI_FONT_TYPE * getFont( int size ); // get a font for a specific pixel size
