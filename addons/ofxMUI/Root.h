@@ -26,11 +26,23 @@ namespace mui{
 		virtual void init(); 
 		virtual void handleUpdate();
 		virtual void handleDraw();
+		
+		// touch events
 		virtual Container * handleTouchDown( ofTouchEventArgs &touch );
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
 		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
 		virtual Container * handleTouchDoubleTap( ofTouchEventArgs &touch );
 		virtual Container * handleTouchCancelled( ofTouchEventArgs &touch );
+		
+		// keyboard events
+		virtual Container * handleKeyPressed( int key );
+		virtual Container * handleKeyReleased( int key );
+		
+		// mouse event forwards (mouse events get converted to touch events)
+		virtual Container * handleMouseMoved( int x, int y );
+		virtual Container * handleMouseDragged( int x, int y, int button );
+		virtual Container * handleMousePressed( int x, int y, int button );
+		virtual Container * handleMouseReleased( int x, int y, int button );
 		
 		virtual bool becomeResponder( Container * container, ofTouchEventArgs &touch );
 		virtual void showTextField( TextField * tf );

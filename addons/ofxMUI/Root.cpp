@@ -265,3 +265,45 @@ void mui::Root::handleRemovals(){
     safeRemoveAndDeleteList.clear(); 
 }
 
+//--------------------------------------------------------------
+mui::Container * mui::Root::handleKeyPressed( int key ){
+	return NULL;
+}
+
+//--------------------------------------------------------------
+mui::Container * mui::Root::handleKeyReleased( int key ){
+	return NULL;
+}
+
+//--------------------------------------------------------------
+mui::Container * mui::Root::handleMouseMoved( int x, int y ){
+	return NULL;
+}
+
+//--------------------------------------------------------------
+mui::Container * mui::Root::handleMouseDragged( int x, int y, int button ){
+	ofTouchEventArgs args;
+	args.x = x;
+	args.y = y;
+	args.id = 0;
+	return handleTouchMoved(args);
+}
+
+//--------------------------------------------------------------
+mui::Container * mui::Root::handleMousePressed( int x, int y, int button ){
+	ofTouchEventArgs args;
+	args.x = x;
+	args.y = y;
+	args.id = 0;
+	return handleTouchDown(args);
+}
+
+//--------------------------------------------------------------
+mui::Container * mui::Root::handleMouseReleased( int x, int y, int button ){
+	ofTouchEventArgs args;
+	args.x = x;
+	args.y = y;
+	args.id = 0;
+	return handleTouchUp(args);
+}
+
