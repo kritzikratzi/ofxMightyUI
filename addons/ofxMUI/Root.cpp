@@ -8,7 +8,8 @@
  */
 
 #include "MUI.h"
-
+#include "ofEventUtils.h"
+#include "ofEvents.h"
 
 // TODO: the handleXX functions might return null, even if touchMovedOutside and touchUpOutside 
 //       delegated to containers. this shouldn't be the case. 
@@ -24,6 +25,28 @@ void mui::Root::init(){
 //	#elif TARGET_OS_MAC
 //	NativeOSX::init();
 	#endif
+	
+	ofAddListener( ofEvents().setup, this, &mui::Root::of_setup, OF_EVENT_ORDER_AFTER_APP );
+	ofAddListener( ofEvents().update, this, &mui::Root::of_update, OF_EVENT_ORDER_AFTER_APP );
+	ofAddListener( ofEvents().draw, this, &mui::Root::of_draw, OF_EVENT_ORDER_AFTER_APP );
+	//ofAddListener( ofEvents().exit, this, &mui::Root::of_exit );
+	//ofAddListener( ofEvents().windowEntered, this, &mui::Root::of_windowEntered );
+	//ofAddListener( ofEvents().windowResized, this, &mui::Root::of_windowResized );
+	ofAddListener( ofEvents().keyPressed, this, &mui::Root::of_keyPressed, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().keyReleased, this, &mui::Root::of_keyReleased, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().mouseMoved, this, &mui::Root::of_mouseMoved, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().mouseDragged, this, &mui::Root::of_mouseDragged, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().mousePressed, this, &mui::Root::of_mousePressed, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().mouseReleased, this, &mui::Root::of_mouseReleased, OF_EVENT_ORDER_BEFORE_APP );
+	//ofAddListener( ofEvents().audioReceived, this, &mui::Root::of_audioReceived );
+	//ofAddListener( ofEvents().audioRequested, this, &mui::Root::of_audioRequested );
+	ofAddListener( ofEvents().touchDown, this, &mui::Root::of_touchDown, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().touchUp, this, &mui::Root::of_touchUp, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().touchMoved, this, &mui::Root::of_touchMoved, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().touchDoubleTap, this, &mui::Root::of_touchDoubleTap, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().touchCancelled, this, &mui::Root::of_touchCancelled, OF_EVENT_ORDER_BEFORE_APP );
+	//ofAddListener( ofEvents().messageEvent, this, &mui::Root::of_messageEvent );
+	//ofAddListener( ofEvents().fileDragEvent, this, &mui::Root::of_fileDragEvent );
 }
 
 void mui::Root::handleUpdate(){
@@ -307,3 +330,68 @@ mui::Container * mui::Root::handleMouseReleased( int x, int y, int button ){
 	return handleTouchUp(args);
 }
 
+
+
+void mui::Root::of_setup( ofEventArgs &args ){
+	//handleSetup();
+}
+void mui::Root::of_update( ofEventArgs &args ){
+	handleUpdate();
+}
+void mui::Root::of_draw( ofEventArgs &args ){
+	handleDraw();
+}
+void mui::Root::of_exit( ofEventArgs &args ){
+	//handleExit(args);
+}
+void mui::Root::of_windowEntered( ofEntryEventArgs &args ){
+	//handleWindowEntered(args);
+}
+void mui::Root::of_windowResized( ofResizeEventArgs &args ){
+	//handleWindowResized(args);
+}
+bool mui::Root::of_keyPressed( ofKeyEventArgs &args ){
+	return handleKeyPressed(args.key) != NULL;
+}
+bool mui::Root::of_keyReleased( ofKeyEventArgs &args ){
+	return handleKeyReleased(args.key) != NULL;
+}
+bool mui::Root::of_mouseMoved( ofMouseEventArgs &args ){
+	return handleMouseMoved(args.x, args.y) != NULL;
+}
+bool mui::Root::of_mouseDragged( ofMouseEventArgs &args ){
+	return handleMouseDragged(args.x, args.y, args.button) != NULL;
+}
+bool mui::Root::of_mousePressed( ofMouseEventArgs &args ){
+	return handleMousePressed(args.x, args.y, args.button) != NULL;
+}
+bool mui::Root::of_mouseReleased( ofMouseEventArgs &args ){
+	return handleMouseReleased(args.x, args.y, args.button) != NULL;
+}
+void mui::Root::of_audioReceived( ofAudioEventArgs &args ){
+	//handleAudioReceived(args);
+}
+void mui::Root::of_audioRequested( ofAudioEventArgs &args ){
+	//handleAudioRequested(args);
+}
+bool mui::Root::of_touchDown( ofTouchEventArgs &args ){
+	return handleTouchDown(args) != NULL;
+}
+bool mui::Root::of_touchUp( ofTouchEventArgs &args ){
+	return handleTouchUp(args) != NULL;
+}
+bool mui::Root::of_touchMoved( ofTouchEventArgs &args ){
+	return handleTouchMoved(args) != NULL;
+}
+bool mui::Root::of_touchDoubleTap( ofTouchEventArgs &args ){
+	return handleTouchDoubleTap(args) != NULL;
+}
+bool mui::Root::of_touchCancelled( ofTouchEventArgs &args ){
+	return handleTouchCancelled(args) != NULL;
+}
+void mui::Root::of_messageEvent( ofMessage &args ){
+	//handleMessageEvent(args);
+}
+void mui::Root::of_fileDragEvent( ofDragInfo &args ){
+	//handleFileDragEvent(args);
+}

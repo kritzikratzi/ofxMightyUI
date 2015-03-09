@@ -68,7 +68,29 @@ namespace mui{
 		tween::Tweener tweener;
         
         vector<Container*> safeRemoveAndDeleteList; 
-        vector<Container*> safeRemoveList; 
+        vector<Container*> safeRemoveList;
+		
+		virtual void of_setup( ofEventArgs &args );
+		virtual void of_update( ofEventArgs &args );
+		virtual void of_draw( ofEventArgs &args );
+		virtual void of_exit( ofEventArgs &args );
+		virtual void of_windowEntered( ofEntryEventArgs &args );
+		virtual void of_windowResized( ofResizeEventArgs &args );
+		virtual bool of_keyPressed( ofKeyEventArgs &args );
+		virtual bool of_keyReleased( ofKeyEventArgs &args );
+		virtual bool of_mouseMoved( ofMouseEventArgs &args );
+		virtual bool of_mouseDragged( ofMouseEventArgs &args );
+		virtual bool of_mousePressed( ofMouseEventArgs &args );
+		virtual bool of_mouseReleased( ofMouseEventArgs &args );
+		virtual void of_audioReceived( ofAudioEventArgs &args );
+		virtual void of_audioRequested( ofAudioEventArgs &args );
+		virtual bool of_touchDown( ofTouchEventArgs &args );
+		virtual bool of_touchUp( ofTouchEventArgs &args );
+		virtual bool of_touchMoved( ofTouchEventArgs &args );
+		virtual bool of_touchDoubleTap( ofTouchEventArgs &args );
+		virtual bool of_touchCancelled( ofTouchEventArgs &args );
+		virtual void of_messageEvent( ofMessage &args );
+		virtual void of_fileDragEvent( ofDragInfo &args );
 	};
 }
 
