@@ -10,8 +10,6 @@
 #ifndef MUI_SLIDER
 #define MUI_SLIDER
 
-#include <Poco/BasicEvent.h>
-
 namespace mui{
 	class Slider : public Container{
 	public: 
@@ -36,12 +34,11 @@ namespace mui{
 		virtual float screenToValue( float x ); 
 		virtual float valueToScreen( float val ); 
 
-         Poco::BasicEvent<ofTouchEventArgs> onChange;
+		ofEvent<float> onChange;
         
 		
 	private: 
 		static int paddingLR;
-		
 	}; 
 }
 
