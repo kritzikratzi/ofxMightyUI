@@ -28,6 +28,7 @@
 // which font rendering thingie to use?
 // works with ofTrueTypeFont and ofxTrueTypeFontFS
 // enable the include in case of the FS font...
+//#define MUI_FONT_TYPE ofTrueTypeFont
 #define MUI_FONT_TYPE ofxTrueTypeFontFS
 #include "../ofxFontStash/ofxTrueTypeFontFS.h"
 
