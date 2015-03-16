@@ -25,12 +25,23 @@
 
 #define MUI_DEBUG_DRAW mui::MuiConfig::debugDraw
 
+#define MUI_FONT_TYPE_OPENFRAMEWORKS 0
+#define MUI_FONT_TYPE_FONTSTASH 1
+
 // which font rendering thingie to use?
 // works with ofTrueTypeFont and ofxTrueTypeFontFS
-// enable the include in case of the FS font...
-//#define MUI_FONT_TYPE ofTrueTypeFont
-#define MUI_FONT_TYPE ofxTrueTypeFontFS
-#include "../ofxFontStash/ofxTrueTypeFontFS.h"
+// it's nasty, but just add the correct font type to your IDEs global
+// preprocessor flags!
+#ifndef MUI_FONT_TYPE_ACTIVE
+	#define MUI_FONT_TYPE_ACTIVE MUI_FONT_TYPE_FONTSTASH
+#endif
+
+#if MUI_FONT_TYPE_ACTIVE == MUI_FONT_TYPE_OPENFRAMEWORKS
+	#define MUI_FONT_TYPE ofTrueTypeFont
+#else
+	#define MUI_FONT_TYPE ofxTrueTypeFontFS
+	#include "../ofxFontStash/ofxTrueTypeFontFS.h"
+#endif
 
 #define MUI_FONT_SIZE 12
 
