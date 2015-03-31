@@ -26,6 +26,7 @@ void mui::Root::init(){
 //	NativeOSX::init();
 	#endif
 	
+	name = "Root"; 
 	width = ofGetWidth()/mui::MuiConfig::scaleFactor;
 	height = ofGetWidth()/mui::MuiConfig::scaleFactor;
 	
@@ -91,7 +92,7 @@ void mui::Root::handleDraw(){
 			while( c != NULL  ){
 				name_ << c->name;
 				c = c->parent;
-				if( c != NULL )  name_ << " _ ";
+				if( c != NULL )  name_ << " < ";
 			}
 			
 			string name = name_.str();
