@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2011 Andreas Krinke andreas.krinke@gmx.de
+// Copyright (c) 2011-2013 Andreas Krinke andreas.krinke@gmx.de
 // Copyright (c) 2009 Mikko Mononen memon@inside.org
 //
 // This software is provided 'as-is', without any express or implied
@@ -21,50 +21,56 @@
 // Oriol Ferrer Mesià made tiny modifications to make this render text flipped vertically
 // Also changed the include ifdefs
 
+// 31st July 2014 - Danoli3 - Daniel Rosser made minor macro modifictions to support Android and another iPhone Target.
+
+/*
+ #ifdef __MACOSX__
+ #include <OpenGL/gl.h>
+ #else
+ #include <GL/gl.h>
+ #endif
+ */
 
 //oriol replacing platform includes to work better in OpenFrameworks
 //from http://stackoverflow.com/questions/5919996/how-to-detect-reliably-mac-os-x-ios-linux-windows-in-c-preprocessor
-#ifdef _WIN32
-	#include <windows.h>
-	#include <gl/gl.h>
-#elif _WIN64
-	#include <windows.h>
-	#include <gl/gl.h>
+#if defined(_WIN32) || defined(_WIN64)
+	//#include <gl/gl.h> //oriol making it work for win32
+	#include "GL\glew.h"
+	#include "GL\wglew.h"
+#elif __ANDROID__   // Danoli3 - Adding Android target as it is supported with OpenGLES
+#include <GLES/gl.h>
+#include <GLES/glext.h>
 #elif __APPLE__
-	#include "TargetConditionals.h"
-	#if (TARGET_OS_IPHONE)
-		#import <OpenGLES/ES1/gl.h>
-	#elif (TARGET_IPHONE_SIMULATOR)
-		#import <OpenGLES/ES1/gl.h>
-	#elif (TARGET_OS_MAC)
-		#include <OpenGL/gl.h>
-	#else
-		// Unsupported platform
-	#endif
-#elif __ANDROID__
-	#include <GLES/gl.h>
-	#include <GLES/glext.h>
+#include "TargetConditionals.h"
+#if defined(__ANDROID__) || defined(TARGET_OS_IPHONE_SIMULATOR) || (TARGET_IPHONE_SIMULATOR == 1) || (TARGET_OS_IPHONE == 1) || defined(TARGET_IPHONE)
+#import <OpenGLES/ES1/gl.h>
+#import <OpenGLES/ES1/glext.h>
+#elif (TARGET_OS_MAC)
+#include <OpenGL/gl.h>
+#else
+// Unsupported platform
+#endif
 #elif __linux
-	#include <GL/gl.h>
+#include <GL/gl.h>
 #elif __unix // all unices not caught above
-	#include <GL/gl.h>
+#include <GL/gl.h>
 #elif __posix
-	#include <GL/gl.h>
+#include <GL/gl.h>
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 
-#define STB_TRUETYPE_IMPLEMENTATION
-#define STBTT_malloc(x,u)    malloc(x)
-#define STBTT_free(x,u)      free(x)
+/* @rlyeh: removed STB_TRUETYPE_IMPLENTATION. We link it externally */
 #include "stb_truetype.h"
+#include "fontstash.h"
 
 #define HASH_LUT_SIZE 256
 #define MAX_ROWS 128
-#define VERT_COUNT (6*128)
+#define VERT_COUNT (6*128 * 100)  /* oriol! x 100 to avoid repeated flush_draw() calls while drawing */
 #define VERT_STRIDE (sizeof(float)*4)
 
 #define TTFONT_FILE 1
@@ -72,6 +78,11 @@
 #define BMFONT      3
 
 static int idx = 1;
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 static unsigned int hashint(unsigned int a)
 {
@@ -132,16 +143,6 @@ struct sth_texture
 	struct sth_texture* next;
 };
 
-struct sth_stash
-{
-	int tw,th;
-	float itw,ith;
-	struct sth_texture* textures;
-	struct sth_font* fonts;
-	int drawing;
-};
-
-
 
 // Copyright (c) 2008-2009 Bjoern Hoehrmann <bjoern@hoehrmann.de>
 // See http://bjoern.hoehrmann.de/utf-8/decoder/dfa/ for details.
@@ -178,15 +179,21 @@ static unsigned int decutf8(unsigned int* state, unsigned int* codep, unsigned i
 
 
 
-struct sth_stash* sth_create(int cachew, int cacheh)
-{
+struct sth_stash* sth_create(int cachew, int cacheh, int createMipmaps, int charPadding, float dpiScale){
+
 	struct sth_stash* stash = NULL;
+	GLubyte* empty_data = NULL;
 	struct sth_texture* texture = NULL;
 
 	// Allocate memory for the font stash.
 	stash = (struct sth_stash*)malloc(sizeof(struct sth_stash));
 	if (stash == NULL) goto error;
 	memset(stash,0,sizeof(struct sth_stash));
+
+	// Create data for clearing the textures
+	empty_data = (GLubyte*)	malloc(cachew * cacheh);
+	if (empty_data == NULL) goto error;
+	memset(empty_data, 0, cachew * cacheh);
 
 	// Allocate memory for the first texture
 	texture = (struct sth_texture*)malloc(sizeof(struct sth_texture));
@@ -198,13 +205,20 @@ struct sth_stash* sth_create(int cachew, int cacheh)
 	stash->th = cacheh;
 	stash->itw = 1.0f/cachew;
 	stash->ith = 1.0f/cacheh;
-	stash->textures = texture;
+	stash->empty_data = empty_data;
+	stash->tt_textures = texture;
+	stash->dpiScale = dpiScale;
 	glGenTextures(1, &texture->id);
 	if (!texture->id) goto error;
 	glBindTexture(GL_TEXTURE_2D, texture->id);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, stash->tw,stash->th, 0, GL_ALPHA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, cachew, cacheh, 0, GL_ALPHA, GL_UNSIGNED_BYTE, empty_data);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	stash->hasMipMap = createMipmaps;
+	stash->padding = charPadding;
+	stash->charSpacing = 0.0f;
+	stash->doKerning = 0;
 	return stash;
 	
 error:
@@ -228,6 +242,7 @@ int sth_add_font_from_memory(struct sth_stash* stash, unsigned char* buffer)
 	for (i = 0; i < HASH_LUT_SIZE; ++i) fnt->lut[i] = -1;
 
 	fnt->data = buffer;
+
 
 	// Init stb_truetype
 	if (!stbtt_InitFont(&fnt->font, fnt->data, 0)) goto error;
@@ -335,7 +350,7 @@ void sth_add_glyph(struct sth_stash* stash,
 	unsigned int state = 0;
 
 	if (stash == NULL) return;
-	texture = stash->textures;
+	texture = stash->bm_textures;
 	while (texture != NULL && texture->id != id) texture = texture->next;
 	if (texture == NULL)
 	{
@@ -344,8 +359,8 @@ void sth_add_glyph(struct sth_stash* stash,
 		if (texture == NULL) return;
 		memset(texture, 0, sizeof(struct sth_texture));
 		texture->id = id;
-		texture->next = stash->textures;
-		stash->textures = texture;
+		texture->next = stash->bm_textures;
+		stash->bm_textures = texture;
 	}
 
 	fnt = stash->fonts;
@@ -361,11 +376,7 @@ void sth_add_glyph(struct sth_stash* stash,
 
 	// Alloc space for new glyph.
 	fnt->nglyphs++;
-	#ifdef _WIN32
-		fnt->glyphs = (sth_glyph*) realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph));
-	#else
-		fnt->glyphs = realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph));
-	#endif
+	fnt->glyphs = (struct sth_glyph *)realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph)); /* @rlyeh: explicit cast needed in C++ */
 	if (!fnt->glyphs) return;
 
 	// Init glyph.
@@ -416,21 +427,23 @@ static struct sth_glyph* get_glyph(struct sth_stash* stash, struct sth_font* fnt
 	if (fnt->type == BMFONT) return 0;
 	
 	// For truetype fonts: create this glyph.
-	scale = stbtt_ScaleForPixelHeight(&fnt->font, size);
+	scale = stash->dpiScale * stbtt_ScaleForPixelHeight(&fnt->font, size);
 	g = stbtt_FindGlyphIndex(&fnt->font, codepoint);
+	if(!g) return 0; /* @rlyeh: glyph not found, ie, arab chars */
 	stbtt_GetGlyphHMetrics(&fnt->font, g, &advance, &lsb);
 	stbtt_GetGlyphBitmapBox(&fnt->font, g, scale,scale, &x0,&y0,&x1,&y1);
-	gw = x1-x0;
-	gh = y1-y0;
+
+	gw = x1-x0 + stash->padding;
+	gh = y1-y0 + stash->padding;
 	
-    // Check if glyph is larger than maximum texture size
+	// Check if glyph is larger than maximum texture size
 	if (gw >= stash->tw || gh >= stash->th)
 		return 0;
 
 	// Find texture and row where the glyph can be fit.
 	br = NULL;
 	rh = (gh+7) & ~7;
-	texture = stash->textures;
+	texture = stash->tt_textures;
 	while(br == NULL)
 	{
 		for (i = 0; i < texture->nrows; ++i)
@@ -463,11 +476,22 @@ static struct sth_glyph* get_glyph(struct sth_stash* stash, struct sth_font* fnt
 						texture = texture->next;
 						if (texture == NULL) goto error;
 						memset(texture,0,sizeof(struct sth_texture));
+						//oriol counting how many we have created so far!
+						int numTex = 1;
+						struct sth_texture* tex = stash->tt_textures;
+						while (tex->next != NULL) {
+							numTex++;
+							tex = tex->next;
+						}
+						printf("fontStash allocating a new texture of %d x %d (%d used so far)\n", stash->tw,stash->th, numTex );
 						glGenTextures(1, &texture->id);
 						if (!texture->id) goto error;
 						glBindTexture(GL_TEXTURE_2D, texture->id);
-						glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, stash->tw,stash->th, 0, GL_ALPHA, GL_UNSIGNED_BYTE, 0);
+						glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, stash->tw,stash->th, 0, GL_ALPHA, GL_UNSIGNED_BYTE, stash->empty_data);
 						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+						//glGenerateMipmap(GL_TEXTURE_2D);
 					}
 					continue;
 				}
@@ -483,11 +507,7 @@ static struct sth_glyph* get_glyph(struct sth_stash* stash, struct sth_font* fnt
 	
 	// Alloc space for new glyph.
 	fnt->nglyphs++;
-	#ifdef _WIN32
-		fnt->glyphs = (sth_glyph*)realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph));
-	#else
-		fnt->glyphs = realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph));
-	#endif
+	fnt->glyphs = (struct sth_glyph *)realloc(fnt->glyphs, fnt->nglyphs*sizeof(struct sth_glyph)); /* @rlyeh: explicit cast needed in C++ */
 	if (!fnt->glyphs) return 0;
 
 	// Init glyph.
@@ -520,7 +540,21 @@ static struct sth_glyph* get_glyph(struct sth_stash* stash, struct sth_font* fnt
 		// Update texture
 		glBindTexture(GL_TEXTURE_2D, texture->id);
 		glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-		glTexSubImage2D(GL_TEXTURE_2D, 0, glyph->x0,glyph->y0, gw,gh, GL_ALPHA,GL_UNSIGNED_BYTE,bmp); 
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	//oriol trying to get rid of halos when rotating font
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	//
+		glTexSubImage2D(GL_TEXTURE_2D, 0, glyph->x0,glyph->y0, gw,gh, GL_ALPHA,GL_UNSIGNED_BYTE,bmp);
+		if(stash->hasMipMap > 0){
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 8); //TODO check for hw support!
+#if defined(__ANDROID__) || defined(TARGET_OS_IPHONE_SIMULATOR) || (TARGET_IPHONE_SIMULATOR == 1) || (TARGET_OS_IPHONE == 1) || defined(TARGET_IPHONE)
+				// OpenGLES 1.0 does not support the following.
+#else
+//			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.0); //shoot for sharper test
+//			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 3); // pick mipmap level 7 or lower
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.0);
+			glGenerateMipmap(GL_TEXTURE_2D);
+#endif
+		}
 		free(bmp);
 	}
 	
@@ -535,20 +569,20 @@ error:
 static int get_quad(struct sth_stash* stash, struct sth_font* fnt, struct sth_glyph* glyph, short isize, float* x, float* y, struct sth_quad* q)
 {
 	int rx,ry;
-	float scale = 1.0f;
+	float scale = 1.0f ;
 
 	if (fnt->type == BMFONT) scale = isize/(glyph->size*10.0f);
 
 	rx = floorf(*x + scale * glyph->xoff);
 	//ry = floorf(*y - scale * glyph->yoff); //oriol flipped vertically to better match openFrameworks
 	ry = floorf(*y + scale * glyph->yoff);
-	
+
 	q->x0 = rx;
 	q->y0 = ry;
 	q->x1 = rx + scale * (glyph->x1 - glyph->x0);
 	//q->y1 = ry - scale * (glyph->y1 - glyph->y0);
 	q->y1 = ry + scale * (glyph->y1 - glyph->y0); //oriol flipped vertically to better match openFrameworks
-	
+
 	q->s0 = (glyph->x0) * stash->itw;
 	q->t0 = (glyph->y0) * stash->ith;
 	q->s1 = (glyph->x1) * stash->itw;
@@ -568,13 +602,33 @@ static float* setv(float* v, float x, float y, float s, float t)
 	return v+4;
 }
 
+
+void set_lod_bias(struct sth_stash* stash, float bias){
+
+	struct sth_texture* texture = stash->tt_textures;
+	if(stash->hasMipMap > 0){
+		while (texture){
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, texture->id);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, bias);
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glDisable(GL_TEXTURE_2D);
+			texture = texture->next;
+		}
+	}
+}
+
 static void flush_draw(struct sth_stash* stash)
 {
-	struct sth_texture* texture = stash->textures;
+	struct sth_texture* texture = stash->tt_textures;
+	short tt = 1;
 	while (texture)
 	{
 		if (texture->nverts > 0)
-		{			
+		{
+			glPushMatrix();
+			float ss = 1.0f / stash->dpiScale;
+			glScalef(ss, ss, ss);
 			glBindTexture(GL_TEXTURE_2D, texture->id);
 			glEnable(GL_TEXTURE_2D);
 			glEnableClientState(GL_VERTEX_ARRAY);
@@ -585,9 +639,15 @@ static void flush_draw(struct sth_stash* stash)
 			glDisable(GL_TEXTURE_2D);
 			glDisableClientState(GL_VERTEX_ARRAY);
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+			glPopMatrix();
 			texture->nverts = 0;
 		}
 		texture = texture->next;
+		if (!texture && tt)
+		{
+			texture = stash->bm_textures;
+			tt = 0;
+		}
 	}
 }
 
@@ -643,12 +703,19 @@ void sth_draw_text(struct sth_stash* stash,
 	
 	if (stash == NULL) return;
 
-	if (!stash->textures) return;
 	fnt = stash->fonts;
 	while(fnt != NULL && fnt->idx != idx) fnt = fnt->next;
 	if (fnt == NULL) return;
 	if (fnt->type != BMFONT && !fnt->data) return;
-	
+
+	int len = strlen(s);
+	float scale = stbtt_ScaleForPixelHeight(&fnt->font, size);
+	int c = 0;
+	float spacing = stash->charSpacing;
+	int doKerning = stash->doKerning;
+	int p = stash->padding;
+	float tw = stash->padding / (float)stash->tw;
+
 	for (; *s; ++s)
 	{
 		if (decutf8(&state, &codepoint, *(unsigned char*)s)) continue;
@@ -659,18 +726,27 @@ void sth_draw_text(struct sth_stash* stash,
 			flush_draw(stash);
 		
 		if (!get_quad(stash, fnt, glyph, isize, &x, &y, &q)) continue;
-		
+
+		int diff = 0;
+		if (c < len && doKerning > 0){
+			diff = stbtt_GetCodepointKernAdvance(&fnt->font, *(s), *(s+1));
+			//printf("diff '%c' '%c' = %d\n", *(s-1), *s, diff);
+			x += diff * scale;
+		}
+		x += scale + spacing;
+
 		v = &texture->verts[texture->nverts*4];
-		
-		v = setv(v, q.x0, q.y0, q.s0, q.t0);
-		v = setv(v, q.x1, q.y0, q.s1, q.t0);
-		v = setv(v, q.x1, q.y1, q.s1, q.t1);
 
 		v = setv(v, q.x0, q.y0, q.s0, q.t0);
-		v = setv(v, q.x1, q.y1, q.s1, q.t1);
-		v = setv(v, q.x0, q.y1, q.s0, q.t1);
+		v = setv(v, q.x1 - p, q.y0, q.s1 - tw, q.t0);
+		v = setv(v, q.x1 - p, q.y1 - p, q.s1 - tw, q.t1 - tw);
+
+		v = setv(v, q.x0, q.y0, q.s0, q.t0);
+		v = setv(v, q.x1 - p, q.y1 - p, q.s1 - tw, q.t1 - tw);
+		v = setv(v, q.x0, q.y1 - p, q.s0, q.t1 - tw);
 		
 		texture->nverts += 6;
+		c++;
 	}
 	
 	if (dx) *dx = x;
@@ -688,28 +764,42 @@ void sth_dim_text(struct sth_stash* stash,
 	short isize = (short)(size*10.0f);
 	struct sth_font* fnt = NULL;
 	float x = 0, y = 0;
-	
+
+	*minx = *maxx = *miny = *maxy = 0;	/* @rlyeh: reset vars before failing */
+
 	if (stash == NULL) return;
-	if (!stash->textures || !stash->textures->id) return;
 	fnt = stash->fonts;
 	while(fnt != NULL && fnt->idx != idx) fnt = fnt->next;
 	if (fnt == NULL) return;
 	if (fnt->type != BMFONT && !fnt->data) return;
-	
-	*minx = *maxx = x;
-	*miny = *maxy = y;
 
-	for (; *s; ++s)
-	{
+	int len = strlen(s);
+	float scale = stbtt_ScaleForPixelHeight(&fnt->font, size);
+	int c = 0;
+	float spacing = stash->charSpacing;
+	int doKerning = stash->doKerning;
+
+	for (; *s; ++s){
 		if (decutf8(&state, &codepoint, *(unsigned char*)s)) continue;
 		glyph = get_glyph(stash, fnt, codepoint, isize);
 		if (!glyph) continue;
 		if (!get_quad(stash, fnt, glyph, isize, &x, &y, &q)) continue;
+
+		int diff = 0;
+		if (c < len && doKerning > 0){
+			diff = stbtt_GetCodepointKernAdvance(&fnt->font, *(s), *(s+1));
+			//printf("diff '%c' '%c' = %d\n", *(s-1), *s, diff);
+			x += diff * scale + spacing;
+		}
+		x += scale + spacing;
+
 		if (q.x0 < *minx) *minx = q.x0;
 		if (q.x1 > *maxx) *maxx = q.x1;
-		if (q.y1 > *miny) *miny = q.y1; //oriol swapped compare operator to flip text
-		if (q.y0 < *maxy) *maxy = q.y0; //oriol swapped compare operator to flip text
+		if (q.y1 > *miny) *miny = q.y1;		//oriol changed "<" direction bc its flipped to fit OF
+		if (q.y0 < *maxy) *maxy = q.y0;		//idem
+		c++;
 	}
+	if (floorf(x) > *maxx) *maxx = floorf(x);
 }
 
 void sth_vmetrics(struct sth_stash* stash,
@@ -719,7 +809,6 @@ void sth_vmetrics(struct sth_stash* stash,
 	struct sth_font* fnt = NULL;
 
 	if (stash == NULL) return;
-	if (!stash->textures || !stash->textures->id) return;
 	fnt = stash->fonts;
 	while(fnt != NULL && fnt->idx != idx) fnt = fnt->next;
 	if (fnt == NULL) return;
@@ -741,7 +830,16 @@ void sth_delete(struct sth_stash* stash)
 
 	if (!stash) return;
 
-	tex = stash->textures;
+	tex = stash->tt_textures;
+	while(tex != NULL) {
+		curtex = tex;
+		tex = tex->next;
+		if (curtex->id)
+			glDeleteTextures(1, &curtex->id);
+		free(curtex);
+	}
+
+	tex = stash->bm_textures;
 	while(tex != NULL) {
 		curtex = tex;
 		tex = tex->next;
@@ -760,5 +858,11 @@ void sth_delete(struct sth_stash* stash)
 			free(curfnt->data);
 		free(curfnt);
 	}
+	free(stash->empty_data);
 	free(stash);
 }
+
+
+#ifdef __cplusplus
+}
+#endif

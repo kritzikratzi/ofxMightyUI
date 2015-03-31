@@ -12,6 +12,7 @@
 
 #include <map>
 #include <string>
+#include "MUI.h"
 
 namespace mui{
 	class Container; 

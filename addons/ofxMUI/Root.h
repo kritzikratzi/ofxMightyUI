@@ -19,7 +19,7 @@ namespace mui{
 	class TextField; 
 	class Root : public Container {
 	public: 
-		Root() : Container( 0, 0, ofGetWidth(), ofGetHeight() ){ INSTANCE = this; ignoreEvents = true; init(); };
+		Root() : Container( 0, 0, -1, -1 ){ INSTANCE = this; ignoreEvents = true; init(); };
 		
 		Container * respondingContainer[OF_MAX_TOUCHES]; // think of the responder as the elements received touchDown events.
 		

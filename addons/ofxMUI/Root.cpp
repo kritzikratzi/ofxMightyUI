@@ -26,12 +26,15 @@ void mui::Root::init(){
 //	NativeOSX::init();
 	#endif
 	
+	width = ofGetWidth()/mui::MuiConfig::scaleFactor;
+	height = ofGetWidth()/mui::MuiConfig::scaleFactor;
+	
 	ofAddListener( ofEvents().setup, this, &mui::Root::of_setup, OF_EVENT_ORDER_AFTER_APP );
 	ofAddListener( ofEvents().update, this, &mui::Root::of_update, OF_EVENT_ORDER_AFTER_APP );
 	ofAddListener( ofEvents().draw, this, &mui::Root::of_draw, OF_EVENT_ORDER_AFTER_APP );
 	//ofAddListener( ofEvents().exit, this, &mui::Root::of_exit );
 	//ofAddListener( ofEvents().windowEntered, this, &mui::Root::of_windowEntered );
-	//ofAddListener( ofEvents().windowResized, this, &mui::Root::of_windowResized );
+	ofAddListener( ofEvents().windowResized, this, &mui::Root::of_windowResized, OF_EVENT_ORDER_BEFORE_APP );
 	ofAddListener( ofEvents().keyPressed, this, &mui::Root::of_keyPressed, OF_EVENT_ORDER_BEFORE_APP );
 	ofAddListener( ofEvents().keyReleased, this, &mui::Root::of_keyReleased, OF_EVENT_ORDER_BEFORE_APP );
 	ofAddListener( ofEvents().mouseMoved, this, &mui::Root::of_mouseMoved, OF_EVENT_ORDER_BEFORE_APP );
@@ -63,25 +66,17 @@ void mui::Root::handleUpdate(){
 
 //--------------------------------------------------------------
 void mui::Root::handleDraw(){
+	ofSetupScreenOrtho(); 
 	ofPushStyle();
 	ofScale( mui::MuiConfig::scaleFactor, mui::MuiConfig::scaleFactor, mui::MuiConfig::scaleFactor );
 	ofFill(); 
 	ofSetLineWidth( 1 ); 
 	ofSetColor( 255, 255, 255 ); 
 	ofEnableAlphaBlending();
-//TMP
-//	if( Helpers::retinaMode ){
-//		ofPushMatrix();
-//		ofScale( 2, 2, 1 );
-//	}
 	
 	Container::handleDraw();
 	
-//	if( Helpers::retinaMode ){
-//		ofPopMatrix();
-//	}
-	
-	ofDisableAlphaBlending(); 
+	ofDisableAlphaBlending();
     
     handleRemovals();
 	
@@ -376,6 +371,8 @@ void mui::Root::of_windowEntered( ofEntryEventArgs &args ){
 }
 void mui::Root::of_windowResized( ofResizeEventArgs &args ){
 	//handleWindowResized(args);
+	width = args.width/mui::MuiConfig::scaleFactor;
+	height = args.height/mui::MuiConfig::scaleFactor;
 }
 bool mui::Root::of_keyPressed( ofKeyEventArgs &args ){
 	return handleKeyPressed(args.key) != NULL;

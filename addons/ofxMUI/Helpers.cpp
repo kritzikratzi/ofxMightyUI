@@ -24,24 +24,23 @@ void mui::Helpers::clearCaches(){
 	images.clear();
 
 
-
-	#if MUI_FONT_TYPE == ofxTrueTypeFontFS
+	#if MUI_FONT_TYPE_ACTIVE == MUI_FONT_TYPE_FONTSTASH
 		ofxTrueTypeFontFS::clearCaches();
 		fonts.clear();
 		customFonts.clear();
-	#else
-		for(std::map<std::string, MUI_FONT_TYPE*>::iterator iterator = fonts.begin(); iterator != fonts.end(); iterator++) {
-			MUI_FONT_TYPE *font = iterator->second;
-			font->clear();
+	#elif MUI_FONT_TYPE_ACTIVE == MUI_FONT_TYPE_OPENFRAMEWORKS
+		for(std::map<int, ofTrueTypeFont*>::iterator iterator = fonts.begin(); iterator != fonts.end(); iterator++) {
+			ofTrueTypeFont *font = iterator->second;
 			delete font;
 		}
-		for(std::map<std::string, MUI_FONT_TYPE*>::iterator iterator = customFonts.begin(); iterator != customFonts.end(); iterator++) {
-			MUI_FONT_TYPE *font = iterator->second;
-			font->clear();
+		for(std::map<std::string, ofTrueTypeFont*>::iterator iterator = customFonts.begin(); iterator != customFonts.end(); iterator++) {
+			ofTrueTypeFont *font = iterator->second;
 			delete font;
 		}
 		fonts.clear();
 		customFonts.clear();
+	#else
+		#error Unsupported Font Rendering Implemtation selected.
 	#endif
 
 }
