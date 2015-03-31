@@ -53,7 +53,7 @@ bool ofxFontStash::setup( string fontFile, float lineHeightPercent ){
 		stash = sth_create(512,512);
 		stashFontID = sth_add_font( stash, ofToDataPath( fontFile ).c_str() );			
 		if ( stashFontID != 0){
-			printf("ofxFontStash : loaded font %s\n", fontFile.c_str() );
+			//printf("ofxFontStash : loaded font %s\n", fontFile.c_str() );
 			return true;
 		}else{
 			printf("ofxFontStash : Can't load font! %s\n", fontFile.c_str() );

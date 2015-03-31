@@ -317,6 +317,27 @@ ofPoint mui::Container::getGlobalPosition(){
 	return result;
 }
 
+mui::Container * mui::Container::findChildAt( float x, float y, bool onlyVisible ){
+	if( x >= 0 && y >= 0 && x <= width && y <= height && (!onlyVisible || visible ) ){
+		// do we have a child that fits there?
+		vector<mui::Container*>::iterator it = children.begin();
+
+		mui::Container * result = this;
+		mui::Container * child = NULL;
+
+		while( it != children.end() ){
+			child = (*it)->findChildAt( x - (*it)->x, y - (*it)->y );
+			if( child != NULL ) result = child;
+			++it;
+		}
+		
+		return result;
+	}
+	else{
+		return NULL;
+	}
+}
+
 bool mui::Container::isVisibleOnScreen( float border ){
 	ofPoint result;
 	

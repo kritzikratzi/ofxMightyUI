@@ -97,3 +97,4 @@ bool mui::MuiConfig::detectRetina = true;
 bool mui::MuiConfig::useRetinaAssets = true;
 int mui::MuiConfig::scaleFactor = 1;
 Poco::Path mui::MuiConfig::dataPath = Poco::Path();
+ofLogLevel mui::MuiConfig::logLevel = OF_LOG_ERROR; 

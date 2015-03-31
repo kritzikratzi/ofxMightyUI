@@ -84,6 +84,33 @@ void mui::Root::handleDraw(){
 	ofDisableAlphaBlending(); 
     
     handleRemovals();
+	
+	if( mui::MuiConfig::debugDraw ){
+		mui::Container * active = this->findChildAt( ofGetMouseX()/mui::MuiConfig::scaleFactor - this->x, ofGetMouseY()/mui::MuiConfig::scaleFactor-this->y, true );
+		if( active != NULL ){
+			ofPoint p = active->getGlobalPosition();
+			ofPushMatrix();
+			ofFill();
+			stringstream name_;
+			mui::Container * c = active;
+			while( c != NULL  ){
+				name_ << c->name;
+				c = c->parent;
+				if( c != NULL )  name_ << " _ ";
+			}
+			
+			string name = name_.str();
+			ofRectangle bounds = mui::Helpers::getFont(10)->getStringBoundingBox(name, p.x, p.y+10);
+			ofRect( bounds.x, bounds.y, bounds.width, bounds.height );
+			ofNoFill();
+			ofSetColor( 255,255,0 );
+			ofRect( p.x, p.y, active->width, active->height );
+			ofSetColor(255);
+			mui::Helpers::drawString(name, p.x, p.y+10, 10);
+			ofPopMatrix();
+		}
+	}
+	
 	ofPopStyle();
 }
 

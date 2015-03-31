@@ -152,5 +152,6 @@ namespace mui{
 		// path to the data folder (containing the mui folder)
 		static Poco::Path dataPath;
 
+		static ofLogLevel logLevel;
 	};
 }

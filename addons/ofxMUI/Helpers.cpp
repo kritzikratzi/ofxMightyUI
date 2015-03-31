@@ -59,7 +59,9 @@ std::string mui::Helpers::muiPath( std::string path ){
 		outputPath = inputPath;
 	}
 	
-	cout << "loading path: " << outputPath.toString() << " || " << outputPath.absolute().toString() << " || " << path << endl;
+	if( mui::MuiConfig::logLevel <= OF_LOG_NOTICE ){
+		cout << "loading path: " << outputPath.toString() << " || " << outputPath.absolute().toString() << " || " << path << endl;
+	}
 	return outputPath.absolute().toString();
 }
 
@@ -69,12 +71,20 @@ ofImage * mui::Helpers::getImage( std::string name ){
 	std::map<std::string, ofImage*>::iterator iter = mui::Helpers::images.find( name ); 
 
 	if( iter == images.end() ){
-		cout << "Image: " << name << " not loaded yet, doing this now!" << endl; 
-		ofImage * img = new ofImage(); 
+		if( mui::MuiConfig::logLevel <= OF_LOG_NOTICE ){
+			cout << "Image: " << name << " not loaded yet, doing this now!" << endl;
+		}
+		ofImage * img = new ofImage();
 		if( mui::MuiConfig::useRetinaAssets ){
-			img->loadImage( muiPath("mui/retina/" + name + ".png") );
+			ofFile file( muiPath("mui/retina/" + name + ".png") );
+			if( file.exists() ){
+				img->loadImage( muiPath("mui/retina/" + name + ".png") );
+			}
+			
 			if( img->width == 0 ){
-				cerr << "Image: " << name << " not available in retina folder. trying normal!" << endl;
+				if( mui::MuiConfig::logLevel <= OF_LOG_WARNING ){
+					cerr << "Image: " << name << " not available in retina folder. trying normal!" << endl;
+				}
 				img->loadImage( muiPath("mui/normal/" + name + ".png") );
 			}
 		}
@@ -92,7 +102,9 @@ MUI_FONT_TYPE* mui::Helpers::getFont( int fontSize ){
 	std::map<int, MUI_FONT_TYPE*>::iterator iter = mui::Helpers::fonts.find( fontSize );
 	
 	if( iter == fonts.end() ){
-		cout << "Font: " << fontSize << " not loaded yet, doing this now!" << endl;
+		if( mui::MuiConfig::logLevel <= OF_LOG_NOTICE ){
+			cout << "Font: " << fontSize << " not loaded yet, doing this now!" << endl;
+		}
 		MUI_FONT_TYPE * font = new MUI_FONT_TYPE();
 		font->loadFont( muiPath(MUI_FONT), fontSize, true );
 		fonts[fontSize] = font;
@@ -107,7 +119,9 @@ MUI_FONT_TYPE* mui::Helpers::getFont( string customFont, int fontSize ){
 	std::map<string, MUI_FONT_TYPE*>::iterator iter = mui::Helpers::customFonts.find( id );
 	
 	if( iter == customFonts.end() ){
-		cout << "Font: " << fontSize << " not loaded yet, doing this now!" << endl;
+		if( mui::MuiConfig::logLevel <= OF_LOG_NOTICE ){
+			cout << "Font: " << fontSize << " not loaded yet, doing this now!" << endl;
+		}
 		MUI_FONT_TYPE * font = new MUI_FONT_TYPE();
 		font->loadFont( muiPath(customFont), fontSize, true );
 		customFonts[id] = font;
@@ -358,14 +372,11 @@ ofTouchEventArgs mui::Helpers::translateTouch( ofTouchEventArgs &touch, Containe
 
 ofPoint mui::Helpers::translateCoords(float x, float y, mui::Container *src, mui::Container *dest){
     ofPoint p(x, y ); 
-    cout << "[p=" << p.x << "," << p.y << endl; 
     if( src != NULL ){
         p += src->getGlobalPosition(); 
-        cout << "[sp=" << p.x << "," << p.y << endl; 
     }
     if( dest != NULL ){
         p -= dest->getGlobalPosition(); 
-        cout << "[dp=" << p.x << "," << p.y << endl; 
     }
     
     return p; 
