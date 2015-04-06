@@ -56,7 +56,9 @@ public:
 	
 	void bind();
 	void unbind();
-	
+
+	static void clearCaches();
+
 protected:
 	bool			bLoadedOk;
 	bool 			bAntiAliased;
@@ -85,7 +87,7 @@ protected:
 	ofTexture texAtlas;
 	bool binded;
 	ofMesh stringQuads;
-	
+
 private:
 	static std::map<string, ofxFontStash*> fonts;
 	ofxFontStash * font;

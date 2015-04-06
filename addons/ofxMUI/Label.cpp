@@ -39,9 +39,11 @@ void mui::Label::draw(){
 	ofSetColor( 255, 255, 255 ); 
 	glBlendFunc( GL_ONE, GL_ONE_MINUS_SRC_ALPHA ); 
 //	fbo.draw( (int)size.x, (int)size.y, size.width, size.height );
-    ofSetColor( fg.r, fg.g, fg.b );
-	if( Helpers::retinaMode ){
-		MUI_FONT_TYPE * font = Helpers::getFont( 2*fontSize );
+    ofSetColor( fg.r, fg.g, fg.b, fg.a );
+	if( mui::MuiConfig::scaleFactor != 1 ){
+		MUI_FONT_TYPE * font;
+		if( fontName == "" ) font = Helpers::getFont( mui::MuiConfig::scaleFactor*fontSize );
+		else  font = Helpers::getFont( fontName, mui::MuiConfig::scaleFactor*fontSize );
 		ofPushMatrix();
 		ofTranslate( (int)(size.x-boundingBox.x), (int)(size.y-(int)boundingBox.y) );
 		ofScale( 0.5, 0.5 );
@@ -49,7 +51,9 @@ void mui::Label::draw(){
 		ofPopMatrix();
 	}
 	else{
-		MUI_FONT_TYPE * font = Helpers::getFont( Helpers::retinaMode?(fontSize*2):fontSize );
+		MUI_FONT_TYPE * font;
+		if( fontName == "" ) font = Helpers::getFont( fontSize );
+		else font = Helpers::getFont( fontName, fontSize );
 		font->drawString( displayText, (int)(size.x-boundingBox.x), (int)(size.y-(int)boundingBox.y) );
 	}
 	
@@ -84,7 +88,9 @@ void mui::Label::commit(){
 	// magic trick #2
 	// MUI_FONT_TYPE * font = Helpers::getFont( Helpers::retinaMode?(fontSize*2):fontSize );
 	// magic trick #2.2: fuck retina, we compute the bounding box at normal size!
-	MUI_FONT_TYPE * font = Helpers::getFont( fontSize );
+	MUI_FONT_TYPE * font;
+	if( fontName == "" ) font = Helpers::getFont( fontSize );
+	else  font = Helpers::getFont( fontName, fontSize );
 	boundingBox = font->getStringBoundingBox( text, 0, 0 );
 	
 	

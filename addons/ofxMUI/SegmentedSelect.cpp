@@ -118,7 +118,8 @@ void mui::SegmentedSelect::drawBackground(){
 //--------------------------------------------------------------
 void mui::SegmentedSelect::onButtonPress( const void* sender, ofTouchEventArgs &args ){
 	SegmentedButton * button = (SegmentedButton*) sender; 
-	selected = button->label->text; 
+	selected = button->label->text;
+	ofNotifyEvent(onChange, selected); 
 	commit(); 
 }
 

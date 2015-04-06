@@ -17,17 +17,36 @@
 // 3. This notice may not be removed or altered from any source distribution.
 //
 
-
 #ifndef FONTSTASH_H
 #define FONTSTASH_H
 
-struct sth_stash* sth_create(int cachew, int cacheh);
+#if __cplusplus
+extern "C" {
+#endif
+
+struct sth_stash
+{int tw,th;
+	float itw,ith;
+	GLubyte *empty_data;
+	struct sth_texture* tt_textures;
+	struct sth_texture* bm_textures;
+	struct sth_font* fonts;
+	int drawing;
+	int padding; //oriol adding texture padding around chars to avoid mipmap neighbor leaks
+	int hasMipMap; //oriol adding optional mipmap generation to each char
+	int doKerning; //calc kerning on the fly and offset letters when drawing and / calcing box sizes
+	float charSpacing;
+	float dpiScale;
+};
+
+
+struct sth_stash* sth_create(int cachew, int cacheh, int createMipmaps, int charPadding, float dpiScale);
 
 int sth_add_font(struct sth_stash* stash, const char* path);
 int sth_add_font_from_memory(struct sth_stash* stash, unsigned char* buffer);
 
-int sth_add_bitmap_font(struct sth_stash* stash, int ascent, int descent, int line_gap);
-int sth_add_glyph(struct sth_stash* stash, int idx, GLuint id, const char* s,
+int  sth_add_bitmap_font(struct sth_stash* stash, int ascent, int descent, int line_gap);
+void sth_add_glyph(struct sth_stash* stash, int idx, GLuint id, const char* s,  /* @rlyeh: function does not return int */
                   short size, short base, int x, int y, int w, int h,
                   float xoffset, float yoffset, float xadvance);
 
@@ -47,4 +66,11 @@ void sth_vmetrics(struct sth_stash* stash,
 
 void sth_delete(struct sth_stash* stash);
 
+void set_lod_bias(struct sth_stash* stash, float bias);
+
+#if __cplusplus
+}
+#endif
+
 #endif // FONTSTASH_H
+

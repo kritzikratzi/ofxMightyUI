@@ -45,7 +45,8 @@ void mui::ScrollPaneView::handleDraw(){
 			Helpers::inside( parent, x+c->x, y+c->y ) ||
 			Helpers::inside( parent, x+c->x+c->width, y+c->y ) ||
 			Helpers::inside( parent, x+c->x, y+c->y+c->height ) ||
-			Helpers::inside( parent, x+c->x+c->width, y+c->y+c->height );
+			Helpers::inside( parent, x+c->x+c->width, y+c->y+c->height ) ||
+			Helpers::inside( parent, x+c->x+c->width/2, y+c->y+c->height/2 );
 
 		if( inside || c->drawDirty ){
 			c->handleDraw();
@@ -134,6 +135,63 @@ void mui::ScrollPane::beginMomentumAnimation(){
 	animatingToBase = false; 
 	animatingMomentum = true; 
 }
+
+mui::Container * mui::ScrollPane::createPage(){
+	static int pageCount = 0;
+	mui::Container * container = new mui::Container( width*numPagesAdded, 0, width, height );
+	container->name = "page-" + ofToString(pageCount++);
+	view->add(container);
+	container->ignoreEvents = true;
+	numPagesAdded ++;
+	commit();
+	return container;
+}
+
+//--------------------------------------------------------------
+mui::ScrollPane * mui::ScrollPane::createPageWithScrollPane(){
+	static int scrollPageCount = 0;
+	mui::ScrollPane * container = new mui::ScrollPane( width*numPagesAdded, 0, width, height );
+	container->name = "scrollpage-" + ofToString(scrollPageCount++);
+	view->add(container);
+	container->ignoreEvents = true;
+	container->canScrollX = false; 
+	numPagesAdded ++;
+	commit();
+	return container;
+}
+
+//--------------------------------------------------------------
+void mui::ScrollPane::nextPage(int inc){
+	cout << getPageNum() << endl; 
+	gotoPage( getPageNum() + inc);
+}
+
+//--------------------------------------------------------------
+void mui::ScrollPane::prevPage(int dec){
+	gotoPage( getPageNum() - dec);
+}
+
+//--------------------------------------------------------------
+void mui::ScrollPane::gotoPage( int page ){
+	page = ofClamp(page, 0, MAX(numPages()-1,0));
+	beginBaseAnimation(page*width, currentScrollY);
+}
+
+//--------------------------------------------------------------
+int mui::ScrollPane::getPageNum(){
+	if( animating && animatingToBase ){
+		return roundf(animateToX/width-0.499999f);
+	}
+	else{
+		return roundf(currentScrollX/width-0.499999f);
+	}
+}
+
+//--------------------------------------------------------------
+int mui::ScrollPane::numPages(){
+	return numPagesAdded;
+}
+
 
 //--------------------------------------------------------------
 void mui::ScrollPane::update(){
@@ -255,16 +313,16 @@ void mui::ScrollPane::touchMoved( ofTouchEventArgs &touch ){
 		float wantX = initialX - touch.x + touchStartX; 
 		float wantY = initialY - touch.y + touchStartY; 
 		
-		if( wantX > maxScrollX ) wantX = ( wantX + maxScrollX ) / 2; 
-		else if( wantX < minScrollX ) wantX = ( wantX + minScrollX ) / 2; 
+		if( wantX > maxScrollX ) wantX = ( wantX + 2*maxScrollX ) / 3;
+		else if( wantX < minScrollX ) wantX = ( wantX + 2*minScrollX ) / 3;
 		else scrollX = wantX; 
 		
-		if( wantY > maxScrollY ) wantY = ( wantY + maxScrollY ) / 2; 
-		else if( wantY < minScrollY ) wantY = ( wantY + minScrollY ) / 2; 
+		if( wantY > maxScrollY ) wantY = ( wantY + 2*maxScrollY ) / 3;
+		else if( wantY < minScrollY ) wantY = ( wantY + 2*minScrollY ) / 3;
 		else wantY = wantY; 
 		
 		if( canScrollX ) currentScrollX = wantX; 
-		if( canScrollY ) currentScrollY = wantY; 
+		if( canScrollY ) currentScrollY = wantY;
 		
 		updateTouchVelocity( touch ); 
 		pressedX = touch.x; 
@@ -283,7 +341,17 @@ void mui::ScrollPane::touchMovedOutside( ofTouchEventArgs &touch ){
 void mui::ScrollPane::touchUp( ofTouchEventArgs &touch ){
 	if( pressed ){
 		updateTouchVelocity( touch );
-		if( ( canScrollX && ABS( velX ) > 50 ) || ( canScrollY && ABS( velY ) > 50 ) ){
+		if( usePagingH ){
+			int page = 0;
+			if( fabsf(velX ) < 5 ){
+				page = ofClamp( roundf(currentScrollX/width), 0, numPagesAdded-1 );
+			}
+			else{
+				page = ofClamp( roundf(currentScrollX/width+(velX<0?-.5:+.5)), 0, numPagesAdded-1 );
+			}
+			beginBaseAnimation(page*width, currentScrollY);
+		}
+		else if( ( canScrollX && ABS( velX ) > 50 ) || ( canScrollY && ABS( velY ) > 50 ) ){
 			beginMomentumAnimation();
 		}
 		else if( currentScrollX > maxScrollX || currentScrollY > maxScrollY || currentScrollX < minScrollX || currentScrollY < minScrollY )
@@ -295,6 +363,7 @@ void mui::ScrollPane::touchUp( ofTouchEventArgs &touch ){
 
 	pressed = false;
 	watchingTouch[touch.id] = false;
+	focusTransferable = true;
 
 }
 
@@ -309,7 +378,11 @@ void mui::ScrollPane::touchUpOutside( ofTouchEventArgs &touch ){
 void mui::ScrollPane::touchDoubleTap( ofTouchEventArgs &touch ){
 }
 
-
+//--------------------------------------------------------------
+void mui::ScrollPane::touchCanceled( ofTouchEventArgs &touch ){
+	pressed = false;
+	focusTransferable = true;
+}
 
 //--------------------------------------------------------------
 mui::Container * mui::ScrollPane::handleTouchDown( ofTouchEventArgs &touch ){
@@ -349,6 +422,7 @@ mui::Container * mui::ScrollPane::handleTouchMoved( ofTouchEventArgs &touch ){
 	if( !pressed && watchingTouch[touch.id] ){
 		// we don't care about "wantsToScrollX" anymore, 
 		// because on touch devices you can drag around a bit anyways
+		
 		if(( canScrollX && /*wantsToScrollX && */fabsf( touchStart[touch.id].x - touch.x ) > 20 ) || 
 		   ( canScrollY && /*wantsToScrollY && */fabsf( touchStart[touch.id].y - touch.y ) > 20 )
 		){
@@ -356,6 +430,7 @@ mui::Container * mui::ScrollPane::handleTouchMoved( ofTouchEventArgs &touch ){
 			if( Root::INSTANCE->becomeResponder( this, touch ) ){ 
 				touchDown( touch ); // fake a touchdown
 				watchingTouch[touch.id] = false;
+				focusTransferable = false;
 			}
 		}
 	}

@@ -42,7 +42,7 @@ void mui::Slider::touchDown( ofTouchEventArgs &touch ){
 //--------------------------------------------------------------
 void mui::Slider::touchMoved( ofTouchEventArgs &touch ){
 	value = fminf( max, fmaxf( min, screenToValue( touch.x ) ) );
-    onChange( this, touch );
+	ofNotifyEvent(onChange, value);
 }
 
 

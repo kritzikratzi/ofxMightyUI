@@ -26,8 +26,9 @@ namespace mui{
 		HorizontalAlign horizontalAlign; 
 		VerticalAlign verticalAlign; 
 		std::string text; 
-		int fontSize; 
-		ofRectangle boundingBox; 
+		int fontSize;
+		string fontName; // subject to change!
+		ofRectangle boundingBox;
 		int renderX; 
 		int renderY; 
 		//ofxFBOTexture fbo;

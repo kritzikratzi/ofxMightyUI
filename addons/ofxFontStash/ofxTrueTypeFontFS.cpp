@@ -110,12 +110,12 @@ float ofxTrueTypeFontFS::stringHeight(string s){
 
 //------------------------------------------------------------------------
 ofRectangle ofxTrueTypeFontFS::getStringBoundingBox(string s, float x, float y){
-	return font->getBoundingBoxSize( s, FONTSTASH_SIZE, x, y );
+	return font->getBBox( s, FONTSTASH_SIZE, x, y );
 }
 
 //------------------------------------------------------------------------
 void ofxTrueTypeFontFS::drawString(string s, float x, float y){
-	ofEnableAlphaBlending(); 
+	ofEnableAlphaBlending();
 	font->draw( s, FONTSTASH_SIZE, x, y );
 }
 
@@ -154,3 +154,10 @@ void ofxTrueTypeFontFS::unbind(){
 }
 
 
+void ofxTrueTypeFontFS::clearCaches(){
+	for(std::map<std::string, ofxFontStash*>::iterator iterator = fonts.begin(); iterator != fonts.end(); iterator++) {
+		ofxFontStash *font = iterator->second;
+		delete font;
+	}
+	fonts.clear();
+}

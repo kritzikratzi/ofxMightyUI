@@ -12,39 +12,55 @@
 
 std::map<std::string, ofImage*> mui::Helpers::images; 
 std::map<int, MUI_FONT_TYPE*> mui::Helpers::fonts;
+std::map<string, MUI_FONT_TYPE*> mui::Helpers::customFonts;
 std::stack<ofRectangle> mui::Helpers::scissorStack;
 
-bool mui::Helpers::retinaMode = false;
-Poco::Path mui::Helpers::dataPath = Poco::Path();
-
-/**
- * not much magic need for that retina hack.
- * look inside Label.cpp and and Root.cpp, nothing else should be affected.  
- * btw - if you do decide to enable retina mode you can consider this mui-library 
- * to also calculate in points, not in pixels. 
- */
-void mui::Helpers::enableRetinaHack(){
-	if( images.size() > 0 || fonts.size() > 0 ){
-		cout << "oooooooo . retina mode is most likely gonna be all fucked up!" << endl; 
+void mui::Helpers::clearCaches(){
+	for(std::map<std::string, ofImage*>::iterator iterator = images.begin(); iterator != images.end(); iterator++) {
+		ofImage *img = iterator->second;
+		img->clear();
+		delete img;
 	}
-	
-	retinaMode = true; 
+	images.clear();
+
+
+	#if MUI_FONT_TYPE_ACTIVE == MUI_FONT_TYPE_FONTSTASH
+		ofxTrueTypeFontFS::clearCaches();
+		fonts.clear();
+		customFonts.clear();
+	#elif MUI_FONT_TYPE_ACTIVE == MUI_FONT_TYPE_OPENFRAMEWORKS
+		for(std::map<int, ofTrueTypeFont*>::iterator iterator = fonts.begin(); iterator != fonts.end(); iterator++) {
+			ofTrueTypeFont *font = iterator->second;
+			delete font;
+		}
+		for(std::map<std::string, ofTrueTypeFont*>::iterator iterator = customFonts.begin(); iterator != customFonts.end(); iterator++) {
+			ofTrueTypeFont *font = iterator->second;
+			delete font;
+		}
+		fonts.clear();
+		customFonts.clear();
+	#else
+		#error Unsupported Font Rendering Implemtation selected.
+	#endif
+
 }
 
 std::string mui::Helpers::muiPath( std::string path ){
 	// pretty much copy&pasted from OF
 	Poco::Path outputPath;
 	Poco::Path inputPath(path);
-	string strippedDataPath = dataPath.toString();
+	string strippedDataPath = mui::MuiConfig::dataPath.toString();
 	strippedDataPath = ofFilePath::removeTrailingSlash(strippedDataPath);
 	if (inputPath.toString().find(strippedDataPath) != 0) {
-		outputPath = dataPath;
+		outputPath = mui::MuiConfig::dataPath;
 		outputPath.resolve(inputPath);
 	} else {
 		outputPath = inputPath;
 	}
 	
-	cout << "loading path: " << outputPath.toString() << " || " << outputPath.absolute().toString() << " || " << path << endl;
+	if( mui::MuiConfig::logLevel <= OF_LOG_NOTICE ){
+		cout << "loading path: " << outputPath.toString() << " || " << outputPath.absolute().toString() << " || " << path << endl;
+	}
 	return outputPath.absolute().toString();
 }
 
@@ -54,10 +70,26 @@ ofImage * mui::Helpers::getImage( std::string name ){
 	std::map<std::string, ofImage*>::iterator iter = mui::Helpers::images.find( name ); 
 
 	if( iter == images.end() ){
-		cout << "Image: " << name << " not loaded yet, doing this now!" << endl; 
-		ofImage * img = new ofImage(); 
-		if( retinaMode ) img->loadImage( muiPath("mui/retina/" + name + ".png") );
-		else img->loadImage( muiPath("mui/normal/" + name + ".png") );
+		if( mui::MuiConfig::logLevel <= OF_LOG_NOTICE ){
+			cout << "Image: " << name << " not loaded yet, doing this now!" << endl;
+		}
+		ofImage * img = new ofImage();
+		if( mui::MuiConfig::useRetinaAssets ){
+			ofFile file( muiPath("mui/retina/" + name + ".png") );
+			if( file.exists() ){
+				img->loadImage( muiPath("mui/retina/" + name + ".png") );
+			}
+			
+			if( img->width == 0 ){
+				if( mui::MuiConfig::logLevel <= OF_LOG_WARNING ){
+					cerr << "Image: " << name << " not available in retina folder. trying normal!" << endl;
+				}
+				img->loadImage( muiPath("mui/normal/" + name + ".png") );
+			}
+		}
+		else{
+			img->loadImage( muiPath("mui/normal/" + name + ".png") );
+		}
 		images[name] = img; 
 		return img; 
 	}
@@ -66,22 +98,40 @@ ofImage * mui::Helpers::getImage( std::string name ){
 }
 
 MUI_FONT_TYPE* mui::Helpers::getFont( int fontSize ){
-	
 	std::map<int, MUI_FONT_TYPE*>::iterator iter = mui::Helpers::fonts.find( fontSize );
 	
 	if( iter == fonts.end() ){
-		cout << "Font: " << fontSize << " not loaded yet, doing this now!" << endl; 
+		if( mui::MuiConfig::logLevel <= OF_LOG_NOTICE ){
+			cout << "Font: " << fontSize << " not loaded yet, doing this now!" << endl;
+		}
 		MUI_FONT_TYPE * font = new MUI_FONT_TYPE();
 		font->loadFont( muiPath(MUI_FONT), fontSize, true );
-		fonts[fontSize] = font; 
-		return font; 
+		fonts[fontSize] = font;
+		return font;
+	}
+	
+	return iter->second;
+}
+
+MUI_FONT_TYPE* mui::Helpers::getFont( string customFont, int fontSize ){
+	string id = customFont + ofToString(fontSize);
+	std::map<string, MUI_FONT_TYPE*>::iterator iter = mui::Helpers::customFonts.find( id );
+	
+	if( iter == customFonts.end() ){
+		if( mui::MuiConfig::logLevel <= OF_LOG_NOTICE ){
+			cout << "Font: " << fontSize << " not loaded yet, doing this now!" << endl;
+		}
+		MUI_FONT_TYPE * font = new MUI_FONT_TYPE();
+		font->loadFont( muiPath(customFont), fontSize, true );
+		customFonts[id] = font;
+		return font;
 	}
 	
 	return iter->second;
 }
 
 void mui::Helpers::drawString( string s, float x, float y, int fontSize ){
-	if( Helpers::retinaMode ){
+	if( mui::MuiConfig::useRetinaAssets ){
 		MUI_FONT_TYPE * font = Helpers::getFont( 2*fontSize );
 		ofPushMatrix();
 		ofTranslate( x, y );
@@ -142,7 +192,7 @@ ofColor mui::Helpers::rgb( int r, int g, int b, int a ){
 // this only sets the scissor mask,
 // you have to call glEnable( GL_SCISSOR_TEST yourself )
 void mui::Helpers::orientedScissor( float x, float y, float w, float h ){
-	if( retinaMode ){ x*=2; y*=2; w*=2; h*=2; }
+	if( mui::MuiConfig::scaleFactor != 1 ){ x*=mui::MuiConfig::scaleFactor; y*=mui::MuiConfig::scaleFactor; w*=mui::MuiConfig::scaleFactor; h*=mui::MuiConfig::scaleFactor; }
 	// position 0
 	glScissor( x, ofGetHeight()-y-h, w, h );
     
@@ -157,8 +207,8 @@ void mui::Helpers::orientedScissor( float x, float y, float w, float h ){
 
 void mui::Helpers::pushScissor( Container * c, float x, float y, float w, float h ){
     glEnable( GL_SCISSOR_TEST );
-    if( c != NULL && w == -9999 ) w = c->width;
-    if( c != NULL && h == -9999 ) h = c->height;
+    if( c != NULL && w == -9999 ) w = c->width+1;
+    if( c != NULL && h == -9999 ) h = c->height+1;
     
     ofPoint pos(x, y);
     
@@ -321,14 +371,11 @@ ofTouchEventArgs mui::Helpers::translateTouch( ofTouchEventArgs &touch, Containe
 
 ofPoint mui::Helpers::translateCoords(float x, float y, mui::Container *src, mui::Container *dest){
     ofPoint p(x, y ); 
-    cout << "[p=" << p.x << "," << p.y << endl; 
     if( src != NULL ){
         p += src->getGlobalPosition(); 
-        cout << "[sp=" << p.x << "," << p.y << endl; 
     }
     if( dest != NULL ){
         p -= dest->getGlobalPosition(); 
-        cout << "[dp=" << p.x << "," << p.y << endl; 
     }
     
     return p; 

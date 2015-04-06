@@ -39,7 +39,7 @@ namespace mui{
 		//bool startedInside[OF_MAX_TOUCHES]; // don't use this. unless you're you really want to. 
 		
 		Container( float x_, float y_, float width_ = 10, float height_ = 10 ) : 
-		x(x_), y(y_), width(width_), height(height_), opaque(false), parent(NULL), layoutManager(NULL), visible(true), ignoreEvents(false), singleTouch(true), name( "" ), singleTouchId( -1 ), focusTransferable(true),bg(0,0,0,0), allowSubpixelTranslations(true), drawDirty(false){
+		x(x_), y(y_), width(width_), height(height_), opaque(false), parent(NULL), layoutManager(NULL), visible(true), ignoreEvents(false), singleTouch(true), name( "Container" ), singleTouchId( -1 ), focusTransferable(true),bg(0,0,0,0), allowSubpixelTranslations(true), drawDirty(false){
 			//for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
 			//	startedInside[i] = false; 
 			//}
@@ -73,11 +73,14 @@ namespace mui{
 		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
 		virtual Container * handleTouchDoubleTap( ofTouchEventArgs &touch );
 
-		virtual Container * getContainer( float x, float y );
-		
+		virtual void reloadTextures();
+		virtual void handleReloadTextures();
 		virtual bool hasFocus();
 		virtual bool hasFocus( ofTouchEventArgs &touch );
 		virtual ofPoint getGlobalPosition();
+		virtual Container * findChildAt( float x, float y, bool onlyVisible = true );
+		
+		virtual bool isVisibleOnScreen(float border=0); // effectively visible on screen? border adds an additonal border around, so border<0 means isVisible return false if it's barely visible, border>0 means isVisible will return true even if the component is already slightly off screen.
 		virtual string toString(); 
 	private: 
 	};

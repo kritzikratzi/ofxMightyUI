@@ -31,21 +31,20 @@
  THE SOFTWARE.
  */
 
-
-// TODO: implement getBoundingBoxSize() for text with multiple lines!
-
 #ifndef ofxFontStash_h
 #define ofxFontStash_h
 
-#include "ofMain.h"
+#define OFX_FONT_STASH_LINE_HEIGHT_MULT	0.9
 
-#ifdef _WIN32
-#include "fontstash.h"
-#else
+#include "ofMain.h"
+// removed unicode and block draw support.
+// for the full source see https://github.com/armadillu/ofxFontStash
+//#include "ofUTF8.h"
+//#include "ofTextConverter.h"
+
 extern "C" {
 	#include "fontstash.h"
 }
-#endif
 
 
 class ofxFontStash{
@@ -56,31 +55,76 @@ class ofxFontStash{
 		~ofxFontStash();
 	
 		//call this to set your font file (.ttf, etc)
-		bool setup( string fontFile, float lineHeightPercent = 1.0f );
-			
-		//if automaticBeginEnd == false you will need to manually call begin() and end(). This improves
-		//performance if you want to make several consecutive draw() calls
-		void draw( string text, float size, int x, int y, bool automaticBeginEnd = true );
+		bool setup( string fontFile,
+				   float lineHeightPercent = 1.0f,
+				   int textureDimension = 512,	//texture atlas size, must be PowerOfTwo (512, 1024, 2048, etc)
+				   bool createMipMaps = false,	//create mipmaps for the texture atlasas; if you do
+												//you will need some extra padding between the characters
+												//in the altases, otherwise the mipmaps will leak when
+												//using smaller sizes, and characters will have white
+												//outlines around them
+				   int intraCharPadding = 0,	//padding around each character in the texture atlas;
+												//wastes texture space, but makes mipmaps work.
+				   float dpiScale = 1.0f		//character texture is rendered internally at this scale
+				   );
 
-		//same as draw, but scans the text for '\n' and starts a new line if found
-		//if automaticBeginEnd == false you will need to manually call begin() and end(). This improves
-		//performance if you want to make several consecutive draw() calls
-		void drawMultiLine( string text, float size, int x, int y, bool automaticBeginEnd = true );
-	
-		//to be used when drawing with automaticBeginEnd == false
-		inline void begin(){ sth_begin_draw(stash);	}
+		//will draw text in one line, ignoring "\n"'s
+		void draw( string text, float size, float x, float y);
 
-		//to be used when drawing with automaticBeginEnd == false
-		inline void end(){ sth_end_draw(stash); }
-	
-		ofRectangle getBoundingBoxSize( string text, float size, int x, int y );
+		//text with "\n" will produce line breaks
+		void drawMultiLine( string text, float fontSize, float x, float y );
 
+		//if the text has newlines, it will be treated as if was called into drawMultiLine()
+		ofRectangle getBBox( string text, float size, float x, float y );
+		ofRectangle getBBox( string text, float size, float x, float y, float columnWidth );
+
+
+		//interleave drawBatch* calls between begin() and end()
+		void beginBatch();
+		void drawBatch( string text, float size, float x, float y);
+		void drawMultiLineBatch( string text, float size, float x, float y );
+		void endBatch();
+
+		void setLineHeight(float percent);
+
+		void setKerning(bool enabled); //use ttf supplied kerning info at draw time or not
+		bool getKerning();
+
+		sth_stash* getStash(){return stash;}; //you probably dont need to mess with that
+		float getDpiScale(){return dpiScale;}
+		void setLodBias(float bias); //only makes sense when using mipmaps!
+
+        // ofTrueTypeFont parity methods
+        bool loadFont(string filename, int fontsize, float lineHeightPercent = 1.0f, int textureDimension = 512);
+        bool isLoaded();
+    
+        void setSize(int fontsize);
+        int getSize();
+    
+        float getLineHeight();
+        float getSpaceSize();
+
+		float getCharacterSpacing(){return stash->charSpacing;}
+		void setCharacterSpacing(float spacing){stash->charSpacing = spacing;}
+    
+        float stringWidth(const string& s);
+        float stringHeight(const string& s);
+    
+        ofRectangle getStringBoundingBox(const string& s, float x, float y);
+    
+        void drawString(const string& s, float x, float y);
+    
 	private:
-		
-		float lineHeight;
-		struct sth_stash* stash;
-		int stashFontID;
-	
+
+		int					extraPadding; //used for mipmaps
+		float				lineHeight; // as percent, 1.0 would be normal
+		struct sth_stash*	stash;
+		int					stashFontID;
+		bool				batchDrawing;
+
+        // ofTrueTypeFont parity attributes
+        int					fontSize;
+		float				dpiScale;
 };
 
 

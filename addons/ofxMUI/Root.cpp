@@ -8,6 +8,8 @@
  */
 
 #include "MUI.h"
+#include "ofEventUtils.h"
+#include "ofEvents.h"
 
 // TODO: the handleXX functions might return null, even if touchMovedOutside and touchUpOutside 
 //       delegated to containers. this shouldn't be the case. 
@@ -24,6 +26,32 @@ void mui::Root::init(){
 //	NativeOSX::init();
 	#endif
 	editing = NULL;
+	
+	name = "Root"; 
+	width = ofGetWidth()/mui::MuiConfig::scaleFactor;
+	height = ofGetWidth()/mui::MuiConfig::scaleFactor;
+	
+	ofAddListener( ofEvents().setup, this, &mui::Root::of_setup, OF_EVENT_ORDER_AFTER_APP );
+	ofAddListener( ofEvents().update, this, &mui::Root::of_update, OF_EVENT_ORDER_AFTER_APP );
+	ofAddListener( ofEvents().draw, this, &mui::Root::of_draw, OF_EVENT_ORDER_AFTER_APP );
+	//ofAddListener( ofEvents().exit, this, &mui::Root::of_exit );
+	//ofAddListener( ofEvents().windowEntered, this, &mui::Root::of_windowEntered );
+	ofAddListener( ofEvents().windowResized, this, &mui::Root::of_windowResized, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().keyPressed, this, &mui::Root::of_keyPressed, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().keyReleased, this, &mui::Root::of_keyReleased, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().mouseMoved, this, &mui::Root::of_mouseMoved, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().mouseDragged, this, &mui::Root::of_mouseDragged, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().mousePressed, this, &mui::Root::of_mousePressed, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().mouseReleased, this, &mui::Root::of_mouseReleased, OF_EVENT_ORDER_BEFORE_APP );
+	//ofAddListener( ofEvents().audioReceived, this, &mui::Root::of_audioReceived );
+	//ofAddListener( ofEvents().audioRequested, this, &mui::Root::of_audioRequested );
+	ofAddListener( ofEvents().touchDown, this, &mui::Root::of_touchDown, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().touchUp, this, &mui::Root::of_touchUp, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().touchMoved, this, &mui::Root::of_touchMoved, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().touchDoubleTap, this, &mui::Root::of_touchDoubleTap, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().touchCancelled, this, &mui::Root::of_touchCancelled, OF_EVENT_ORDER_BEFORE_APP );
+	//ofAddListener( ofEvents().messageEvent, this, &mui::Root::of_messageEvent );
+	//ofAddListener( ofEvents().fileDragEvent, this, &mui::Root::of_fileDragEvent );
 }
 
 void mui::Root::handleUpdate(){
@@ -50,24 +78,17 @@ void mui::Root::handleUpdate(){
 
 //--------------------------------------------------------------
 void mui::Root::handleDraw(){
+	ofSetupScreenOrtho(); 
 	ofPushStyle();
+	ofScale( mui::MuiConfig::scaleFactor, mui::MuiConfig::scaleFactor, mui::MuiConfig::scaleFactor );
 	ofFill(); 
 	ofSetLineWidth( 1 ); 
 	ofSetColor( 255, 255, 255 ); 
 	ofEnableAlphaBlending();
-//TMP
-//	if( Helpers::retinaMode ){
-//		ofPushMatrix();
-//		ofScale( 2, 2, 1 );
-//	}
 	
 	Container::handleDraw();
 	
-//	if( Helpers::retinaMode ){
-//		ofPopMatrix();
-//	}
-	
-	ofDisableAlphaBlending(); 
+	ofDisableAlphaBlending();
     
     handleRemovals();
 
@@ -103,6 +124,32 @@ void mui::Root::handleDraw(){
 		ofFill();
 	}
 
+	if( mui::MuiConfig::debugDraw ){
+		mui::Container * active = this->findChildAt( ofGetMouseX()/mui::MuiConfig::scaleFactor - this->x, ofGetMouseY()/mui::MuiConfig::scaleFactor-this->y, true );
+		if( active != NULL ){
+			ofPoint p = active->getGlobalPosition();
+			ofPushMatrix();
+			ofFill();
+			stringstream name_;
+			mui::Container * c = active;
+			while( c != NULL  ){
+				name_ << c->name;
+				c = c->parent;
+				if( c != NULL )  name_ << " < ";
+			}
+			
+			string name = name_.str();
+			ofRectangle bounds = mui::Helpers::getFont(10)->getStringBoundingBox(name, p.x, p.y+10);
+			ofRect( bounds.x, bounds.y, bounds.width, bounds.height );
+			ofNoFill();
+			ofSetColor( 255,255,0 );
+			ofRect( p.x, p.y, active->width, active->height );
+			ofSetColor(255);
+			mui::Helpers::drawString(name, p.x, p.y+10, 10);
+			ofPopMatrix();
+		}
+	}
+	
 	ofPopStyle();
 }
 
@@ -132,8 +179,9 @@ mui::Container * mui::Root::handleTouchMoved( ofTouchEventArgs &touch ){
 	Container * touched = Container::handleTouchMoved( copy );
     
 	if( touched != respondingContainer[touch.id] && respondingContainer[touch.id] != NULL ){
-        copy = Helpers::translateTouch( touch, this, respondingContainer[touch.id] );
-        copy = Helpers::translateTouch( touch, this, respondingContainer[touch.id] );
+		copy = touch;
+		fixTouchPosition( touch, copy, NULL );
+        copy = Helpers::translateTouch( copy, this, respondingContainer[touch.id] );
         respondingContainer[touch.id]->touchMovedOutside( copy );
 	}
 	
@@ -168,21 +216,28 @@ mui::Container * mui::Root::handleTouchDoubleTap( ofTouchEventArgs &touch ){
 	return Container::handleTouchDoubleTap( copy ); 
 }
 
+//--------------------------------------------------------------
+mui::Container * mui::Root::handleTouchCancelled( ofTouchEventArgs &touch ){
+	if( respondingContainer[touch.id] != NULL ){
+		respondingContainer[touch.id]->touchCanceled( touch );
+		respondingContainer[touch.id]->singleTouchId = -1;
+		mui::Container * c = respondingContainer[touch.id];
+		respondingContainer[touch.id] = NULL;
+		return c;
+	}
+	else{
+		return NULL;
+	}
+}
+
+
 
 //--------------------------------------------------------------
 void mui::Root::fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &copy, Container * container ){
-	if( Helpers::retinaMode ){
-		copy.x = touch.x/2; 
-		copy.y = touch.y/2;
-        copy.xspeed = touch.xspeed/2;
-        copy.yspeed = touch.yspeed/2; 
-	}
-	else{
-		copy.x = touch.x; 
-		copy.y = touch.y; 
-        copy.xspeed = touch.xspeed; 
-        copy.yspeed = touch.yspeed; 
-	}
+	copy.x = touch.x/mui::MuiConfig::scaleFactor;
+	copy.y = touch.y/mui::MuiConfig::scaleFactor;
+	copy.xspeed = touch.xspeed/mui::MuiConfig::scaleFactor;
+	copy.yspeed = touch.yspeed/mui::MuiConfig::scaleFactor;
 	
 	if( container != NULL ){
 		ofPoint pos = container->getGlobalPosition();
@@ -190,39 +245,6 @@ void mui::Root::fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &cop
 		copy.y -= pos.y;
 	}
 }
-
-
-mui::Container * mui::Root::handleKeyPressed( int key ){
-	if( key == '\t' ){
-		ofTouchEventArgs touch;
-		touch.x = ofGetMouseX();
-		touch.y = ofGetMouseY();
-		ofTouchEventArgs copy = touch;
-		fixTouchPosition( touch, copy, NULL );
-		Container * c = getContainer(touch.x, touch.y);
-		
-		if( c == editing ){
-			editing = NULL;
-		}
-		else{
-			editing = c;
-		}
-		
-		move = false;
-		return this;
-	}
-	else if( key == 'm' && editing != NULL ){
-		move = !move;
-		return this;
-	}
-}
-
-
-mui::Container * mui::Root::handleKeyReleased( int key ){
-	
-}
-
-
 
 
 //--------------------------------------------------------------
@@ -289,6 +311,10 @@ void mui::Root::removeFromResponders( Container * c ){
 	}
 }
 
+void mui::Root::reloadTextures(){
+	mui::Helpers::clearCaches();
+}
+
 
 
 //--------------------------------------------------------------
@@ -326,3 +352,137 @@ void mui::Root::handleRemovals(){
     safeRemoveAndDeleteList.clear(); 
 }
 
+//--------------------------------------------------------------
+mui::Container * mui::Root::handleKeyPressed( int key ){
+	if( key == '\t' ){
+		ofTouchEventArgs touch;
+		touch.x = ofGetMouseX();
+		touch.y = ofGetMouseY();
+		ofTouchEventArgs copy = touch;
+		fixTouchPosition( touch, copy, NULL );
+		Container * c = findChildAt(touch.x, touch.y);
+		
+		if( c == editing ){
+			editing = NULL;
+		}
+		else{
+			editing = c;
+		}
+		
+		move = false;
+		return this;
+	}
+	else if( key == 'M' && editing != NULL ){
+		move = !move;
+		return this;
+	}
+	else{
+	}
+	
+	return NULL;
+}
+
+//--------------------------------------------------------------
+mui::Container * mui::Root::handleKeyReleased( int key ){
+	return NULL;
+}
+
+//--------------------------------------------------------------
+mui::Container * mui::Root::handleMouseMoved( int x, int y ){
+	return NULL;
+}
+
+//--------------------------------------------------------------
+mui::Container * mui::Root::handleMouseDragged( int x, int y, int button ){
+	ofTouchEventArgs args;
+	args.x = x;
+	args.y = y;
+	args.id = 0;
+	return handleTouchMoved(args);
+}
+
+//--------------------------------------------------------------
+mui::Container * mui::Root::handleMousePressed( int x, int y, int button ){
+	ofTouchEventArgs args;
+	args.x = x;
+	args.y = y;
+	args.id = 0;
+	return handleTouchDown(args);
+}
+
+//--------------------------------------------------------------
+mui::Container * mui::Root::handleMouseReleased( int x, int y, int button ){
+	ofTouchEventArgs args;
+	args.x = x;
+	args.y = y;
+	args.id = 0;
+	return handleTouchUp(args);
+}
+
+
+
+void mui::Root::of_setup( ofEventArgs &args ){
+	//handleSetup();
+}
+void mui::Root::of_update( ofEventArgs &args ){
+	handleUpdate();
+}
+void mui::Root::of_draw( ofEventArgs &args ){
+	handleDraw();
+}
+void mui::Root::of_exit( ofEventArgs &args ){
+	//handleExit(args);
+}
+void mui::Root::of_windowEntered( ofEntryEventArgs &args ){
+	//handleWindowEntered(args);
+}
+void mui::Root::of_windowResized( ofResizeEventArgs &args ){
+	//handleWindowResized(args);
+	width = args.width/mui::MuiConfig::scaleFactor;
+	height = args.height/mui::MuiConfig::scaleFactor;
+}
+bool mui::Root::of_keyPressed( ofKeyEventArgs &args ){
+	return handleKeyPressed(args.key) != NULL;
+}
+bool mui::Root::of_keyReleased( ofKeyEventArgs &args ){
+	return handleKeyReleased(args.key) != NULL;
+}
+bool mui::Root::of_mouseMoved( ofMouseEventArgs &args ){
+	return handleMouseMoved(args.x, args.y) != NULL;
+}
+bool mui::Root::of_mouseDragged( ofMouseEventArgs &args ){
+	return handleMouseDragged(args.x, args.y, args.button) != NULL;
+}
+bool mui::Root::of_mousePressed( ofMouseEventArgs &args ){
+	return handleMousePressed(args.x, args.y, args.button) != NULL;
+}
+bool mui::Root::of_mouseReleased( ofMouseEventArgs &args ){
+	return handleMouseReleased(args.x, args.y, args.button) != NULL;
+}
+void mui::Root::of_audioReceived( ofAudioEventArgs &args ){
+	//handleAudioReceived(args);
+}
+void mui::Root::of_audioRequested( ofAudioEventArgs &args ){
+	//handleAudioRequested(args);
+}
+bool mui::Root::of_touchDown( ofTouchEventArgs &args ){
+	return handleTouchDown(args) != NULL;
+}
+bool mui::Root::of_touchUp( ofTouchEventArgs &args ){
+	return handleTouchUp(args) != NULL;
+}
+bool mui::Root::of_touchMoved( ofTouchEventArgs &args ){
+	return handleTouchMoved(args) != NULL;
+}
+bool mui::Root::of_touchDoubleTap( ofTouchEventArgs &args ){
+	return handleTouchDoubleTap(args) != NULL;
+}
+bool mui::Root::of_touchCancelled( ofTouchEventArgs &args ){
+	return handleTouchCancelled(args) != NULL;
+}
+void mui::Root::of_messageEvent( ofMessage &args ){
+	//handleMessageEvent(args);
+}
+void mui::Root::of_fileDragEvent( ofDragInfo &args ){
+	//handleFileDragEvent(args);
+}

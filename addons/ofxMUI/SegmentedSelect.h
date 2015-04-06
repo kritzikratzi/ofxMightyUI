@@ -26,7 +26,7 @@ namespace mui{
 		
 		virtual void initSegmentedButton(); 
 		virtual void drawBackground();
-	}; 
+	};
 	
 	class SegmentedSelect : public Container{
 	public: 
@@ -47,6 +47,8 @@ namespace mui{
 		virtual void touchMoved( ofTouchEventArgs &touch ); 
 		virtual void touchUp( ofTouchEventArgs &touch ); 
 		virtual void touchDoubleTap( ofTouchEventArgs &touch ); 
+
+		ofEvent<string> onChange;
 		
 	private: 
 	};

@@ -25,11 +25,23 @@
 
 #define MUI_DEBUG_DRAW mui::MuiConfig::debugDraw
 
+#define MUI_FONT_TYPE_OPENFRAMEWORKS 0
+#define MUI_FONT_TYPE_FONTSTASH 1
+
 // which font rendering thingie to use?
 // works with ofTrueTypeFont and ofxTrueTypeFontFS
-// enable the include in case of the FS font...
-#define MUI_FONT_TYPE ofxTrueTypeFontFS
-#include "../ofxFontStash/ofxTrueTypeFontFS.h"
+// it's nasty, but just add the correct font type to your IDEs global
+// preprocessor flags!
+#ifndef MUI_FONT_TYPE_ACTIVE
+	#define MUI_FONT_TYPE_ACTIVE MUI_FONT_TYPE_FONTSTASH
+#endif
+
+#if MUI_FONT_TYPE_ACTIVE == MUI_FONT_TYPE_OPENFRAMEWORKS
+	#define MUI_FONT_TYPE ofTrueTypeFont
+#else
+	#define MUI_FONT_TYPE ofxTrueTypeFontFS
+	#include "../ofxFontStash/ofxTrueTypeFontFS.h"
+#endif
 
 #define MUI_FONT_SIZE 12
 
@@ -52,7 +64,7 @@ namespace mui{
 
 #include <vector>
 #include "ofMain.h"
-#include "ofxFBOTexture.h"
+//#include "ofxFBOTexture.h"
 #include "CppTweener.h"
 #include <Poco/BasicEvent.h>
 #include <Poco/Delegate.h>
@@ -83,7 +95,9 @@ namespace mui{
 #elif TARGET_OS_MAC
 	#warning don't use textfields, lol
 #elif TARGET_OS_WIN32
-	#pragma message ("don't use textfields!") 
+	#pragma message ("don't use textfields!")
+#elif defined(__ANDROID_API__)
+	#warning No ofxMui textfield implementation for android yet!
 #elif MUI_BE_INSANE
 #else
 	#error No native textfield implementation for this platform. You can define MUI_BE_INSANE to skip over this error if you know you're not using textfields.
@@ -110,6 +124,7 @@ namespace mui{
 #include "SliderWithLabel.h"
 #include "TextField.h"
 #include "SegmentedSelect.h"
+#include "Image.h"
 
 void mui_init();
 
@@ -140,5 +155,14 @@ namespace mui{
 		// automaticaly detect retina on device like the ipad?
 		// this must be set before calling mui_init()
 		static bool detectRetina;
+		static bool useRetinaAssets;
+		
+		// pixels per pixel.
+		static int scaleFactor;
+		
+		// path to the data folder (containing the mui folder)
+		static Poco::Path dataPath;
+
+		static ofLogLevel logLevel;
 	};
 }

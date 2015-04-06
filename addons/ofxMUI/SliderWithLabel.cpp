@@ -20,11 +20,25 @@
 
 #include "MUI.h"
 
+mui::SliderWithLabel::SliderWithLabel( float x_, float y_, float width_, float height_, float min_, float max_, float value_, int decimalPlaces_ ) : Container( x_, y_, width_, height_ ), decimalPlaces(decimalPlaces_), oldValue(-9999) {
+	slider = new Slider( 0, 0, width_ - 40, height_, min_, max_, value_ );
+	label = new Label( ofToString(max_,decimalPlaces), width_ - 35, 0, 35, height_ );
+	label->width = label->boundingBox.width + 5;
+	ofColor col;
+	col.r = col.g = col.b = 0;
+	label->fg = col;
+	label->horizontalAlign = Right;
+	defaultValue = value_;
+	
+	add( slider );
+	add( label );
+}
+
 //--------------------------------------------------------------
 void mui::SliderWithLabel::update(){
-	slider->width = width - 40; 
+	slider->width = width - 5 - label->width;
 	slider->height = height; 
-	label->x = width - 35; 
+	label->x = width - label->width;
 	if( oldValue != slider->value ){
 		label->text = ofToString( slider->value, decimalPlaces ); 
 		label->commit(); 

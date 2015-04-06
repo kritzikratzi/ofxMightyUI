@@ -3,10 +3,16 @@
  *
  *  yyyy, a button!
  
- void onEvent(const void* pSender, ofTouchEventArgs& arg)
- {
- std::cout << "onEvent: " << arg << std::endl;
+ void onEvent(const void* pSender, ofTouchEventArgs& arg){
+	std::cout << "onEvent: " << arg << std::endl;
  }
+ 
+ or
+
+ void onEvent(ofTouchEventArgs& arg){
+	std::cout << "onEvent: " << arg << std::endl;
+ }
+ 
  
  then do button.onPress += Delegate<YourClass,ofTouchEventArgs>( this, %YourClass::yourEventFunc );
  */
@@ -14,7 +20,7 @@
 #ifndef MUI_TOGGLEBUTTON
 #define MUI_TOGGLEBUTTON
 
-#include "poco/BasicEvent.h"
+#include "ofEvents.h"
 
 namespace mui{
 	class Label;
@@ -29,7 +35,7 @@ namespace mui{
 		bool selected;
 		ofColor selectedBg;
 		ofColor selectedFg;
-		Poco::BasicEvent<ofTouchEventArgs> onPress;
+		ofEvent<ofTouchEventArgs> onPress;
 		
 		virtual void init( std::string title );
 		virtual void update();
