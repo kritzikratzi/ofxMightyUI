@@ -33,7 +33,7 @@ namespace mui{
 		
 		virtual float screenToValue( float x ); 
 		virtual float valueToScreen( float val ); 
-
+		
 		ofEvent<float> onChange;
         
 		

@@ -33,17 +33,20 @@ namespace mui{
 		SegmentedSelect( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 ) 
 		: Container( x_, y_, width_, height_ ), selected("")  {};
 		
-		string selected; 
+		string selected;
 		
 		virtual void addLabel( string text );
-		virtual void commit(); 
+		virtual void commit();
+
+		// iterator?
+		virtual size_t getNumSegments();
+		virtual string getSegment( int num );
 		
 		virtual void update();
 		virtual void draw();
 		virtual void drawBackground();
 		
-		virtual void onButtonPress( const void* sender, ofTouchEventArgs &args ); 
-		virtual void touchDown( ofTouchEventArgs &touch ); 
+		virtual void touchDown( ofTouchEventArgs &touch );
 		virtual void touchMoved( ofTouchEventArgs &touch ); 
 		virtual void touchUp( ofTouchEventArgs &touch ); 
 		virtual void touchDoubleTap( ofTouchEventArgs &touch ); 
@@ -51,6 +54,7 @@ namespace mui{
 		ofEvent<string> onChange;
 		
 	private: 
+		virtual void onButtonPress( const void* sender, ofTouchEventArgs &args );
 	};
 };
 

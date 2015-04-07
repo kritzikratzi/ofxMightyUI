@@ -69,6 +69,16 @@ void mui::SegmentedSelect::addLabel( string text ){
 	commit(); 
 }
 
+//--------------------------------------------------------------
+size_t mui::SegmentedSelect::getNumSegments(){
+	return children.size();
+}
+
+//--------------------------------------------------------------
+string mui::SegmentedSelect::getSegment( int num ){
+	mui::SegmentedButton * button = (mui::SegmentedButton*)children[num];
+	return button->label->text;
+}
 
 //--------------------------------------------------------------
 void mui::SegmentedSelect::commit(){
