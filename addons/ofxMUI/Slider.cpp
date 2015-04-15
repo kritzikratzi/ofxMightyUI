@@ -21,14 +21,14 @@ void mui::Slider::draw(){
 	// draw bg... 
 	// Helpers::getImage( "slider_inactive_left" )->draw( 0, startY ); // not needed! 
 	ofEnableTextureEdgeHack(); 
-	Helpers::getImage( "slider_inactive_center" )->draw( 4, startY, width - 9, 9 );
+	Helpers::getTexture( "slider_inactive_center" )->draw( 4, startY, width - 9, 9 );
 	ofDisableTextureEdgeHack(); 
-	Helpers::getImage( "slider_inactive_right")->draw( width - 5, startY, 5, 9 ); 
-	Helpers::getImage( "slider_active_left" )->draw( 0, startY, 5, 9 ); 
+	Helpers::getTexture( "slider_inactive_right")->draw( width - 5, startY, 5, 9 );
+	Helpers::getTexture( "slider_active_left" )->draw( 0, startY, 5, 9 );
 	if( x > 5 ) 
-		Helpers::getImage( "slider_active_center" )->draw( 5, startY, x - 5, 9 ); 
+		Helpers::getTexture( "slider_active_center" )->draw( 5, startY, x - 5, 9 );
 	
-	Helpers::getImage( "slider_handle" )->draw( x-13, startY-10, 26, 27 ); 
+	Helpers::getTexture( "slider_handle" )->draw( x-13, startY-10, 26, 27 );
 }
 
 

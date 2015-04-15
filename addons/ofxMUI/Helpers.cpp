@@ -10,7 +10,8 @@
 #include "MUI.h"
 #include <locale>
 
-std::map<std::string, ofImage*> mui::Helpers::images; 
+std::map<std::string, ofTexture*> mui::Helpers::textures;
+std::map<std::string, ofImage*> mui::Helpers::images;
 std::map<int, MUI_FONT_TYPE*> mui::Helpers::fonts;
 std::map<string, MUI_FONT_TYPE*> mui::Helpers::customFonts;
 std::stack<ofRectangle> mui::Helpers::scissorStack;
@@ -21,7 +22,12 @@ void mui::Helpers::clearCaches(){
 		img->clear();
 		delete img;
 	}
-	images.clear();
+	for(std::map<std::string, ofTexture*>::iterator iterator = textures.begin(); iterator != textures.end(); iterator++) {
+		ofTexture *tex = iterator->second;
+		tex->clear();
+		delete tex;
+	}
+	textures.clear();
 
 
 	#if MUI_FONT_TYPE_ACTIVE == MUI_FONT_TYPE_FONTSTASH
@@ -64,6 +70,37 @@ std::string mui::Helpers::muiPath( std::string path ){
 	return outputPath.absolute().toString();
 }
 
+ofTexture * mui::Helpers::getTexture( std::string name ){
+	
+	std::map<std::string, ofTexture*>::iterator iter = mui::Helpers::textures.find( name );
+	
+	if( iter == textures.end() ){
+		if( mui::MuiConfig::logLevel <= OF_LOG_NOTICE ){
+			cout << "Image: " << name << " not loaded yet, doing this now!" << endl;
+		}
+		ofTexture * tex = new ofTexture();
+		if( mui::MuiConfig::useRetinaAssets ){
+			ofFile file( muiPath("mui/retina/" + name + ".png") );
+			if( file.exists() ){
+				ofLoadImage(*tex, muiPath("mui/retina/" + name + ".png") );
+			}
+
+			if( tex->getWidth() == 0 ){
+				if( mui::MuiConfig::logLevel <= OF_LOG_WARNING ){
+					cerr << "Image: " << name << " not available in retina folder. trying normal!" << endl;
+				}
+				ofLoadImage( *tex, muiPath("mui/normal/" + name + ".png") );
+			}
+		}
+		else{
+			ofLoadImage( *tex, muiPath("mui/normal/" + name + ".png") );
+		}
+		textures[name] = tex;
+		return tex;
+	}
+	
+	return iter->second;
+}
 
 ofImage * mui::Helpers::getImage( std::string name ){
 
