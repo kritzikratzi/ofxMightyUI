@@ -57,8 +57,10 @@ namespace mui{
 		virtual void draw(){};
 		virtual void drawBackground(); 
 		
-		virtual void layout(); 
-		virtual void handleDraw(); 
+		virtual void layout();
+		virtual void handleLayout();
+		
+		virtual void handleDraw();
 		virtual void handleUpdate();
 		
 		virtual void touchDown( ofTouchEventArgs &touch ){};

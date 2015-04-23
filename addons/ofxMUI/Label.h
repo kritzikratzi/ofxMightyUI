@@ -18,7 +18,7 @@ namespace mui{
 	class Label : public Container{
 	public: 
 		Label( std::string text_ = "Label", float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 ) : 
-		Container( x_, y_, width_, height_ ), ellipsisMode(false),
+		Container( x_, y_, width_, height_ ), ellipsisMode(true),
 		text( text_), fontSize( MUI_FONT_SIZE ), horizontalAlign(Left), verticalAlign(Middle)
 		{ ignoreEvents = true; commit(); };  
 		
@@ -31,13 +31,14 @@ namespace mui{
 		ofRectangle boundingBox;
 		int renderX; 
 		int renderY; 
-		//ofxFBOTexture fbo;
+		ofFbo fbo;
 		bool ellipsisMode;
         
 		virtual void update();
 		virtual void draw();
 		virtual void render();
 		virtual void drawBackground();
+		virtual void layout(); 
 		
 		virtual void commit(); // call this after you made changes to any variables (changing x/y is okay without doing a commit() ). doing text-maths too insane to do on every frame!
 		

@@ -13,6 +13,7 @@
 #include <map>
 #include <string>
 #include "MUI.h"
+#include "TextureAtlas.h"
 
 namespace mui{
 	class Container; 
@@ -21,8 +22,12 @@ namespace mui{
 	public: 
 		static void clearCaches();
 		static string muiPath( string path );
-		static ofTexture * getTexture( string what );
-		static ofImage * getImage( string what );
+		//static ofTexture * getTexture( string what );
+		//static ofImage * getImage( string what );
+		static void beginImages();
+		static void endImages();
+		static void drawImage( string name, float x, float y );
+		static void drawImage( string name, float x, float y, float w, float h );
 		static MUI_FONT_TYPE * getFont( int size ); // get a font for a specific pixel size
 		static MUI_FONT_TYPE * getFont( string customFont, int size ); // get a font for a specific pixel size
 		static void drawString( string s, float x = 0, float y = 0, int size = MUI_FONT_SIZE ); // draw retina friendly string
@@ -41,14 +46,16 @@ namespace mui{
 		static ofRectangle alignBox( Container * container, float width, float height, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign );
 		static bool inside( Container * container, float x, float y ); 
         static ofTouchEventArgs translateTouch( ofTouchEventArgs &touch, Container * src, Container * dest );
-        static ofPoint translateCoords( float x, float y, Container * src, Container * dest ); 
+        static ofPoint translateCoords( float x, float y, Container * src, Container * dest );
+		
 	private:
 		static std::map<std::string, ofTexture*> textures;
 		static std::map<std::string, ofImage*> images;
 		static std::map<int, MUI_FONT_TYPE*> fonts;
 		static std::map<string, MUI_FONT_TYPE*> customFonts;
         static std::stack<ofRectangle> scissorStack;
-		
+		// todo: static names would be nice. neato if the compiler can check that an image is there
+		static mui::TextureAtlas atlas;
 	};
 }
 

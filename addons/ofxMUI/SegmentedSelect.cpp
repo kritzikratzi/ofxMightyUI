@@ -29,25 +29,23 @@ void mui::SegmentedButton::initSegmentedButton(){
 
 //--------------------------------------------------------------
 void mui::SegmentedButton::drawBackground(){
-	ofSetColor( 255, 255, 255 ); 
+	ofSetColor( 255, 255, 255 );
+	Helpers::beginImages();
 	if( selected || pressed ){
-		if( roundedLeft ) Helpers::getImage( "segment_left_active" )->draw( 0, 0, 5, 29 ); 
-		ofEnableTextureEdgeHack(); 
-		Helpers::getImage( "segment_center_active" )->draw( roundedLeft?5:0, 0, width-((roundedLeft?5:0)+(roundedRight?5:0)), 29 ); 
-		ofDisableTextureEdgeHack(); 
-		if( roundedRight ) Helpers::getImage( "segment_right_active" )->draw( width-5, 0, 5, 29 ); 
+		if( roundedLeft ) Helpers::drawImage( "segment_left_active", 0, 0, 5, 29 );
+		Helpers::drawImage( "segment_center_active", roundedLeft?5:0, 0, width-((roundedLeft?5:0)+(roundedRight?5:0)), 29 );
+		if( roundedRight ) Helpers::drawImage( "segment_right_active", width-5, 0, 5, 29 );
 	}
 	else{
-		if( roundedLeft ) Helpers::getImage( "segment_left" )->draw( 0, 0, 5, 29 ); 
-		ofEnableTextureEdgeHack(); 
-		Helpers::getImage( "segment_center" )->draw( roundedLeft?5:0, 0, width-((roundedLeft?5:0)+(roundedRight?5:0)), 29 ); 
-		ofDisableTextureEdgeHack(); 
-		if( roundedRight ) Helpers::getImage( "segment_right" )->draw( width-5, 0, 5, 29 ); 
+		if( roundedLeft ) Helpers::drawImage( "segment_left", 0, 0, 5, 29 );
+		Helpers::drawImage( "segment_center", roundedLeft?5:0, 0, width-((roundedLeft?5:0)+(roundedRight?5:0)), 29 );
+		if( roundedRight ) Helpers::drawImage( "segment_right", width-5, 0, 5, 29 );
 	}
 	
 	if( !roundedRight ){
-		Helpers::getImage( "segment_separator" )->draw( width-1, 0, 1, 29 ); 
+		Helpers::drawImage( "segment_separator", width-1, 0, 1, 29 );
 	}
+	Helpers::endImages();
 }
 
 

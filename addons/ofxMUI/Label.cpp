@@ -56,9 +56,6 @@ void mui::Label::draw(){
 		else font = Helpers::getFont( fontName, fontSize );
 		font->drawString( displayText, (int)(size.x-boundingBox.x), (int)(size.y-(int)boundingBox.y) );
 	}
-	
-
-	ofEnableAlphaBlending(); 
 }
 
 
@@ -78,7 +75,15 @@ void mui::Label::drawBackground(){
     Container::drawBackground(); 
 }
 
+//--------------------------------------------------------------
+void mui::Label::layout(){
+	// we might have to recalculate the text if things change ...
+	if( ellipsisMode ){
+		commit();
+	}
+}
 
+//--------------------------------------------------------------
 ofRectangle mui::Label::box( float t, float r, float b, float l ){
 	ofRectangle size = Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign );
 	return ofRectangle( size.x - boundingBox.x - l, size.y - boundingBox.y - t, boundingBox.width + l + r, boundingBox.height + t + b );
@@ -114,21 +119,22 @@ void mui::Label::commit(){
         displayText = text;
     }
     
-/*
+
+	/*
 	int w = floorf(boundingBox.width) + 1;
 	int h = floorf(boundingBox.height);
  
 	// magic trick #1:
-	if( Helpers::retinaMode ) w *= 2, h *= 2; 
+	if( mui::MuiConfig::scaleFactor != 1 ) w *= mui::MuiConfig::scaleFactor, h *= mui::MuiConfig::scaleFactor;
 	
-	ofPushMatrix(); 
+	ofPushMatrix();
 	if( fbo.getWidth() != w || fbo.getHeight() != h ) fbo.allocate( w, h, GL_RGBA ); 
-	fbo.clear( 0, 0, 0, 0 ); 
+	ofClear( 0, 0, 0, 0 );
 	
 	//////////////////////
 	// RENDER! 
 	//////////////////////
-	fbo.begin(); 
+	fbo.begin();
 	
 	#ifdef TARGET_OPENGLES
 	glBlendFuncSeparateOES(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);  //oriol added to get rid of halos
@@ -136,20 +142,20 @@ void mui::Label::commit(){
 	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA); //oriol added to get rid of halos
 	#endif
 	
-	if( Helpers::retinaMode ){
+	if( mui::MuiConfig::scaleFactor != 1 ){
 		ofPushMatrix(); 
-		ofScale( 0.5, 0.5, 1 );
+		ofScale( 1/mui::MuiConfig::scaleFactor, 1/mui::MuiConfig::scaleFactor, 1 );
 	}
 	
 	ofSetColor( fg.r, fg.g, fg.b ); 
-	font->drawString( text, -(int)boundingBox.x, -(int)boundingBox.y ); 
+	font->drawString( displayText, -(int)boundingBox.x, -(int)boundingBox.y );
 	
-	if( Helpers::retinaMode ){
+	if( mui::MuiConfig::scaleFactor != 1 ){
 		ofPopMatrix(); 
 	}
 	
 	
 	
 	fbo.end();
-	ofPopMatrix(); */
+	ofPopMatrix();*/
 }

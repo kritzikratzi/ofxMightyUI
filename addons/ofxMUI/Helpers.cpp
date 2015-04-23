@@ -15,6 +15,10 @@ std::map<std::string, ofImage*> mui::Helpers::images;
 std::map<int, MUI_FONT_TYPE*> mui::Helpers::fonts;
 std::map<string, MUI_FONT_TYPE*> mui::Helpers::customFonts;
 std::stack<ofRectangle> mui::Helpers::scissorStack;
+mui::TextureAtlas mui::Helpers::atlas;
+
+// TODO: clear caches/regen texs should take atlas into account?
+
 
 void mui::Helpers::clearCaches(){
 	for(std::map<std::string, ofImage*>::iterator iterator = images.begin(); iterator != images.end(); iterator++) {
@@ -48,7 +52,6 @@ void mui::Helpers::clearCaches(){
 	#else
 		#error Unsupported Font Rendering Implemtation selected.
 	#endif
-
 }
 
 std::string mui::Helpers::muiPath( std::string path ){
@@ -70,6 +73,8 @@ std::string mui::Helpers::muiPath( std::string path ){
 	return outputPath.absolute().toString();
 }
 
+// this will be gone soon!
+/*
 ofTexture * mui::Helpers::getTexture( std::string name ){
 	
 	std::map<std::string, ofTexture*>::iterator iter = mui::Helpers::textures.find( name );
@@ -132,7 +137,42 @@ ofImage * mui::Helpers::getImage( std::string name ){
 	}
 	
 	return iter->second;
+}*/
+
+void mui::Helpers::drawImage( string name, float x, float y, float w, float h ){
+	// we have a retina version?
+	const ofRectangle * rect = &mui::TextureAtlas::NOT_FOUND;
+	
+	if( mui::MuiConfig::useRetinaAssets ){
+		rect = &atlas.getRectRef(name + "@2x.png");
+	}
+	
+	if( rect == &mui::TextureAtlas::NOT_FOUND ){
+		rect = &atlas.getRectRef(name+".png");
+	}
+	
+	if( rect == &mui::TextureAtlas::NOT_FOUND ){
+		cerr << "Image: " << name << " not available. this is bad!" << endl;
+	}
+	else{
+		ofEnableTextureEdgeHack(); 
+		atlas.addDraw(x, y, w, h, *rect);
+	}
 }
+
+void mui::Helpers::beginImages(){
+	if( !atlas.loaded ){
+		string xml = mui::Helpers::muiPath("mui/atlas/ui.xml");
+		string png = mui::Helpers::muiPath("mui/atlas/ui.png");
+		atlas.load(xml, png);
+	}
+}
+
+void mui::Helpers::endImages(){
+	atlas.drawAdded();
+}
+
+
 
 MUI_FONT_TYPE* mui::Helpers::getFont( int fontSize ){
 	std::map<int, MUI_FONT_TYPE*>::iterator iter = mui::Helpers::fonts.find( fontSize );

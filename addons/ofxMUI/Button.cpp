@@ -67,6 +67,20 @@ void mui::Button::drawBackground(){
 	}
 }
 
+void mui::Button::fitWidthToLabel( int paddingLR ){
+	fitWidthToLabel(paddingLR, paddingLR );
+}
+
+void mui::Button::fitWidthToLabel( int paddingL, int paddingR ){
+	label->commit();
+	ofRectangle bounds = label->box(0, paddingR, 0, paddingL );
+	width = bounds.width;
+}
+
+void mui::Button::layout(){
+	label->width = width;
+	label->height = height;
+}
 
 //--------------------------------------------------------------
 void mui::Button::touchDown( ofTouchEventArgs &touch ){

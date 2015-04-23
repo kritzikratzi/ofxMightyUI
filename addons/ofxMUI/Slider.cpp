@@ -19,16 +19,16 @@ void mui::Slider::draw(){
 	float x = valueToScreen( value ); 
 	float startY = (int)( height/2 - 9.0/2 );
 	// draw bg... 
-	// Helpers::getImage( "slider_inactive_left" )->draw( 0, startY ); // not needed! 
-	ofEnableTextureEdgeHack(); 
-	Helpers::getTexture( "slider_inactive_center" )->draw( 4, startY, width - 9, 9 );
-	ofDisableTextureEdgeHack(); 
-	Helpers::getTexture( "slider_inactive_right")->draw( width - 5, startY, 5, 9 );
-	Helpers::getTexture( "slider_active_left" )->draw( 0, startY, 5, 9 );
+	// Helpers::getImage( "slider_inactive_left", 0, startY ); // not needed!
+	Helpers::beginImages();
+	Helpers::drawImage( "slider_inactive_center", 4, startY, width - 9, 9 );
+	Helpers::drawImage( "slider_inactive_right", width - 5, startY, 5, 9 );
+	Helpers::drawImage( "slider_active_left", 0, startY, 5, 9 );
 	if( x > 5 ) 
-		Helpers::getTexture( "slider_active_center" )->draw( 5, startY, x - 5, 9 );
+		Helpers::drawImage( "slider_active_center", 5, startY, x - 5, 9 );
 	
-	Helpers::getTexture( "slider_handle" )->draw( x-13, startY-10, 26, 27 );
+	Helpers::drawImage( "slider_handle", x-13, startY-10, 26, 27 );
+	Helpers::endImages();
 }
 
 

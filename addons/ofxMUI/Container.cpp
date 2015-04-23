@@ -49,8 +49,21 @@ void mui::Container::remove(){
 
 //--------------------------------------------------------------
 void mui::Container::layout(){
+	// layout managers might have been a fucking stupid idea.
+	// or maybe not. this is definitely gonna change!
 	if( layoutManager != NULL ){
 		layoutManager->layout( this );
+	}
+}
+
+void mui::Container::handleLayout(){
+	// does this order make sense?
+	layout();
+
+	vector<mui::Container*>::iterator it = children.begin();
+	while( it != children.end() ){
+		(*it)->handleLayout();
+		++it;
 	}
 }
 

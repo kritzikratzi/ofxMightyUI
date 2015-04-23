@@ -64,6 +64,12 @@ void mui::ToggleButton::drawBackground(){
 	}
 }
 
+//--------------------------------------------------------------
+void mui::ToggleButton::layout(){
+	label->width = width;
+	label->height = height;
+	label->fg = selected?selectedFg:fg;
+}
 
 //--------------------------------------------------------------
 void mui::ToggleButton::touchDown( ofTouchEventArgs &touch ){

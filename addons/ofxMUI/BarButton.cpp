@@ -29,15 +29,17 @@ void mui::BarButton::initBarButton(){
 
 //--------------------------------------------------------------
 	void mui::BarButton::drawBackground(){
-	ofSetColor( 255, 255, 255 ); 
+	ofSetColor( 255, 255, 255 );
+	Helpers::beginImages();
 	if( pressed ){
-		Helpers::getImage( "barbutton_left_active" )->draw( 0, 0, 5, 30 ); 
-		Helpers::getImage( "barbutton_center_active" )->draw( 5, 0, width-10, 30 ); 
-		Helpers::getImage( "barbutton_right_active" )->draw( width-5, 0, 5, 30 ); 
+		Helpers::drawImage( "barbutton_left_active", 0, 0, 5, 30 );
+		Helpers::drawImage( "barbutton_center_active", 5, 0, width-10, 30 );
+		Helpers::drawImage( "barbutton_right_active", width-5, 0, 5, 30 );
 	}
 	else{
-		Helpers::getImage( "barbutton_left" )->draw( 0, 0, 5, 30 ); 
-		Helpers::getImage( "barbutton_center" )->draw( 5, 0, width-10, 30 ); 
-		Helpers::getImage( "barbutton_right" )->draw( width-5, 0, 5, 30 ); 
+		Helpers::drawImage( "barbutton_left", 0, 0, 5, 30 );
+		Helpers::drawImage( "barbutton_center", 5, 0, width-10, 30 );
+		Helpers::drawImage( "barbutton_right", width-5, 0, 5, 30 );
 	}
+	Helpers::endImages();
 }

@@ -41,6 +41,7 @@ namespace mui{
 		virtual void update();
 		virtual void draw();
 		virtual void drawBackground();
+		virtual void layout(); 
 		
 		virtual void touchDown( ofTouchEventArgs &touch );
 		virtual void touchMoved( ofTouchEventArgs &touch );

@@ -36,22 +36,19 @@ mui::SliderWithLabel::SliderWithLabel( float x_, float y_, float width_, float h
 
 //--------------------------------------------------------------
 void mui::SliderWithLabel::update(){
-	slider->width = width - 5 - label->width;
-	slider->height = height; 
-	label->x = width - label->width;
 	if( oldValue != slider->value ){
-		label->text = ofToString( slider->value, decimalPlaces ); 
-		label->commit(); 
-		oldValue = slider->value; 
+		label->text = ofToString( slider->value, decimalPlaces );
+		label->commit();
+		oldValue = slider->value;
+		// do we really need to do this on every frame?
+		layout();
 	}
 }
 
-
 //--------------------------------------------------------------
-void mui::SliderWithLabel::draw(){
+void mui::SliderWithLabel::layout(){
+	slider->width = width - 5 - label->width;
+	slider->height = height; 
+	label->x = width - label->width;
 }
 
-
-//--------------------------------------------------------------
-void mui::SliderWithLabel::drawBackground(){
-}

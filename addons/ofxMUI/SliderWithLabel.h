@@ -23,8 +23,7 @@ namespace mui{
 		Label * label;
 
 		virtual void update();
-		virtual void draw();
-		virtual void drawBackground();
+		virtual void layout();
 
 	private: 
 		float oldValue; 

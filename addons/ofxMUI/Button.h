@@ -32,6 +32,9 @@ namespace mui{
 		virtual void update();
 		virtual void draw();
 		virtual void drawBackground();
+		virtual void fitWidthToLabel(int paddingLR = 5);
+		virtual void fitWidthToLabel(int paddingL, int paddingR );
+		virtual void layout();
 
 		virtual void touchDown( ofTouchEventArgs &touch ); 
 		virtual void touchMoved( ofTouchEventArgs &touch ); 

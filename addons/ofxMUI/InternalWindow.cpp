@@ -63,10 +63,12 @@ void mui::InternalWindow::drawBackground(){
 	ofNoFill(); 
 	//Helpers::roundedRect( 1, 22, width-2, height-22, radius ); 
 	
-	ofSetColor( 255, 255, 255 ); 
-	Helpers::getImage( "titlebar_left" )->draw( 0, 0, 5, 44 ); 
-	Helpers::getImage( "titlebar_center" )->draw( 5, 0, width - 9, 44 ); 
-	Helpers::getImage( "titlebar_right" )->draw( width-5, 0, 5, 44 ); 
+	ofSetColor( 255, 255, 255 );
+	Helpers::beginImages();
+	Helpers::drawImage( "titlebar_left", 0, 0, 5, 44 );
+	Helpers::drawImage( "titlebar_center", 5, 0, width - 9, 44 );
+	Helpers::drawImage( "titlebar_right", width-5, 0, 5, 44 );
+	Helpers::endImages(); 
 }
 
 
