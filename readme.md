@@ -1,6 +1,38 @@
 ofxMightyUI
 ===========
 
+INSTRUCTIONS ARE OUT OF DATE. 
+---
+LOTS OF REFACTORING GOING ON. 
+THIS IS UNUSABLE AT THE MOMENT. 
+PLEASE BE PATIENT. 
+
+
+TODO: 
+
+- ☑︎ switch from poco events to ofEvent (same behind the scenes, but nicer to use)
+- ☑︎ moving files around to follow ofx addon standard. already sortof works with project generator. hurray! 
+- ☐ hm... seems the project generator doesn't set up copying of data files? 
+- ☐ test android (+retina)
+- ☐ test ios (+retina)
+- ☐ test windows (is there retina?)
+- ☐ finish textfield overlays
+- ☐ stupid rotation issues
+- ☐ see if i can depend on the "proper" ofxFontStash
+- ☐ cleanup include structure. how does it even compile? 
+- ☑︎ make a basic example
+- ☐ make a more complex example
+- ☐ share code with the midi mapping? --> could be optional addon?
+
+TODO OSX: 
+
+- what is needed for the user to enable retina? [should be supported]
+- to copy resources: ```cp -R ../../../addons/ofxMightyUI/bin/data/* "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"``` can this be done with projectgen? 
+
+
+---
+
+
 A handy UI addon for [openFrameworks](http://www.openframeworks.cc). 
 
 Features
@@ -103,56 +135,13 @@ There's a longer example in the `src/` folder.
 		
 		// create button and register add listener
 		button = new mui::Button( "Button", 20, 200, 70, 30 ); 
-		button->onPress += Poco::Delegate<testApp, ofTouchEventArgs>( this, &testApp::onButtonPress );
+		ofAddListener( button->onPress += this, &testApp::onButtonPress );
 		root->add( button ); 
-
-		// create slider
-		slider = new mui::SliderWithLabel( -1, -1, 250, 20, 0, 1, 0.5, 2 );
-	}
-	
-	//--------------------------------------------------------------
-	void testApp::update(){
-		root->handleUpdate();
-	}
-
-	//--------------------------------------------------------------
-	void testApp::draw(){
-		// do this last! 
-		root->handleDraw(); 
-		
-		// do something with slider->value
-	}
-	
-	//--------------------------------------------------------------
-	void testApp::touchDown(ofTouchEventArgs &touch){
-		if( root->handleTouchDown( touch ) ){
-			// touch was "used" by UI elements
-			return; 
-		}
-		
-		// continue as you would normally
-	}
-	
-	//--------------------------------------------------------------
-	void testApp::touchMoved(ofTouchEventArgs &touch){
-		root->handleTouchMoved( touch ); 
-	}
-	
-	//--------------------------------------------------------------
-	void testApp::touchUp(ofTouchEventArgs &touch){
-		root->handleTouchUp( touch ); 
-	}
-	
-	//--------------------------------------------------------------
-	void testApp::touchDoubleTap(ofTouchEventArgs &touch){
-		root->handleTouchDoubleTap( touch ); 
 	}
 	
 	//--------------------------------------------------------------
 	void testApp::onButtonPress( const void* sender, ofTouchEventArgs &args ){
-		if( sender == button ){
-			cout << "button pressed!" << endl; 
-		}
+		cout << "the button was pressed!" << endl; 
 	}
 
 Licensing 
@@ -160,10 +149,11 @@ Licensing
 
 Third party software/assets used: 
 
+- ofxFontStash / fontstash (MIT license?)
+- ofxEasyRetina (would be cool if this stayed external)
 - [CppTweener](http://code.google.com/p/tweener/): MIT License
 - [iPhone4 GUI for Photoshop](http://www.teehanlax.com/blog/2010/08/12/iphone-4-gui-psd-retina-display/) cc-sa-by
 - [Lato Regular font](http://www.fontsquirrel.com/fonts/lato): Sil open font license
-- [ofxFBO](https://code.google.com/p/kyle/source/browse/trunk/openframeworks/addons/ofxFbo/src/ofxFbo.h?r=83): not mentioned, need to check! 
  
 The project itself is released under [WTFPL](http://sam.zoy.org/wtfpl/). 
 
@@ -181,4 +171,5 @@ toolbars/navigation bars, internal windows, textfields
 
 ofxMightyUI is (and most likely won't be suitable)
 as neither a proper GUI replacement or as a scenegraph. 
-there's already lots of other people doing that. I think. 
+turns out: it is a neat little scenegraph. so maybe yes. 
+
