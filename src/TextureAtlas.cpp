@@ -19,6 +19,8 @@ mui::TextureAtlas::TextureAtlas(){
 
 void mui::TextureAtlas::load( string absXmlPath, string absImgPath ){
 	ofLoadImage(tex, absImgPath);
+	tex.setTextureWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+	tex.setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
 	
 	ofXml xml(absXmlPath);
 //	xml.setTo("");

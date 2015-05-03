@@ -15,19 +15,28 @@ TODO:
 - ☐ hm... seems the project generator doesn't set up copying of data files? 
 - ☐ test android (+retina)
 - ☐ test ios (+retina)
-- ☐ test windows (is there retina?)
+- ☑︎ test windows (is there retina?)
 - ☐ finish textfield overlays
-- ☐ stupid rotation issues
+- ☐ stupid mobile rotation issues
 - ☐ see if i can depend on the "proper" ofxFontStash
 - ☐ cleanup include structure. how does it even compile? 
 - ☑︎ make a basic example
 - ☐ make a more complex example
-- ☐ share code with the midi mapping? --> could be optional addon?
+- ☐ ~ share code with the midi mapping? --> could be optional addon?
+- ☐ window size is very confused until the window is resized once (esp one windows)
+- ☐ possible speed gain when combining textureatlas of fontstash and mui ui elements? (no switching textures -> drawArrays becomes non blocking?)
+- ☐ clean up layouting mess
 
 TODO OSX: 
 
-- what is needed for the user to enable retina? [should be supported]
-- to copy resources: ```cp -R ../../../addons/ofxMightyUI/bin/data/* "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"``` can this be done with projectgen? 
+- ☐ what is needed for the user to enable retina? [should be supported] -> add the high resolution capable option to the plist
+- **Copy Resources**: ```cp -R ../../../addons/ofxMightyUI/bin/data/* "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"``` can this be done with projectgen?  --> not at the moment. not gonna mess around to get this to work. 
+
+TODO WINDOWS: 
+
+- ☐ what is need to detect retina? (using scaleFactor already works very nicely)
+- **Copy Resources**: Go to Project settings, choose "all configurations". Then go to Build Events>Post-Build Events add this to the _command line_: <br>
+  		```xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxMightyUI\bin\data\mui" "$(ProjectDir)bin\data\mui"```
 
 
 ---
