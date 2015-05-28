@@ -22,8 +22,10 @@
 
 mui::SliderWithLabel::SliderWithLabel( float x_, float y_, float width_, float height_, float min_, float max_, float value_, int decimalPlaces_ ) : Container( x_, y_, width_, height_ ), decimalPlaces(decimalPlaces_), oldValue(-9999) {
 	slider = new Slider( 0, 0, width_ - 40, height_, min_, max_, value_ );
-	label = new Label( ofToString(max_,decimalPlaces), width_ - 35, 0, 35, height_ );
+	float longestVal = -min_>max_?min_:max_;
+	label = new Label( ofToString(longestVal,decimalPlaces), width_ - 35, 0, 35, height_ );
 	label->width = label->boundingBox.width + 5;
+	if( longestVal < 0 ) label->width += 20;
 	ofColor col;
 	col.r = col.g = col.b = 0;
 	label->fg = col;

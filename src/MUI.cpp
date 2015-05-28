@@ -74,7 +74,7 @@ void mui_init(){
 		appPath = appPath.parent().parent().pushDirectory("Resources");
 	
 		if( mui::MuiConfig::detectRetina ){
-			ofAppGLFWWindow * window = (ofAppGLFWWindow*)ofGetWindowPtr();
+			ofAppGLFWWindow * window = dynamic_cast<ofAppGLFWWindow*>(ofGetWindowPtr());
 			if( window != NULL ){
 				mui::MuiConfig::scaleFactor = window->getPixelScreenCoordScale();
 			}
