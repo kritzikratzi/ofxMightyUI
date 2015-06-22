@@ -24,6 +24,7 @@ namespace mui{
 
 		virtual void update();
 		virtual void layout();
+		virtual mui::Container * handleTouchDown(ofTouchEventArgs &args);
 
 	private: 
 		float oldValue; 

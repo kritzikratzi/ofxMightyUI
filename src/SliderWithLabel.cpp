@@ -31,6 +31,7 @@ mui::SliderWithLabel::SliderWithLabel( float x_, float y_, float width_, float h
 	label->fg = col;
 	label->horizontalAlign = Right;
 	defaultValue = value_;
+	label->ignoreEvents = false;
 	
 	add( slider );
 	add( label );
@@ -54,3 +55,9 @@ void mui::SliderWithLabel::layout(){
 	label->x = width - label->width;
 }
 
+mui::Container * mui::SliderWithLabel::handleTouchDown( ofTouchEventArgs &args ){
+	mui::Container * res = mui::Container::handleTouchDown(args);
+	if( res == label ){
+		slider->value = defaultValue;
+	}
+}
