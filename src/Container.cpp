@@ -51,8 +51,8 @@ void mui::Container::remove(){
 void mui::Container::layout(){
 	// layout managers might have been a fucking stupid idea.
 	// or maybe not. this is definitely gonna change!
-	if( layoutManager != NULL ){
-		layoutManager->layout( this );
+	if( layoutHandler != NULL ){
+		layoutHandler->layout( this );
 	}
 }
 

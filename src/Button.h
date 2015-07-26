@@ -35,6 +35,9 @@ namespace mui{
 		virtual void fitWidthToLabel(int paddingLR = 5);
 		virtual void fitWidthToLabel(int paddingL, int paddingR );
 		virtual void layout();
+		
+		// simulate a click
+		virtual void clickAndNotify(); 
 
 		virtual void touchDown( ofTouchEventArgs &touch ); 
 		virtual void touchMoved( ofTouchEventArgs &touch ); 

@@ -34,7 +34,7 @@ namespace mui{
 		
 		vector<mui::Container*> children;
 		Container * parent; 
-		Layout * layoutManager;
+		Layout * layoutHandler;
 		
 		// put anything you like here...
 		void * userData;
@@ -42,7 +42,7 @@ namespace mui{
 		//bool startedInside[OF_MAX_TOUCHES]; // don't use this. unless you're you really want to.
 		
 		Container( float x_, float y_, float width_ = 10, float height_ = 10 ) : 
-		x(x_), y(y_), width(width_), height(height_), opaque(false), parent(NULL), layoutManager(NULL), visible(true), ignoreEvents(false), singleTouch(true), name( "Container" ), singleTouchId( -1 ), focusTransferable(true),bg(0,0,0,0), allowSubpixelTranslations(true), drawDirty(false), userData(NULL){
+		x(x_), y(y_), width(width_), height(height_), opaque(false), parent(NULL), layoutHandler(NULL), visible(true), ignoreEvents(false), singleTouch(true), name( "Container" ), singleTouchId( -1 ), focusTransferable(true),bg(0,0,0,0), allowSubpixelTranslations(true), drawDirty(false), userData(NULL){
 			//for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
 			//	startedInside[i] = false; 
 			//}

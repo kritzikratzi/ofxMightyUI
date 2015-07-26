@@ -42,6 +42,9 @@ namespace mui{
 		virtual void draw();
 		virtual void drawBackground();
 		virtual void layout(); 
+
+		// simulate a click
+		virtual void clickAndNotify();
 		
 		virtual void touchDown( ofTouchEventArgs &touch );
 		virtual void touchMoved( ofTouchEventArgs &touch );

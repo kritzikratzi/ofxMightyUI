@@ -50,21 +50,14 @@ void mui::Button::draw(){
 
 //--------------------------------------------------------------
 void mui::Button::drawBackground(){
-	if( bg.a > 0 ){
-		ofFill(); 
-		ofSetColor( bg.r, bg.g, bg.b, bg.a ); 
-		//Helpers::roundedRect( 0, 0, width, height, 5 );
-		ofRect( 0, 0, width, height ); 
-
-		if( pressed ){
-			ofSetColor( bg.r/2, bg.g/2, bg.b/2, bg.a ); 
-		}
-		
-		/*ofNoFill();
-		Helpers::roundedRect( 0, 0, width, height, 5 );
-        
-        ofFill(); */
+	if( pressed ){
+		ofSetColor( bg.r/2, bg.g/2, bg.b/2, bg.a );
 	}
+	else{
+		ofSetColor( bg.r, bg.g, bg.b, bg.a );
+	}
+	ofRect( 0, 0, width, height );
+	ofSetColor(255);
 }
 
 void mui::Button::fitWidthToLabel( int paddingLR ){
@@ -90,7 +83,7 @@ void mui::Button::touchDown( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::Button::touchMoved( ofTouchEventArgs &touch ){
-	pressed = true; 
+	pressed = true;
 }
 
 
@@ -121,4 +114,11 @@ void mui::Button::touchDoubleTap( ofTouchEventArgs &touch ){
 //--------------------------------------------------------------
 void mui::Button::touchCanceled( ofTouchEventArgs &touch ){
 	pressed = false; 
+}
+
+void mui::Button::clickAndNotify(){
+	ofTouchEventArgs args;
+	args.x = width/2;
+	args.y = height/2;
+	onPress(this, args);
 }

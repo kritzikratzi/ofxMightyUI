@@ -37,7 +37,7 @@ void mui::Label::draw(){
 	ofRectangle size = Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign ); 
 	
 	ofSetColor( 255, 255, 255 ); 
-	glBlendFunc( GL_ONE, GL_ONE_MINUS_SRC_ALPHA ); 
+//	glBlendFunc( GL_ONE, GL_ONE_MINUS_SRC_ALPHA );
 //	fbo.draw( (int)size.x, (int)size.y, size.width, size.height );
     ofSetColor( fg.r, fg.g, fg.b, fg.a );
 	if( mui::MuiConfig::scaleFactor != 1 ){

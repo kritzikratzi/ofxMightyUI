@@ -100,7 +100,7 @@ namespace mui{
 	#warning No ofxMui textfield implementation for android yet!
 #elif MUI_BE_INSANE
 #else
-	#error No native textfield implementation for this platform. You can define MUI_BE_INSANE to skip over this error if you know you're not using textfields.
+	#warning No native textfield implementation for this platform. You can define MUI_BE_INSANE to skip over this warning if you know you're not using textfields.
 #endif
 
 

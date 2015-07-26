@@ -51,6 +51,12 @@ void mui::Root::init(){
 	ofAddListener( ofEvents().touchCancelled, this, &mui::Root::of_touchCancelled, OF_EVENT_ORDER_BEFORE_APP );
 	//ofAddListener( ofEvents().messageEvent, this, &mui::Root::of_messageEvent );
 	//ofAddListener( ofEvents().fileDragEvent, this, &mui::Root::of_fileDragEvent );
+	
+	
+	// this seems unclear ... let's better put this in place!
+	for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
+		respondingContainer[i] = NULL;
+	}
 }
 
 void mui::Root::handleUpdate(){
@@ -134,7 +140,7 @@ mui::Container * mui::Root::handleTouchMoved( ofTouchEventArgs &touch ){
 	ofTouchEventArgs copy = touch; 
 	fixTouchPosition( touch, copy, NULL ); 
 	Container * touched = Container::handleTouchMoved( copy );
-    
+
 	if( touched != respondingContainer[touch.id] && respondingContainer[touch.id] != NULL ){
 		copy = touch;
 		fixTouchPosition( touch, copy, NULL );
@@ -323,7 +329,11 @@ mui::Container * mui::Root::handleKeyReleased( int key ){
 
 //--------------------------------------------------------------
 mui::Container * mui::Root::handleMouseMoved( int x, int y ){
-	return NULL;
+	ofTouchEventArgs args;
+	args.x = x;
+	args.y = y;
+	args.id = 0;
+	return handleTouchMoved(args);
 }
 
 //--------------------------------------------------------------

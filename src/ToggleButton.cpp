@@ -112,3 +112,12 @@ void mui::ToggleButton::touchDoubleTap( ofTouchEventArgs &touch ){
 void mui::ToggleButton::touchCanceled( ofTouchEventArgs &touch ){
 	pressed = false;
 }
+
+
+void mui::ToggleButton::clickAndNotify(){
+	ofTouchEventArgs args;
+	args.x = width/2;
+	args.y = height/2;
+	selected ^= true;
+	onPress(this, args);
+}
