@@ -40,7 +40,7 @@
 	#define MUI_FONT_TYPE ofTrueTypeFont
 #else
 	#define MUI_FONT_TYPE ofxTrueTypeFontFS
-	#include "_fontStash/ofxTrueTypeFontFS.h"
+	#include "_fontstash/ofxTrueTypeFontFS.h"
 #endif
 
 #define MUI_FONT_SIZE 12
