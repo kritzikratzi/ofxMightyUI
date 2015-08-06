@@ -12,13 +12,14 @@ TODO:
 
 - ☑︎ switch from poco events to ofEvent (same behind the scenes, but nicer to use)
 - ☑︎ moving files around to follow ofx addon standard. already sortof works with project generator. hurray! 
-- ☐ hm... seems the project generator doesn't set up copying of data files? 
+- ☐ hm... seems the project generator doesn't set up copying of data files? <br>Yep, that's the case! 
+- ☐ test with new pg (project generator)
 - ☐ test android (+retina)
 - ☐ test ios (+retina)
 - ☑︎ test windows (is there retina?)
 - ☐ finish textfield overlays
 - ☐ stupid mobile rotation issues
-- ☐ see if i can depend on the "proper" ofxFontStash
+- ☐- see if i can depend on the "proper" ofxFontStash<br>Don't care for now. Waiting for fontstash2 to look
 - ☐ cleanup include structure. how does it even compile? 
 - ☑︎ make a basic example
 - ☐ make a more complex example
@@ -62,42 +63,42 @@ It's all a bit ugly still. Also eventually slow!
 
 Setup
 -----
-The included project is broken at the moment (sorry). 
-To get up and running grab the empty example from OF080. I suggest you add ofxMightyUI as a submodule: 
 
-	git submodule add git@github.com:kritzikratzi/ofxMightyUI.git
+Download the current master branch, either as zip or clone from git with
 
-To update to a newer of ofxMightyUI run
+	cd OF/addons
+	git clone https://github.com/kritzikratzi/ofxMightyUI.git
+	
 
-	git submodule foreach git pull
 
 **iOS**
 
-- Add the folder ofxMightyUI/addons to your XCode project
+- Add the folder addons/ofxMightyUI/src to your XCode project
 - Go to Project>Targets>emptyExample>Build Phases>Link Binary with Libraries. Click the '+' icon and add the CoreText framework. 
 - Go to Project>Targets>emptyExample>Build Phases>Run Script and add <br>
-  	```cp -rf ofxMightyUI/bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app"```
+  	```cp -rf ../../../addons/ofxMightyUI/bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app"```
 
 **MacOS X**
 
-- Add the folder ofxMightyUI/addons to your XCode project, don't add ofxEasyRetina. 
+- Add the folder addons/ofxMightyUI/src to your XCode project. 
 - Go to Project>Targets>emptyExample>Build Phases>Run Script and add <br>
-  	```cp -rf ofxMightyUI/bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources"```
+  	```cp -rf ../../../addons/ofxMightyUI/bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources"```
   	
 **Windows**
 
-- Create a groups (filters) for ofxMightyUI and subgroups for ofxMUI and ofxFontStash
-- Add the .cpp and .h from those folders to their respective groups
+- Create a groups (filters) for ofxMightyUI
+- Add all .cpp and .h from those folders to their respective groups
 - Go to Project>Properties, choose "All configurations" from the dropdown on top
 - Go to C/C++>General and edit additional include directories. Add the following<br>
-		```ofxMightyUI\addons\ofxMUI```<br>
-		```ofxMightyUI\addons\ofxFontStash```
+		```..\..\..\addons\ofxMightyUI\src```<br>
+		```..\..\..\addons\ofxMightyUI\src\fontstash```
 
-- Go to Build Events>Post-Build Events and edit command line. <br>
-  		```xcopy /e /i /y "$(ProjectDir)..\..\..\export\vs\*.dll" "$(ProjectDir)bin"```<br>
-  		```xcopy /e /i /y "$(ProjectDir)ofxMightyUI\bin\data\mui" "$(ProjectDir)bin\data\mui"```
+- Go to Build Events>Post-Build Events and add this to command line: <br>
+  		```xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxMightyUI\bin\data\mui" "$(ProjectDir)bin\data\mui"```
 
 **Android**
+
+*instructions are old*
 
 - Refresh your project view (press F5), the ofxMightyUI subproject should show up
 - Right click>Resource Configuration>Exclude From Build>Release and Debug for these folders: 

@@ -105,7 +105,6 @@ namespace mui{
 
 
 #ifndef OF_MAX_TOUCHES 
-#pragma message(" OF_MAX_TOUCHES not defined, assuming 20.")
 #define OF_MAX_TOUCHES 20
 #endif
 
