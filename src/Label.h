@@ -14,6 +14,8 @@
 #ifndef MUI_LABEL
 #define MUI_LABEL
 
+#include "MuiCore.h"
+
 namespace mui{
 	class Label : public Container{
 	public: 

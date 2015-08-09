@@ -7,11 +7,13 @@
  *
  */
 
-#include "MUI.h"
+#include "Container.h"
+#include "MuiConfig.h"
+#include "Root.h"
+
 
 //--------------------------------------------------------------
 mui::Container::~Container(){
-	cout << "~Container " << name << endl;
 	MUI_ROOT->removeFromResponders( this );
 }
 

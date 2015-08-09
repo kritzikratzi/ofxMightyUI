@@ -19,8 +19,13 @@
  */
 
 
-#include "MUI.h"
+#include "ToggleButton.h"
+#include "Label.h"
 
+mui::ToggleButton::ToggleButton( std::string title_, float x_, float y_, float width_, float height_ )
+: Container( x_, y_, width_, height_ ), pressed(false), selected(false){
+	init( title_ );
+};
 
 //--------------------------------------------------------------
 void mui::ToggleButton::init( std::string title ){

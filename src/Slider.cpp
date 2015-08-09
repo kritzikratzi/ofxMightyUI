@@ -7,7 +7,7 @@
  *
  */
 
-#include "MUI.h"
+#include "Slider.h"
 
 
 int mui::Slider::paddingLR = 11; 

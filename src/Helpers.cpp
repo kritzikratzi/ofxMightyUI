@@ -7,7 +7,8 @@
  *
  */
 
-#include "MUI.h"
+#include "Helpers.h"
+#include "TextureAtlas.h"
 #include <locale>
 
 std::map<std::string, ofTexture*> mui::Helpers::textures;

@@ -18,9 +18,8 @@
  *	 left top corner of your container, not top left corner of your application. 
  */
 
-#include "MUI.h"
-#include <math.h>
-
+#include "ScrollPane.h"
+#include "Root.h"
 
 void mui::ScrollPaneView::handleDraw(){
 	if( !visible ) return;

@@ -12,11 +12,12 @@
 #ifndef MUI_EMPTY_CONTAINER
 #define MUI_EMPTY_CONTAINER
 
+#include "MuiCore.h"
+
 namespace mui{
 	class EmptyContainer : public Container{
 	public: 
-		EmptyContainer( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 ) 
-		: Container( x_, y_, width_, height_ ) {};  
+		EmptyContainer( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 );
 		
 		virtual void update();
 		virtual void draw();

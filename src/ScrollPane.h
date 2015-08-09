@@ -12,6 +12,8 @@
 #ifndef MUI_SCROLL_PANE
 #define MUI_SCROLL_PANE
 
+#include "MuiCore.h"
+
 namespace mui{
     class ScrollPane;
     

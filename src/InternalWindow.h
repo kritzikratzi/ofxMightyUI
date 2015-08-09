@@ -13,9 +13,9 @@
 #ifndef MUI_INTERNAL_WINDOW
 #define MUI_INTERNAL_WINDOW
 
+#include "MuiCore.h"
+
 namespace mui{
-	class Label; 
-	
 	class InternalWindow : public Container{
 	public: 
 		InternalWindow( std::string title_ = "Window", float x_ = 0, float y_ = 0, float width_ = 300, float height_ = 300, float radius_ = 10 )

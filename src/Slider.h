@@ -10,6 +10,8 @@
 #ifndef MUI_SLIDER
 #define MUI_SLIDER
 
+#include "MuiCore.h"
+
 namespace mui{
 	class Slider : public Container{
 	public: 

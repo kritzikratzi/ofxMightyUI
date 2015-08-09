@@ -12,6 +12,9 @@
 #ifndef MUI_SLIDER_WITH_LABEL
 #define MUI_SLIDER_WITH_LABEL
 
+#include "MuiCore.h"
+#include "Slider.h"
+
 namespace mui{
 	class SliderWithLabel : public Container{
 	public: 

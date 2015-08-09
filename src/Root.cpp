@@ -7,9 +7,12 @@
  *
  */
 
-#include "MUI.h"
+#include "Root.h"
 #include "ofEventUtils.h"
 #include "ofEvents.h"
+#include "Container.h"
+
+using namespace mui;
 
 // TODO: the handleXX functions might return null, even if touchMovedOutside and touchUpOutside 
 //       delegated to containers. this shouldn't be the case. 
@@ -17,6 +20,12 @@
 
 mui::Root * mui::Root::INSTANCE = NULL;
 
+//--------------------------------------------------------------
+mui::Root::Root() : Container( 0, 0, -1, -1 ){
+	INSTANCE = this;
+	ignoreEvents = true;
+	init();
+};
 
 //--------------------------------------------------------------
 void mui::Root::init(){

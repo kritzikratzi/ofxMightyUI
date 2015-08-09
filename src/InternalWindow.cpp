@@ -6,7 +6,10 @@
  *  Copyright 2011 __MyCompanyName__. All rights reserved.
  */
 
-#include "MUI.h"
+#include "InternalWindow.h"
+#include "Label.h"
+#include "BarButton.h"
+
 #include <algorithm>
 
 //--------------------------------------------------------------

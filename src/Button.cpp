@@ -19,8 +19,15 @@
  */
 
 
-#include "MUI.h"
+#include "Button.h"
+#include "MuiCore.h"
+#include "Label.h"
 
+using namespace mui; 
+
+//--------------------------------------------------------------
+mui::Button::Button( std::string title_, float x_, float y_, float width_, float height_ )
+: Container( x_, y_, width_, height_ ), pressed(false) { init( title_ ); };
 
 //--------------------------------------------------------------
 void mui::Button::init( std::string title ){

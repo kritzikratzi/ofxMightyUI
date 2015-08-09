@@ -20,15 +20,14 @@
 #ifndef MUI_TOGGLEBUTTON
 #define MUI_TOGGLEBUTTON
 
-#include "ofEvents.h"
+#include "MuiCore.h"
 
 namespace mui{
 	class Label;
 	
 	class ToggleButton : public Container{
 	public:
-		ToggleButton( std::string title_, float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 )
-		: Container( x_, y_, width_, height_ ), pressed(false), selected(false){ init( title_ ); };
+		ToggleButton( std::string title_, float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 );
 		
 		Label * label;
 		bool pressed;

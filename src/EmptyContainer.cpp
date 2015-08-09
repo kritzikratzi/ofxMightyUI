@@ -18,7 +18,12 @@
  *     left top corner of your container, not top left corner of your application. 
  */
 
-#include "MUI.h"
+#include "EmptyContainer.h"
+using namespace mui;
+
+mui::EmptyContainer::EmptyContainer( float x_, float y_, float width_, float height_ )
+	: Container( x_, y_, width_, height_ ) {
+};
 
 //--------------------------------------------------------------
 void mui::EmptyContainer::update(){

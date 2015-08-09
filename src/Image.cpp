@@ -1,7 +1,7 @@
-#include "MUI.h"
-#include "Helpers.h"
+#include "Image.h"
 
-mui::Image::Image( string filename, float x_, float y_, float width_, float height_ )
+
+mui::Image::Image( std::string filename, float x_, float y_, float width_, float height_ )
 : Container( x_, y_, width_, height_ ), texRef(NULL),horizontalAlign(Center),verticalAlign(Middle),scaleMethod(ScaleMethodFitInside) {
 	ofLoadImage(tex, filename);
 }

@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "MuiCore.h"
+
 namespace mui{
 	class Layout{
 		public: 

@@ -49,41 +49,52 @@ namespace tween {
 	/**** Quint ****/
 	
 	float Quint::easeIn (float t,float b , float c, float d) {
-		return c*(t/=d)*t*t*t*t + b;
+		t/=d;
+		return c*(t)*t*t*t*t + b;
 	}
 	float Quint::easeOut(float t,float b , float c, float d) {
-		return c*((t=t/d-1)*t*t*t*t + 1) + b;
+		t=t/d-1;
+		return c*((t)*t*t*t*t + 1) + b;
 	}
 	
 	float Quint::easeInOut(float t,float b , float c, float d) {
-		if ((t/=d/2) < 1) return c/2*t*t*t*t*t + b;
-		return c/2*((t-=2)*t*t*t*t + 2) + b;
+		t/=d/2;
+		if ((t) < 1) return c/2*t*t*t*t*t + b;
+		t-=2;
+		return c/2*((t)*t*t*t*t + 2) + b;
 	}
 	
 	/**** Quart ****/
 	float Quart::easeIn (float t,float b , float c, float d) {
-		return c*(t/=d)*t*t*t + b;
+		t/=d;
+		return c*(t)*t*t*t + b;
 	}
 	float Quart::easeOut(float t,float b , float c, float d) {
-		return -c * ((t=t/d-1)*t*t*t - 1) + b;
+		t=t/d-1;
+		return -c * ((t)*t*t*t - 1) + b;
 	}
 	
 	float Quart::easeInOut(float t,float b , float c, float d) {
 		if ((t/=d/2) < 1) return c/2*t*t*t*t + b;
-		return -c/2 * ((t-=2)*t*t*t - 2) + b;
+		t-=2;
+		return -c/2 * ((t)*t*t*t - 2) + b;
 	}
 	
 	/**** Quad ****/
 	float Quad::easeIn (float t,float b , float c, float d) {
-		return c*(t/=d)*t + b;
+		t/=d;
+		return c*(t)*t + b;
 	}
 	float Quad::easeOut(float t,float b , float c, float d) {
-		return -c *(t/=d)*(t-2) + b;
+		t/=d;
+
+		return -c *(t)*(t-2) + b;
 	}
 	
 	float Quad::easeInOut(float t,float b , float c, float d) {
-		if ((t/=d/2) < 1) return ((c/2)*(t*t)) + b;
-		return -c/2 * (((t-2)*(--t)) - 1) + b;
+		t/=d/2;
+		if ((t) < 1) return ((c/2)*(t*t)) + b;
+		return -c/2 * (((t-2)*(t-1)) - 1) + b;
 		/*
 		 originally return -c/2 * (((t-2)*(--t)) - 1) + b;
 		 
@@ -146,29 +157,35 @@ namespace tween {
 	
 	/****  Cubic ****/
 	float Cubic::easeIn (float t,float b , float c, float d) {
-		return c*(t/=d)*t*t + b;
+		t/=d;
+		return c*(t)*t*t + b;
 	}
 	float Cubic::easeOut(float t,float b , float c, float d) {
-		return c*((t=t/d-1)*t*t + 1) + b;
+		t=t/d-1;
+		return c*((t)*t*t + 1) + b;
 	}
 	
 	float Cubic::easeInOut(float t,float b , float c, float d) {
 		if ((t/=d/2) < 1) return c/2*t*t*t + b;
-		return c/2*((t-=2)*t*t + 2) + b;
+		t-=2;
+		return c/2*((t)*t*t + 2) + b;
 	}
 	
 	/*** Circ ***/
 	
 	float Circ::easeIn (float t,float b , float c, float d) {
-		return -c * (sqrt(1 - (t/=d)*t) - 1) + b;
+		t/=d;
+		return -c * (sqrt(1 - (t)*t) - 1) + b;
 	}
 	float Circ::easeOut(float t,float b , float c, float d) {
-		return c * sqrt(1 - (t=t/d-1)*t) + b;
+		t=t/d-1;
+		return c * sqrt(1 - (t)*t) + b;
 	}
 	
 	float Circ::easeInOut(float t,float b , float c, float d) {
 		if ((t/=d/2) < 1) return -c/2 * (sqrt(1 - t*t) - 1) + b;
-		return c/2 * (sqrt(1 - t*(t-=2)) + 1) + b;
+		t-=2;
+		return c/2 * (sqrt(1 - t*(t+2)) + 1) + b;
 	}
 	
 	/****  Bounce ****/
@@ -204,14 +221,17 @@ namespace tween {
 	}
 	float Back::easeOut(float t,float b , float c, float d) {
 		float s = 1.70158f;
-		return c*((t=t/d-1)*t*((s+1)*t + s) + 1) + b;
+		t=t/d-1;
+		return c*((t)*t*((s+1)*t + s) + 1) + b;
 	}
 	
 	float Back::easeInOut(float t,float b , float c, float d) {
 		float s = 1.70158f;
-		if ((t/=d/2) < 1) return c/2*(t*t*(((s*=(1.525f))+1)*t - s)) + b;
+		s*=(1.525f);
+		if ((t/=d/2) < 1) return c/2*(t*t*(((s)+1)*t - s)) + b;
 		float postFix = t-=2;
-		return c/2*((postFix)*t*(((s*=(1.525f))+1)*t + s) + 2) + b;
+		s*=(1.525f);
+		return c/2*((postFix)*t*(((s)+1)*t + s) + 2) + b;
 	}
 	
 	

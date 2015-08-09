@@ -18,7 +18,7 @@
  *     left top corner of your container, not top left corner of your application. 
  */
 
-#include "MUI.h"
+#include "Label.h"
 
 //--------------------------------------------------------------
 void mui::Label::update(){

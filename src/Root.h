@@ -9,17 +9,15 @@
 
 #pragma once
 
+#include "MuiCore.h"
+
 #define MUI_ROOT (mui::Root::INSTANCE)
 
 namespace mui{
-	typedef  Container* (Container::*PrimaryHandler)( ofTouchEventArgs& );
-	typedef  void (Container::*SecondaryHandler)( ofTouchEventArgs& );
-
-	
 	class TextField; 
 	class Root : public Container {
 	public: 
-		Root() : Container( 0, 0, -1, -1 ){ INSTANCE = this; ignoreEvents = true; init(); };
+		Root();
 		
 		Container * respondingContainer[OF_MAX_TOUCHES]; // think of the responder as the elements received touchDown events.
 		
@@ -60,8 +58,7 @@ namespace mui{
 		static mui::Root * INSTANCE;
 		
 	private: 
-		Container * handle( ofTouchEventArgs &touch, PrimaryHandler handler, SecondaryHandler secondaryHandler ); 
-		void fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &copy, Container * c ); 
+		void fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &copy, Container * c );
         void handleRemovals(); 
         
 		tween::TweenerParam param;

@@ -18,7 +18,8 @@
  *     left top corner of your container, not top left corner of your application. 
  */
 
-#include "MUI.h"
+#include "SliderWithLabel.h"
+#include "Label.h"
 
 mui::SliderWithLabel::SliderWithLabel( float x_, float y_, float width_, float height_, float min_, float max_, float value_, int decimalPlaces_ ) : Container( x_, y_, width_, height_ ), decimalPlaces(decimalPlaces_), oldValue(-9999) {
 	slider = new Slider( 0, 0, width_ - 40, height_, min_, max_, value_ );

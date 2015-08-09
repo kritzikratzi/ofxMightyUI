@@ -10,8 +10,11 @@
 #ifndef MUI_NODE
 #define MUI_NODE
 
+#include "MuiCore.h"
+
 namespace mui{
-	class Layout; 
+	class Layout;
+	
 	class Container{
 	public: 
 		float x;

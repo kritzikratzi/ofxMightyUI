@@ -14,15 +14,12 @@
 #ifndef MUI_BUTTON
 #define MUI_BUTTON
 
-// how the fuck does that even compile?
+#include "MuiCore.h"
 
 namespace mui{
-	class Label; 
-	
 	class Button : public Container{
 	public: 
-		Button( std::string title_, float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 ) 
-		: Container( x_, y_, width_, height_ ), pressed(false) { init( title_ ); };
+		Button( std::string title_, float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 );
 		
 		Label * label; 
 		bool pressed;

@@ -12,6 +12,9 @@
 #ifndef MUI_SEGMENTED_SELECTED
 #define MUI_SEGMENTED_SELECTED
 
+#include "MuiCore.h"
+#include "Button.h"
+
 namespace mui{
 	class SegmentedSelect;
 
