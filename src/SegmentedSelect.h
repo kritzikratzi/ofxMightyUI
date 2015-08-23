@@ -20,8 +20,7 @@ namespace mui{
 
 	class SegmentedButton : public Button{
 	public: 
-		SegmentedButton( std::string title_, float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 30 ) : 
-		Button( title_, x_, y_, width_, height_ ), selected(false) { initSegmentedButton(); }; 
+		SegmentedButton( std::string title_, float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 30 );
 		
 		bool selected;
 		bool roundedLeft; 
@@ -33,8 +32,7 @@ namespace mui{
 	
 	class SegmentedSelect : public Container{
 	public: 
-		SegmentedSelect( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 ) 
-		: Container( x_, y_, width_, height_ ), selected("")  {};
+		SegmentedSelect( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 );
 		
 		string selected;
 		

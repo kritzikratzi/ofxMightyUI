@@ -8,6 +8,11 @@
 #include "SegmentedSelect.h"
 #include "Label.h"
 
+mui::SegmentedButton::SegmentedButton( std::string title_, float x_, float y_, float width_, float height_) :
+Button( title_, x_, y_, width_, height_ ), selected(false) {
+	initSegmentedButton();
+};
+
 //--------------------------------------------------------------
 void mui::SegmentedButton::initSegmentedButton(){
 	label->fontSize = 10; 
@@ -42,6 +47,10 @@ void mui::SegmentedButton::drawBackground(){
 //--------------------------------------------------------------
 
 
+//--------------------------------------------------------------
+mui::SegmentedSelect::	SegmentedSelect( float x_, float y_, float width_, float height_ )
+: Container( x_, y_, width_, height_ ), selected(""){
+}
 
 
 //--------------------------------------------------------------

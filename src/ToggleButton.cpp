@@ -40,7 +40,7 @@ void mui::ToggleButton::init( std::string title ){
 	name = "togglebutton-" + title;
 	
 	bg = ofColor(125,50);
-	fg = ofColor( 125 );
+	fg = ofColor( 200 );
 	
 	selectedBg = ofColor(255);
 	selectedFg = ofColor(0);
