@@ -71,7 +71,6 @@ namespace mui{
 		virtual void of_update( ofEventArgs &args );
 		virtual void of_draw( ofEventArgs &args );
 		virtual void of_exit( ofEventArgs &args );
-		virtual void of_windowEntered( ofEntryEventArgs &args );
 		virtual void of_windowResized( ofResizeEventArgs &args );
 		virtual bool of_keyPressed( ofKeyEventArgs &args );
 		virtual bool of_keyReleased( ofKeyEventArgs &args );
@@ -79,8 +78,6 @@ namespace mui{
 		virtual bool of_mouseDragged( ofMouseEventArgs &args );
 		virtual bool of_mousePressed( ofMouseEventArgs &args );
 		virtual bool of_mouseReleased( ofMouseEventArgs &args );
-		virtual void of_audioReceived( ofAudioEventArgs &args );
-		virtual void of_audioRequested( ofAudioEventArgs &args );
 		virtual bool of_touchDown( ofTouchEventArgs &args );
 		virtual bool of_touchUp( ofTouchEventArgs &args );
 		virtual bool of_touchMoved( ofTouchEventArgs &args );

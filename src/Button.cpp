@@ -103,7 +103,7 @@ void mui::Button::touchMovedOutside( ofTouchEventArgs &touch ){
 //--------------------------------------------------------------
 void mui::Button::touchUp( ofTouchEventArgs &touch ){
 	pressed = false;
-	onPress( this, touch );
+	ofNotifyEvent( onPress, touch, this );
 }
 
 
@@ -127,5 +127,5 @@ void mui::Button::clickAndNotify(){
 	ofTouchEventArgs args;
 	args.x = width/2;
 	args.y = height/2;
-	onPress(this, args);
+	ofNotifyEvent(onPress, args, this );
 }

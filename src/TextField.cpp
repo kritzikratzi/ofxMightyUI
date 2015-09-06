@@ -22,7 +22,7 @@ void mui::TextField::setText( string value ){
     if( text.compare( value ) != 0 ){
         text = value; 
         commit(); 
-        onChange( this, text );     
+		ofNotifyEvent(onChange, text, this );
     }
 }
 
@@ -58,7 +58,7 @@ void mui::TextField::touchMoved( ofTouchEventArgs &touch ){
 //--------------------------------------------------------------
 void mui::TextField::touchUp( ofTouchEventArgs &touch ){
 	Root::INSTANCE->showTextField( this );
-	onPress( this, touch );
+	ofNotifyEvent(onPress, touch, this );
 }
 
 

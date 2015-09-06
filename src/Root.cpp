@@ -43,7 +43,6 @@ void mui::Root::init(){
 	ofAddListener( ofEvents().update, this, &mui::Root::of_update, OF_EVENT_ORDER_AFTER_APP );
 	ofAddListener( ofEvents().draw, this, &mui::Root::of_draw, OF_EVENT_ORDER_AFTER_APP );
 	//ofAddListener( ofEvents().exit, this, &mui::Root::of_exit );
-	//ofAddListener( ofEvents().windowEntered, this, &mui::Root::of_windowEntered );
 	ofAddListener( ofEvents().windowResized, this, &mui::Root::of_windowResized, OF_EVENT_ORDER_BEFORE_APP );
 	ofAddListener( ofEvents().keyPressed, this, &mui::Root::of_keyPressed, OF_EVENT_ORDER_BEFORE_APP );
 	ofAddListener( ofEvents().keyReleased, this, &mui::Root::of_keyReleased, OF_EVENT_ORDER_BEFORE_APP );
@@ -51,8 +50,6 @@ void mui::Root::init(){
 	ofAddListener( ofEvents().mouseDragged, this, &mui::Root::of_mouseDragged, OF_EVENT_ORDER_BEFORE_APP );
 	ofAddListener( ofEvents().mousePressed, this, &mui::Root::of_mousePressed, OF_EVENT_ORDER_BEFORE_APP );
 	ofAddListener( ofEvents().mouseReleased, this, &mui::Root::of_mouseReleased, OF_EVENT_ORDER_BEFORE_APP );
-	//ofAddListener( ofEvents().audioReceived, this, &mui::Root::of_audioReceived );
-	//ofAddListener( ofEvents().audioRequested, this, &mui::Root::of_audioRequested );
 	ofAddListener( ofEvents().touchDown, this, &mui::Root::of_touchDown, OF_EVENT_ORDER_BEFORE_APP );
 	ofAddListener( ofEvents().touchUp, this, &mui::Root::of_touchUp, OF_EVENT_ORDER_BEFORE_APP );
 	ofAddListener( ofEvents().touchMoved, this, &mui::Root::of_touchMoved, OF_EVENT_ORDER_BEFORE_APP );
@@ -386,9 +383,6 @@ void mui::Root::of_draw( ofEventArgs &args ){
 void mui::Root::of_exit( ofEventArgs &args ){
 	//handleExit(args);
 }
-void mui::Root::of_windowEntered( ofEntryEventArgs &args ){
-	//handleWindowEntered(args);
-}
 void mui::Root::of_windowResized( ofResizeEventArgs &args ){
 	//handleWindowResized(args);
 	width = args.width/mui::MuiConfig::scaleFactor;
@@ -411,12 +405,6 @@ bool mui::Root::of_mousePressed( ofMouseEventArgs &args ){
 }
 bool mui::Root::of_mouseReleased( ofMouseEventArgs &args ){
 	return handleMouseReleased(args.x, args.y, args.button) != NULL;
-}
-void mui::Root::of_audioReceived( ofAudioEventArgs &args ){
-	//handleAudioReceived(args);
-}
-void mui::Root::of_audioRequested( ofAudioEventArgs &args ){
-	//handleAudioRequested(args);
 }
 bool mui::Root::of_touchDown( ofTouchEventArgs &args ){
 	return handleTouchDown(args) != NULL;

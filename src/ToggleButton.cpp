@@ -98,7 +98,7 @@ void mui::ToggleButton::touchMovedOutside( ofTouchEventArgs &touch ){
 void mui::ToggleButton::touchUp( ofTouchEventArgs &touch ){
 	selected = !selected;
 	pressed = false;
-	onPress( this, touch );
+	ofNotifyEvent(onPress, touch, this );
 }
 
 
@@ -124,5 +124,5 @@ void mui::ToggleButton::clickAndNotify(){
 	args.x = width/2;
 	args.y = height/2;
 	selected ^= true;
-	onPress(this, args);
+	ofNotifyEvent(onPress, args, this);
 }
