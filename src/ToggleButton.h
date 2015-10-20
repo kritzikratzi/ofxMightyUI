@@ -44,6 +44,7 @@ namespace mui{
 
 		// simulate a click
 		virtual void clickAndNotify();
+		virtual void clickAndNotify(bool state);
 		
 		virtual void touchDown( ofTouchEventArgs &touch );
 		virtual void touchMoved( ofTouchEventArgs &touch );

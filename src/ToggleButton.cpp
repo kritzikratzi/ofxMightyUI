@@ -121,8 +121,17 @@ void mui::ToggleButton::touchCanceled( ofTouchEventArgs &touch ){
 
 void mui::ToggleButton::clickAndNotify(){
 	ofTouchEventArgs args;
-	args.x = width/2;
+	args.x = width/2; // click in the center
 	args.y = height/2;
 	selected ^= true;
 	ofNotifyEvent(onPress, args, this);
 }
+
+void mui::ToggleButton::clickAndNotify(bool state){
+	ofTouchEventArgs args;
+	args.x = width/2; // click in the center
+	args.y = height/2;
+	selected = state;
+	ofNotifyEvent(onPress, args, this);
+}
+
