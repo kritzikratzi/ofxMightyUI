@@ -65,7 +65,12 @@ void mui::Container::layout(){
 
 void mui::Container::handleLayout(){
 	// does this order make sense?
-	layout();
+	if( layoutHandler == NULL ){
+		layout();
+	}
+	else{
+		layoutHandler->layout(this);
+	}
 
 	vector<mui::Container*>::iterator it = children.begin();
 	while( it != children.end() ){
@@ -163,7 +168,12 @@ mui::Container * mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
 				touchDown( touch );
 			}
 			
-			return this;
+			if( MUI_ROOT->respondingContainer[touch.id] != NULL ){
+				return MUI_ROOT->respondingContainer[touch.id];
+			}
+			else{
+				return this;
+			}
 		}
 	}
 	
@@ -285,6 +295,14 @@ mui::Container * mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
 	return NULL;
 }
 
+void mui::Container::handleTouchCanceled( ofTouchEventArgs &touch ){
+	touchCanceled(touch);
+	if( parent != NULL ){
+		parent->handleTouchCanceled(touch);
+	}
+}
+
+
 
 //--------------------------------------------------------------
 void mui::Container::reloadTextures(){
@@ -317,6 +335,10 @@ bool mui::Container::hasFocus( ofTouchEventArgs &touch ){
     return Root::INSTANCE->respondingContainer[touch.id] == this;
 }
 
+bool mui::Container::requestFocus( ofTouchEventArgs &args ){
+	return Root::INSTANCE->becomeResponder(this, args);
+}
+
 //--------------------------------------------------------------
 ofPoint mui::Container::getGlobalPosition(){
 	ofPoint result;
@@ -335,6 +357,16 @@ ofPoint mui::Container::getGlobalPosition(){
 	result.y = y;
 	
 	return result;
+}
+
+mui::Container * mui::Container::byName( string name ){
+	vector<mui::Container*>::iterator it = children.begin();
+	while( it != children.end() ){
+		if( (*it)->name == name ) return *it;
+		++it;
+	}
+	
+	return NULL;
 }
 
 mui::Container * mui::Container::findChildAt( float x, float y, bool onlyVisible ){

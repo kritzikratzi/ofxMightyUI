@@ -11,13 +11,7 @@
 
 
 
-// http://www.parashift.com/c++-faq-lite/pointers-to-members.html#faq-33.12
-// says i should do this: 
-inline mui::Layout::~Layout() { }
-
-
 void mui::RowLayout::layout( Container * container ){
-	cout << "LAYOUT!" << endl; 
 	vector<Container*> * children = &container->children; 
 	vector<Container*>::iterator it = children->begin(); 
 	int y = 0; 

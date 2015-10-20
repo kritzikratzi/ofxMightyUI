@@ -16,8 +16,8 @@ namespace mui{
 	class Layout{
 		public: 
 		Layout(){}; 
-		virtual void layout( Container * container ) = 0; 
-		virtual ~Layout() = 0; 
+		~Layout(){};
+		virtual void layout( Container * container ) = 0;
 		
 		Container * container; 
 	};
@@ -27,7 +27,7 @@ namespace mui{
 	class RowLayout : public Layout{
 	public: 
 		RowLayout( int spacing = 3 ) : Layout(), spacing(spacing){}; 
-		virtual void layout( Container * container ); 
+		void layout( Container * container ); 
 		
 		int spacing; 
 	}; 

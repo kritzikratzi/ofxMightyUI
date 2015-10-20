@@ -78,7 +78,8 @@ mui::ScrollPane::~ScrollPane(){
 
 //--------------------------------------------------------------
 void mui::ScrollPane::commit(){
-	ofRectangle bounds = getViewBoundingBox(); 
+	view->handleLayout();
+	ofRectangle bounds = getViewBoundingBox();
 	
 	minScrollX = fminf( 0, bounds.x ); 
 	minScrollY = fminf( 0, bounds.y ); 
@@ -89,7 +90,7 @@ void mui::ScrollPane::commit(){
 	wantsToScrollY = maxScrollY != 0 || minScrollY != 0; 
 	
 	view->width = fmaxf( width, maxScrollX + width ); 
-	view->height = fmaxf( height, maxScrollY + height ); 
+	view->height = fmaxf( height, maxScrollY + height );
 }
 
 ofRectangle mui::ScrollPane::getViewBoundingBox(){
@@ -379,6 +380,8 @@ void mui::ScrollPane::touchDoubleTap( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::ScrollPane::touchCanceled( ofTouchEventArgs &touch ){
+	watchingTouch[touch.id] = false;
+	cout << "stop watching touch #" << touch.id << endl;
 	pressed = false;
 	focusTransferable = true;
 }
@@ -421,11 +424,11 @@ mui::Container * mui::ScrollPane::handleTouchMoved( ofTouchEventArgs &touch ){
 	if( !pressed && watchingTouch[touch.id] ){
 		// we don't care about "wantsToScrollX" anymore, 
 		// because on touch devices you can drag around a bit anyways
-		
-		if(( canScrollX && /*wantsToScrollX && */fabsf( touchStart[touch.id].x - touch.x ) > 20 ) || 
+		if(( canScrollX && /*wantsToScrollX && */fabsf( touchStart[touch.id].x - touch.x ) > 20 ) ||
 		   ( canScrollY && /*wantsToScrollY && */fabsf( touchStart[touch.id].y - touch.y ) > 20 )
 		){
-			// steal focus! 
+			cout << "steal focus for touch #" << touch.id << endl;
+			// steal focus!
 			if( Root::INSTANCE->becomeResponder( this, touch ) ){ 
 				touchDown( touch ); // fake a touchdown
 				watchingTouch[touch.id] = false;

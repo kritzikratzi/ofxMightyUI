@@ -74,13 +74,33 @@ namespace mui{
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
 		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
 		virtual Container * handleTouchDoubleTap( ofTouchEventArgs &touch );
+		void handleTouchCanceled( ofTouchEventArgs &touch );
 
 		virtual void reloadTextures();
 		virtual void handleReloadTextures();
 
 		virtual bool hasFocus();
 		virtual bool hasFocus( ofTouchEventArgs &touch );
+		virtual bool requestFocus( ofTouchEventArgs &args );
 		virtual ofPoint getGlobalPosition();
+		
+		mui::Container * byName( string name ); 
+		
+		// implemented directly in the header because templates ... have some issues
+		template <typename T>
+		T * findChildOfType( float x, float y, bool onlyVisible = true ){
+			mui::Container * thing = findChildAt(x,y,onlyVisible);
+			while(thing!=NULL){
+				T * result = dynamic_cast<T*>(thing);
+				if( result != NULL ){
+					return result;
+				}
+				else{
+					thing = thing->parent;
+				}
+			}
+		}
+
 		virtual Container * findChildAt( float x, float y, bool onlyVisible = true );
 		
 		virtual bool isVisibleOnScreen(float border=0); // effectively visible on screen? border adds an additonal border around, so border<0 means isVisible return false if it's barely visible, border>0 means isVisible will return true even if the component is already slightly off screen.

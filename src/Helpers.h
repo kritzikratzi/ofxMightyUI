@@ -45,7 +45,8 @@ namespace mui{
 		static ofRectangle alignBox( Container * container, float width, float height, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign );
 		static bool inside( Container * container, float x, float y ); 
         static ofTouchEventArgs translateTouch( ofTouchEventArgs &touch, Container * src, Container * dest );
-        static ofPoint translateCoords( float x, float y, Container * src, Container * dest );
+		static ofPoint translateCoords( float x, float y, Container * src, Container * dest );
+		static ofPoint translateCoords( ofPoint pt, Container * src, Container * dest );
 		
 	private:
 		static std::map<std::string, ofTexture*> textures;

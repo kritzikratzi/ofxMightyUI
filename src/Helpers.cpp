@@ -458,3 +458,8 @@ ofPoint mui::Helpers::translateCoords(float x, float y, mui::Container *src, mui
     
     return p; 
 }
+
+ofPoint mui::Helpers::translateCoords( ofPoint pt, Container * src, Container * dest ){
+	return translateCoords(pt.x, pt.y, src, dest);
+}
+

@@ -248,7 +248,7 @@ bool mui::Root::becomeResponder( Container * c, ofTouchEventArgs &touch ){
         if( respondingContainer[touch.id]->focusTransferable == false )
             return false; 
         
-		respondingContainer[touch.id]->touchCanceled( touch ); 
+		respondingContainer[touch.id]->handleTouchCanceled( touch );
 		respondingContainer[touch.id]->singleTouchId = -1; 
 	}
 	
