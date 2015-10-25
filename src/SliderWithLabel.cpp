@@ -60,6 +60,7 @@ mui::Container * mui::SliderWithLabel::handleTouchDown( ofTouchEventArgs &args )
 	mui::Container * res = mui::Container::handleTouchDown(args);
 	if( res == label ){
 		slider->value = defaultValue;
+		ofNotifyEvent(slider->onChange, defaultValue, slider );
 	}
 	return res; 
 }
