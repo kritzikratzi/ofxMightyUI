@@ -91,6 +91,10 @@ void mui::ScrollPane::commit(){
 	
 	view->width = fmaxf( width, maxScrollX + width ); 
 	view->height = fmaxf( height, maxScrollY + height );
+	
+	if( isAutoLockingToBottom && autoLockToBottom && !pressed ){
+		beginBaseAnimation( ofClamp( currentScrollX, minScrollX, maxScrollX ), maxScrollY );
+	}
 }
 
 ofRectangle mui::ScrollPane::getViewBoundingBox(){
@@ -236,8 +240,10 @@ void mui::ScrollPane::update(){
 				animateX = animateY = 0; 
 				animating = false; 
 				animatingMomentum = false; 
-				if( currentScrollX > maxScrollX || currentScrollY > maxScrollY || currentScrollX < minScrollX || currentScrollY < minScrollY )
-					beginBaseAnimation( ofClamp( currentScrollX, minScrollX, maxScrollX ), ofClamp( currentScrollY, minScrollY, maxScrollY ) ); 
+				if( currentScrollX > maxScrollX || currentScrollY > maxScrollY || currentScrollX < minScrollX || currentScrollY < minScrollY ){
+					if( currentScrollY > maxScrollY ) isAutoLockingToBottom = true; 
+					beginBaseAnimation( ofClamp( currentScrollX, minScrollX, maxScrollX ), ofClamp( currentScrollY, minScrollY, maxScrollY ) );
+				}
 			}
 #undef SIGN
 			
@@ -341,6 +347,7 @@ void mui::ScrollPane::touchMovedOutside( ofTouchEventArgs &touch ){
 void mui::ScrollPane::touchUp( ofTouchEventArgs &touch ){
 	if( pressed ){
 		updateTouchVelocity( touch );
+		isAutoLockingToBottom = false;
 		if( usePagingH ){
 			int page = 0;
 			if( fabsf(velX ) < 5 ){
@@ -354,8 +361,10 @@ void mui::ScrollPane::touchUp( ofTouchEventArgs &touch ){
 		else if( ( canScrollX && ABS( velX ) > 50 ) || ( canScrollY && ABS( velY ) > 50 ) ){
 			beginMomentumAnimation();
 		}
-		else if( currentScrollX > maxScrollX || currentScrollY > maxScrollY || currentScrollX < minScrollX || currentScrollY < minScrollY )
-			beginBaseAnimation( ofClamp( currentScrollX, minScrollX, maxScrollX ), ofClamp( currentScrollY, minScrollY, maxScrollY ) ); 
+		else if( currentScrollX > maxScrollX || currentScrollY > maxScrollY || currentScrollX < minScrollX || currentScrollY < minScrollY ){
+			isAutoLockingToBottom = currentScrollY > maxScrollY;
+			beginBaseAnimation( ofClamp( currentScrollX, minScrollX, maxScrollX ), ofClamp( currentScrollY, minScrollY, maxScrollY ) );
+		}
 		else if( ( canScrollX && ABS( velX ) > 30 ) || ( canScrollY && ABS( velY ) > 30 ) ){
 			beginMomentumAnimation();
 		}

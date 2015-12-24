@@ -31,7 +31,8 @@ namespace mui{
 			: Container( x_, y_, width_, height_ ), 
 			wantsToScrollX(false), wantsToScrollY(false), 
 			canScrollX(true), canScrollY(true), scrollX(0), scrollY(0), 
-			maxScrollX(0), maxScrollY(0), minScrollX(0), minScrollY(0), 
+			maxScrollX(0), maxScrollY(0), minScrollX(0), minScrollY(0),
+			autoLockToBottom(false),
 			currentScrollX(0), currentScrollY(0), 
 			pressed(false), 
 			view( NULL ), 
@@ -62,6 +63,7 @@ namespace mui{
 		
 		// use horizontal paging?
 		bool usePagingH;
+		bool autoLockToBottom;
 		
 		// create a new page.
 		Container * createPage();
@@ -94,7 +96,8 @@ namespace mui{
 		
 		bool pressed; 
 		float pressedX, pressedY; 
-		bool wantsToScrollX, wantsToScrollY; 
+		bool wantsToScrollX, wantsToScrollY;
+		bool isAutoLockingToBottom;
         float initialX, initialY; // positions before drag start
 		
 		bool watchingTouch[OF_MAX_TOUCHES]; 
