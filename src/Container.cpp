@@ -54,6 +54,14 @@ void mui::Container::remove(){
     }
 }
 
+void mui::Container::setBounds( float x, float y, float w, float h ){
+	this->x = x;
+	this->y = y;
+	this->width = w;
+	this->height = h;
+	handleLayout();
+}
+
 //--------------------------------------------------------------
 void mui::Container::layout(){
 	// layout managers might have been a fucking stupid idea.

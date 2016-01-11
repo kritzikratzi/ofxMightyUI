@@ -2,20 +2,11 @@
  *  Label.cpp
  *  iPhoneEmptyExample
  *
- *  Created by hansi on 29.01.11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
- * 
- * ------------------------------
- *  PLEASE READ BEFORE YOU CODE:
- * 
- *  This is a simple container thingie. 
- *  You can use it exactly like an OF main app, there are only small differences in how touch events work. 
- *  1. If you don't want an event to propagate to other containers just do a "return true;" at then end. 
- *  2. A container will only be notified of events that happen within it's bounds
- *  3. If you do a "return true" at the end of touchDown() your container will be remembered and will then 
- *     receive all moved(), doubleTap() and touchUp() events, even if they happen outside the container. 
- *  4. The coordinates touch.x and touch.y are modified to match the drawing coordinate system, so 0/0 is at the 
- *     left top corner of your container, not top left corner of your application. 
+ *  Text label
+ *  - Supports vertical and horizontal alignments
+ *  - Call commit() after changing text, fontSize, fontName, ellipsis mode or any of the other variables (except bounds!).
+ *  - fg variable affects text color (no commit needed)
+ *  - Doesn't support multiline
  */
 
 #include "Label.h"
@@ -83,6 +74,25 @@ void mui::Label::layout(){
 	}
 }
 
+void mui::Label::sizeToFit( float padX, float padY ){
+	commit(); // update bounding box
+	width = boundingBox.width + padX;
+	height = boundingBox.height + padY;
+	layout(); // tell ourselves about the size change
+}
+
+void mui::Label::sizeToFitWidth( float padX ){
+	commit();
+	width = boundingBox.width + padX;
+	layout();
+}
+
+void mui::Label::sizeToFitHeight( float padY ){
+	commit();
+	height = boundingBox.height + padY;
+	layout();
+}
+
 //--------------------------------------------------------------
 ofRectangle mui::Label::box( float t, float r, float b, float l ){
 	ofRectangle size = Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign );
@@ -104,10 +114,12 @@ void mui::Label::commit(){
 
     if( ellipsisMode ){
         if( boundingBox.width > width && text.length() > 3 ){
+			// don't mess with the original boundingBox object. it's publicly readable!
+			ofRectangle box = boundingBox;
             int len = text.length() - 3;
-            while( boundingBox.width > width && len >= 0 ){
+            while( box.width > width && len >= 0 ){
                 displayText = text.substr(0, len ) + "...";
-                boundingBox = font->getStringBoundingBox( displayText, 0, 0 ); 
+                box = font->getStringBoundingBox( displayText, 0, 0 );
                 len --; 
             }
         }

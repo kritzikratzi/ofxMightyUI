@@ -108,11 +108,13 @@ ofRectangle mui::ScrollPane::getViewBoundingBox(){
 	maxY = 0; 
 	
 	while( it != view->children.end() ) {
-		minX = fminf( (*it)->x, minX ); 
-		minY = fminf( (*it)->y, minX ); 
-		maxX = fmaxf( (*it)->x + (*it)->width, maxX );
-		maxY = fmaxf( (*it)->y + (*it)->height, maxY ); 
-		++it; 
+		if( (*it)->visible ){
+			minX = fminf( (*it)->x, minX );
+			minY = fminf( (*it)->y, minX ); 
+			maxX = fmaxf( (*it)->x + (*it)->width, maxX );
+			maxY = fmaxf( (*it)->y + (*it)->height, maxY );
+		}
+		++it;
 	}
 	
 	return ofRectangle( minX, minY, maxX - minX, maxY - minY ); 
@@ -241,7 +243,7 @@ void mui::ScrollPane::update(){
 				animating = false; 
 				animatingMomentum = false; 
 				if( currentScrollX > maxScrollX || currentScrollY > maxScrollY || currentScrollX < minScrollX || currentScrollY < minScrollY ){
-					if( currentScrollY > maxScrollY ) isAutoLockingToBottom = true; 
+					if( currentScrollY > maxScrollY ) isAutoLockingToBottom = true;
 					beginBaseAnimation( ofClamp( currentScrollX, minScrollX, maxScrollX ), ofClamp( currentScrollY, minScrollY, maxScrollY ) );
 				}
 			}

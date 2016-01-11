@@ -37,7 +37,7 @@
 // it's nasty, but just add the correct font type to your IDEs global
 // preprocessor flags!
 #ifndef MUI_FONT_TYPE_ACTIVE
-#define MUI_FONT_TYPE_ACTIVE MUI_FONT_TYPE_FONTSTASH
+#define MUI_FONT_TYPE_ACTIVE MUI_FONT_TYPE_OPENFRAMEWORKS
 #endif
 
 #if MUI_FONT_TYPE_ACTIVE == MUI_FONT_TYPE_OPENFRAMEWORKS

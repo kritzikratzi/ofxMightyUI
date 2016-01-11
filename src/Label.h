@@ -41,6 +41,9 @@ namespace mui{
 		virtual void render();
 		virtual void drawBackground();
 		virtual void layout(); 
+		virtual void sizeToFit( float padX = 0, float padY = 0 );
+		virtual void sizeToFitWidth( float padX = 0 );
+		virtual void sizeToFitHeight( float padY = 0 );
 		
 		virtual void commit(); // call this after you made changes to any variables (changing x/y is okay without doing a commit() ). doing text-maths too insane to do on every frame!
 		

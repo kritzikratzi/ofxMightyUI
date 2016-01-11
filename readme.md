@@ -7,6 +7,8 @@ LOTS OF REFACTORING GOING ON.
 THIS IS UNUSABLE AT THE MOMENT. 
 PLEASE BE PATIENT. 
 
+To be fair: it's not so unstable, actually. 
+
 
 TODO: 
 
@@ -17,16 +19,14 @@ TODO:
 - ☐ test android (+retina)
 - ☐ test ios (+retina)
 - ☑︎ test windows (is there retina?)
-- ☐ finish textfield overlays
+- ☐ finish textfield overlays --> or make simple textfield? 
 - ☐ stupid mobile rotation issues
-- ☐- see if i can depend on the "proper" ofxFontStash<br>Don't care for now. Waiting for fontstash2 to look
-- ☐ cleanup include structure. how does it even compile? 
+- ☐ see if i can depend on the "proper" ofxFontStash<br>Don't care for now. Waiting for fontstash2 to look
+- ☑︎ cleanup include structure. how does it even compile? 
 - ☑︎ make a basic example
-- ☐ make a more complex example
-- ☐ ~ share code with the midi mapping? --> could be optional addon?
 - ☐ window size is very confused until the window is resized once (esp one windows)
 - ☐ possible speed gain when combining textureatlas of fontstash and mui ui elements? (no switching textures -> drawArrays becomes non blocking?)
-- ☐ clean up layouting mess
+- clean up layouting mess --> getting there
 
 TODO OSX: 
 
