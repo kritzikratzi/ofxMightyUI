@@ -11,6 +11,13 @@
 
 #include "Label.h"
 
+
+mui::Label::Label( std::string text_, float x_, float y_, float width_, float height_ ) :
+	Container( x_, y_, width_, height_ ),
+	ellipsisMode(true), text( text_), fontSize( MUI_FONT_SIZE ), horizontalAlign(Left), verticalAlign(Middle){
+		ignoreEvents = true;
+		commit();
+};
 //--------------------------------------------------------------
 void mui::Label::update(){
 }
@@ -18,18 +25,9 @@ void mui::Label::update(){
 
 //--------------------------------------------------------------
 void mui::Label::draw(){
-//	// magic trick #1:	
-//	int w, h; 
-//	if( Helpers::retinaMode ) w = 2*width, h = 2*height; 
-//	else w = width, h=height; 
-//	
-
-    //	ofRectangle size = Helpers::alignBox( this, fbo.getWidth(), fbo.getHeight(), horizontalAlign, verticalAlign ); 
-	ofRectangle size = Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign ); 
+	ofRectangle size = Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign );
 	
 	ofSetColor( 255, 255, 255 ); 
-//	glBlendFunc( GL_ONE, GL_ONE_MINUS_SRC_ALPHA );
-//	fbo.draw( (int)size.x, (int)size.y, size.width, size.height );
     ofSetColor( fg.r, fg.g, fg.b, fg.a );
 	if( mui::MuiConfig::scaleFactor != 1 ){
 		MUI_FONT_TYPE * font;
@@ -47,17 +45,6 @@ void mui::Label::draw(){
 		else font = Helpers::getFont( fontName, fontSize );
 		font->drawString( displayText, (int)(size.x-boundingBox.x), (int)(size.y-(int)boundingBox.y) );
 	}
-}
-
-
-//--------------------------------------------------------------
-void mui::Label::render(){
-	// old, maybe new again one day. 
-	//Helpers::drawStringWithShadow( text, renderX, renderY, fontSize, fg.r, fg.g, fg.b );
-	
-	
-	if( horizontalAlign == Left ) renderX = -boundingBox.x;
-	if( verticalAlign == Top ) renderY = - boundingBox.y; 
 }
 
 
@@ -94,10 +81,12 @@ void mui::Label::sizeToFitHeight( float padY ){
 }
 
 //--------------------------------------------------------------
+//deprecated
 ofRectangle mui::Label::box( float t, float r, float b, float l ){
 	ofRectangle size = Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign );
-	return ofRectangle( size.x - boundingBox.x - l, size.y - boundingBox.y - t, boundingBox.width + l + r, boundingBox.height + t + b );
+	return ofRectangle( size.x - boundingBox.x - l, size.y - boundingBox.y + t, boundingBox.width + l + r, boundingBox.height + t + b );
 }
+
 //--------------------------------------------------------------
 void mui::Label::commit(){
 	// magic trick #2
@@ -107,7 +96,6 @@ void mui::Label::commit(){
 	if( fontName == "" ) font = Helpers::getFont( fontSize );
 	else  font = Helpers::getFont( fontName, fontSize );
 	boundingBox = font->getStringBoundingBox( text, 0, 0 );
-	
 	
 	// NASTY HACK#158
 	boundingBox.x = 0;
@@ -130,44 +118,10 @@ void mui::Label::commit(){
     else{
         displayText = text;
     }
-    
-
-	/*
-	int w = floorf(boundingBox.width) + 1;
-	int h = floorf(boundingBox.height);
- 
-	// magic trick #1:
-	if( mui::MuiConfig::scaleFactor != 1 ) w *= mui::MuiConfig::scaleFactor, h *= mui::MuiConfig::scaleFactor;
 	
-	ofPushMatrix();
-	if( fbo.getWidth() != w || fbo.getHeight() != h ) fbo.allocate( w, h, GL_RGBA ); 
-	ofClear( 0, 0, 0, 0 );
-	
-	//////////////////////
-	// RENDER! 
-	//////////////////////
-	fbo.begin();
-	
-	#ifdef TARGET_OPENGLES
-	glBlendFuncSeparateOES(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);  //oriol added to get rid of halos
-	#else
-	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA); //oriol added to get rid of halos
-	#endif
-	
-	if( mui::MuiConfig::scaleFactor != 1 ){
-		ofPushMatrix(); 
-		ofScale( 1/mui::MuiConfig::scaleFactor, 1/mui::MuiConfig::scaleFactor, 1 );
-	}
-	
-	ofSetColor( fg.r, fg.g, fg.b ); 
-	font->drawString( displayText, -(int)boundingBox.x, -(int)boundingBox.y );
-	
-	if( mui::MuiConfig::scaleFactor != 1 ){
-		ofPopMatrix(); 
-	}
-	
-	
-	
-	fbo.end();
-	ofPopMatrix();*/
+	// Orient y on a simple uppercase character
+	// Otherwise things go up and down unexpectedly
+	ofRectangle baselineSize = font->getStringBoundingBox("M", 0, 0);
+	boundingBox.height = baselineSize.height;
+	boundingBox.y = baselineSize.y;
 }

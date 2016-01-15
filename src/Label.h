@@ -1,14 +1,10 @@
 /*
- *  Text.h
- *  iPhoneEmptyExample
- *  
- *  Use this as a starting point for a new element! 
- * 
+ *  Label.h
+ *
  *  Created by hansi on 29.01.11.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.
  *
- *  Allrighty, label does some magic to properly support the retina display. 
- *  It's not complicated, but i'm too tired to write documentation, sorry :(
+ *  A single line text label with alignments.
  */
 
 #ifndef MUI_LABEL
@@ -19,33 +15,37 @@
 namespace mui{
 	class Label : public Container{
 	public: 
-		Label( std::string text_ = "Label", float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 ) : 
-		Container( x_, y_, width_, height_ ), ellipsisMode(true),
-		text( text_), fontSize( MUI_FONT_SIZE ), horizontalAlign(Left), verticalAlign(Middle)
-		{ ignoreEvents = true; commit(); };  
-		
-		
+		Label( std::string text_ = "Label", float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 );
+		// alignments
 		HorizontalAlign horizontalAlign; 
-		VerticalAlign verticalAlign; 
-		std::string text; 
+		VerticalAlign verticalAlign;
+		
+		// text settings
+		std::string text;
 		int fontSize;
 		string fontName; // subject to change!
-		ofRectangle boundingBox;
-		int renderX; 
-		int renderY; 
-		ofFbo fbo;
 		bool ellipsisMode;
-        
+		
+		// the currently computed text boundaries
+		// the height and y offset are currently always the size of a capital 'M'
+		ofRectangle boundingBox;
+		
+		// used internally
 		virtual void update();
 		virtual void draw();
-		virtual void render();
 		virtual void drawBackground();
-		virtual void layout(); 
+		virtual void layout();
+		
+		// change the size to accomodate all contents
 		virtual void sizeToFit( float padX = 0, float padY = 0 );
+		// change the width to accomodate all contents
 		virtual void sizeToFitWidth( float padX = 0 );
+		// changes the height of the label to accomodate all contents
 		virtual void sizeToFitHeight( float padY = 0 );
 		
-		virtual void commit(); // call this after you made changes to any variables (changing x/y is okay without doing a commit() ). doing text-maths too insane to do on every frame!
+		// call this after you made changes to any variables (changing x/y is okay without doing a commit() ).
+		// doing text-maths too insane to do on every frame!
+		virtual void commit();
 		
 		virtual ofRectangle box( float tblr = 0 ){ return box( tblr, tblr, tblr, tblr ); }
 		virtual ofRectangle box( float tb, float lr ){ return box( tb, lr, tb, lr ); }
@@ -53,7 +53,7 @@ namespace mui{
 		virtual ofRectangle box( float t, float r, float b, float l );
 
 	private: 
-        std::string displayText; 
+        std::string displayText;
 	};
 };
 
