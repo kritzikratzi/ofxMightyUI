@@ -54,6 +54,14 @@ void mui::Container::remove(){
     }
 }
 
+ofRectangle mui::Container::getGlobalBounds(){
+	return ofRectangle( getGlobalPosition(), width, height );
+}
+
+ofRectangle mui::Container::getBounds(){
+	return ofRectangle(x, y, width, height);
+}
+
 void mui::Container::setBounds( float x, float y, float w, float h ){
 	this->x = x;
 	this->y = y;
@@ -233,16 +241,16 @@ mui::Container * mui::Container::handleTouchDoubleTap( ofTouchEventArgs &touch )
 	
 	
 	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
-		float x, y;
+		float posX, posY;
 		Container * touched;
 		
 		std::vector<Container*>::reverse_iterator it = children.rbegin();
 		while( it != children.rend() ) {
-			touch.x -= ( x = (*it)->x );
-			touch.y -= ( y = (*it)->y );
+			touch.x -= ( posX = (*it)->x );
+			touch.y -= ( posY = (*it)->y );
 			touched = (*it)->handleTouchDoubleTap( touch );
-			touch.x += x;
-			touch.y += y;
+			touch.x += posX;
+			touch.y += posY;
 			
 			if( touched != NULL ){
 				// that container is touched!
@@ -271,16 +279,16 @@ mui::Container * mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
 	
 	
 	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
-		float x, y;
+		float posX, posY;
 		Container * touched;
 		
 		std::vector<Container*>::reverse_iterator it = children.rbegin();
 		while( it != children.rend() ) {
-			touch.x -= ( x = (*it)->x );
-			touch.y -= ( y = (*it)->y );
+			touch.x -= ( posX = (*it)->x );
+			touch.y -= ( posY = (*it)->y );
 			touched = (*it)->handleTouchUp( touch );
-			touch.x += x;
-			touch.y += y;
+			touch.x += posX;
+			touch.y += posY;
             
 			if( touched != NULL ){
 				// that container is touched!
@@ -349,22 +357,17 @@ bool mui::Container::requestFocus( ofTouchEventArgs &args ){
 
 //--------------------------------------------------------------
 ofPoint mui::Container::getGlobalPosition(){
-	ofPoint result;
+	float posX = 0;
+	float posY = 0;
 	
-	float x = 0;
-	float y = 0;
-	
-	Container * parent = this;
-	while( parent != NULL ){
-		x += parent->x;
-		y += parent->y;
-		parent = parent->parent;
+	Container * element = this;
+	while( element != NULL ){
+		posX += element->x;
+		posY += element->y;
+		element = element->parent;
 	}
 	
-	result.x = x;
-	result.y = y;
-	
-	return result;
+	return ofPoint(posX,posY);
 }
 
 mui::Container * mui::Container::byName( string name ){
@@ -377,8 +380,8 @@ mui::Container * mui::Container::byName( string name ){
 	return NULL;
 }
 
-mui::Container * mui::Container::findChildAt( float x, float y, bool onlyVisible ){
-	if( x >= 0 && y >= 0 && x <= width && y <= height && (!onlyVisible || visible ) ){
+mui::Container * mui::Container::findChildAt( float posX, float posY, bool onlyVisible ){
+	if( posX >= 0 && posY >= 0 && posX <= width && posY <= height && (!onlyVisible || visible ) ){
 		// do we have a child that fits there?
 		vector<mui::Container*>::iterator it = children.begin();
 
@@ -386,7 +389,7 @@ mui::Container * mui::Container::findChildAt( float x, float y, bool onlyVisible
 		mui::Container * child = NULL;
 
 		while( it != children.end() ){
-			child = (*it)->findChildAt( x - (*it)->x, y - (*it)->y );
+			child = (*it)->findChildAt( posX - (*it)->x, posY - (*it)->y );
 			if( child != NULL ) result = child;
 			++it;
 		}
@@ -399,24 +402,19 @@ mui::Container * mui::Container::findChildAt( float x, float y, bool onlyVisible
 }
 
 bool mui::Container::isVisibleOnScreen( float border ){
-	ofPoint result;
+	float posX = 0;
+	float posY = 0;
 	
-	float x = 0;
-	float y = 0;
-	
-	Container * parent = this;
-	while( parent != NULL ){
-		if( parent->visible == false ) return false;
+	Container * element = this;
+	while( element != NULL ){
+		if( element->visible == false ) return false;
 		
-		x += parent->x;
-		y += parent->y;
+		posX += parent->x;
+		posY += parent->y;
 		parent = parent->parent;
 	}
 	
-	result.x = x;
-	result.y = y;
-	
-	ofRectangle me(x-border,y-border,width+2*border,height+2*border);
+	ofRectangle me(posX-border,posY-border,width+2*border,height+2*border);
 	ofRectangle root(0,0,MUI_ROOT->width, MUI_ROOT->height );
 	
 	return me.intersects(root);

@@ -14,7 +14,8 @@
 #define MUI_ROOT (mui::Root::INSTANCE)
 
 namespace mui{
-	class TextField; 
+	class TextField;
+	
 	class Root : public Container {
 	public: 
 		Root();
@@ -33,8 +34,8 @@ namespace mui{
 		virtual Container * handleTouchCancelled( ofTouchEventArgs &touch );
 		
 		// keyboard events
-		virtual Container * handleKeyPressed( int key );
-		virtual Container * handleKeyReleased( int key );
+		virtual Container * handleKeyPressed( ofKeyEventArgs &event );
+		virtual Container * handleKeyReleased( ofKeyEventArgs &event );
 		
 		// mouse event forwards (mouse events get converted to touch events)
 		virtual Container * handleMouseMoved( int x, int y );
@@ -55,10 +56,13 @@ namespace mui{
 		virtual void animate( float &variable, float targetValue ); 
 		virtual void commitAnimation();
 		
+		virtual bool getKeyPressed( int key ); 
+		
 		static mui::Root * INSTANCE;
 		
-	private: 
-		void fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &copy, Container * c );
+	private:
+		std::set<int> activeKeys;
+		void fixTouchPosition( ofVec2f &touch, ofVec2f &copy, Container * c );
         void handleRemovals(); 
         
 		tween::TweenerParam param;
@@ -78,6 +82,7 @@ namespace mui{
 		virtual bool of_mouseDragged( ofMouseEventArgs &args );
 		virtual bool of_mousePressed( ofMouseEventArgs &args );
 		virtual bool of_mouseReleased( ofMouseEventArgs &args );
+		virtual bool of_mouseScrolled( ofMouseEventArgs &args );
 		virtual bool of_touchDown( ofTouchEventArgs &args );
 		virtual bool of_touchUp( ofTouchEventArgs &args );
 		virtual bool of_touchMoved( ofTouchEventArgs &args );

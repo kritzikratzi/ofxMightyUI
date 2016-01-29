@@ -283,6 +283,10 @@ void mui::Helpers::orientedScissor( float x, float y, float w, float h ){
 	//    glScissor( pos.x, pos.y, width, height );
 }
 
+void mui::Helpers::pushScissor( Container * c, ofRectangle rect ){
+	pushScissor(c, rect.x, rect.y, rect.width, rect.height ); 
+}
+
 void mui::Helpers::pushScissor( Container * c, float x, float y, float w, float h ){
     glEnable( GL_SCISSOR_TEST );
     if( c != NULL && w == -9999 ) w = c->width+1;

@@ -35,6 +35,7 @@ namespace mui{
 		static void drawStringWithShadow( std::string s, int x, int y, int fontSize, int r, int g, int b ); 
         static void orientedScissor( float x, float y, float w, float h );
 		static void pushScissor( Container * c = NULL, float x = 0, float y = 0, float w = -9999, float h = -9999  );
+		static void pushScissor( Container * c, ofRectangle rect );
         static void popScissor();
         static void disableMask();
 		static ofColor rgb( int r, int g, int b, int a = 255 ); 

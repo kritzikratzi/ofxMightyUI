@@ -11,6 +11,7 @@
 #include "ofEventUtils.h"
 #include "ofEvents.h"
 #include "Container.h"
+#include "ScrollPane.h"
 
 using namespace mui;
 
@@ -50,6 +51,7 @@ void mui::Root::init(){
 	ofAddListener( ofEvents().mouseDragged, this, &mui::Root::of_mouseDragged, OF_EVENT_ORDER_BEFORE_APP );
 	ofAddListener( ofEvents().mousePressed, this, &mui::Root::of_mousePressed, OF_EVENT_ORDER_BEFORE_APP );
 	ofAddListener( ofEvents().mouseReleased, this, &mui::Root::of_mouseReleased, OF_EVENT_ORDER_BEFORE_APP );
+	ofAddListener( ofEvents().mouseScrolled, this, &mui::Root::of_mouseScrolled, OF_EVENT_ORDER_BEFORE_APP );
 	ofAddListener( ofEvents().touchDown, this, &mui::Root::of_touchDown, OF_EVENT_ORDER_BEFORE_APP );
 	ofAddListener( ofEvents().touchUp, this, &mui::Root::of_touchUp, OF_EVENT_ORDER_BEFORE_APP );
 	ofAddListener( ofEvents().touchMoved, this, &mui::Root::of_touchMoved, OF_EVENT_ORDER_BEFORE_APP );
@@ -202,11 +204,9 @@ mui::Container * mui::Root::handleTouchCancelled( ofTouchEventArgs &touch ){
 
 
 //--------------------------------------------------------------
-void mui::Root::fixTouchPosition( ofTouchEventArgs &touch, ofTouchEventArgs &copy, Container * container ){
+void mui::Root::fixTouchPosition( ofVec2f &touch, ofVec2f &copy, Container * container ){
 	copy.x = touch.x/mui::MuiConfig::scaleFactor;
 	copy.y = touch.y/mui::MuiConfig::scaleFactor;
-	copy.xspeed = touch.xspeed/mui::MuiConfig::scaleFactor;
-	copy.yspeed = touch.yspeed/mui::MuiConfig::scaleFactor;
 	
 	if( container != NULL ){
 		ofPoint pos = container->getGlobalPosition();
@@ -293,6 +293,9 @@ void mui::Root::prepareAnimation( int milliseconds, int type, int direction ){
 	param = tween::TweenerParam( milliseconds, type, direction );
 }
 
+bool mui::Root::getKeyPressed( int key ){
+	return activeKeys.find(key) != activeKeys.end();
+}
 
 //--------------------------------------------------------------
 void mui::Root::animate( float &variable, float targetValue ){
@@ -324,12 +327,17 @@ void mui::Root::handleRemovals(){
 }
 
 //--------------------------------------------------------------
-mui::Container * mui::Root::handleKeyPressed( int key ){
+mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
+	activeKeys.insert(event.key);
 	return NULL;
 }
 
 //--------------------------------------------------------------
-mui::Container * mui::Root::handleKeyReleased( int key ){
+mui::Container * mui::Root::handleKeyReleased( ofKeyEventArgs &event ){
+	set<int>::iterator it = activeKeys.find(event.key);
+	if( it != activeKeys.end() ){
+		activeKeys.erase(event.key);
+	}
 	return NULL;
 }
 
@@ -389,10 +397,10 @@ void mui::Root::of_windowResized( ofResizeEventArgs &args ){
 	height = args.height/mui::MuiConfig::scaleFactor;
 }
 bool mui::Root::of_keyPressed( ofKeyEventArgs &args ){
-	return handleKeyPressed(args.key) != NULL;
+	return handleKeyPressed(args) != NULL;
 }
 bool mui::Root::of_keyReleased( ofKeyEventArgs &args ){
-	return handleKeyReleased(args.key) != NULL;
+	return handleKeyReleased(args) != NULL;
 }
 bool mui::Root::of_mouseMoved( ofMouseEventArgs &args ){
 	return handleMouseMoved(args.x, args.y) != NULL;
@@ -405,6 +413,18 @@ bool mui::Root::of_mousePressed( ofMouseEventArgs &args ){
 }
 bool mui::Root::of_mouseReleased( ofMouseEventArgs &args ){
 	return handleMouseReleased(args.x, args.y, args.button) != NULL;
+}
+bool mui::Root::of_mouseScrolled( ofMouseEventArgs &args ){
+	ofVec2f pos;
+	fixTouchPosition(args, pos, NULL);
+	mui::Container * container = (mui::Container*)findChildOfType<mui::ScrollPane>(pos.x, pos.y);
+	if( container != NULL ){
+		container->mouseScroll(args);
+		return true;
+	}
+	else{
+		return false;
+	}
 }
 bool mui::Root::of_touchDown( ofTouchEventArgs &args ){
 	return handleTouchDown(args) != NULL;

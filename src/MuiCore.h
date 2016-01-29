@@ -59,6 +59,7 @@ namespace mui{
 
 // wtf windows...
 // https://code.google.com/p/py-lepton/source/browse/trunk/lepton/renderer.h?r=222
+// um... looks like this can be cleaned up by paying more attention to float/double
 #ifndef fminf
 #define fminf(x, y) (((x) < (y)) ? (x) : (y))
 #endif

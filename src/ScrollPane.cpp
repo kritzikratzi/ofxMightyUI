@@ -21,6 +21,20 @@
 #include "ScrollPane.h"
 #include "Root.h"
 
+mui::ScrollPane::ScrollPane( float x_, float y_, float width_, float height_ )
+	: Container( x_, y_, width_, height_ ),
+	wantsToScrollX(false), wantsToScrollY(false),
+	canScrollX(true), canScrollY(true), scrollX(0), scrollY(0),
+	maxScrollX(0), maxScrollY(0), minScrollX(0), minScrollY(0),
+	autoLockToBottom(false),isAutoLockingToBottom(true),
+	currentScrollX(0), currentScrollY(0),
+	trackingState(INACTIVE),
+	view( NULL ),
+	animating(false), animatingToBase(false), animatingMomentum(false),
+	usePagingH(false), numPagesAdded(0){
+		init();
+};
+
 void mui::ScrollPaneView::handleDraw(){
 	if( !visible ) return;
 	
@@ -83,16 +97,18 @@ void mui::ScrollPane::commit(){
 	
 	minScrollX = fminf( 0, bounds.x ); 
 	minScrollY = fminf( 0, bounds.y ); 
-	maxScrollX = fmaxf( 0, bounds.x + bounds.width - width ); 
+	maxScrollX = fmaxf( 0, bounds.x + bounds.width - width );
 	maxScrollY = fmaxf( 0, bounds.y + bounds.height - height );
 	
 	wantsToScrollX = maxScrollX != 0 || minScrollX != 0; 
 	wantsToScrollY = maxScrollY != 0 || minScrollY != 0; 
 	
-	view->width = fmaxf( width, maxScrollX + width ); 
+	view->width = fmaxf( width, maxScrollX + width );
 	view->height = fmaxf( height, maxScrollY + height );
 	
-	if( isAutoLockingToBottom && autoLockToBottom && !pressed ){
+	// todo: trigger layout (again!) when size changed?
+	
+	if( isAutoLockingToBottom && autoLockToBottom && trackingState == INACTIVE ){
 		beginBaseAnimation( ofClamp( currentScrollX, minScrollX, maxScrollX ), maxScrollY );
 	}
 }
@@ -201,7 +217,7 @@ int mui::ScrollPane::numPages(){
 
 //--------------------------------------------------------------
 void mui::ScrollPane::update(){
-	if( pressed ){
+	if( trackingState != INACTIVE ){
 /*		scrollX = ofClamp( scrollX, minScrollX - MUI_SCROLLPANE_BLEED*2, maxScrollX + MUI_SCROLLPANE_BLEED*2 );
 		scrollY = ofClamp( scrollY, minScrollY - MUI_SCROLLPANE_BLEED*2, maxScrollY + MUI_SCROLLPANE_BLEED*2 );
 		currentScrollX += ( getScrollTarget( scrollX, minScrollX, maxScrollX ) - currentScrollX )/3;
@@ -274,9 +290,17 @@ void mui::ScrollPane::drawBackground(){
 //--------------------------------------------------------------
 // mostly a copy of Container::handleDraw
 void mui::ScrollPane::handleDraw(){
-	mui::Helpers::pushScissor( this );
+	ofRectangle intersection = ofRectangle(0,0,width-7,height).getIntersection(view->getBounds());
+	mui::Helpers::pushScissor( this, intersection );
 	Container::handleDraw(); 
 	mui::Helpers::popScissor();
+	
+	if( visible && minScrollY != maxScrollY ){
+		ofLine(x+width-4, y+2, x+width-4, y+height-2 );
+		float scrubberHeight = ofClamp(height*height/(maxScrollY - minScrollY), 10, height/2);
+		float scrubberPos = ofMap(currentScrollY, minScrollY, maxScrollY, 2, height-2-scrubberHeight);
+		ofDrawRectangle(x+width-6, y+scrubberPos, 5, scrubberHeight );
+	}
 }
 
 
@@ -306,7 +330,7 @@ void mui::ScrollPane::touchDown( ofTouchEventArgs &touch ){
 	initialX = currentScrollX; 
 	initialY = currentScrollY; 
 	velX = 0; velY = 0; 
-	pressed = true; 
+	trackingState = (canScrollY && touch.x > width - 13)?DRAG_SCROLLBAR:DRAG_CONTENT;
 	animating = animatingToBase = animatingMomentum = false; 
 	updateTouchVelocity( touch ); 
 }
@@ -314,7 +338,7 @@ void mui::ScrollPane::touchDown( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::ScrollPane::touchMoved( ofTouchEventArgs &touch ){
-	if( pressed ){
+	if( trackingState == DRAG_CONTENT ){
 //		if( canScrollX && wantsToScrollX ) scrollX -= ( touch.x - pressedX ); 
 //		if( canScrollY && wantsToScrollY ) scrollY -= ( touch.y - pressedY ); 
 		
@@ -336,6 +360,11 @@ void mui::ScrollPane::touchMoved( ofTouchEventArgs &touch ){
 		pressedX = touch.x; 
 		pressedY = touch.y; 
 	}
+	else if( trackingState == DRAG_SCROLLBAR ){
+		float scrubberHeight = ofClamp((maxScrollY - minScrollY)/height, 10, height/2);
+		float scrubberPos = ofMap(currentScrollY, minScrollY, maxScrollY, 2, height-2-scrubberHeight);
+		currentScrollY = ofMap( touch.y, 2+scrubberHeight/2, height-2-scrubberHeight/2, minScrollY, maxScrollY, true);
+	}
 }
 
 
@@ -347,7 +376,7 @@ void mui::ScrollPane::touchMovedOutside( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::ScrollPane::touchUp( ofTouchEventArgs &touch ){
-	if( pressed ){
+	if( trackingState == DRAG_CONTENT ){
 		updateTouchVelocity( touch );
 		isAutoLockingToBottom = false;
 		if( usePagingH ){
@@ -372,7 +401,7 @@ void mui::ScrollPane::touchUp( ofTouchEventArgs &touch ){
 		}
 	}
 
-	pressed = false;
+	trackingState = INACTIVE;
 	watchingTouch[touch.id] = false;
 	focusTransferable = true;
 
@@ -393,17 +422,31 @@ void mui::ScrollPane::touchDoubleTap( ofTouchEventArgs &touch ){
 void mui::ScrollPane::touchCanceled( ofTouchEventArgs &touch ){
 	watchingTouch[touch.id] = false;
 	cout << "stop watching touch #" << touch.id << endl;
-	pressed = false;
+	trackingState = INACTIVE;
 	focusTransferable = true;
 }
 
+void mui::ScrollPane::mouseScroll( ofMouseEventArgs &args){
+	view->x = -(currentScrollX = ofClamp(currentScrollX-args.scrollX, minScrollX, maxScrollX));
+	view->y = -(currentScrollY = ofClamp(currentScrollY-args.scrollY, minScrollY, maxScrollY));
+}
+
+
 //--------------------------------------------------------------
 mui::Container * mui::ScrollPane::handleTouchDown( ofTouchEventArgs &touch ){
-	if( !pressed ){
+	if( !visible ){
+		watchingTouch[touch.id] = false;
+		return NULL;
+	}
+	if( trackingState == INACTIVE ){
 		if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
 			if( animating && ( !animatingMomentum || ofDist(0,0,animateX/1000,animateY/1000) >= 0.1 ) && !animatingToBase /*&& ( !animatingToBase || ofDist(animateToX, animateToY,currentScrollX,currentScrollY ) >= 5 )*/){
 				// you want something? just take it, it's yours!
 				touchDown( touch );
+				return this;
+			}
+			else if( canScrollY && wantsToScrollY && touch.x > width - 10 ){
+				touchDown(touch);
 				return this;
 			}
 			else{
@@ -421,7 +464,7 @@ mui::Container * mui::ScrollPane::handleTouchDown( ofTouchEventArgs &touch ){
 			}
 		}
 	}
-	else if( pressed && singleTouchId == touch.id ){
+	else if( trackingState != INACTIVE && singleTouchId == touch.id ){
 		return this;
 	}
 	
@@ -432,7 +475,7 @@ mui::Container * mui::ScrollPane::handleTouchDown( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 mui::Container * mui::ScrollPane::handleTouchMoved( ofTouchEventArgs &touch ){
-	if( !pressed && watchingTouch[touch.id] ){
+	if( trackingState == INACTIVE && watchingTouch[touch.id] ){
 		// we don't care about "wantsToScrollX" anymore, 
 		// because on touch devices you can drag around a bit anyways
 		if(( canScrollX && /*wantsToScrollX && */fabsf( touchStart[touch.id].x - touch.x ) > 20 ) ||
@@ -458,7 +501,7 @@ mui::Container * mui::ScrollPane::handleTouchUp( ofTouchEventArgs &touch ){
 	if( singleTouchId == touch.id ){
 		touchUp( touch );
 		singleTouchId = -1;
-		pressed = false;
+		trackingState = INACTIVE;
 		return this;
 	}
 	else{

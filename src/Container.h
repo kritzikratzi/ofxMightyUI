@@ -52,6 +52,8 @@ namespace mui{
 		void remove( Container * c ); 
 		void remove();
 		
+		ofRectangle getGlobalBounds();
+		ofRectangle getBounds();
 		void setBounds( float x, float y, float width, float height );
         
 		virtual void update(){};
@@ -70,7 +72,8 @@ namespace mui{
 		virtual void touchUp( ofTouchEventArgs &touch ){}; 
 		virtual void touchUpOutside( ofTouchEventArgs &touch ){}
 		virtual void touchDoubleTap( ofTouchEventArgs &touch ){};
-		virtual void touchCanceled( ofTouchEventArgs &touch ){}; // when some other component "stole" the responder status. 
+		virtual void touchCanceled( ofTouchEventArgs &touch ){}; // when some other component "stole" the responder status.
+		virtual void mouseScroll( ofMouseEventArgs &args){};
 		
 		virtual Container * handleTouchDown( ofTouchEventArgs &touch );
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
@@ -88,12 +91,13 @@ namespace mui{
 		
 		mui::Container * byName( string name ); 
 		
+		// recursively find children of a certain type at a position
 		// implemented directly in the header because templates ... have some issues
 		template <typename T>
-		T * findChildOfType( float x, float y, bool onlyVisible = true ){
-			mui::Container * thing = findChildAt(x,y,onlyVisible);
+		T * findChildOfType( float posX, float posY, bool onlyVisible = true ){
+			mui::Container * thing = findChildAt(posX,posY,onlyVisible);
 			while(thing!=NULL){
-				T * result = dynamic_cast<T*>(thing);
+				T * result = dynamic_cast<T* const>(thing);
 				if( result != NULL ){
 					return result;
 				}
@@ -101,8 +105,10 @@ namespace mui{
 					thing = thing->parent;
 				}
 			}
+			return NULL;
 		}
-
+		
+		// recursively find children at position.
 		virtual Container * findChildAt( float x, float y, bool onlyVisible = true );
 		
 		virtual bool isVisibleOnScreen(float border=0); // effectively visible on screen? border adds an additonal border around, so border<0 means isVisible return false if it's barely visible, border>0 means isVisible will return true even if the component is already slightly off screen.

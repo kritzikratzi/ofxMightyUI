@@ -27,19 +27,8 @@ namespace mui{
     
 	class ScrollPane : public Container{
 	public: 
-		ScrollPane( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 ) 
-			: Container( x_, y_, width_, height_ ), 
-			wantsToScrollX(false), wantsToScrollY(false), 
-			canScrollX(true), canScrollY(true), scrollX(0), scrollY(0), 
-			maxScrollX(0), maxScrollY(0), minScrollX(0), minScrollY(0),
-			autoLockToBottom(false),
-			currentScrollX(0), currentScrollY(0), 
-			pressed(false), 
-			view( NULL ), 
-            animating(false), animatingToBase(false), animatingMomentum(false),
-			usePagingH(false), numPagesAdded(0)
-			{ init(); };
-		~ScrollPane(); 
+		ScrollPane( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 );
+		~ScrollPane();
 		float scrollX, scrollY; // intended
 		float currentScrollX, currentScrollY; // actually
 
@@ -85,16 +74,22 @@ namespace mui{
 		virtual void touchUpOutside( ofTouchEventArgs &touch ); 
 		virtual void touchDoubleTap( ofTouchEventArgs &touch ); 
 		virtual void touchCanceled( ofTouchEventArgs &touch ); 
+		virtual void mouseScroll( ofMouseEventArgs &args);
 
 		virtual Container * handleTouchDown( ofTouchEventArgs &touch );
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
 		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
 		
 		
-	private: 
+	private:
+		enum TrackingState{
+			DRAG_CONTENT,
+			DRAG_SCROLLBAR,
+			INACTIVE
+		};
 //		virtual inline float getScrollTarget( float value, float min, float max ); 
 		
-		bool pressed; 
+		TrackingState trackingState;
 		float pressedX, pressedY; 
 		bool wantsToScrollX, wantsToScrollY;
 		bool isAutoLockingToBottom;
@@ -116,6 +111,7 @@ namespace mui{
 		
 		int numPagesAdded;
 	};
+	
 };
 
 #endif

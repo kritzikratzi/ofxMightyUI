@@ -18,7 +18,6 @@ namespace mui{
 		float min; 
 		float max; 
 		float value;
-		ofTouchEventArgs touch; 
 		
 		Slider( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20, float min_ = 0, float max_ = 1, float value_ = 0 ) 
 			: Container( x_, y_, width_, height_ ), min(min_), max(max_), value(value_) {};  
