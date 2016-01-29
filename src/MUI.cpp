@@ -28,8 +28,7 @@ void mui_init(){
 		}
 	}
 	#endif
-	//TODO: allow retina in osx too!
-	
+
 	Poco::Path appPath;
 	#if TARGET_OS_IPHONE
 		// http://www.cocoabuilder.com/archive/cocoa/193451-finding-out-executable-location-from-c-program.html
@@ -81,7 +80,7 @@ void mui_init(){
 			}
 		}
 	#else
-		appPath = Poco::Path(ofToDataPath("", true));
+		appPath = Poco::Path(ofToDataPath("./", true));
 	#endif
 	
 	mui::MuiConfig::dataPath = appPath.absolute();
