@@ -71,6 +71,7 @@ void mui_init(){
 		CFRelease(url);
 		CFRelease(absolute);
 		appPath = Poco::Path(result);
+		if(result != NULL ) free(result); 
 		appPath = appPath.parent().parent().pushDirectory("Resources");
 	
 		if( mui::MuiConfig::detectRetina ){

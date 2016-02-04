@@ -109,8 +109,8 @@ void mui::InternalWindow::touchDown( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::InternalWindow::touchMoved( ofTouchEventArgs &touch ){
-	int deltaX = touch.x - dragX; 
-	int deltaY = touch.y - dragY; 
+	float deltaX = touch.x - dragX;
+	float deltaY = touch.y - dragY;
 	x += deltaX; 
 	y += deltaY; 
 }

@@ -38,10 +38,10 @@ namespace mui{
 		virtual Container * handleKeyReleased( ofKeyEventArgs &event );
 		
 		// mouse event forwards (mouse events get converted to touch events)
-		virtual Container * handleMouseMoved( int x, int y );
-		virtual Container * handleMouseDragged( int x, int y, int button );
-		virtual Container * handleMousePressed( int x, int y, int button );
-		virtual Container * handleMouseReleased( int x, int y, int button );
+		virtual Container * handleMouseMoved( float x, float y );
+		virtual Container * handleMouseDragged( float x, float y, int button );
+		virtual Container * handleMousePressed( float x, float y, int button );
+		virtual Container * handleMouseReleased( float x, float y, int button );
 		
 		virtual bool becomeResponder( Container * container, ofTouchEventArgs &touch );
 		virtual void showTextField( TextField * tf );

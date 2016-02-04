@@ -183,7 +183,7 @@ MUI_FONT_TYPE* mui::Helpers::getFont( int fontSize ){
 			cout << "Font: " << fontSize << " not loaded yet, doing this now!" << endl;
 		}
 		MUI_FONT_TYPE * font = new MUI_FONT_TYPE();
-		font->loadFont( muiPath(MUI_FONT), fontSize, true );
+		font->load( muiPath(MUI_FONT), fontSize, true );
 		fonts[fontSize] = font;
 		return font;
 	}
@@ -200,7 +200,7 @@ MUI_FONT_TYPE* mui::Helpers::getFont( string customFont, int fontSize ){
 			cout << "Font: " << fontSize << " not loaded yet, doing this now!" << endl;
 		}
 		MUI_FONT_TYPE * font = new MUI_FONT_TYPE();
-		font->loadFont( muiPath(customFont), fontSize, true );
+		font->load( muiPath(customFont), fontSize, true );
 		customFonts[id] = font;
 		return font;
 	}
@@ -248,10 +248,10 @@ void mui::Helpers::roundedRect(float x, float y, float w, float h, float r){
 }
 
 void mui::Helpers::quadraticBezierVertex(float cpx, float cpy, float x, float y, float prevX, float prevY) {
-	float cp1x = prevX + 2.0/3.0*(cpx - prevX);
-	float cp1y = prevY + 2.0/3.0*(cpy - prevY);
-	float cp2x = cp1x + (x - prevX)/3.0;
-	float cp2y = cp1y + (y - prevY)/3.0;
+	float cp1x = prevX + 2.0f/3.0f*(cpx - prevX);
+	float cp1y = prevY + 2.0f/3.0f*(cpy - prevY);
+	float cp2x = cp1x + (x - prevX)/3.0f;
+	float cp2y = cp1y + (y - prevY)/3.0f;
 	
 	// finally call cubic Bezier curve function
 	ofBezierVertex(cp1x, cp1y, cp2x, cp2y, x, y);
@@ -259,10 +259,10 @@ void mui::Helpers::quadraticBezierVertex(float cpx, float cpy, float x, float y,
 
 ofColor mui::Helpers::rgb( int r, int g, int b, int a ){
 	ofColor color; 
-	color.r = r; 
-	color.g = g; 
-	color.b = b; 
-	color.a = a; 
+	color.r = (unsigned char)r;
+	color.g = (unsigned char)g;
+	color.b = (unsigned char)b;
+	color.a = (unsigned char)a;
 	
 	return color; 
 }
@@ -272,7 +272,7 @@ ofColor mui::Helpers::rgb( int r, int g, int b, int a ){
 void mui::Helpers::orientedScissor( float x, float y, float w, float h ){
 	if( mui::MuiConfig::scaleFactor != 1 ){ x*=mui::MuiConfig::scaleFactor; y*=mui::MuiConfig::scaleFactor; w*=mui::MuiConfig::scaleFactor; h*=mui::MuiConfig::scaleFactor; }
 	// position 0
-	glScissor( x, ofGetHeight()-y-h, w, h );
+	glScissor( (GLint)x, (GLint)(ofGetHeight()-y-h), (GLint)w, (GLint)h );
     
 	// position 1
 	//glScissor( y, x, h, w );
@@ -333,7 +333,7 @@ ofColor mui::Helpers::rgb( int rgbVal, int a ){
 	color.r = (rgbVal&0xFF0000)>>16; 
 	color.g = (rgbVal&0x00FF00)>>8; 
 	color.b = rgbVal&0xFF; 
-	color.a = a; 
+	color.a = (unsigned char)a;
 	
 	return color; 
 }
@@ -351,10 +351,10 @@ ofColor mui::Helpers::rgba( int rgbVal ){
 
 ofColor mui::Helpers::grey( int g, int a ){
 	ofColor color; 
-	color.r = g; 
-	color.g = g; 
-	color.b = g; 
-	color.a = a; 
+	color.r = (unsigned char)g;
+	color.g = (unsigned char)g;
+	color.b = (unsigned char)g;
+	color.a = (unsigned char)a;
 	
 	return color; 
 }

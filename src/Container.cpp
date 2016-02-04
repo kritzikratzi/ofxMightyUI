@@ -101,7 +101,7 @@ void mui::Container::drawBackground(){
     if( bg.a > 0 ){
 		ofFill();
         ofSetColor( bg );
-        ofRect( 0, 0, width, height );
+        ofDrawRectangle( 0, 0, width, height );
         ofSetColor( 255 );
     }
 }
@@ -121,7 +121,7 @@ void mui::Container::handleDraw(){
 	if( MUI_DEBUG_DRAW ){
 		ofNoFill();
 		ofSetColor( 255, 0, 0 );
-		ofRect( 0, 0, width, height );
+		ofDrawRectangle( 0, 0, width, height );
 	}
 	
 	std::vector<Container*>::iterator it = children.begin();

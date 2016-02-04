@@ -63,7 +63,7 @@ void mui::Button::drawBackground(){
 	else{
 		ofSetColor( bg.r, bg.g, bg.b, bg.a );
 	}
-	ofRect( 0, 0, width, height );
+	ofDrawRectangle( 0, 0, width, height );
 	ofSetColor(255);
 }
 

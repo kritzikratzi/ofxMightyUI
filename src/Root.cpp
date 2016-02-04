@@ -111,10 +111,10 @@ void mui::Root::handleDraw(){
 			
 			string name = name_.str();
 			ofRectangle bounds = mui::Helpers::getFont(10)->getStringBoundingBox(name, p.x, p.y+10);
-			ofRect( bounds.x, bounds.y, bounds.width, bounds.height );
+			ofDrawRectangle( bounds.x, bounds.y, bounds.width, bounds.height );
 			ofNoFill();
 			ofSetColor( 255,255,0 );
-			ofRect( p.x, p.y, active->width, active->height );
+			ofDrawRectangle( p.x, p.y, active->width, active->height );
 			ofSetColor(255);
 			mui::Helpers::drawString(name, p.x, p.y+10, 10);
 			ofPopMatrix();
@@ -290,7 +290,7 @@ void mui::Root::reloadTextures(){
 
 //--------------------------------------------------------------
 void mui::Root::prepareAnimation( int milliseconds, int type, int direction ){
-	param = tween::TweenerParam( milliseconds, type, direction );
+	param = tween::TweenerParam( milliseconds, (short)type, (short)direction );
 }
 
 bool mui::Root::getKeyPressed( int key ){
@@ -342,7 +342,7 @@ mui::Container * mui::Root::handleKeyReleased( ofKeyEventArgs &event ){
 }
 
 //--------------------------------------------------------------
-mui::Container * mui::Root::handleMouseMoved( int x, int y ){
+mui::Container * mui::Root::handleMouseMoved( float x, float y ){
 	ofTouchEventArgs args;
 	args.x = x;
 	args.y = y;
@@ -351,7 +351,7 @@ mui::Container * mui::Root::handleMouseMoved( int x, int y ){
 }
 
 //--------------------------------------------------------------
-mui::Container * mui::Root::handleMouseDragged( int x, int y, int button ){
+mui::Container * mui::Root::handleMouseDragged( float x, float y, int button ){
 	ofTouchEventArgs args;
 	args.x = x;
 	args.y = y;
@@ -360,7 +360,7 @@ mui::Container * mui::Root::handleMouseDragged( int x, int y, int button ){
 }
 
 //--------------------------------------------------------------
-mui::Container * mui::Root::handleMousePressed( int x, int y, int button ){
+mui::Container * mui::Root::handleMousePressed( float x, float y, int button ){
 	ofTouchEventArgs args;
 	args.x = x;
 	args.y = y;
@@ -369,7 +369,7 @@ mui::Container * mui::Root::handleMousePressed( int x, int y, int button ){
 }
 
 //--------------------------------------------------------------
-mui::Container * mui::Root::handleMouseReleased( int x, int y, int button ){
+mui::Container * mui::Root::handleMouseReleased( float x, float y, int button ){
 	ofTouchEventArgs args;
 	args.x = x;
 	args.y = y;

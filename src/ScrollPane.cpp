@@ -47,7 +47,7 @@ void mui::ScrollPaneView::handleDraw(){
 	if( MUI_DEBUG_DRAW ){
 		ofNoFill();
 		ofSetColor( 255, 0, 0 );
-		ofRect( 0, 0, width, height );
+		ofDrawRectangle( 0, 0, width, height );
 	}
 	
 	std::vector<Container*>::iterator it = children.begin();
@@ -195,17 +195,17 @@ void mui::ScrollPane::prevPage(int dec){
 
 //--------------------------------------------------------------
 void mui::ScrollPane::gotoPage( int page ){
-	page = ofClamp(page, 0, MAX(numPages()-1,0));
+	page = (int) ofClamp(page, 0, MAX(numPages()-1,0));
 	beginBaseAnimation(page*width, currentScrollY);
 }
 
 //--------------------------------------------------------------
 int mui::ScrollPane::getPageNum(){
 	if( animating && animatingToBase ){
-		return roundf(animateToX/width-0.499999f);
+		return (int) roundf(animateToX/width-0.499999f);
 	}
 	else{
-		return roundf(currentScrollX/width-0.499999f);
+		return (int) roundf(currentScrollX/width-0.499999f);
 	}
 }
 
@@ -226,8 +226,8 @@ void mui::ScrollPane::update(){
 	}
 	else if( animating ){
 		long t = ofGetElapsedTimeMicros(); 
-		float totalT = ( t - animationStartTime  ) / 1000.0; 
-		float dt = ( t - lastAnimationTime ) / 1000000.0; 
+		float totalT = ( t - animationStartTime  ) / 1000.0f;
+		float dt = ( t - lastAnimationTime ) / 1000000.0f;
 		lastAnimationTime = t; 
 		
 		if( animatingToBase ){
@@ -296,7 +296,7 @@ void mui::ScrollPane::handleDraw(){
 	mui::Helpers::popScissor();
 	
 	if( visible && minScrollY != maxScrollY ){
-		ofLine(x+width-4, y+2, x+width-4, y+height-2 );
+		ofDrawLine(x+width-4, y+2, x+width-4, y+height-2 );
 		float scrubberHeight = ofClamp(height*height/(maxScrollY - minScrollY), 10, height/2);
 		float scrubberPos = ofMap(currentScrollY, minScrollY, maxScrollY, 2, height-2-scrubberHeight);
 		ofDrawRectangle(x+width-6, y+scrubberPos, 5, scrubberHeight );
@@ -311,7 +311,7 @@ void mui::ScrollPane::updateTouchVelocity( ofTouchEventArgs &touch ){
 	
 	long dt = ofGetElapsedTimeMicros() - lastTouchTime; 
 	lastTouchTime = ofGetElapsedTimeMicros(); 
-	float pct = 0.01 + MIN( 0.99, dt/100000.0 ); 
+	float pct = 0.01f + MIN( 0.99f, dt/100000.0f );
 	velX = pct*(dx*1000000/dt) + (1-pct)*velX;
 	velY = pct*(dy*1000000/dt) + (1-pct)*velY;
 }
@@ -362,7 +362,7 @@ void mui::ScrollPane::touchMoved( ofTouchEventArgs &touch ){
 	}
 	else if( trackingState == DRAG_SCROLLBAR ){
 		float scrubberHeight = ofClamp((maxScrollY - minScrollY)/height, 10, height/2);
-		float scrubberPos = ofMap(currentScrollY, minScrollY, maxScrollY, 2, height-2-scrubberHeight);
+		//float scrubberPos = ofMap(currentScrollY, minScrollY, maxScrollY, 2, height-2-scrubberHeight);
 		currentScrollY = ofMap( touch.y, 2+scrubberHeight/2, height-2-scrubberHeight/2, minScrollY, maxScrollY, true);
 	}
 }
@@ -382,10 +382,10 @@ void mui::ScrollPane::touchUp( ofTouchEventArgs &touch ){
 		if( usePagingH ){
 			int page = 0;
 			if( fabsf(velX ) < 5 ){
-				page = ofClamp( roundf(currentScrollX/width), 0, numPagesAdded-1 );
+				page = (int)ofClamp( roundf(currentScrollX/width), 0, numPagesAdded-1 );
 			}
 			else{
-				page = ofClamp( roundf(currentScrollX/width+(velX<0?-.5:+.5)), 0, numPagesAdded-1 );
+				page = (int)ofClamp( roundf(currentScrollX/width+(velX<0?-.5f:+.5f)), 0, numPagesAdded-1 );
 			}
 			beginBaseAnimation(page*width, currentScrollY);
 		}

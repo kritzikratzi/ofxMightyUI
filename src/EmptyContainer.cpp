@@ -33,7 +33,7 @@ void mui::EmptyContainer::update(){
 //--------------------------------------------------------------
 void mui::EmptyContainer::draw(){
 	ofSetColor( 255, 0, 0 ); 
-	ofRect( 0, 0, width, height ); 
+	ofDrawRectangle( 0, 0, width, height ); 
 }
 
 

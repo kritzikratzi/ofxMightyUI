@@ -42,7 +42,7 @@ namespace mui{
 		
 	private: 
 		float radius;
-		int dragX, dragY; 
+		float dragX, dragY;
 	};
 };
 

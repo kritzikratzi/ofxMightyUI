@@ -65,7 +65,7 @@ void mui::ToggleButton::drawBackground(){
 	if( bg.a > 0 ){
 		ofFill();
 		ofSetColor( bg );
-		ofRect( 0, 0, width, height );
+		ofDrawRectangle( 0, 0, width, height );
 	}
 }
 

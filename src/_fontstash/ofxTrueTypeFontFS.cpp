@@ -2,7 +2,7 @@
 
 
 std::map<string,ofxFontStash*> ofxTrueTypeFontFS::fonts;
-#define FONTSTASH_SIZE fontSize*1.5
+#define FONTSTASH_SIZE (fontSize*1.5f)
 
 //------------------------------------------------------------------------
 ofxTrueTypeFontFS::ofxTrueTypeFontFS(){
@@ -138,7 +138,7 @@ ofTTFCharacter ofxTrueTypeFontFS::getCharacterAsPoints(int character){
 }
 
 //------------------------------------------------------------------------
-vector<ofTTFCharacter> getStringAsPoints(string str){
+vector<ofTTFCharacter> ofxTrueTypeFontFS::getStringAsPoints(string str){
 	// same
 	return vector<ofTTFCharacter>(); 
 }
