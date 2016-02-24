@@ -34,25 +34,11 @@ void mui::Helpers::clearCaches(){
 	}
 	textures.clear();
 
-
-	#if MUI_FONT_TYPE_ACTIVE == MUI_FONT_TYPE_FONTSTASH
-		ofxTrueTypeFontFS::clearCaches();
-		fonts.clear();
-		customFonts.clear();
-	#elif MUI_FONT_TYPE_ACTIVE == MUI_FONT_TYPE_OPENFRAMEWORKS
-		for(std::map<int, ofTrueTypeFont*>::iterator iterator = fonts.begin(); iterator != fonts.end(); iterator++) {
-			ofTrueTypeFont *font = iterator->second;
-			delete font;
-		}
-		for(std::map<std::string, ofTrueTypeFont*>::iterator iterator = customFonts.begin(); iterator != customFonts.end(); iterator++) {
-			ofTrueTypeFont *font = iterator->second;
-			delete font;
-		}
-		fonts.clear();
-		customFonts.clear();
-	#else
-		#error Unsupported Font Rendering Implemtation selected.
-	#endif
+	fontStash.
+	ofxTrueTypeFontFS::clearCaches();
+	fonts.clear();
+	customFonts.clear();
+	
 }
 
 std::string mui::Helpers::muiPath( std::string path ){
@@ -73,72 +59,6 @@ std::string mui::Helpers::muiPath( std::string path ){
 	}
 	return outputPath.absolute().toString();
 }
-
-// this will be gone soon!
-/*
-ofTexture * mui::Helpers::getTexture( std::string name ){
-	
-	std::map<std::string, ofTexture*>::iterator iter = mui::Helpers::textures.find( name );
-	
-	if( iter == textures.end() ){
-		if( mui::MuiConfig::logLevel <= OF_LOG_NOTICE ){
-			cout << "Image: " << name << " not loaded yet, doing this now!" << endl;
-		}
-		ofTexture * tex = new ofTexture();
-		if( mui::MuiConfig::useRetinaAssets ){
-			ofFile file( muiPath("mui/retina/" + name + ".png") );
-			if( file.exists() ){
-				ofLoadImage(*tex, muiPath("mui/retina/" + name + ".png") );
-			}
-
-			if( tex->getWidth() == 0 ){
-				if( mui::MuiConfig::logLevel <= OF_LOG_WARNING ){
-					cerr << "Image: " << name << " not available in retina folder. trying normal!" << endl;
-				}
-				ofLoadImage( *tex, muiPath("mui/normal/" + name + ".png") );
-			}
-		}
-		else{
-			ofLoadImage( *tex, muiPath("mui/normal/" + name + ".png") );
-		}
-		textures[name] = tex;
-		return tex;
-	}
-	
-	return iter->second;
-}
-
-ofImage * mui::Helpers::getImage( std::string name ){
-
-	std::map<std::string, ofImage*>::iterator iter = mui::Helpers::images.find( name ); 
-
-	if( iter == images.end() ){
-		if( mui::MuiConfig::logLevel <= OF_LOG_NOTICE ){
-			cout << "Image: " << name << " not loaded yet, doing this now!" << endl;
-		}
-		ofImage * img = new ofImage();
-		if( mui::MuiConfig::useRetinaAssets ){
-			ofFile file( muiPath("mui/retina/" + name + ".png") );
-			if( file.exists() ){
-				img->loadImage( muiPath("mui/retina/" + name + ".png") );
-			}
-			
-			if( img->width == 0 ){
-				if( mui::MuiConfig::logLevel <= OF_LOG_WARNING ){
-					cerr << "Image: " << name << " not available in retina folder. trying normal!" << endl;
-				}
-				img->loadImage( muiPath("mui/normal/" + name + ".png") );
-			}
-		}
-		else{
-			img->loadImage( muiPath("mui/normal/" + name + ".png") );
-		}
-		images[name] = img; 
-		return img; 
-	}
-	
-	return iter->second;
-}*/
 
 void mui::Helpers::drawImage( string name, float x, float y, float w, float h ){
 	// we have a retina version?
