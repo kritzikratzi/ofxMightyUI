@@ -103,7 +103,7 @@ void mui::ScrollPane::commit(){
 	wantsToScrollX = maxScrollX != 0 || minScrollX != 0; 
 	wantsToScrollY = maxScrollY != 0 || minScrollY != 0; 
 	
-	view->width = fmaxf( width, maxScrollX + width );
+	view->width = fmaxf( width-15, maxScrollX + width - 15);
 	view->height = fmaxf( height, maxScrollY + height );
 	
 	// todo: trigger layout (again!) when size changed?

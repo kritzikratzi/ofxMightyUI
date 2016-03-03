@@ -101,22 +101,28 @@ void mui::Root::handleDraw(){
 			ofPoint p = active->getGlobalPosition();
 			ofPushMatrix();
 			ofFill();
-			stringstream name_;
+			string name;
 			mui::Container * c = active;
+			string size;
 			while( c != NULL  ){
-				name_ << c->name;
+				name = c->name + (name==""?"":">");
 				c = c->parent;
-				if( c != NULL )  name_ << " < ";
 			}
 			
-			string name = name_.str();
-			ofRectangle bounds = mui::Helpers::getFont(10)->getStringBoundingBox(name, p.x, p.y+10);
-			ofDrawRectangle( bounds.x, bounds.y, bounds.width, bounds.height );
+			ofRectangle b = active->getGlobalBounds();
+			size = (stringstream() << "Pos:" << b.x << "," << b.y << "  " << b.width << " x " << b.height).str();
+			
+			
+			ofRectangle nameB = mui::Helpers::getFont(10)->getStringBoundingBox(name, p.x, p.y+10);
+			ofRectangle sizeB = mui::Helpers::getFont(10)->getStringBoundingBox(size, p.x, p.y+20);
+			ofDrawRectangle( nameB );
+			ofDrawRectangle( sizeB );
 			ofNoFill();
 			ofSetColor( 255,255,0 );
 			ofDrawRectangle( p.x, p.y, active->width, active->height );
 			ofSetColor(255);
 			mui::Helpers::drawString(name, p.x, p.y+10, 10);
+			mui::Helpers::drawString(size, p.x, p.y+20, 10);
 			ofPopMatrix();
 		}
 	}
