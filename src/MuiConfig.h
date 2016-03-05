@@ -29,7 +29,7 @@
 
 #define MUI_DEBUG_DRAW mui::MuiConfig::debugDraw
 
-#define MUI_FONT_SIZE 12
+#define MUI_FONT_SIZE mui::MuiConfig::fontSize
 
 
 namespace mui{

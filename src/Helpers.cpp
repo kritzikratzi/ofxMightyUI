@@ -11,16 +11,14 @@
 #include "TextureAtlas.h"
 #include <locale>
 
+
 std::map<std::string, ofTexture*> mui::Helpers::textures;
 std::map<std::string, ofImage*> mui::Helpers::images;
-std::map<int, MUI_FONT_TYPE*> mui::Helpers::fonts;
-std::map<string, MUI_FONT_TYPE*> mui::Helpers::customFonts;
 std::stack<ofRectangle> mui::Helpers::scissorStack;
 mui::TextureAtlas mui::Helpers::atlas;
+ofxFontStash2 mui::Helpers::fontStash;
 
 // TODO: clear caches/regen texs should take atlas into account?
-
-
 void mui::Helpers::clearCaches(){
 	for(std::map<std::string, ofImage*>::iterator iterator = images.begin(); iterator != images.end(); iterator++) {
 		ofImage *img = iterator->second;
@@ -34,11 +32,7 @@ void mui::Helpers::clearCaches(){
 	}
 	textures.clear();
 
-	fontStash.
-	ofxTrueTypeFontFS::clearCaches();
-	fonts.clear();
-	customFonts.clear();
-	
+	cerr << "CLEAR CACHE NOT FOR REALLY IMPLEMENTED FOR FONTS. GOING TO LEAK" << endl;
 }
 
 std::string mui::Helpers::muiPath( std::string path ){
@@ -93,63 +87,41 @@ void mui::Helpers::endImages(){
 	atlas.drawAdded();
 }
 
-
-
-MUI_FONT_TYPE* mui::Helpers::getFont( int fontSize ){
-	std::map<int, MUI_FONT_TYPE*>::iterator iter = mui::Helpers::fonts.find( fontSize );
-	
-	if( iter == fonts.end() ){
-		if( mui::MuiConfig::logLevel <= OF_LOG_NOTICE ){
-			cout << "Font: " << fontSize << " not loaded yet, doing this now!" << endl;
-		}
-		MUI_FONT_TYPE * font = new MUI_FONT_TYPE();
-		font->load( muiPath(MUI_FONT), fontSize, true );
-		fonts[fontSize] = font;
-		return font;
+bool mui::Helpers::loadFont(string fontName){
+	if( !fontStash.isFontLoaded(fontName) ){
+		cout << "Font: [" << fontName << "] not loaded yet, doing this now!" << endl;
+		fontStash.addFont(fontName, muiPath(fontName==""?MUI_FONT:fontName));
 	}
 	
-	return iter->second;
+	return true;
 }
 
-MUI_FONT_TYPE* mui::Helpers::getFont( string customFont, int fontSize ){
-	string id = customFont + ofToString(fontSize);
-	std::map<string, MUI_FONT_TYPE*>::iterator iter = mui::Helpers::customFonts.find( id );
-	
-	if( iter == customFonts.end() ){
-		if( mui::MuiConfig::logLevel <= OF_LOG_NOTICE ){
-			cout << "Font: " << fontSize << " not loaded yet, doing this now!" << endl;
-		}
-		MUI_FONT_TYPE * font = new MUI_FONT_TYPE();
-		font->load( muiPath(customFont), fontSize, true );
-		customFonts[id] = font;
-		return font;
-	}
-	
-	return iter->second;
+ofxFontStashStyle mui::Helpers::getStyle( int size ){
+	loadFont("");
+	ofxFontStashStyle style;
+	style.fontSize = size;
+	style.fontID="";
+	return style;
 }
 
-void mui::Helpers::drawString( string s, float x, float y, int fontSize ){
-	if( mui::MuiConfig::useRetinaAssets ){
-		MUI_FONT_TYPE * font = Helpers::getFont( 2*fontSize );
-		ofPushMatrix();
-		ofTranslate( x, y );
-		ofScale( 0.5, 0.5 );
-		font->drawString( s, 0, 0 );
-		ofPopMatrix();
-	}
-	else{
-		MUI_FONT_TYPE * font = Helpers::getFont( fontSize );
-		font->drawString( s, x, y );
-	}
+ofxFontStashStyle mui::Helpers::getStyle( string customFont, int fontSize ){
+	loadFont(customFont);
+	ofxFontStashStyle style;
+	style.fontID = customFont;
+	style.fontSize = fontSize;
+	return style;
+}
+
+ofxFontStash2 & mui::Helpers::getFontStash(){
+	return fontStash;
 }
 
 
-void mui::Helpers::drawStringWithShadow( std::string s, int x, int y, int fontSize, int r, int g, int b ){
-	MUI_FONT_TYPE * font = mui::Helpers::getFont( fontSize ); 
-	ofSetColor( r/2, g/2, b/2, 150 ); 
-	font->drawString( s, x, y+1 ); 
-	ofSetColor( r, g, b ); 
-	font->drawString( s, x, y ); 
+void mui::Helpers::drawString( string s, float x, float y, ofColor color, int fontSize ){
+	ofxFontStashStyle style;
+	style.fontSize = fontSize;
+	style.color = color;
+	fontStash.draw(s, style, x, y);
 }
 
 
@@ -176,16 +148,6 @@ void mui::Helpers::quadraticBezierVertex(float cpx, float cpy, float x, float y,
 	// finally call cubic Bezier curve function
 	ofBezierVertex(cp1x, cp1y, cp2x, cp2y, x, y);
 };
-
-ofColor mui::Helpers::rgb( int r, int g, int b, int a ){
-	ofColor color; 
-	color.r = (unsigned char)r;
-	color.g = (unsigned char)g;
-	color.b = (unsigned char)b;
-	color.a = (unsigned char)a;
-	
-	return color; 
-}
 
 // this only sets the scissor mask,
 // you have to call glEnable( GL_SCISSOR_TEST yourself )
@@ -247,37 +209,6 @@ void mui::Helpers::popScissor(){
 	}
 }
 
-
-ofColor mui::Helpers::rgb( int rgbVal, int a ){
-	ofColor color; 
-	color.r = (rgbVal&0xFF0000)>>16; 
-	color.g = (rgbVal&0x00FF00)>>8; 
-	color.b = rgbVal&0xFF; 
-	color.a = (unsigned char)a;
-	
-	return color; 
-}
-
-ofColor mui::Helpers::rgba( int rgbVal ){
-	ofColor color; 
-	color.a = (rgbVal&0xFF000000)>>24; 
-	color.r = (rgbVal&0xFF0000)>>16; 
-	color.g = (rgbVal&0xFF00)>>8; 
-	color.b = rgbVal&0xFF; 
-	
-	return color; 
-}
-
-
-ofColor mui::Helpers::grey( int g, int a ){
-	ofColor color; 
-	color.r = (unsigned char)g;
-	color.g = (unsigned char)g;
-	color.b = (unsigned char)g;
-	color.a = (unsigned char)a;
-	
-	return color; 
-}
 
 // compares two strings with a strict weak order,
 // so stringLtString(a,a) will return false (obviously)

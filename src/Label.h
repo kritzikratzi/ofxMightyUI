@@ -54,6 +54,7 @@ namespace mui{
 
 	private: 
         std::string displayText;
+		ofxFontStashStyle fontStyle;
 	};
 };
 

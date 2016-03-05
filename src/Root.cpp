@@ -109,8 +109,9 @@ void mui::Root::handleDraw(){
 				if( c != NULL )  name_ << " < ";
 			}
 			
+			ofxFontStashStyle style = mui::Helpers::getStyle(10);
 			string name = name_.str();
-			ofRectangle bounds = mui::Helpers::getFont(10)->getStringBoundingBox(name, p.x, p.y+10);
+			ofRectangle bounds = mui::Helpers::getFontStash().getTextBounds(name, style, p.x, p.y+10);
 			ofDrawRectangle( bounds.x, bounds.y, bounds.width, bounds.height );
 			ofNoFill();
 			ofSetColor( 255,255,0 );
