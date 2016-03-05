@@ -15,7 +15,7 @@ Button( title_, x_, y_, width_, height_ ), selected(false) {
 
 //--------------------------------------------------------------
 void mui::SegmentedButton::initSegmentedButton(){
-	label->fontSize = 10; 
+	label->fontSize -= 2;
 	label->commit(); 
 }
 
