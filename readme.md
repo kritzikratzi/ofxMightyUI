@@ -1,18 +1,16 @@
 ofxMightyUI
 ===========
 
-INSTRUCTIONS ARE OUT OF DATE. 
+Instructions are not exactly up to date. 
+
+Active working ongoing in the `fs2` branch
+
+
 ---
-LOTS OF REFACTORING GOING ON. 
-THIS IS UNUSABLE AT THE MOMENT. 
-PLEASE BE PATIENT. 
-
-To be fair: it's not so unstable, actually. 
-
 
 TODO: 
 
-- ☐ use dependencies instead of including everything (ofxUnicode, ofxEasyRetina, ofxFontStash)
+- ☑︎ use dependencies instead of including everything (ofxUnicode, ofxEasyRetina, ofxFontStash)
 - ☑︎ switch from poco events to ofEvent (same behind the scenes, but nicer to use)
 - ☑︎ moving files around to follow ofx addon standard. already sortof works with project generator. hurray! 
 - ☐ hm... seems the project generator doesn't set up copying of data files? <br>Yep, that's the case! 
@@ -22,11 +20,11 @@ TODO:
 - ☑︎ test windows (is there retina?)
 - ☐ finish textfield overlays --> or make simple textfield? --> look into stb_textedit https://github.com/nothings/stb/blob/master/stb_textedit.h
 - ☐ stupid mobile rotation issues
-- ☐ see if i can depend on the "proper" ofxFontStash<br>Don't care for now. Waiting for fontstash2 to look
+- ☑︎ see if i can depend on the "proper" ofxFontStash<br>Don't care for now. Waiting for fontstash2 to look
 - ☑︎ cleanup include structure. how does it even compile? 
 - ☑︎ make a basic example
 - ☐ window size is very confused until the window is resized once (esp one windows)
-- ☐ possible speed gain when combining textureatlas of fontstash and mui ui elements? (no switching textures -> drawArrays becomes non blocking?) --> better to collect draw commands as long as possible. 
+- ☑︎ possible speed gain when combining textureatlas of fontstash and mui ui elements? (no switching textures -> drawArrays becomes non blocking?) --> better to collect draw commands as long as possible. 
 - clean up layouting mess --> getting there
 
 TODO OSX: 
@@ -46,8 +44,8 @@ TODO WINDOWS:
 
 A handy UI addon for [openFrameworks](http://www.openframeworks.cc). 
 
-Features
---------
+# Features
+
 
 This is very much a work in progress. The following works: 
 
@@ -58,34 +56,48 @@ This is very much a work in progress. The following works:
 - Textfields (operating system textfield is overlayed during editing so it allows copy&paste)
 - Scrollpanes
 - Segmented buttons (the equivalent of radio buttons in a way)
-It's all a bit ugly still. Also eventually slow! 
 - Retina support 
 
 
-Setup
------
+# Setup
+
 
 Download the current master branch, either as zip or clone from git with
 
 	cd OF/addons
 	git clone https://github.com/kritzikratzi/ofxMightyUI.git
-	
 
 
-**iOS**
+### All platforms
+
+Edit `addons.make` and add this line: 
+
+	ofxMightyUI
+
+
+With this alone makefile builds should already work. 
+
+
+### iOS 
+
+**outdated, this is much easier now**
 
 - Add the folder addons/ofxMightyUI/src to your XCode project
 - Go to Project>Targets>emptyExample>Build Phases>Link Binary with Libraries. Click the '+' icon and add the CoreText framework. 
 - Go to Project>Targets>emptyExample>Build Phases>Run Script and add <br>
   	```cp -rf ../../../addons/ofxMightyUI/bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app"```
 
-**MacOS X**
+### MacOS X
+
+**outdated, this is much easier now**
 
 - Add the folder addons/ofxMightyUI/src to your XCode project. 
 - Go to Project>Targets>emptyExample>Build Phases>Run Script and add <br>
   	```cp -rf ../../../addons/ofxMightyUI/bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources"```
   	
-**Windows**
+### Windows
+
+**outdated, this is much easier now**
 
 - Create a groups (filters) for ofxMightyUI
 - Add all .cpp and .h from those folders to their respective groups
@@ -97,9 +109,9 @@ Download the current master branch, either as zip or clone from git with
 - Go to Build Events>Post-Build Events and add this to command line: <br>
   		```xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxMightyUI\bin\data\mui" "$(ProjectDir)bin\data\mui"```
 
-**Android**
+### Android
 
-*instructions are old*
+**outdated, this is much easier now**
 
 - Refresh your project view (press F5), the ofxMightyUI subproject should show up
 - Right click>Resource Configuration>Exclude From Build>Release and Debug for these folders: 
@@ -120,6 +132,8 @@ Also find the excludes section in config.make and add those same folders:
 Usage
 -------
 There's a longer example in the `src/` folder. 
+
+
 
 **testApp.h**
 
@@ -160,8 +174,7 @@ Licensing
 
 Third party software/assets used: 
 
-- ofxFontStash / fontstash (MIT license?)
-- ofxEasyRetina (would be cool if this stayed external)
+- ofxFontStash2 / fontstash (MIT license?)
 - [CppTweener](http://code.google.com/p/tweener/): MIT License
 - [iPhone4 GUI for Photoshop](http://www.teehanlax.com/blog/2010/08/12/iphone-4-gui-psd-retina-display/) cc-sa-by
 - [Lato Regular font](http://www.fontsquirrel.com/fonts/lato): Sil open font license
