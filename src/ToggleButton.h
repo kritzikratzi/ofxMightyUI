@@ -40,7 +40,9 @@ namespace mui{
 		virtual void update();
 		virtual void draw();
 		virtual void drawBackground();
-		virtual void layout(); 
+		virtual void fitWidthToLabel(int paddingLR = 5);
+		virtual void fitWidthToLabel(int paddingL, int paddingR );
+		virtual void layout();
 
 		// simulate a click
 		virtual void clickAndNotify();

@@ -69,6 +69,16 @@ void mui::ToggleButton::drawBackground(){
 	}
 }
 
+void mui::ToggleButton::fitWidthToLabel( int paddingLR ){
+	fitWidthToLabel(paddingLR, paddingLR );
+}
+
+void mui::ToggleButton::fitWidthToLabel( int paddingL, int paddingR ){
+	label->commit();
+	ofRectangle bounds = label->box(0, paddingR, 0, paddingL );
+	width = bounds.width;
+}
+
 //--------------------------------------------------------------
 void mui::ToggleButton::layout(){
 	label->width = width;
