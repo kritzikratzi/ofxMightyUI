@@ -87,5 +87,6 @@ void mui_init(){
 	mui::MuiConfig::dataPath = appPath.absolute();
 	mui::Helpers::getFontStash().setup(1024);
 	mui::Helpers::getFontStash().pixelDensity = mui::MuiConfig::scaleFactor;
+	mui::Helpers::getFontStash().fontScale = 1.3;
 }
 
