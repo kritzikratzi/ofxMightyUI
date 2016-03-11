@@ -89,7 +89,12 @@ namespace mui{
 		virtual bool requestFocus( ofTouchEventArgs &args );
 		virtual ofPoint getGlobalPosition();
 		
-		mui::Container * byName( string name ); 
+		// make this the front most child in the parent container
+		virtual void toFront();
+		// make this the last child in the parent container
+		virtual void toBack();
+		
+		mui::Container * byName( string name );
 		
 		// recursively find children of a certain type at a position
 		// implemented directly in the header because templates ... have some issues

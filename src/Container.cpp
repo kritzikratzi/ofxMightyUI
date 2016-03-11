@@ -380,6 +380,28 @@ mui::Container * mui::Container::byName( string name ){
 	return NULL;
 }
 
+void mui::Container::toFront(){
+	if( parent != NULL ){
+		auto it = std::find(parent->children.begin(), parent->children.end(), this);
+		if( it != parent->children.end() ){
+			//TODO: (maybe) use std::rotate
+			parent->children.erase(it);
+			parent->add(this, -1);
+		}
+	}
+}
+
+void mui::Container::toBack(){
+	if( parent != NULL ){
+		auto it = std::find(parent->children.begin(), parent->children.end(), this);
+		if( it != parent->children.end() ){
+			//TODO: (maybe) use std::rotate
+			parent->children.erase(it);
+			parent->add(this, 0);
+		}
+	}
+}
+
 mui::Container * mui::Container::findChildAt( float posX, float posY, bool onlyVisible ){
 	if( posX >= 0 && posY >= 0 && posX <= width && posY <= height && (!onlyVisible || visible ) ){
 		// do we have a child that fits there?
