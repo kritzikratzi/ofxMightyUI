@@ -72,6 +72,7 @@ void mui::Button::fitWidthToLabel( int paddingLR ){
 }
 
 void mui::Button::fitWidthToLabel( int paddingL, int paddingR ){
+	label->ellipsisMode = false; 
 	label->commit();
 	ofRectangle bounds = label->box(0, paddingR, 0, paddingL );
 	width = bounds.width;

@@ -50,6 +50,7 @@ void mui::Label::layout(){
 
 void mui::Label::sizeToFit( float padX, float padY ){
 	commit(); // update bounding box
+	ellipsisMode = false;
 	width = boundingBox.width + padX;
 	height = boundingBox.height + padY;
 	layout(); // tell ourselves about the size change
@@ -57,6 +58,7 @@ void mui::Label::sizeToFit( float padX, float padY ){
 
 void mui::Label::sizeToFitWidth( float padX ){
 	commit();
+	ellipsisMode = false;
 	width = boundingBox.width + padX;
 	layout();
 }
@@ -81,8 +83,7 @@ void mui::Label::commit(){
 	// MUI_FONT_TYPE * font = Helpers::getFont( Helpers::retinaMode?(fontSize*2):fontSize );
 	// magic trick #2.2: fuck retina, we compute the bounding box at normal size!
 	mui::Helpers::loadFont(fontName);
-	boundingBox = Helpers::getFontStash().getTextBounds(displayText, fontStyle, 0, 0);
-	
+	boundingBox = Helpers::getFontStash().getTextBounds(text, fontStyle, 0, 0);
 	// NASTY HACK#158
 	boundingBox.x = 0;
 
