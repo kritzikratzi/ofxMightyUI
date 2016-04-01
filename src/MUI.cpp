@@ -15,7 +15,7 @@
 	#include "ofAppiOSWindow.h"
 	#include <CoreFoundation/CoreFoundation.h>
 #elif TARGET_OS_MAC
-	#include "ofAppGLFWWindow.h
+	#include "ofAppGLFWWindow.h"
 #elif _WIN32
 	#include <windows.h>
 	#include "ofAppGLFWWindow.h"
