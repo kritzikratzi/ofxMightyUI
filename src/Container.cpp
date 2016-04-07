@@ -184,8 +184,8 @@ mui::Container * mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
 				touchDown( touch );
 			}
 			
-			if( MUI_ROOT->respondingContainer[touch.id] != NULL ){
-				return MUI_ROOT->respondingContainer[touch.id];
+			if( MUI_ROOT->touchResponder[touch.id] != NULL ){
+				return MUI_ROOT->touchResponder[touch.id];
 			}
 			else{
 				return this;
@@ -339,7 +339,7 @@ void mui::Container::handleReloadTextures(){
 //--------------------------------------------------------------
 bool mui::Container::hasFocus(){
 	for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
-		if( Root::INSTANCE->respondingContainer[i] == this )
+		if( Root::INSTANCE->touchResponder[i] == this )
 			return true;
 	}
 	
@@ -348,11 +348,19 @@ bool mui::Container::hasFocus(){
 
 //--------------------------------------------------------------
 bool mui::Container::hasFocus( ofTouchEventArgs &touch ){
-    return Root::INSTANCE->respondingContainer[touch.id] == this;
+    return Root::INSTANCE->touchResponder[touch.id] == this;
 }
 
 bool mui::Container::requestFocus( ofTouchEventArgs &args ){
-	return Root::INSTANCE->becomeResponder(this, args);
+	return Root::INSTANCE->becomeTouchResponder(this, args);
+}
+
+bool mui::Container::hasKeyboardFocus(){
+	return Root::INSTANCE->keyboardResponder == this;
+}
+
+bool mui::Container::requestKeyboardFocus(){
+	return Root::INSTANCE->becomeKeyboardResponder(this);
 }
 
 //--------------------------------------------------------------

@@ -25,6 +25,7 @@ mui::Root * mui::Root::INSTANCE = NULL;
 mui::Root::Root() : Container( 0, 0, -1, -1 ){
 	INSTANCE = this;
 	ignoreEvents = true;
+	keyboardResponder = NULL;
 	init();
 };
 
@@ -63,7 +64,7 @@ void mui::Root::init(){
 	
 	// this seems unclear ... let's better put this in place!
 	for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
-		respondingContainer[i] = NULL;
+		touchResponder[i] = NULL;
 	}
 }
 
@@ -138,9 +139,9 @@ mui::Container * mui::Root::handleTouchDown( ofTouchEventArgs &touch ){
 	ofTouchEventArgs copy = touch; 
 	fixTouchPosition( touch, copy, NULL ); 
 	
-	//return ( respondingContainer[touch.id] = Container::handleTouchDown( copy ) ); 
-	respondingContainer[touch.id] = Container::handleTouchDown( copy ); 
-	return respondingContainer[touch.id]; 
+	//return ( touchResponder[touch.id] = Container::handleTouchDown( copy ) ); 
+	touchResponder[touch.id] = Container::handleTouchDown( copy ); 
+	return touchResponder[touch.id]; 
 }
 
 
@@ -150,11 +151,11 @@ mui::Container * mui::Root::handleTouchMoved( ofTouchEventArgs &touch ){
 	fixTouchPosition( touch, copy, NULL ); 
 	Container * touched = Container::handleTouchMoved( copy );
 
-	if( touched != respondingContainer[touch.id] && respondingContainer[touch.id] != NULL ){
+	if( touched != touchResponder[touch.id] && touchResponder[touch.id] != NULL ){
 		copy = touch;
 		fixTouchPosition( touch, copy, NULL );
-        copy = Helpers::translateTouch( copy, this, respondingContainer[touch.id] );
-        respondingContainer[touch.id]->touchMovedOutside( copy );
+        copy = Helpers::translateTouch( copy, this, touchResponder[touch.id] );
+        touchResponder[touch.id]->touchMovedOutside( copy );
 	}
 	
 	return touched;
@@ -167,14 +168,14 @@ mui::Container * mui::Root::handleTouchUp( ofTouchEventArgs &touch ){
 	fixTouchPosition( touch, copy, NULL ); 
 	Container * touched = Container::handleTouchUp( copy ); 
 	
-	if( touched != respondingContainer[touch.id] && respondingContainer[touch.id] != NULL ){
-		fixTouchPosition( touch, copy, respondingContainer[touch.id] );
-		Container *c = respondingContainer[touch.id];
-		respondingContainer[touch.id]->touchUpOutside( copy );
+	if( touched != touchResponder[touch.id] && touchResponder[touch.id] != NULL ){
+		fixTouchPosition( touch, copy, touchResponder[touch.id] );
+		Container *c = touchResponder[touch.id];
+		touchResponder[touch.id]->touchUpOutside( copy );
 		c->singleTouchId = -1;
 	}
 	
-    respondingContainer[touch.id] = NULL; 
+    touchResponder[touch.id] = NULL; 
     
 	return touched; 	
 }
@@ -190,11 +191,11 @@ mui::Container * mui::Root::handleTouchDoubleTap( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 mui::Container * mui::Root::handleTouchCancelled( ofTouchEventArgs &touch ){
-	if( respondingContainer[touch.id] != NULL ){
-		respondingContainer[touch.id]->touchCanceled( touch );
-		respondingContainer[touch.id]->singleTouchId = -1;
-		mui::Container * c = respondingContainer[touch.id];
-		respondingContainer[touch.id] = NULL;
+	if( touchResponder[touch.id] != NULL ){
+		touchResponder[touch.id]->touchCanceled( touch );
+		touchResponder[touch.id]->singleTouchId = -1;
+		mui::Container * c = touchResponder[touch.id];
+		touchResponder[touch.id] = NULL;
 		return c;
 	}
 	else{
@@ -238,29 +239,34 @@ void mui::Root::hideTextFields(){
 
 
 //--------------------------------------------------------------
-bool mui::Root::becomeResponder( Container * c, ofTouchEventArgs &touch ){
+bool mui::Root::becomeTouchResponder( Container * c, ofTouchEventArgs &touch ){
 	// the trivial case ...
-	if( c != NULL && c == respondingContainer[touch.id] )
+	if( c != NULL && c == touchResponder[touch.id] )
 		return true;
 	
 	// notify previous owner,
 	// cancel if it doesn't allow transfering focus
-	if( respondingContainer[touch.id] != NULL ){
-        if( respondingContainer[touch.id]->focusTransferable == false )
+	if( touchResponder[touch.id] != NULL ){
+        if( touchResponder[touch.id]->focusTransferable == false )
             return false; 
         
-		respondingContainer[touch.id]->handleTouchCanceled( touch );
-		respondingContainer[touch.id]->singleTouchId = -1; 
+		touchResponder[touch.id]->handleTouchCanceled( touch );
+		touchResponder[touch.id]->singleTouchId = -1; 
 	}
 	
 	// alright, install new owner
-	respondingContainer[touch.id] = c;
-	if( respondingContainer[touch.id] != NULL ){
-		respondingContainer[touch.id]->singleTouchId = touch.id;
+	touchResponder[touch.id] = c;
+	if( touchResponder[touch.id] != NULL ){
+		touchResponder[touch.id]->singleTouchId = touch.id;
 	}
 
 	
 	return true; 
+}
+
+bool mui::Root::becomeKeyboardResponder( Container * c ){
+	this->keyboardResponder = c;
+	return true;
 }
 
 
@@ -277,9 +283,12 @@ void mui::Root::safeRemoveAndDelete( mui::Container *c ){
 //--------------------------------------------------------------
 void mui::Root::removeFromResponders( Container * c ){
 	for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
-		if( respondingContainer[i] == c ){
-			respondingContainer[i] = NULL;
+		if( touchResponder[i] == c ){
+			touchResponder[i] = NULL;
 		}
+	}
+	if( keyboardResponder == c ){
+		keyboardResponder = NULL;
 	}
 }
 
@@ -330,6 +339,9 @@ void mui::Root::handleRemovals(){
 //--------------------------------------------------------------
 mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 	activeKeys.insert(event.key);
+	if( keyboardResponder != NULL ){
+		keyboardResponder->keyPressed(event);
+	}
 	return NULL;
 }
 
@@ -338,6 +350,9 @@ mui::Container * mui::Root::handleKeyReleased( ofKeyEventArgs &event ){
 	set<int>::iterator it = activeKeys.find(event.key);
 	if( it != activeKeys.end() ){
 		activeKeys.erase(event.key);
+	}
+	if( keyboardResponder != NULL ){
+		keyboardResponder->keyReleased(event);
 	}
 	return NULL;
 }

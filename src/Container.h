@@ -75,6 +75,9 @@ namespace mui{
 		virtual void touchCanceled( ofTouchEventArgs &touch ){}; // when some other component "stole" the responder status.
 		virtual void mouseScroll( ofMouseEventArgs &args){};
 		
+		virtual void keyPressed( ofKeyEventArgs &touch){};
+		virtual void keyReleased( ofKeyEventArgs &touch){};
+		
 		virtual Container * handleTouchDown( ofTouchEventArgs &touch );
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
 		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
@@ -87,6 +90,10 @@ namespace mui{
 		virtual bool hasFocus();
 		virtual bool hasFocus( ofTouchEventArgs &touch );
 		virtual bool requestFocus( ofTouchEventArgs &args );
+
+		virtual bool hasKeyboardFocus();
+		virtual bool requestKeyboardFocus();
+		
 		virtual ofPoint getGlobalPosition();
 		
 		// make this the front most child in the parent container
