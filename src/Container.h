@@ -54,6 +54,7 @@ namespace mui{
 		
 		ofRectangle getGlobalBounds();
 		ofRectangle getBounds();
+		ofRectangle getChildBounds(); 
 		void setBounds( float x, float y, float width, float height );
         
 		virtual void update(){};

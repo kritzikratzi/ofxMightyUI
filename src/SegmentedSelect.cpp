@@ -8,19 +8,22 @@
 #include "SegmentedSelect.h"
 #include "Label.h"
 
-mui::SegmentedButton::SegmentedButton( std::string title_, float x_, float y_, float width_, float height_) :
-Button( title_, x_, y_, width_, height_ ), selected(false) {
+template<typename T>
+mui::SegmentedButton<T>::SegmentedButton( std::string title_, T value, float x_, float y_, float width_, float height_) :
+Button( title_, x_, y_, width_, height_ ), selected(false), value(value) {
 	initSegmentedButton();
 };
 
 //--------------------------------------------------------------
-void mui::SegmentedButton::initSegmentedButton(){
+template<typename T>
+void mui::SegmentedButton<T>::initSegmentedButton(){
 	label->fontSize -= 2;
 	label->commit(); 
 }
 
 //--------------------------------------------------------------
-void mui::SegmentedButton::drawBackground(){
+template<typename T>
+void mui::SegmentedButton<T>::drawBackground(){
 	ofSetColor( 255, 255, 255 );
 	Helpers::beginImages();
 	if( selected || pressed ){
@@ -48,14 +51,16 @@ void mui::SegmentedButton::drawBackground(){
 
 
 //--------------------------------------------------------------
-mui::SegmentedSelect::	SegmentedSelect( float x_, float y_, float width_, float height_ )
-: Container( x_, y_, width_, height_ ), selected(""){
+template<typename T>
+mui::SegmentedSelect<T>::SegmentedSelect( float x_, float y_, float width_, float height_ )
+: Container( x_, y_, width_, height_ ), selected(NULL){
 }
 
 
 //--------------------------------------------------------------
-void mui::SegmentedSelect::addLabel( string text ){
-	SegmentedButton * button = new SegmentedButton( text );
+template<typename T>
+void mui::SegmentedSelect<T>::addSegment( string text, T value ){
+	SegmentedButton<T> * button = new SegmentedButton<T>( text, value );
 	button->width = button->label->boundingBox.width + 10; 
 	ofAddListener(button->onPress, this, &SegmentedSelect::onButtonPress );
 
@@ -64,28 +69,31 @@ void mui::SegmentedSelect::addLabel( string text ){
 }
 
 //--------------------------------------------------------------
-size_t mui::SegmentedSelect::getNumSegments(){
+template<typename T>
+size_t mui::SegmentedSelect<T>::getNumSegments(){
 	return children.size();
 }
 
 //--------------------------------------------------------------
-string mui::SegmentedSelect::getSegment( int num ){
-	mui::SegmentedButton * button = (mui::SegmentedButton*)children[num];
-	return button->label->text;
+template<typename T>
+mui::SegmentedButton<T> * mui::SegmentedSelect<T>::getSegment( int num ){
+	mui::SegmentedButton<T> * button = (mui::SegmentedButton<T>*)children[num];
+	return button;
 }
 
 //--------------------------------------------------------------
-void mui::SegmentedSelect::commit(){
+template<typename T>
+void mui::SegmentedSelect<T>::commit(){
 	vector<Container*>::iterator it = children.begin(); 
 	int x = 0; 
 	bool first = true; 
-	SegmentedButton * last = NULL; 
+	SegmentedButton<T> * last = NULL;
 	
 	while( it != children.end() ){
-		SegmentedButton * button = (SegmentedButton*) *it; 
+		SegmentedButton<T> * button = (SegmentedButton<T>*) *it;
 		button->x = x; 
 		x += button->width; 
-		button->selected = button->label->text == selected;
+		button->selected = button == selected;
 		button->roundedLeft = first; 
 		button->roundedRight = false;
 		
@@ -102,44 +110,58 @@ void mui::SegmentedSelect::commit(){
 
 
 //--------------------------------------------------------------
-void mui::SegmentedSelect::update(){
+template<typename T>
+void mui::SegmentedSelect<T>::update(){
 }
 
 
 //--------------------------------------------------------------
-void mui::SegmentedSelect::draw(){
+template<typename T>
+void mui::SegmentedSelect<T>::draw(){
 }
 
 
 //--------------------------------------------------------------
-void mui::SegmentedSelect::drawBackground(){
+template<typename T>
+void mui::SegmentedSelect<T>::drawBackground(){
 }
 
 
 //--------------------------------------------------------------
-void mui::SegmentedSelect::onButtonPress( const void* sender, ofTouchEventArgs &args ){
-	SegmentedButton * button = (SegmentedButton*) sender; 
-	selected = button->label->text;
+template<typename T>
+void mui::SegmentedSelect<T>::onButtonPress( const void* sender, ofTouchEventArgs &args ){
+	SegmentedButton<T> * button = (SegmentedButton<T>*) sender;
+	selected = button;
 	ofNotifyEvent(onChange, selected, this);
 	commit(); 
 }
 
 
 //--------------------------------------------------------------
-void mui::SegmentedSelect::touchDown( ofTouchEventArgs &touch ){
+template<typename T>
+void mui::SegmentedSelect<T>::touchDown( ofTouchEventArgs &touch ){
 }
 
 
 //--------------------------------------------------------------
-void mui::SegmentedSelect::touchMoved( ofTouchEventArgs &touch ){
+template<typename T>
+void mui::SegmentedSelect<T>::touchMoved( ofTouchEventArgs &touch ){
 }
 
 
 //--------------------------------------------------------------
-void mui::SegmentedSelect::touchUp( ofTouchEventArgs &touch ){
+template<typename T>
+void mui::SegmentedSelect<T>::touchUp( ofTouchEventArgs &touch ){
 }
 
 
 //--------------------------------------------------------------
-void mui::SegmentedSelect::touchDoubleTap( ofTouchEventArgs &touch ){
+template<typename T>
+void mui::SegmentedSelect<T>::touchDoubleTap( ofTouchEventArgs &touch ){
 }
+
+
+template class mui::SegmentedSelect<int>;
+template class mui::SegmentedSelect<float>;
+template class mui::SegmentedSelect<double>;
+template class mui::SegmentedSelect<string>;

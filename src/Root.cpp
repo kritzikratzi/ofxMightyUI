@@ -69,6 +69,10 @@ void mui::Root::init(){
 }
 
 void mui::Root::handleUpdate(){
+	if( ofGetFrameNum() == 0 ){
+		handleLayout();
+	}
+	
 	tweener.step( ofGetSystemTime() );
 	#if TARGET_OS_IPHONE
 	NativeIOS::update();
@@ -411,6 +415,7 @@ void mui::Root::of_windowResized( ofResizeEventArgs &args ){
 	//handleWindowResized(args);
 	width = args.width/mui::MuiConfig::scaleFactor;
 	height = args.height/mui::MuiConfig::scaleFactor;
+	handleLayout();
 }
 bool mui::Root::of_keyPressed( ofKeyEventArgs &args ){
 	return handleKeyPressed(args) != NULL;

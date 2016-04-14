@@ -62,6 +62,29 @@ ofRectangle mui::Container::getBounds(){
 	return ofRectangle(x, y, width, height);
 }
 
+ofRectangle mui::Container::getChildBounds(){
+	// figure out min/max values...
+	std::vector<Container*>::iterator it = children.begin();
+	float minX, minY, maxX, maxY;
+	
+	minX = 0;
+	minY = 0;
+	maxX = 0;
+	maxY = 0;
+	
+	while( it != children.end() ) {
+		if( (*it)->visible ){
+			minX = fminf( (*it)->x, minX );
+			minY = fminf( (*it)->y, minX );
+			maxX = fmaxf( (*it)->x + (*it)->width, maxX );
+			maxY = fmaxf( (*it)->y + (*it)->height, maxY );
+		}
+		++it;
+	}
+	
+	return ofRectangle( minX, minY, maxX - minX, maxY - minY );
+}
+
 void mui::Container::setBounds( float x, float y, float w, float h ){
 	this->x = x;
 	this->y = y;
