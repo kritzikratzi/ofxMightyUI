@@ -39,7 +39,7 @@ void mui::Root::init(){
 	
 	name = "Root"; 
 	width = ofGetWidth()/mui::MuiConfig::scaleFactor;
-	height = ofGetWidth()/mui::MuiConfig::scaleFactor;
+	height = ofGetHeight()/mui::MuiConfig::scaleFactor;
 	
 	ofAddListener( ofEvents().setup, this, &mui::Root::of_setup, OF_EVENT_ORDER_AFTER_APP );
 	ofAddListener( ofEvents().update, this, &mui::Root::of_update, OF_EVENT_ORDER_AFTER_APP );
