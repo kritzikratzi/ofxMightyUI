@@ -49,16 +49,16 @@ void mui::Label::layout(){
 }
 
 void mui::Label::sizeToFit( float padX, float padY ){
-	commit(); // update bounding box
 	ellipsisMode = false;
+	commit(); // update bounding box
 	width = boundingBox.width + padX;
 	height = boundingBox.height + padY;
 	layout(); // tell ourselves about the size change
 }
 
 void mui::Label::sizeToFitWidth( float padX ){
-	commit();
 	ellipsisMode = false;
+	commit();
 	width = boundingBox.width + padX;
 	layout();
 }
