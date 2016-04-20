@@ -36,7 +36,8 @@ namespace mui{
 		ofColor selectedFg;
 		ofEvent<ofTouchEventArgs> onPress;
 		
-		virtual void init( std::string title );
+		bool checkbox; 
+		
 		virtual void update();
 		virtual void draw();
 		virtual void drawBackground();
