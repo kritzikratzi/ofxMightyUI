@@ -41,7 +41,10 @@ namespace mui{
 	class Layout;
 	class Root;
 	class ScrollPane;
+	
+	template<typename T>
 	class SegmentedSelect;
+	
 	class Slider;
 	class SliderWithLabel;
 	class TextField;

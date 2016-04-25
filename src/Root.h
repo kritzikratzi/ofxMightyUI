@@ -20,7 +20,8 @@ namespace mui{
 	public: 
 		Root();
 		
-		Container * respondingContainer[OF_MAX_TOUCHES]; // think of the responder as the elements received touchDown events.
+		Container * touchResponder[OF_MAX_TOUCHES]; // think of the responder as the elements received touchDown events.
+		Container * keyboardResponder;
 		
 		virtual void init(); 
 		virtual void handleUpdate();
@@ -43,7 +44,8 @@ namespace mui{
 		virtual Container * handleMousePressed( float x, float y, int button );
 		virtual Container * handleMouseReleased( float x, float y, int button );
 		
-		virtual bool becomeResponder( Container * container, ofTouchEventArgs &touch );
+		virtual bool becomeTouchResponder( Container * container, ofTouchEventArgs &touch );
+		virtual bool becomeKeyboardResponder( Container * container );
 		virtual void showTextField( TextField * tf );
 		virtual void hideTextFields();
 		virtual void safeRemoveAndDelete( Container * c ); 

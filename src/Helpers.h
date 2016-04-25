@@ -11,52 +11,53 @@
 #define MUI_HELPERS
 
 #include "MuiCore.h"
+#include "ofxFontStash2.h"
 
 namespace mui{
 	class TextureAtlas;
-	class Container; 
-	
+	class Container;
 	
 	class Helpers{
 	public: 
 		static void clearCaches();
 		static string muiPath( string path );
-		//static ofTexture * getTexture( string what );
-		//static ofImage * getImage( string what );
+
 		static void beginImages();
 		static void endImages();
-		static void drawImage( string name, float x, float y );
-		static void drawImage( string name, float x, float y, float w, float h );
-		static MUI_FONT_TYPE * getFont( int size ); // get a font for a specific pixel size
-		static MUI_FONT_TYPE * getFont( string customFont, int size ); // get a font for a specific pixel size
-		static void drawString( string s, float x = 0, float y = 0, int size = MUI_FONT_SIZE ); // draw retina friendly string
-		static void roundedRect(float x, float y, float w, float h, float r); 
+		static void drawImage( const string name, float x, float y );
+		static void drawImage( const string name, float x, float y, float w, float h );
+
+		static bool loadFont( const string customFont );
+		static ofxFontStashStyle getStyle( const int size = mui::MuiConfig::fontSize );
+		static ofxFontStashStyle getStyle( const string customFont, const int size = mui::MuiConfig::fontSize );
+		static ofxFontStash2 & getFontStash();
+		static void drawString( const string s, const float x = 0, const float y = 0, const ofColor color = ofColor(255), const int size = mui::MuiConfig::fontSize );
+
+		static void roundedRect(float x, float y, float w, float h, float r);
 		static void quadraticBezierVertex( float cpx, float cpy, float x, float y, float prevX, float prevY); 
-		static void drawStringWithShadow( std::string s, int x, int y, int fontSize, int r, int g, int b ); 
-        static void orientedScissor( float x, float y, float w, float h );
+
+		static void orientedScissor( float x, float y, float w, float h );
 		static void pushScissor( Container * c = NULL, float x = 0, float y = 0, float w = -9999, float h = -9999  );
 		static void pushScissor( Container * c, ofRectangle rect );
         static void popScissor();
-        static void disableMask();
-		static ofColor rgb( int r, int g, int b, int a = 255 ); 
-		static ofColor rgb( int rgb, int a = 255 ); 
-		static ofColor rgba( int rgba ); 
-		static ofColor grey( int g, int a = 255 );
-        static bool stringLtString( string a, string b ); 
+		
+        static bool stringLtString( string a, string b );
+		
 		static ofRectangle alignBox( Container * container, float width, float height, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign );
 		static bool inside( Container * container, float x, float y ); 
         static ofTouchEventArgs translateTouch( ofTouchEventArgs &touch, Container * src, Container * dest );
+		
 		static ofPoint translateCoords( float x, float y, Container * src, Container * dest );
 		static ofPoint translateCoords( ofPoint pt, Container * src, Container * dest );
 		
 	private:
 		static std::map<std::string, ofTexture*> textures;
 		static std::map<std::string, ofImage*> images;
-		static std::map<int, MUI_FONT_TYPE*> fonts;
-		static std::map<string, MUI_FONT_TYPE*> customFonts;
         static std::stack<ofRectangle> scissorStack;
-		// todo: static names would be nice. neato if the compiler can check that an image is there
 		static mui::TextureAtlas atlas;
+		static ofxFontStash2 fontStash;
+		
+		friend class MuiFont;
 	};
 }
 

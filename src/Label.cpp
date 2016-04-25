@@ -14,37 +14,24 @@
 
 mui::Label::Label( std::string text_, float x_, float y_, float width_, float height_ ) :
 	Container( x_, y_, width_, height_ ),
-	ellipsisMode(true), text( text_), fontSize( MUI_FONT_SIZE ), horizontalAlign(Left), verticalAlign(Middle){
+	ellipsisMode(true), text( text_), fontSize(-1), horizontalAlign(Left), verticalAlign(Middle),fontName(""){
 		ignoreEvents = true;
+		if( fontSize < 0 ) fontSize = mui::MuiConfig::fontSize;
 		commit();
 };
 //--------------------------------------------------------------
 void mui::Label::update(){
+	fontStyle.fontSize = fontSize;
+	fontStyle.color = fg;
+	fontStyle.fontID = fontName;
 }
 
 
 //--------------------------------------------------------------
 void mui::Label::draw(){
 	ofRectangle size = Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign );
-	
-	ofSetColor( 255, 255, 255 ); 
-    ofSetColor( fg.r, fg.g, fg.b, fg.a );
-	if( mui::MuiConfig::scaleFactor != 1 ){
-		MUI_FONT_TYPE * font;
-		if( fontName == "" ) font = Helpers::getFont( mui::MuiConfig::scaleFactor*fontSize );
-		else  font = Helpers::getFont( fontName, mui::MuiConfig::scaleFactor*fontSize );
-		ofPushMatrix();
-		ofTranslate( (int)(size.x-boundingBox.x), (int)(size.y-(int)boundingBox.y) );
-		ofScale( 0.5, 0.5 );
-		font->drawString( displayText, 0, 0 );
-		ofPopMatrix();
-	}
-	else{
-		MUI_FONT_TYPE * font;
-		if( fontName == "" ) font = Helpers::getFont( fontSize );
-		else font = Helpers::getFont( fontName, fontSize );
-		font->drawString( displayText, (int)(size.x-boundingBox.x), (int)(size.y-(int)boundingBox.y) );
-	}
+	mui::Helpers::getFontStash().draw(displayText, fontStyle, size.x-boundingBox.x, size.y-boundingBox.y);
+	ofSetColor( 255, 255, 255 );
 }
 
 
@@ -62,6 +49,7 @@ void mui::Label::layout(){
 }
 
 void mui::Label::sizeToFit( float padX, float padY ){
+	ellipsisMode = false;
 	commit(); // update bounding box
 	width = boundingBox.width + padX;
 	height = boundingBox.height + padY;
@@ -69,6 +57,7 @@ void mui::Label::sizeToFit( float padX, float padY ){
 }
 
 void mui::Label::sizeToFitWidth( float padX ){
+	ellipsisMode = false;
 	commit();
 	width = boundingBox.width + padX;
 	layout();
@@ -89,14 +78,12 @@ ofRectangle mui::Label::box( float t, float r, float b, float l ){
 
 //--------------------------------------------------------------
 void mui::Label::commit(){
+	update();
 	// magic trick #2
 	// MUI_FONT_TYPE * font = Helpers::getFont( Helpers::retinaMode?(fontSize*2):fontSize );
 	// magic trick #2.2: fuck retina, we compute the bounding box at normal size!
-	MUI_FONT_TYPE * font;
-	if( fontName == "" ) font = Helpers::getFont( fontSize );
-	else  font = Helpers::getFont( fontName, fontSize );
-	boundingBox = font->getStringBoundingBox( text, 0, 0 );
-	
+	mui::Helpers::loadFont(fontName);
+	boundingBox = Helpers::getFontStash().getTextBounds(text, fontStyle, 0, 0);
 	// NASTY HACK#158
 	boundingBox.x = 0;
 
@@ -107,8 +94,8 @@ void mui::Label::commit(){
             int len = text.length() - 3;
             while( box.width > width && len >= 0 ){
                 displayText = text.substr(0, len ) + "...";
-                box = font->getStringBoundingBox( displayText, 0, 0 );
-                len --; 
+				box = Helpers::getFontStash().getTextBounds(displayText, fontStyle, 0, 0 );
+                len --;
             }
         }
         else{
@@ -121,7 +108,7 @@ void mui::Label::commit(){
 	
 	// Orient y on a simple uppercase character
 	// Otherwise things go up and down unexpectedly
-	ofRectangle baselineSize = font->getStringBoundingBox("M", 0, 0);
+	ofRectangle baselineSize = Helpers::getFontStash().getTextBounds("M", fontStyle, 0, 0);
 	boundingBox.height = baselineSize.height;
 	boundingBox.y = baselineSize.y;
 }

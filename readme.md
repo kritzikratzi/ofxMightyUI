@@ -3,38 +3,44 @@ ofxMightyUI
 
 Instructions are not exactly up to date. 
 
-Active working ongoing in the `fs2` branch
+~~Active working ongoing in the `fs2` branch~~ ofxFontStash2 is stable enough. Development is back on master! 
+
+
 
 
 ---
 
 TODO: 
 
-- ☑︎ use dependencies instead of including everything (ofxUnicode, ofxEasyRetina, ofxFontStash)
-- ☑︎ switch from poco events to ofEvent (same behind the scenes, but nicer to use)
-- ☑︎ moving files around to follow ofx addon standard. already sortof works with project generator. hurray! 
-- ☐ hm... seems the project generator doesn't set up copying of data files? <br>Yep, that's the case! 
-- ☐ test with new pg (project generator)
-- ☐ test android (+retina)
-- ☐ test ios (+retina)
-- ☑︎ test windows (is there retina?)
-- ☐ finish textfield overlays --> or make simple textfield? --> look into stb_textedit https://github.com/nothings/stb/blob/master/stb_textedit.h
-- ☐ stupid mobile rotation issues
-- ☑︎ see if i can depend on the "proper" ofxFontStash<br>Don't care for now. Waiting for fontstash2 to look
-- ☑︎ cleanup include structure. how does it even compile? 
+- ☀️ use dependencies instead of including everything (ofxUnicode, ofxEasyRetina, ofxFontStash)
+- ☀️ switch from poco events to ofEvent (same behind the scenes, but nicer to use)
+- ☀️ moving files around to follow ofx addon standard. already sortof works with project generator. hurray! 
+- ⛅️ hm... seems the project generator doesn't set up copying of data files? <br>Yep, that's the case! 
+- ☀️ test with new pg (project generator)
+- ⛅️ test android (+retina)
+- ⛅️ test ios (+retina)
+- ⛅️ test windows (hidpi partially supported. needs testing when moving between monitors, needs testing on win10)
+- 🔴 ~~finish textfield overlays~~ --> or make simple textfield?
+- ⛅️ look into stb_textedit https://github.com/nothings/stb/blob/master/stb_textedit.h
+- ☁️ stupid mobile rotation issues
+- ☀️ see if i can depend on the "proper" ofxFontStash<br>Don't care for now. Waiting for fontstash2 to look
+- ☀️ cleanup include structure. how does it even compile? 
+- ☁️ prefix all filenames with `Mui` to avoid include conflicts
+- ☁️ create a ofxMightyUI.h that can be included (including MUI.h feels odd in OF)
 - ☑︎ make a basic example
-- ☐ window size is very confused until the window is resized once (esp one windows)
-- ☑︎ possible speed gain when combining textureatlas of fontstash and mui ui elements? (no switching textures -> drawArrays becomes non blocking?) --> better to collect draw commands as long as possible. 
-- clean up layouting mess --> getting there
+- ⛅️ window size is very confused until the window is resized once (esp one windows) -> seems fine now! 
+- ☀️ possible speed gain when combining textureatlas of fontstash and mui ui elements? (no switching textures -> drawArrays becomes non blocking?) --> better to collect draw commands as long as possible. 
+- ⛅️ clean up layouting mess --> getting there. maybe include the new `L.h` i've been using in my own projects
+- ☁️ include dropdown, instanced listview, and some other classes i have lying around here and there
 
 TODO OSX: 
 
-- ☑︎ what is needed for the user to enable retina? [should be supported] -> add the high resolution capable option to the plist
+- ☀️ what is needed for the user to enable retina? [should be supported] -> add the high resolution capable option to the plist
 - **Copy Resources**: ```cp -R ../../../addons/ofxMightyUI/bin/data/* "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"``` can this be done with projectgen?  --> not at the moment. not gonna mess around to get this to work. 
 
 TODO WINDOWS: 
 
-- ☐ what is need to detect retina? (using scaleFactor already works very nicely)
+- ⛅️ what is need to detect retina? (using scaleFactor already works very nicely)
 - **Copy Resources**: Go to Project settings, choose "all configurations". Then go to Build Events>Post-Build Events add this to the _command line_: <br>
   		```xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxMightyUI\bin\data\mui" "$(ProjectDir)bin\data\mui"```
 
@@ -160,7 +166,7 @@ There's a longer example in the `src/` folder.
 		
 		// create button and register add listener
 		button = new mui::Button( "Button", 20, 200, 70, 30 ); 
-		ofAddListener( button->onPress += this, &testApp::onButtonPress );
+		ofAddListener( button->onPress, this, &testApp::onButtonPress );
 		root->add( button ); 
 	}
 	
@@ -168,6 +174,25 @@ There's a longer example in the `src/` folder.
 	void testApp::onButtonPress( const void* sender, ofTouchEventArgs &args ){
 		cout << "the button was pressed!" << endl; 
 	}
+
+Components
+----------
+
+
+|Component|Description|
+|---------|---|
+|Container|Basis for everything. Has (optional) opaque background and takes care of handling touch and key events|
+|Root|Takes care of embeding ofxMightyUI into an openFrameworks base class|
+|Label|A text label with vertical and horizontal alignment and text color|
+|Button|A clickable button with an onPress eventlistener. Contains a label|
+|ToggleButton|Same as button, but has two states (selected=true/false)|
+|InternalWindow||
+|ScrollPane|Takes care of clipping and efficiently display lots of items. Supports scroll wheel and touch scroll, optional paging and autoscroll (for logs). |
+|SegmentedSelected|A set of buttons to choose between various options (e.g. color=red/green/blue). Uses templates to attach data to the options|
+|Slider|A simple horizontal slider|
+|SliderWithLabel|A slider, with a label that displays the current value.|
+|TextField|Deprecated. Native textfield overlay. Will be gone soon.|
+|TextArea|In progress, unusable. TextField replacement|
 
 Licensing 
 ---------

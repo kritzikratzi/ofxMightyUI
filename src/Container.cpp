@@ -62,6 +62,29 @@ ofRectangle mui::Container::getBounds(){
 	return ofRectangle(x, y, width, height);
 }
 
+ofRectangle mui::Container::getChildBounds(){
+	// figure out min/max values...
+	std::vector<Container*>::iterator it = children.begin();
+	float minX, minY, maxX, maxY;
+	
+	minX = 0;
+	minY = 0;
+	maxX = 0;
+	maxY = 0;
+	
+	while( it != children.end() ) {
+		if( (*it)->visible ){
+			minX = fminf( (*it)->x, minX );
+			minY = fminf( (*it)->y, minX );
+			maxX = fmaxf( (*it)->x + (*it)->width, maxX );
+			maxY = fmaxf( (*it)->y + (*it)->height, maxY );
+		}
+		++it;
+	}
+	
+	return ofRectangle( minX, minY, maxX - minX, maxY - minY );
+}
+
 void mui::Container::setBounds( float x, float y, float w, float h ){
 	this->x = x;
 	this->y = y;
@@ -122,6 +145,7 @@ void mui::Container::handleDraw(){
 		ofNoFill();
 		ofSetColor( 255, 0, 0 );
 		ofDrawRectangle( 0, 0, width, height );
+		ofFill(); 
 	}
 	
 	std::vector<Container*>::iterator it = children.begin();
@@ -184,8 +208,8 @@ mui::Container * mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
 				touchDown( touch );
 			}
 			
-			if( MUI_ROOT->respondingContainer[touch.id] != NULL ){
-				return MUI_ROOT->respondingContainer[touch.id];
+			if( MUI_ROOT->touchResponder[touch.id] != NULL ){
+				return MUI_ROOT->touchResponder[touch.id];
 			}
 			else{
 				return this;
@@ -339,7 +363,7 @@ void mui::Container::handleReloadTextures(){
 //--------------------------------------------------------------
 bool mui::Container::hasFocus(){
 	for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
-		if( Root::INSTANCE->respondingContainer[i] == this )
+		if( Root::INSTANCE->touchResponder[i] == this )
 			return true;
 	}
 	
@@ -348,11 +372,19 @@ bool mui::Container::hasFocus(){
 
 //--------------------------------------------------------------
 bool mui::Container::hasFocus( ofTouchEventArgs &touch ){
-    return Root::INSTANCE->respondingContainer[touch.id] == this;
+    return Root::INSTANCE->touchResponder[touch.id] == this;
 }
 
 bool mui::Container::requestFocus( ofTouchEventArgs &args ){
-	return Root::INSTANCE->becomeResponder(this, args);
+	return Root::INSTANCE->becomeTouchResponder(this, args);
+}
+
+bool mui::Container::hasKeyboardFocus(){
+	return Root::INSTANCE->keyboardResponder == this;
+}
+
+bool mui::Container::requestKeyboardFocus(){
+	return Root::INSTANCE->becomeKeyboardResponder(this);
 }
 
 //--------------------------------------------------------------
@@ -378,6 +410,28 @@ mui::Container * mui::Container::byName( string name ){
 	}
 	
 	return NULL;
+}
+
+void mui::Container::toFront(){
+	if( parent != NULL ){
+		auto it = std::find(parent->children.begin(), parent->children.end(), this);
+		if( it != parent->children.end() ){
+			//TODO: (maybe) use std::rotate
+			parent->children.erase(it);
+			parent->add(this, -1);
+		}
+	}
+}
+
+void mui::Container::toBack(){
+	if( parent != NULL ){
+		auto it = std::find(parent->children.begin(), parent->children.end(), this);
+		if( it != parent->children.end() ){
+			//TODO: (maybe) use std::rotate
+			parent->children.erase(it);
+			parent->add(this, 0);
+		}
+	}
 }
 
 mui::Container * mui::Container::findChildAt( float posX, float posY, bool onlyVisible ){

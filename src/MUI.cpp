@@ -16,6 +16,9 @@
 	#include <CoreFoundation/CoreFoundation.h>
 #elif TARGET_OS_MAC
 	#include "ofAppGLFWWindow.h"
+#elif _WIN32
+	#include <windows.h>
+	#include "ofAppGLFWWindow.h"
 #endif
 
 void mui_init(){
@@ -80,10 +83,25 @@ void mui_init(){
 				mui::MuiConfig::scaleFactor = window->getPixelScreenCoordScale();
 			}
 		}
+	#elif _WIN32
+		if (mui::MuiConfig::detectRetina) {
+			SetProcessDPIAware(); //true
+			HDC screen = GetDC(NULL);
+			double hPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSX);
+			double vPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSY);
+			ReleaseDC(NULL, screen);
+			float dpi = (hPixelsPerInch + vPixelsPerInch) * 0.5/96.0;
+			mui::MuiConfig::scaleFactor = dpi;
+			cout << "scale factor = " << dpi << endl;
+		}
+		appPath = Poco::Path(ofToDataPath("./", true));
 	#else
 		appPath = Poco::Path(ofToDataPath("./", true));
 	#endif
 	
 	mui::MuiConfig::dataPath = appPath.absolute();
+	mui::Helpers::getFontStash().setup(1024);
+	mui::Helpers::getFontStash().pixelDensity = mui::MuiConfig::scaleFactor;
+	mui::Helpers::getFontStash().fontScale = 1.3;
 }
 

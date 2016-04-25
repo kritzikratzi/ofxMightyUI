@@ -48,6 +48,7 @@ void mui::ScrollPaneView::handleDraw(){
 		ofNoFill();
 		ofSetColor( 255, 0, 0 );
 		ofDrawRectangle( 0, 0, width, height );
+		ofFill(); 
 	}
 	
 	std::vector<Container*>::iterator it = children.begin();
@@ -483,7 +484,7 @@ mui::Container * mui::ScrollPane::handleTouchMoved( ofTouchEventArgs &touch ){
 		){
 			cout << "steal focus for touch #" << touch.id << endl;
 			// steal focus!
-			if( Root::INSTANCE->becomeResponder( this, touch ) ){ 
+			if( Root::INSTANCE->becomeTouchResponder( this, touch ) ){
 				touchDown( touch ); // fake a touchdown
 				watchingTouch[touch.id] = false;
 				focusTransferable = false;

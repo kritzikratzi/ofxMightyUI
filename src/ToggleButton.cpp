@@ -22,18 +22,13 @@
 #include "ToggleButton.h"
 #include "Label.h"
 
-mui::ToggleButton::ToggleButton( std::string title_, float x_, float y_, float width_, float height_ )
-: Container( x_, y_, width_, height_ ), pressed(false), selected(false){
-	init( title_ );
-};
-
-//--------------------------------------------------------------
-void mui::ToggleButton::init( std::string title ){
+mui::ToggleButton::ToggleButton( std::string title, float x, float y, float width, float height )
+: Container( x, y, width, height ), pressed(false), selected(false), checkbox(false){
 	label = new Label( title, 0, 0, width, height );
 	label->horizontalAlign = Center;
 	label->verticalAlign = Middle;
-	label->fg.r = label->fg.g = label->fg.b = 255;
-	label->fontSize = 12;
+	label->fg = ofColor(255);
+	label->fontSize = mui::MuiConfig::fontSize;
 	label->commit();
 	add( label );
 	opaque = true;
@@ -48,6 +43,7 @@ void mui::ToggleButton::init( std::string title ){
 
 //--------------------------------------------------------------
 void mui::ToggleButton::update(){
+	label->x = checkbox?(4+label->boundingBox.height*1.2):0;
 	label->width = width;
 	label->height = height;
 	label->fg = selected?selectedFg:fg;
@@ -56,6 +52,19 @@ void mui::ToggleButton::update(){
 
 //--------------------------------------------------------------
 void mui::ToggleButton::draw(){
+	if( checkbox ){
+		ofSetColor(fg);
+		float h = label->boundingBox.height;
+		if( selected ){
+			ofDrawRectangle(2+h*0.1,(height-h)/2,h,h);
+		}
+		else{
+			ofNoFill();
+			ofDrawRectangle(2+h*0.1,(height-h)/2,h,h);
+			ofFill();
+		}
+		ofSetColor(255);
+	}
 }
 
 
@@ -69,8 +78,20 @@ void mui::ToggleButton::drawBackground(){
 	}
 }
 
+void mui::ToggleButton::fitWidthToLabel( int paddingLR ){
+	fitWidthToLabel(paddingLR, paddingLR );
+}
+
+void mui::ToggleButton::fitWidthToLabel( int paddingL, int paddingR ){
+	label->ellipsisMode = false; 
+	label->commit();
+	ofRectangle bounds = label->box(0, paddingR, 0, paddingL );
+	width = bounds.width + (checkbox?(4+bounds.height*1.2):0);
+}
+
 //--------------------------------------------------------------
 void mui::ToggleButton::layout(){
+	label->x = checkbox?(4+label->boundingBox.height*1.2):0;
 	label->width = width;
 	label->height = height;
 	label->fg = selected?selectedFg:fg;

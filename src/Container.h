@@ -54,6 +54,7 @@ namespace mui{
 		
 		ofRectangle getGlobalBounds();
 		ofRectangle getBounds();
+		ofRectangle getChildBounds(); 
 		void setBounds( float x, float y, float width, float height );
         
 		virtual void update(){};
@@ -75,6 +76,9 @@ namespace mui{
 		virtual void touchCanceled( ofTouchEventArgs &touch ){}; // when some other component "stole" the responder status.
 		virtual void mouseScroll( ofMouseEventArgs &args){};
 		
+		virtual void keyPressed( ofKeyEventArgs &touch){};
+		virtual void keyReleased( ofKeyEventArgs &touch){};
+		
 		virtual Container * handleTouchDown( ofTouchEventArgs &touch );
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
 		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
@@ -87,9 +91,18 @@ namespace mui{
 		virtual bool hasFocus();
 		virtual bool hasFocus( ofTouchEventArgs &touch );
 		virtual bool requestFocus( ofTouchEventArgs &args );
+
+		virtual bool hasKeyboardFocus();
+		virtual bool requestKeyboardFocus();
+		
 		virtual ofPoint getGlobalPosition();
 		
-		mui::Container * byName( string name ); 
+		// make this the front most child in the parent container
+		virtual void toFront();
+		// make this the last child in the parent container
+		virtual void toBack();
+		
+		mui::Container * byName( string name );
 		
 		// recursively find children of a certain type at a position
 		// implemented directly in the header because templates ... have some issues
