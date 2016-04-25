@@ -69,7 +69,15 @@ void mui::Root::init(){
 }
 
 void mui::Root::handleUpdate(){
-	if( ofGetFrameNum() == 0 ){
+	int _width = ofGetWidth()/mui::MuiConfig::scaleFactor;
+	int _height = ofGetHeight()/mui::MuiConfig::scaleFactor;
+
+	if( width != _width || height != _height ){
+		width = _width;
+		height = _height;
+		handleLayout();
+	}
+	else if( ofGetFrameNum() == 0 ){
 		handleLayout();
 	}
 	

@@ -27,7 +27,8 @@ void layout_func(StbTexteditRow *row, mui::TextArea::EditorData *data, int start
 	mui::Helpers::getFontStash().getTextBounds(data->text, data->fontStyle, boundingBox.x, boundingBox.y);
 
 	int remaining_chars = data->text.size() - start_i;
-	row->num_chars = remaining_chars > 20 ? 20 : remaining_chars; // should do real word wrap here
+	//row->num_chars = remaining_chars > 20 ? 20 : remaining_chars; // should do real word wrap here
+	row->num_chars = remaining_chars;
 	row->x0 = size.x;
 	row->x1 = size.x+size.width; // need to account for actual size of characters
 	row->baseline_y_delta = size.height;
@@ -37,7 +38,13 @@ void layout_func(StbTexteditRow *row, mui::TextArea::EditorData *data, int start
 
 float layout_width(mui::TextArea::EditorData * data, int n, int i ){
 	ofRectangle size = mui::Helpers::getFontStash().getTextBounds(data->text.substr(n+i,1), data->fontStyle, 0, 0);
-	return size.width;
+	if( i == 0 ){
+		return size.x + size.width;
+	}
+	else{
+		ofRectangle size2 = mui::Helpers::getFontStash().getTextBounds(data->text.substr(n+i-1,2), data->fontStyle, 0, 0);
+		return size2.width+size2.x - size.width - size.x;
+	}
 }
 
 int delete_chars(mui::TextArea::EditorData *str, int pos, int num)
@@ -117,7 +124,7 @@ void mui::TextArea::update(){
 	
 	if( data.changed ){
 		data.changed = false;
-		text = data.text; 
+		text = data.text;
 		commit();
 	}
 }
@@ -126,19 +133,34 @@ void mui::TextArea::update(){
 //--------------------------------------------------------------
 void mui::TextArea::draw(){
 	ofRectangle size = Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign );
+	
+	if( state->select_start != state->select_end ){
+		int left = min(state->select_start,state->select_end);
+		int right = max(state->select_start,state->select_end);
+		
+		ofRectangle bounds1 = mui::Helpers::getFontStash().getTextBounds(data.text.substr(0,left), data.fontStyle, size.x-boundingBox.x, size.y-boundingBox.y);
+		ofRectangle bounds2 = mui::Helpers::getFontStash().getTextBounds(data.text.substr(0,right), data.fontStyle, size.x-boundingBox.x, size.y-boundingBox.y);
+		
+		ofSetColor(fg*0.5 + bg*0.5);
+		ofDrawRectangle(bounds1.x+bounds1.width, bounds2.y, bounds2.width-bounds1.width, bounds2.height);
+	}
+	
 	mui::Helpers::getFontStash().drawColumn(data.text, data.fontStyle, size.x-boundingBox.x, size.y-boundingBox.y, width);
 	ofSetColor( 255 );
-	if( hasKeyboardFocus() ){
+	if( hasKeyboardFocus()){
 		ofNoFill();
 		ofDrawRectangle(0,0,width,height);
 		ofFill();
 		
-		int cursorPos = state->cursor;
-		// this is SLOW!
-		// maybe at least remember it?
-		ofRectangle bounds = mui::Helpers::getFontStash().getTextBounds(data.text.substr(0,cursorPos), data.fontStyle, size.x-boundingBox.x, size.y-boundingBox.y);
-		ofSetColor(255,150);
-		ofDrawRectangle(bounds.x+bounds.width, bounds.y+bounds.height-10, 2, 10);
+		uint64_t time = ofGetElapsedTimeMillis();
+		if( ((time-lastInteraction)%1000) < 500 ){
+			int cursorPos = state->cursor;
+			// this is SLOW!
+			// maybe at least remember it?
+			ofRectangle bounds = mui::Helpers::getFontStash().getTextBounds(data.text.substr(0,cursorPos), data.fontStyle, size.x-boundingBox.x, size.y-boundingBox.y);
+			ofSetColor(255,150);
+			ofDrawRectangle(bounds.x+bounds.width, bounds.y+bounds.height-10, 2, 10);
+		}
 	}
 }
 
@@ -222,10 +244,16 @@ void mui::TextArea::commit(){
 }
 
 void mui::TextArea::touchDown(ofTouchEventArgs &touch){
+	lastInteraction = ofGetElapsedTimeMillis();
 	stb_textedit_click(&data, state, touch.x, touch.y);
 }
 
+void mui::TextArea::touchMoved(ofTouchEventArgs &touch){
+	stb_textedit_drag(&data, state, touch.x, touch.y);
+}
+
 void mui::TextArea::keyPressed( ofKeyEventArgs &key ){
+	lastInteraction = ofGetElapsedTimeMillis();
 	// this is some extra work,
 	// but it gives us a lot of control
 	// (the alternative would be to use OF_* constants in the defines directly)

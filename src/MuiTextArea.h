@@ -37,7 +37,9 @@ namespace mui{
 		virtual void drawBackground();
 		virtual void layout();
 		
-		virtual void touchDown( ofTouchEventArgs &touch ); 
+		virtual void touchDown( ofTouchEventArgs &touch );
+		virtual void touchMoved( ofTouchEventArgs &touch );
+		
 		virtual void keyPressed( ofKeyEventArgs &key );
 		virtual void keyReleased( ofKeyEventArgs &key );
 		
@@ -72,6 +74,7 @@ namespace mui{
 		
 		EditorData data;
 		EditorState *state;
+		uint64_t lastInteraction;
 	};
 };
 
