@@ -20,15 +20,24 @@
 // https://github.com/nothings/stb/blob/master/tests/textedit_sample.c
 
 // define the functions we need
-void layout_func(StbTexteditRow *row, mui::TextArea::EditorData *str, int start_i)
+void layout_func(StbTexteditRow *row, mui::TextArea::EditorData *data, int start_i)
 {
-	int remaining_chars = str->text.size() - start_i;
+	const ofRectangle &boundingBox = data->textarea->boundingBox;
+	ofRectangle size = mui::Helpers::alignBox( data->textarea, boundingBox.width, boundingBox.height, data->textarea->horizontalAlign, data->textarea->verticalAlign );
+	mui::Helpers::getFontStash().getTextBounds(data->text, data->fontStyle, boundingBox.x, boundingBox.y);
+
+	int remaining_chars = data->text.size() - start_i;
 	row->num_chars = remaining_chars > 20 ? 20 : remaining_chars; // should do real word wrap here
-	row->x0 = 0;
-	row->x1 = 20; // need to account for actual size of characters
-	row->baseline_y_delta = 1.25;
-	row->ymin = -1;
-	row->ymax =  0;
+	row->x0 = size.x;
+	row->x1 = size.x+size.width; // need to account for actual size of characters
+	row->baseline_y_delta = size.height;
+	row->ymin = size.y;
+	row->ymax =  size.y+size.height;
+}
+
+float layout_width(mui::TextArea::EditorData * data, int n, int i ){
+	ofRectangle size = mui::Helpers::getFontStash().getTextBounds(data->text.substr(n+i,1), data->fontStyle, 0, 0);
+	return size.width;
 }
 
 int delete_chars(mui::TextArea::EditorData *str, int pos, int num)
@@ -48,8 +57,8 @@ int insert_chars(mui::TextArea::EditorData *str, int pos, const STB_TEXTEDIT_CHA
 #define STB_TEXTEDIT_POSITIONTYPE int
 //TODO: utf8 support
 #define STB_TEXTEDIT_STRINGLEN(obj) (obj->text.size())
-#define STB_TEXTEDIT_LAYOUTROW(r,obj,n) layout_func
-#define STB_TEXTEDIT_GETWIDTH(obj,n,i) (1)
+#define STB_TEXTEDIT_LAYOUTROW(r,obj,n) layout_func(r,obj,n)
+#define STB_TEXTEDIT_GETWIDTH(obj,n,i) layout_width(obj,n,i)
 #define STB_TEXTEDIT_KEYTOTEXT(key)    (((key) & KEYDOWN_BIT) ? 0 : (key))
 #define STB_TEXTEDIT_GETCHAR(tc,i)     ((tc)->text[i])
 #define STB_TEXTEDIT_NEWLINE           '\n'
@@ -89,10 +98,9 @@ class mui::TextArea::EditorState : public STB_TexteditState{
 
 mui::TextArea::TextArea( std::string text_, float x_, float y_, float width_, float height_ ) :
 	Container( x_, y_, width_, height_ ),
-	ellipsisMode(true), text( text_), fontSize(-1), horizontalAlign(Left), verticalAlign(Middle),fontName(""){
+	ellipsisMode(true), text( text_), fontSize(-1), horizontalAlign(Left), verticalAlign(Middle),fontName(""),data(this){
 		state = new EditorState();
 		stb_textedit_initialize_state(state,0);
-		ignoreEvents = true;
 		if( fontSize < 0 ) fontSize = mui::MuiConfig::fontSize;
 		commit();
 };
@@ -106,6 +114,12 @@ void mui::TextArea::update(){
 	data.fontStyle.fontSize = fontSize;
 	data.fontStyle.color = fg;
 	data.fontStyle.fontID = fontName;
+	
+	if( data.changed ){
+		data.changed = false;
+		text = data.text; 
+		commit();
+	}
 }
 
 
@@ -205,6 +219,10 @@ void mui::TextArea::commit(){
 	ofRectangle baselineSize = Helpers::getFontStash().getTextBounds("M", data.fontStyle, 0, 0);
 	boundingBox.height = baselineSize.height;
 	boundingBox.y = baselineSize.y;
+}
+
+void mui::TextArea::touchDown(ofTouchEventArgs &touch){
+	stb_textedit_click(&data, state, touch.x, touch.y);
 }
 
 void mui::TextArea::keyPressed( ofKeyEventArgs &key ){

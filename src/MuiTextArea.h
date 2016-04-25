@@ -37,6 +37,7 @@ namespace mui{
 		virtual void drawBackground();
 		virtual void layout();
 		
+		virtual void touchDown( ofTouchEventArgs &touch ); 
 		virtual void keyPressed( ofKeyEventArgs &key );
 		virtual void keyReleased( ofKeyEventArgs &key );
 		
@@ -60,8 +61,9 @@ namespace mui{
 			string text;
 			ofxFontStashStyle fontStyle;
 			bool changed;
+			TextArea * textarea;
 			
-			EditorData() : changed(false){}
+			EditorData(TextArea * textarea) : changed(false),textarea(textarea){}
 		};
 		
 		class EditorState;
