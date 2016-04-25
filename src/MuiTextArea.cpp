@@ -158,7 +158,6 @@ void mui::TextArea::draw(){
 			// this is SLOW!
 			// maybe at least remember it?
 			ofRectangle bounds = mui::Helpers::getFontStash().getTextBounds(data.text.substr(0,cursorPos), data.fontStyle, size.x-boundingBox.x, size.y-boundingBox.y);
-			ofSetColor(255,150);
 			ofDrawRectangle(bounds.x+bounds.width, bounds.y+bounds.height-10, 2, 10);
 		}
 	}
