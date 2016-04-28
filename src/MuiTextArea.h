@@ -25,7 +25,6 @@ namespace mui{
 		std::string text;
 		int fontSize;
 		string fontName; // subject to change!
-		bool ellipsisMode;
 		
 		// the currently computed text boundaries
 		// the height and y offset are currently always the size of a capital 'M'
@@ -50,6 +49,9 @@ namespace mui{
 		// changes the height of the TextArea to accomodate all contents
 		virtual void sizeToFitHeight( float padY = 0 );
 		
+		// changes text + commit
+		void setText( string text ); 
+		
 		// call this after you made changes to any variables (changing x/y is okay without doing a commit() ).
 		// doing text-maths too insane to do on every frame!
 		virtual void commit();
@@ -59,22 +61,38 @@ namespace mui{
 		virtual ofRectangle box( float t, float lr, float b ){ return box( t, lr, b, lr ); }
 		virtual ofRectangle box( float t, float r, float b, float l );
 
+		struct EditorCursor{
+			vector<StyledLine>::iterator lineIt;
+			vector<LineElement>::iterator elementIt;
+			ofRectangle rect;
+			
+			bool operator==(const EditorCursor& other) {
+				return lineIt == other.lineIt && elementIt == other.elementIt;
+			}
+			bool operator!=(const EditorCursor& other) {
+				return !(*this == other);
+			}
+		};
+		
 		struct EditorData{
 			string text;
 			ofxFontStashStyle fontStyle;
+			vector<StyledLine> lines;
+			int strlenWithLineStarts;
 			bool changed;
 			TextArea * textarea;
 			
 			EditorData(TextArea * textarea) : changed(false),textarea(textarea){}
 		};
 		
-		class EditorState;
-		
 	private:
 		
+		
+		class EditorState;
 		EditorData data;
 		EditorState *state;
 		uint64_t lastInteraction;
+		EditorCursor getEditorCursorForIndex( int pos );
 	};
 };
 
