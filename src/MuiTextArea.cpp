@@ -59,7 +59,7 @@ static void layout_func(StbTexteditRow *row, mui::TextArea::EditorData *data, in
 	row->num_chars = 0;
 	row->x0 = size.x;
 	row->x1 = size.x+size.width;
-	row->baseline_y_delta = 10;
+	row->baseline_y_delta = 0;
 	row->ymin = y;
 	row->ymax = y + 10;
 	
@@ -224,7 +224,7 @@ void mui::TextArea::draw(){
 			float x = reset?(size.x-boundingBox.x + line.elements.front().x):from.rect.x;
 			float y = reset?yy:from.rect.y;
 			
-			ofDrawRectangle(x, y, to.rect.x - x, line.lineH );
+			ofDrawRectangle(x, y, to.rect.x + to.rect.width - x, line.lineH );
 			++from.lineIt;
 		}
 	}
@@ -305,6 +305,7 @@ void mui::TextArea::commit(){
 }
 
 void mui::TextArea::touchDown(ofTouchEventArgs &touch){
+	requestKeyboardFocus();
 	lastInteraction = ofGetElapsedTimeMillis();
 	stb_textedit_click(&data, state, touch.x, touch.y);
 }
