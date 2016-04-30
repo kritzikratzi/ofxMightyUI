@@ -9,6 +9,7 @@
  */
 
 #include "MuiTextArea.h"
+#include "Root.h"
 
 #define STB_TEXTEDIT_STRING mui::TextArea::EditorData
 #define STB_TEXTEDIT_CHARTYPE char
@@ -326,26 +327,28 @@ void mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 	// but it gives us a lot of control
 	// (the alternative would be to use OF_* constants in the defines directly)
 //	int shiftFlag = MUI_ROOT->getKeyPressed(OF_KEY_SHIFT);
-	cout << "key=" << key.key << endl;
+/*	cout << "key=" << key.key << endl;
 	cout << "keycode=" << key.keycode << endl;
 	cout << "codepoint=" << key.codepoint << endl;
-	cout << "scancode=" << key.scancode << endl;
-
+	cout << "scancode=" << key.scancode << endl;*/
+	
+	int keyMask = MUI_ROOT->getKeyPressed(OF_KEY_SHIFT)?STB_TEXTEDIT_K_SHIFT:0;
+	
 	switch(key.key){
 		case OF_KEY_LEFT:
-			stb_textedit_key(&data, state, STB_TEXTEDIT_K_LEFT );
+			stb_textedit_key(&data, state, STB_TEXTEDIT_K_LEFT|keyMask );
 			break;
 		case OF_KEY_RIGHT:
-			stb_textedit_key(&data, state, STB_TEXTEDIT_K_RIGHT );
+			stb_textedit_key(&data, state, STB_TEXTEDIT_K_RIGHT|keyMask );
 			break;
 		case OF_KEY_BACKSPACE:
-			stb_textedit_key(&data, state, STB_TEXTEDIT_K_BACKSPACE );
+			stb_textedit_key(&data, state, STB_TEXTEDIT_K_BACKSPACE|keyMask );
 			break;
 		case OF_KEY_DEL:
-			stb_textedit_key(&data, state, STB_TEXTEDIT_K_DELETE );
+			stb_textedit_key(&data, state, STB_TEXTEDIT_K_DELETE|keyMask );
 			break;
 		case OF_KEY_RETURN:
-			stb_textedit_key(&data, state, STB_TEXTEDIT_NEWLINE);
+			stb_textedit_key(&data, state, STB_TEXTEDIT_NEWLINE|keyMask);
 			break; 
 		default:
 			//todo: copied this from built-in utf8::append

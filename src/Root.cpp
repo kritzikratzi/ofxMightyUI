@@ -355,11 +355,15 @@ void mui::Root::handleRemovals(){
 
 //--------------------------------------------------------------
 mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
+	// this is a bit awkward, there seems to be a bug in
+	// glfw that re-sends modifier key when they are released.
+	// for now, i'm not fixing this. i really shouldn't be, not here. 
 	activeKeys.insert(event.key);
 	if( keyboardResponder != NULL ){
 		keyboardResponder->keyPressed(event);
 	}
-	return NULL;
+	
+	return keyboardResponder;
 }
 
 //--------------------------------------------------------------
@@ -371,7 +375,8 @@ mui::Container * mui::Root::handleKeyReleased( ofKeyEventArgs &event ){
 	if( keyboardResponder != NULL ){
 		keyboardResponder->keyReleased(event);
 	}
-	return NULL;
+	
+	return keyboardResponder;
 }
 
 //--------------------------------------------------------------
