@@ -13,6 +13,7 @@
 #include "Label.h"
 #include "SliderWithLabel.h"
 #include "ToggleButton.h"
+#include "MuiTextArea.h"
 
 namespace mui{
 	
@@ -105,6 +106,7 @@ namespace mui{
 		
 		Row<SliderWithLabel,float> * addSlider( string label, float min, float max, float value );
 		Row<ToggleButton,bool> * addToggle( string label, bool selected );
+		Row<TextArea,string> * addText( string label, string text );
 		
 		
 		float getFloat( string component );

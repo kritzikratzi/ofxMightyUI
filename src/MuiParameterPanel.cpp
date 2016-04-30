@@ -147,3 +147,16 @@ mui::ParameterPanel::Row<mui::ToggleButton,bool> * mui::ParameterPanel::addToggl
 	rows.insert(pair<string,data::Attribute>(title,row));
 	return row;
 }
+
+mui::ParameterPanel::Row<mui::TextArea,string> * mui::ParameterPanel::addText( string title, string text ){
+	TextArea * textArea = new TextArea(text);
+	textArea->fg = ofColor(255);
+	textArea->selectAllOnFocus = true;
+	textArea->commit(); 
+	
+	auto row = new ParameterPanel::Row<TextArea,string>(this, title,NULL,textArea,textArea->text);
+	
+	getCurrentSection()->addRow(row);
+	rows.insert(pair<string,data::Attribute>(title,row));
+	return row;
+}

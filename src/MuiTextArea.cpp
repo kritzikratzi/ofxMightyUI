@@ -183,7 +183,7 @@ void mui::TextArea::update(){
 void mui::TextArea::draw(){
 	ofRectangle size = Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign );
 	
-	if( state->select_start != state->select_end ){
+	if( hasKeyboardFocus() && state->select_start != state->select_end ){
 		int left = min(state->select_start,state->select_end);
 		int right = max(state->select_start,state->select_end);
 		
@@ -292,11 +292,24 @@ ofRectangle mui::TextArea::box( float t, float r, float b, float l ){
 
 //--------------------------------------------------------------
 void mui::TextArea::commit(){
-	update();
 	mui::Helpers::loadFont(fontName);
 	boundingBox = Helpers::getFontStash().getTextBounds(text, data.fontStyle, 0, 0);
 
-    data.text = text;
+	data.fontStyle.fontSize = fontSize;
+	data.fontStyle.color = fg;
+	data.fontStyle.fontID = fontName;
+	data.changed = false;
+	data.text = text;
+	
+	vector<StyledText> blocks{ {data.text,data.fontStyle} };
+	data.lines = Helpers::getFontStash().layoutLines(blocks, width);
+	data.strlenWithLineStarts = 0;
+	bool first = false;
+	for( StyledLine line : data.lines ){
+		data.strlenWithLineStarts += count_chars(line);
+		if( first ) first = false;
+		else data.strlenWithLineStarts ++;
+	}
 
 	// Orient y on a simple uppercase character
 	// Otherwise things go up and down unexpectedly
@@ -441,7 +454,7 @@ mui::TextArea::EditorCursor mui::TextArea::getEditorCursorForIndex( int cursorPo
 			result.rect = bounds;
 		}
 		else{
-			
+			result.lineIt = data.lines.end();
 		}
 	}
 	
