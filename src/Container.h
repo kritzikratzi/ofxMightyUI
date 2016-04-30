@@ -1,10 +1,7 @@
-/*
- *  Node.h
- *  iPhoneEmptyExample
+/**
+ * ofxMightyUI
  *
- *  Created by hansi on 28.01.11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
- *
+ * Hansi Raber, 2010-2016
  */
 
 #ifndef MUI_NODE

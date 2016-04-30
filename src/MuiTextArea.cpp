@@ -143,7 +143,7 @@ class mui::TextArea::EditorState : public STB_TexteditState{
 
 mui::TextArea::TextArea( std::string text_, float x_, float y_, float width_, float height_ ) :
 	Container( x_, y_, width_, height_ ),
-	text( text_), fontSize(-1), horizontalAlign(Left), verticalAlign(Middle),fontName(""),data(this),lastInteraction(0){
+	text( text_), fontSize(-1), horizontalAlign(Left), verticalAlign(Middle),fontName(""),data(this),lastInteraction(0),selectAllOnFocus(false){
 		state = new EditorState();
 		stb_textedit_initialize_state(state,0);
 		if( fontSize < 0 ) fontSize = mui::MuiConfig::fontSize;
@@ -305,9 +305,15 @@ void mui::TextArea::commit(){
 }
 
 void mui::TextArea::touchDown(ofTouchEventArgs &touch){
-	requestKeyboardFocus();
 	lastInteraction = ofGetElapsedTimeMillis();
-	stb_textedit_click(&data, state, touch.x, touch.y);
+	if( selectAllOnFocus && !hasKeyboardFocus()){
+		stb_textedit_key(&data, state, STB_TEXTEDIT_K_TEXTSTART);
+		stb_textedit_key(&data, state, STB_TEXTEDIT_K_TEXTEND | STB_TEXTEDIT_K_SHIFT);
+	}
+	else{
+		stb_textedit_click(&data, state, touch.x, touch.y);
+	}
+	requestKeyboardFocus();
 }
 
 void mui::TextArea::touchMoved(ofTouchEventArgs &touch){

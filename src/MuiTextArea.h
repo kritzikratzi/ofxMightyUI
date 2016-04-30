@@ -25,6 +25,7 @@ namespace mui{
 		std::string text;
 		int fontSize;
 		string fontName; // subject to change!
+		bool selectAllOnFocus;
 		
 		// the currently computed text boundaries
 		// the height and y offset are currently always the size of a capital 'M'

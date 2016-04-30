@@ -7,7 +7,7 @@
  *
  */
 
-#include "MUI.h"
+#include "ofxMightyUI.h"
 #include <Poco/Util/Application.h>
 
 

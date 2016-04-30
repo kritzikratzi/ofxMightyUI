@@ -1,10 +1,8 @@
 /*
- *  MUI.h
- *  iPhoneEmptyExample
+ *  ofxMightyUI.h
  *
- *  Created by hansi on 28.01.11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
- *
+ *  by hansi, 2011-2016. https://github.com/kritzikratzi/ofxMightyUI
+ *  MIT License
  */
 
 #pragma once

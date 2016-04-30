@@ -36,7 +36,8 @@ namespace mui{
 		ofColor selectedFg;
 		ofEvent<ofTouchEventArgs> onPress;
 		
-		bool checkbox; 
+		bool checkbox;
+		HorizontalAlign checkboxAlign;
 		
 		virtual void update();
 		virtual void draw();
