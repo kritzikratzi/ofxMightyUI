@@ -127,13 +127,12 @@ namespace mui{
 		
 		template<typename MuiType, typename DataType>
 		void registerGetter( function<DataType(MuiType*)> func ){
-			cout << "adding type " << type_index(typeid(Row<MuiType,DataType>*)).name() << endl;
 			getters.insert(pair<type_index,data::Attribute>(type_index(typeid(Row<MuiType,DataType>*)), func));
 		};
 		
 		template<typename MuiType, typename DataType>
-		void registerSetter( function<void(MuiType*, const DataType & type)> func ){
-			setters.insert(pair<type_index,data::Attribute>(type_index(typeid(Row<SliderWithLabel,float>*)), func));
+		void registerSetter( function<void(MuiType*, DataType & type)> func ){
+			setters.insert(pair<type_index,data::Attribute>(type_index(typeid(Row<MuiType,DataType>*)), func));
 		};
 		
 		template<typename T>
