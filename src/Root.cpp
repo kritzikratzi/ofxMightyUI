@@ -175,6 +175,7 @@ mui::Container * mui::Root::handleTouchMoved( ofTouchEventArgs &touch ){
 		fixTouchPosition( touch, copy, NULL );
         copy = Helpers::translateTouch( copy, this, touchResponder[touch.id] );
         touchResponder[touch.id]->touchMovedOutside( copy );
+		return touchResponder[touch.id];
 	}
 	
 	return touched;

@@ -35,6 +35,7 @@ namespace mui{
 		ofColor selectedBg;
 		ofColor selectedFg;
 		ofEvent<ofTouchEventArgs> onPress;
+		ofEvent<bool> onChange;
 		
 		bool checkbox;
 		HorizontalAlign checkboxAlign;

@@ -14,6 +14,7 @@
 #include "SliderWithLabel.h"
 #include "ToggleButton.h"
 #include "MuiTextArea.h"
+#include <typeindex>
 
 namespace mui{
 	
@@ -82,7 +83,10 @@ namespace mui{
 					if (type() != typeid(T)) throw bad_cast();
 					*(T*)data = it; }}
 		};
-	}
+	};
+	
+	
+	
 	
 	class ParameterPanel : public Container{
 	public:
@@ -109,14 +113,85 @@ namespace mui{
 		Row<TextArea,string> * addText( string label, string text );
 		
 		
-		float getFloat( string component );
+		bool getBool( string rowId );
+		void setBool( string rowId, bool value );
+		int getInt( string rowId );
+		void setInt( string rowId, int value );
+		float getFloat( string rowId );
 		void setFloat( string rowId, float value );
+		string getString( string rowId );
+		void setString( string rowId, string value );
 		
 		void layout();
+		
+		
+		template<typename MuiType, typename DataType>
+		void registerGetter( function<DataType(MuiType*)> func ){
+			cout << "adding type " << type_index(typeid(Row<MuiType,DataType>*)).name() << endl;
+			getters.insert(pair<type_index,data::Attribute>(type_index(typeid(Row<MuiType,DataType>*)), func));
+		};
+		
+		template<typename MuiType, typename DataType>
+		void registerSetter( function<void(MuiType*, const DataType & type)> func ){
+			setters.insert(pair<type_index,data::Attribute>(type_index(typeid(Row<SliderWithLabel,float>*)), func));
+		};
+		
+		template<typename T>
+		T getValue( string rowId ){
+			map<string,mui::data::Attribute>::iterator it = rows.find(rowId);
+			if( it != rows.end() ){
+				mui::data::Attribute &attr = it->second;
+				Row<Container,T> * row = attr.value_unsafe<Row<Container,T>*>();
+				
+				auto getter = getters.find(type_index(attr.type()));
+				if( getter != getters.end() ){
+					auto & func = getter->second.value_unsafe<function<T(Container*)>>();
+					return func(row->control);
+				}
+				else{
+					ofLogError()
+					<< "ofxMightyUI in getValue<T>('" << rowId << "'): no getter for row '" << rowId << "'. You can register a custom one with " << endl
+					<< "parameterPanel.registerGetter<MuiClass,DataType>([](MuiClass * obj){ return obj->myVal; }); ?" << endl;
+				}
+			}
+			else{
+				ofLogError() << "ofxMightyUI in getValue<T>('" << rowId << "'): No row with this name was found. " << endl;
+			}
+			
+			return T();
+		}
+		
+		template<typename T>
+		void setValue( string rowId, const T &value ){
+			map<string,mui::data::Attribute>::iterator it = rows.find(rowId);
+			if( it != rows.end() ){
+				mui::data::Attribute &attr = it->second;
+				Row<Container,T> * row = attr.value_unsafe<Row<Container,T>*>();
+				
+				auto setter = setters.find(type_index(attr.type()));
+				if( setter != setters.end() ){
+					auto & func = setter->second.value_unsafe<function<void(Container*,const T&)>>();
+					func(row->control, value);
+					return;
+				}
+				else{
+					ofLogError()
+					<< "ofxMightyUI in setValue<T>('" << rowId << "'): no getter for row '" << rowId << "'. You can register a custom one with " << endl
+					<< "parameterPanel.registerGetter<TargetClass,float>([](TargetClass * obj){ return obj->myVal; }); ?" << endl;
+				}
+			}
+			else{
+				ofLogError() << "ofxMightyUI in setValue<T>('" << rowId << "'): No row with this name was found. " << endl;
+			}
+			
+			return;
+		}
 		
 	private:
 		Label * titleLabel;
 		map<string,data::Attribute> rows;
+		map<type_index,data::Attribute> getters;
+		map<type_index,data::Attribute> setters;
 		vector<Section*> sections;
 		Section * currentSection;
 		float labelColumnWidth;
@@ -129,10 +204,10 @@ namespace mui{
 			ParameterPanel * panel;
 			Label * titleLabel;
 			ofParameter<DataType> param;
-			MuiType * content;
+			MuiType * control;
 			bool customLabel;
 			
-			Row( ParameterPanel * panel, string title, Label * existingLabel, MuiType * content, DataType & data ) : Container( 0,0, 100, 30), content(content), param(ofParameter<DataType>(title,data)), panel(panel){
+			Row( ParameterPanel * panel, string title, Label * existingLabel, MuiType * control, DataType & data ) : Container( 0,0, 100, 30), control(control), param(ofParameter<DataType>(title,data)), panel(panel){
 				if( existingLabel == NULL ){
 					titleLabel = new Label(title,0,0,100,30);
 					add(titleLabel);
@@ -142,18 +217,18 @@ namespace mui{
 					titleLabel = existingLabel;
 					customLabel = true;
 				}
-				add(content);
+				add(control);
 			}
 			
 			void layout(){
 				if( customLabel ){
-					content->x = 0;
-					content->width = width;
+					control->x = 0;
+					control->width = width;
 				}
 				else{
 					titleLabel->width = panel->labelColumnWidth;
-					content->x = titleLabel->width + 2;
-					content->width = width - titleLabel->width - 2;
+					control->x = titleLabel->width + 2;
+					control->width = width - titleLabel->width - 2;
 				}
 			}
 			
@@ -167,7 +242,7 @@ namespace mui{
 			}
 			
 			void touchDown( ofTouchEventArgs &args ){
-				content->requestFocus(args);
+				control->requestFocus(args);
 			}
 		};
 		

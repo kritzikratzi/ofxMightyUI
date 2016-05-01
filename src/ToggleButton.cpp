@@ -133,6 +133,7 @@ void mui::ToggleButton::touchUp( ofTouchEventArgs &touch ){
 	selected = !selected;
 	pressed = false;
 	ofNotifyEvent(onPress, touch, this );
+	ofNotifyEvent(onChange, selected, this );
 }
 
 
@@ -159,6 +160,7 @@ void mui::ToggleButton::clickAndNotify(){
 	args.y = height/2;
 	selected ^= true;
 	ofNotifyEvent(onPress, args, this);
+	ofNotifyEvent(onChange, selected, this);
 }
 
 void mui::ToggleButton::clickAndNotify(bool state){
@@ -167,5 +169,6 @@ void mui::ToggleButton::clickAndNotify(bool state){
 	args.y = height/2;
 	selected = state;
 	ofNotifyEvent(onPress, args, this);
+	ofNotifyEvent(onChange, selected, this);
 }
 

@@ -10,9 +10,25 @@
 
 using namespace mui;
 
+
+
 mui::ParameterPanel::ParameterPanel( string title ) : mui::Container(0,0,100,100), labelColumnWidth(100), labelFg(255){
 	titleLabel = new mui::Label(title);
 	add(titleLabel);
+//	const pair<type_info,data::Attribute> d(typeid(Row<SliderWithLabel,float>), data::Attribute(3.0));
+	
+	registerGetter<SliderWithLabel,float>([](SliderWithLabel * obj){ return obj->slider->value; } );
+	registerGetter<SliderWithLabel,int>([](SliderWithLabel * obj){ return obj->slider->value; } );
+	registerGetter<TextArea,string>([](TextArea * obj){ return obj->text; } );
+	registerGetter<ToggleButton,bool>([](ToggleButton * obj){ return obj->selected; } );
+	registerGetter<ToggleButton,int>([](ToggleButton * obj){ return obj->selected?1:0; } );
+	
+	registerSetter<SliderWithLabel,float>([](SliderWithLabel * obj,const float & val){ obj->slider->value = val; } );
+	registerSetter<SliderWithLabel,int>([](SliderWithLabel * obj,const int & val){ obj->slider->value = val; } );
+	registerSetter<TextArea,string>([](TextArea * obj,const string & val){ obj->text = val; } );
+	registerSetter<ToggleButton,bool>([](ToggleButton * obj,const float & val){ obj->selected = val; } );
+	registerSetter<ToggleButton,int>([](ToggleButton * obj,const int & val){ obj->selected = val==0; } );
+
 }
 
 
@@ -98,26 +114,38 @@ mui::ParameterPanel::Section * mui::ParameterPanel::getOrCreateSection( string s
 	return addSection(sectionId, title);
 }
 
+bool mui::ParameterPanel::getBool( string rowId ){
+	return getValue<bool>(rowId);
+}
+
+void mui::ParameterPanel::setBool( string rowId, bool value ){
+	return setValue<bool>( rowId, value );
+}
+
+int mui::ParameterPanel::getInt( string rowId ){
+	return getValue<int>(rowId);
+}
+
+void mui::ParameterPanel::setInt( string rowId, int value ){
+	return setValue<int>( rowId, value );
+}
+
 float mui::ParameterPanel::getFloat( string rowId ){
-	map<string,mui::data::Attribute>::iterator it = rows.find(rowId);
-	if( it != rows.end() ){
-		mui::data::Attribute &attr = it->second;
-		if(attr.type() == typeid(Row<SliderWithLabel,float>*)){
-			auto row = attr.value<Row<SliderWithLabel,float>*>();
-			return row->content->slider->value;
-		}
-	}
-	
-	return 0;
+	return getValue<float>(rowId);
 }
 
 void mui::ParameterPanel::setFloat( string rowId, float value ){
-	map<string,mui::data::Attribute>::iterator it = rows.find(rowId);
-	if( it != rows.end() ){
-		mui::data::Attribute &attr = it->second;
-		cout << "attr = " << attr.type().name() << endl;
-	}
+	return setValue<float>( rowId, value );
 }
+
+string mui::ParameterPanel::getString( string rowId ){
+	return getValue<string>(rowId);
+}
+
+void mui::ParameterPanel::setString( string rowId, string value ){
+	return setValue<string>( rowId, value );
+}
+
 
 
 mui::ParameterPanel::Row<mui::SliderWithLabel,float> * mui::ParameterPanel::addSlider( string title, float min, float max, float value ){
