@@ -321,8 +321,8 @@ void mui::TextArea::commit(){
 void mui::TextArea::touchDown(ofTouchEventArgs &touch){
 	lastInteraction = ofGetElapsedTimeMillis();
 	if( selectAllOnFocus && !hasKeyboardFocus()){
-		stb_textedit_key(&data, state, STB_TEXTEDIT_K_TEXTSTART);
-		stb_textedit_key(&data, state, STB_TEXTEDIT_K_TEXTEND | STB_TEXTEDIT_K_SHIFT);
+		stb_textedit_key(&data, state, STB_TEXTEDIT_K_TEXTEND);
+		stb_textedit_key(&data, state, STB_TEXTEDIT_K_TEXTSTART | STB_TEXTEDIT_K_SHIFT);
 	}
 	else{
 		stb_textedit_click(&data, state, touch.x, touch.y);
@@ -336,15 +336,6 @@ void mui::TextArea::touchMoved(ofTouchEventArgs &touch){
 
 void mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 	lastInteraction = ofGetElapsedTimeMillis();
-	// this is some extra work,
-	// but it gives us a lot of control
-	// (the alternative would be to use OF_* constants in the defines directly)
-//	int shiftFlag = MUI_ROOT->getKeyPressed(OF_KEY_SHIFT);
-/*	cout << "key=" << key.key << endl;
-	cout << "keycode=" << key.keycode << endl;
-	cout << "codepoint=" << key.codepoint << endl;
-	cout << "scancode=" << key.scancode << endl;*/
-	
 	int keyMask = MUI_ROOT->getKeyPressed(OF_KEY_SHIFT)?STB_TEXTEDIT_K_SHIFT:0;
 	
 	switch(key.key){
