@@ -54,6 +54,8 @@ namespace mui{
 
 	private: 
         std::string displayText;
+		//ofVbo displayTextVbo;
+		//int displayTextNumTris; 
 		ofxFontStashStyle fontStyle;
 	};
 };

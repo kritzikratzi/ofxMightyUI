@@ -14,7 +14,7 @@
 
 mui::Label::Label( std::string text_, float x_, float y_, float width_, float height_ ) :
 	Container( x_, y_, width_, height_ ),
-	ellipsisMode(true), text( text_), fontSize(-1), horizontalAlign(Left), verticalAlign(Middle),fontName(""){
+	ellipsisMode(true), text( text_), fontSize(-1), horizontalAlign(Left), verticalAlign(Middle),fontName(""),displayTextNumTris(0){
 		ignoreEvents = true;
 		if( fontSize < 0 ) fontSize = mui::MuiConfig::fontSize;
 		commit();
@@ -31,6 +31,8 @@ void mui::Label::update(){
 void mui::Label::draw(){
 	ofRectangle size = Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign );
 	mui::Helpers::getFontStash().draw(displayText, fontStyle, size.x-boundingBox.x, size.y-boundingBox.y);
+	//cout << "tris = " << displayTextNumTris << endl;
+	//displayTextVbo.draw( GL_TRIANGLES, 0, displayTextNumTris );
 	ofSetColor( 255, 255, 255 );
 }
 
@@ -105,6 +107,11 @@ void mui::Label::commit(){
     else{
         displayText = text;
     }
+	
+	//vector<StyledText> styledText;
+	//styledText.push_back(StyledText{displayText,fontStyle});
+	//vector<StyledLine> lines = Helpers::getFontStash().layoutLines(styledText, 999999);
+	//Helpers::getFontStash().drawLinesToVbo(displayTextVbo, displayTextNumTris, lines, 0, 0);
 	
 	// Orient y on a simple uppercase character
 	// Otherwise things go up and down unexpectedly

@@ -52,6 +52,13 @@ void mui::Button::update(){
 
 //--------------------------------------------------------------
 void mui::Button::draw(){
+	if( hasKeyboardFocus() ){
+		ofSetColor(fg);
+		ofNoFill();
+		ofDrawRectangle(0, 0, width, height);
+		ofFill();
+		ofSetColor(255);
+	}
 }
 
 
@@ -85,6 +92,7 @@ void mui::Button::layout(){
 
 //--------------------------------------------------------------
 void mui::Button::touchDown( ofTouchEventArgs &touch ){
+	requestKeyboardFocus(); 
 	pressed = true;
 }
 
@@ -129,4 +137,10 @@ void mui::Button::clickAndNotify(){
 	args.x = width/2;
 	args.y = height/2;
 	ofNotifyEvent(onPress, args, this );
+}
+
+void mui::Button::keyPressed(ofKeyEventArgs &args){
+	if( args.key == ' ' || args.key == OF_KEY_RETURN ){
+		clickAndNotify();
+	}
 }

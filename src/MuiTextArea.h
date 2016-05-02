@@ -26,6 +26,7 @@ namespace mui{
 		int fontSize;
 		string fontName; // subject to change!
 		bool selectAllOnFocus;
+		ofEvent<string> onChange; 
 		
 		// the currently computed text boundaries
 		// the height and y offset are currently always the size of a capital 'M'

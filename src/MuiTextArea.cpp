@@ -174,6 +174,7 @@ void mui::TextArea::update(){
 			else data.strlenWithLineStarts ++;
 		}
 		text = data.text;
+		ofNotifyEvent(onChange, text, this); 
 		commit();
 	}
 }
@@ -357,7 +358,7 @@ void mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 		default:
 			//todo: copied this from built-in utf8::append
 			if (!utf8::internal::is_code_point_valid(key.codepoint)){
-				cerr << "invalid code point: " << key.codepoint << endl;
+				// what is it? don't know! ignore it!
 				return;
 			}
 			
