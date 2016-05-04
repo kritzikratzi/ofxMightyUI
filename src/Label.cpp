@@ -14,7 +14,7 @@
 
 mui::Label::Label( std::string text_, float x_, float y_, float width_, float height_ ) :
 	Container( x_, y_, width_, height_ ),
-	ellipsisMode(true), text( text_), fontSize(-1), horizontalAlign(Left), verticalAlign(Middle),fontName(""),displayTextNumTris(0){
+	ellipsisMode(true), text( text_), fontSize(-1), horizontalAlign(Left), verticalAlign(Middle),fontName(""){
 		ignoreEvents = true;
 		if( fontSize < 0 ) fontSize = mui::MuiConfig::fontSize;
 		commit();
