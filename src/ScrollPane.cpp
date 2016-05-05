@@ -53,14 +53,10 @@ void mui::ScrollPaneView::handleDraw(){
 	
 	std::vector<Container*>::iterator it = children.begin();
 	while( it != children.end() ) {
-		// TODO: GIANT rectangles are not account for
 		Container * c = (*it);
 		bool inside =
-			Helpers::inside( parent, x+c->x, y+c->y ) ||
-			Helpers::inside( parent, x+c->x+c->width, y+c->y ) ||
-			Helpers::inside( parent, x+c->x, y+c->y+c->height ) ||
-			Helpers::inside( parent, x+c->x+c->width, y+c->y+c->height ) ||
-			Helpers::inside( parent, x+c->x+c->width/2, y+c->y+c->height/2 );
+			-x <= (c->x + c->width) && (-x+parent->width) >= c->x &&
+			-y <= (c->y + c->height) && (-y+parent->height) >= c->y;
 
 		if( inside || c->drawDirty ){
 			c->handleDraw();
