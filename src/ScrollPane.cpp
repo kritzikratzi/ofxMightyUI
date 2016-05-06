@@ -92,16 +92,21 @@ void mui::ScrollPane::commit(){
 	view->handleLayout();
 	ofRectangle bounds = getViewBoundingBox();
 	
-	minScrollX = fminf( 0, bounds.x ); 
+	viewportWidth = canScrollX? (width-15):width;
+	viewportHeight = canScrollY? (height-15):height;
+	
+	minScrollX = fminf( 0, bounds.x );
 	minScrollY = fminf( 0, bounds.y ); 
-	maxScrollX = fmaxf( 0, bounds.x + bounds.width - width );
-	maxScrollY = fmaxf( 0, bounds.y + bounds.height - height );
+	maxScrollX = fmaxf( 0, bounds.x + bounds.width - viewportWidth );
+	maxScrollY = fmaxf( 0, bounds.y + bounds.height - viewportHeight );
 	
 	wantsToScrollX = maxScrollX != 0 || minScrollX != 0; 
 	wantsToScrollY = maxScrollY != 0 || minScrollY != 0; 
 	
-	view->width = fmaxf( width-15, maxScrollX + width - 15);
-	view->height = fmaxf( height, maxScrollY + height );
+	//TODO: make this -15 (the bars) optional!
+	
+	view->width = fmaxf( viewportWidth, maxScrollX + viewportWidth);
+	view->height = fmaxf( viewportHeight, maxScrollY + viewportHeight);
 	
 	// todo: trigger layout (again!) when size changed?
 	
@@ -287,7 +292,8 @@ void mui::ScrollPane::drawBackground(){
 //--------------------------------------------------------------
 // mostly a copy of Container::handleDraw
 void mui::ScrollPane::handleDraw(){
-	ofRectangle intersection = ofRectangle(0,0,width-7,height).getIntersection(view->getBounds());
+	// make the -7 (scrollbars) optional
+	ofRectangle intersection = ofRectangle(0,0,viewportWidth,viewportHeight).getIntersection(view->getBounds());
 	mui::Helpers::pushScissor( this, intersection );
 	Container::handleDraw(); 
 	mui::Helpers::popScissor();
@@ -297,6 +303,12 @@ void mui::ScrollPane::handleDraw(){
 		float scrubberHeight = ofClamp(height*height/(maxScrollY - minScrollY), 10, height/2);
 		float scrubberPos = ofMap(currentScrollY, minScrollY, maxScrollY, 2, height-2-scrubberHeight);
 		ofDrawRectangle(x+width-6, y+scrubberPos, 5, scrubberHeight );
+	}
+	if( visible && minScrollX != maxScrollX ){
+		ofDrawLine(x+2, y+height-4, x+width-2, y+height-4 );
+		float scrubberWidth = ofClamp(width*width/(maxScrollX - minScrollX), 10, width/2);
+		float scrubberPos = ofMap(currentScrollX, minScrollX, maxScrollX, 2, width-2-scrubberWidth);
+		ofDrawRectangle(x+scrubberPos, y+height-6, scrubberWidth, 5 );
 	}
 }
 

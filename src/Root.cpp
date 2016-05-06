@@ -116,7 +116,7 @@ void mui::Root::handleDraw(){
 			mui::Container * c = active;
 			string size;
 			while( c != NULL  ){
-				name = c->name + (name==""?"":">");
+				name = c->name + (name==""?"":">") + name;
 				c = c->parent;
 			}
 			
@@ -422,6 +422,7 @@ mui::Container * mui::Root::handleMouseReleased( float x, float y, int button ){
 
 void mui::Root::of_setup( ofEventArgs &args ){
 	//handleSetup();
+	handleLayout(); 
 }
 void mui::Root::of_update( ofEventArgs &args ){
 	handleUpdate();

@@ -33,7 +33,9 @@ namespace mui{
 		float currentScrollX, currentScrollY; // actually
 
 		float minScrollX, minScrollY; 
-		float maxScrollX, maxScrollY; 
+		float maxScrollX, maxScrollY;
+		float viewportWidth, viewportHeight;
+		
 		bool canScrollX, canScrollY;
 		
 		ScrollPaneView * view;
