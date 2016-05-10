@@ -92,7 +92,6 @@ void mui::Button::layout(){
 
 //--------------------------------------------------------------
 void mui::Button::touchDown( ofTouchEventArgs &touch ){
-	requestKeyboardFocus(); 
 	pressed = true;
 }
 
