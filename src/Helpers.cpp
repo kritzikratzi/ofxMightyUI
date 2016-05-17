@@ -48,6 +48,14 @@ std::string mui::Helpers::muiPath( std::string path ){
 		outputPath = inputPath;
 	}
 	
+	if( !ofFile(outputPath.absolute().toString(), ofFile::Reference).exists() ){
+		// maybe in the data dir?
+		string dataFile = ofToDataPath(path, true);
+		if( ofFile(dataFile,ofFile::Reference).exists() ){
+			outputPath = Poco::Path(dataFile);
+		}
+	}
+	
 	if( mui::MuiConfig::logLevel <= OF_LOG_NOTICE ){
 		cout << "loading path: " << outputPath.toString() << " || " << outputPath.absolute().toString() << " || " << path << endl;
 	}

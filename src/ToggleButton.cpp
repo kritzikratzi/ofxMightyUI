@@ -23,7 +23,7 @@
 #include "Label.h"
 
 mui::ToggleButton::ToggleButton( std::string title, float x, float y, float width, float height )
-: Container( x, y, width, height ), pressed(false), selected(false), checkbox(false){
+: Container( x, y, width, height ), pressed(false), selected(false), checkbox(false),checkboxAlign(mui::Left){
 	label = new Label( title, 0, 0, width, height );
 	label->horizontalAlign = Center;
 	label->verticalAlign = Middle;
