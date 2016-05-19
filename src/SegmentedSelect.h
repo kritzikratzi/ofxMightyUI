@@ -102,6 +102,11 @@ namespace mui{
 			mui::SegmentedButton<T> * button = (mui::SegmentedButton<T>*)children[num];
 			return button;
 		}
+		
+		virtual const T getSelectedValueOr( const T defaultValue ){
+			return selected == NULL? defaultValue : selected->value;
+		}
+		
 		virtual SegmentedButton<T> * setSelected( const T value ){
 			for( mui::Container * c : children ){
 				mui::SegmentedButton<T> * button = (mui::SegmentedButton<T>*)c;

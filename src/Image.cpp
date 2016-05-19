@@ -43,9 +43,7 @@ void mui::Image::draw(){
 		imgH *= scale;
 		ofRectangle rect = Helpers::alignBox(this, imgW, imgH, horizontalAlign, verticalAlign);
 		ofSetColor( fg );
-		ofEnableAlphaBlending();
 		tex->draw(rect);
-		ofDisableAlphaBlending();
 	}
 }
 

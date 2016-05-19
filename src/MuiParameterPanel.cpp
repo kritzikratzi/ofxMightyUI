@@ -14,11 +14,17 @@ using namespace mui;
 
 mui::ParameterPanel::ParameterPanel( string title ) : mui::Container(0,0,100,100), labelColumnWidth(100), labelFg(255){
 	titleLabel = new mui::Label(title);
+	titleLabel->fontSize *= 1.2;
 	add(titleLabel);
+	currentSection = NULL; 
 //	const pair<type_info,data::Attribute> d(typeid(Row<SliderWithLabel,float>), data::Attribute(3.0));
 	
-	registerGetter<SliderWithLabel,float>([](SliderWithLabel * obj){ return obj->slider->value; } );
-	registerGetter<SliderWithLabel,int>([](SliderWithLabel * obj){ return obj->slider->value; } );
+	registerGetter<SliderWithLabel,float>([](SliderWithLabel * obj){
+		return obj->slider->value; }
+	);
+	registerGetter<SliderWithLabel,int>([](SliderWithLabel * obj){
+		return (int)obj->slider->value; }
+	);
 	registerGetter<TextArea,string>([](TextArea * obj){ return obj->text; } );
 	registerGetter<ToggleButton,bool>([](ToggleButton * obj){ return obj->selected; } );
 	registerGetter<ToggleButton,int>([](ToggleButton * obj){ return obj->selected?1:0; } );
@@ -29,17 +35,25 @@ mui::ParameterPanel::ParameterPanel( string title ) : mui::Container(0,0,100,100
 	registerSetter<ToggleButton,bool>([](ToggleButton * obj,const float & val){ obj->selected = val; } );
 	registerSetter<ToggleButton,int>([](ToggleButton * obj,const int & val){ obj->selected = val==0; } );
 
+	bg = ofColor(50);
+	opaque = true;
 }
 
+void mui::ParameterPanel::setLabelColumnWidth(float width){
+	labelColumnWidth = width;
+	handleLayout();
+}
 
 void mui::ParameterPanel::layout(){
 	float yy = titleLabel->height;
 	for( Section* section : sections ){
-		section->y = yy;
-		section->width = width;
-		section->handleLayout();
-		
-		yy += section->height;
+		if(section->visible){
+			section->y = yy;
+			section->width = width;
+			section->handleLayout();
+			
+			yy += section->height;
+		}
 	}
 	
 	height = yy;
@@ -147,9 +161,19 @@ void mui::ParameterPanel::setString( string rowId, string value ){
 }
 
 
+mui::ParameterPanel::Row<mui::SliderWithLabel,float> * mui::ParameterPanel::addSliderInt( string title, int min, int max, int value ){
+	SliderWithLabel * slider = new SliderWithLabel(0,0,100,20,  min,max,value, 0);
+	slider->label->fg = labelFg;
+	auto row = new ParameterPanel::Row<SliderWithLabel,float>(this, title,NULL,slider,slider->slider->value);
+	
+	getCurrentSection()->addRow(row);
+	rows.insert(pair<string,data::Attribute>(title,row));
+	return row;
+}
 
-mui::ParameterPanel::Row<mui::SliderWithLabel,float> * mui::ParameterPanel::addSlider( string title, float min, float max, float value ){
-	SliderWithLabel * slider = new SliderWithLabel(0,0,100,30,  min,max,value, 2);
+
+mui::ParameterPanel::Row<mui::SliderWithLabel,float> * mui::ParameterPanel::addSlider( string title, float min, float max, float value, int decimalDigits ){
+	SliderWithLabel * slider = new SliderWithLabel(0,0,100,20,  min,max,value, decimalDigits);
 	slider->label->fg = labelFg;
 	auto row = new ParameterPanel::Row<SliderWithLabel,float>(this, title,NULL,slider,slider->slider->value);
 	

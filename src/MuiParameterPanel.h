@@ -108,10 +108,12 @@ namespace mui{
 		Section * getCurrentSection();
 		Section * getOrCreateSection( string sectionId, string label );
 		
-		Row<SliderWithLabel,float> * addSlider( string label, float min, float max, float value );
+		Row<SliderWithLabel,float> * addSliderInt( string label, int min, int max, int value );
+		Row<SliderWithLabel,float> * addSlider( string label, float min, float max, float value, int decimalDigits = 2 );
 		Row<ToggleButton,bool> * addToggle( string label, bool selected );
 		Row<TextArea,string> * addText( string label, string text );
 		
+		void setLabelColumnWidth( float width ); 
 		
 		bool getBool( string rowId );
 		void setBool( string rowId, bool value );
@@ -206,9 +208,9 @@ namespace mui{
 			MuiType * control;
 			bool customLabel;
 			
-			Row( ParameterPanel * panel, string title, Label * existingLabel, MuiType * control, DataType & data ) : Container( 0,0, 100, 30), control(control), param(ofParameter<DataType>(title,data)), panel(panel){
+			Row( ParameterPanel * panel, string title, Label * existingLabel, MuiType * control, DataType & data ) : Container( 0,0, 100, 20), control(control), param(ofParameter<DataType>(title,data)), panel(panel){
 				if( existingLabel == NULL ){
-					titleLabel = new Label(title,0,0,100,30);
+					titleLabel = new Label(title,0,0,70,20);
 					add(titleLabel);
 					customLabel = false;
 				}
@@ -250,18 +252,25 @@ namespace mui{
 			string sectionId;
 			
 			Section( string sectionId, string title ) : Container( 0, 0, 100, 100 ), sectionId(sectionId){
-				titleLabel = new Label(title,0,0,100,30);
+				titleLabel = new Label(title,0,0,60,20);
 				add(titleLabel);
 			}
 			vector<mui::data::Attribute> rows;
 			
 			void layout(){
-				titleLabel->width = width;
-				float yy = titleLabel->height;
+				float yy;
+				if( titleLabel->text == "" ){
+					yy = 0;
+				}
+				else{
+					titleLabel->width = width;
+					yy = titleLabel->height;
+				}
 				for( data::Attribute & row : rows ){
 					Container * c = row.value_unsafe<Container*>();
-					c->y = yy; 
-					c->width = width;
+					c->y = yy;
+					c->x = 5;
+					c->width = width-10;
 					yy += c->height;
 					c->handleLayout(); 
 				}
