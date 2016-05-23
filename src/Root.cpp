@@ -76,9 +76,11 @@ void mui::Root::handleUpdate(){
 		width = _width;
 		height = _height;
 		handleLayout();
+		cout << "updating width width = " << width << ", height = " << height << endl;
 	}
-	else if( ofGetFrameNum() == 0 ){
+	else if( ofGetFrameNum() == 1 ){
 		handleLayout();
+		cout << "updating width width = " << width << ", height = " << height << endl;
 	}
 	
 	tweener.step( ofGetSystemTime() );
