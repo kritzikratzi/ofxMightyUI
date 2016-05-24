@@ -48,6 +48,7 @@ namespace mui{
 		virtual void draw();
 		virtual void drawBackground();
 		virtual void handleDraw();
+		virtual void handleLayout();
 
 		void beginBaseAnimation( float toX, float toY );
 		void beginMomentumAnimation();

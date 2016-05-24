@@ -88,6 +88,13 @@ mui::ScrollPane::~ScrollPane(){
 }
 
 //--------------------------------------------------------------
+void mui::ScrollPane::handleLayout(){
+	mui::Container::handleLayout();
+	// commit after all components got layed out.
+	commit();
+}
+
+//--------------------------------------------------------------
 void mui::ScrollPane::commit(){
 	view->handleLayout();
 	ofRectangle bounds = getViewBoundingBox();
