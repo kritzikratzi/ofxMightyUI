@@ -188,7 +188,7 @@ namespace mui{
 			return;
 		}
 		
-	private:
+	protected:
 		Label * titleLabel;
 		map<string,data::Attribute> rows;
 		map<type_index,data::Attribute> getters;

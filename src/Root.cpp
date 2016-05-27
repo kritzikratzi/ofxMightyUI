@@ -364,6 +364,25 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 	// glfw that re-sends modifier key when they are released.
 	// for now, i'm not fixing this. i really shouldn't be, not here.
 	activeKeys.insert(event.key);
+
+	if( mui::MuiConfig::debugDraw && getKeyPressed(OF_KEY_ALT) && getKeyPressed(OF_KEY_RETURN)){
+		// dump the view hierachy!
+		mui::Container * active = this->findChildAt( ofGetMouseX()/mui::MuiConfig::scaleFactor - this->x, ofGetMouseY()/mui::MuiConfig::scaleFactor-this->y, true );
+		
+		cout << "------------------------------------";
+		cout << "DUMPING VIEW HIERACHY" << endl;
+		while( active != NULL ){
+			ofRectangle b = active->getBounds();
+			string size = (stringstream() << "Pos:" << b.x << "," << b.y << "  " << b.width << " x " << b.height).str();
+			
+			cout << "> " << active->name << size << endl;
+			active = active->parent;
+		}
+		cout << "------------------------------------";
+		
+		return this;
+	}
+		
 	if( keyboardResponder != NULL ){
 		keyboardResponder->keyPressed(event);
 	}

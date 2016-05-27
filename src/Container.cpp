@@ -109,9 +109,20 @@ void mui::Container::handleLayout(){
 	}
 
 	vector<mui::Container*>::iterator it = children.begin();
+	bool sizeChanged = false;
+	float oldW, oldH;
 	while( it != children.end() ){
+		oldW = (*it)->width;
+		oldH = (*it)->height;
 		(*it)->handleLayout();
+		if( oldW != (*it)->width || oldH != (*it)->height ){
+			sizeChanged = true;
+		}
 		++it;
+	}
+	
+	if( sizeChanged ){
+		layout();
 	}
 }
 

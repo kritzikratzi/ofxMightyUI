@@ -107,7 +107,7 @@ void mui::ScrollPane::commit(){
 	maxScrollX = fmaxf( 0, bounds.x + bounds.width - viewportWidth );
 	maxScrollY = fmaxf( 0, bounds.y + bounds.height - viewportHeight );
 	
-	wantsToScrollX = maxScrollX != 0 || minScrollX != 0; 
+	wantsToScrollX = maxScrollX != 0 || minScrollX != 0;
 	wantsToScrollY = maxScrollY != 0 || minScrollY != 0; 
 	
 	//TODO: make this -15 (the bars) optional!
