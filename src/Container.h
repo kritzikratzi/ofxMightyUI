@@ -104,8 +104,8 @@ namespace mui{
 		// recursively find children of a certain type at a position
 		// implemented directly in the header because templates ... have some issues
 		template <typename T>
-		T * findChildOfType( float posX, float posY, bool onlyVisible = true ){
-			mui::Container * thing = findChildAt(posX,posY,onlyVisible);
+		T * findChildOfType( float posX, float posY, bool onlyVisible = true, bool mustAcceptTouches = false ){
+			mui::Container * thing = findChildAt(posX,posY,onlyVisible,mustAcceptTouches);
 			while(thing!=NULL){
 				T * result = dynamic_cast<T* const>(thing);
 				if( result != NULL ){
@@ -119,7 +119,7 @@ namespace mui{
 		}
 		
 		// recursively find children at position.
-		virtual Container * findChildAt( float x, float y, bool onlyVisible = true );
+		virtual Container * findChildAt( float x, float y, bool onlyVisible = true, bool mustAcceptTouches = false );
 		
 		// recursively ascend to parents until a certain type is found.
 		template <typename T>

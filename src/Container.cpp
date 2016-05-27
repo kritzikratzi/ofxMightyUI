@@ -442,7 +442,7 @@ void mui::Container::toBack(){
 	}
 }
 
-mui::Container * mui::Container::findChildAt( float posX, float posY, bool onlyVisible ){
+mui::Container * mui::Container::findChildAt( float posX, float posY, bool onlyVisible, bool mustAcceptTouches ){
 	if( posX >= 0 && posY >= 0 && posX <= width && posY <= height && (!onlyVisible || visible ) ){
 		// do we have a child that fits there?
 		vector<mui::Container*>::iterator it = children.begin();
@@ -451,8 +451,8 @@ mui::Container * mui::Container::findChildAt( float posX, float posY, bool onlyV
 		mui::Container * child = NULL;
 
 		while( it != children.end() ){
-			child = (*it)->findChildAt( posX - (*it)->x, posY - (*it)->y );
-			if( child != NULL ) result = child;
+			child = (*it)->findChildAt( posX - (*it)->x, posY - (*it)->y, onlyVisible, mustAcceptTouches );
+			if( child != NULL && (!mustAcceptTouches || !child->ignoreEvents)) result = child;
 			++it;
 		}
 		

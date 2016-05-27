@@ -481,7 +481,7 @@ bool mui::Root::of_mouseReleased( ofMouseEventArgs &args ){
 bool mui::Root::of_mouseScrolled( ofMouseEventArgs &args ){
 	ofVec2f pos;
 	fixTouchPosition(args, pos, NULL);
-	mui::Container * container = (mui::Container*)findChildOfType<mui::ScrollPane>(pos.x, pos.y);
+	mui::Container * container = (mui::Container*)findChildOfType<mui::ScrollPane>(pos.x, pos.y, true, true);
 	if( container != NULL ){
 		container->mouseScroll(args);
 		return true;
