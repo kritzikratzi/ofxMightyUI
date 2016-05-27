@@ -470,10 +470,11 @@ bool mui::Container::isVisibleOnScreen( float border ){
 	Container * element = this;
 	while( element != NULL ){
 		if( element->visible == false ) return false;
-		
-		posX += parent->x;
-		posY += parent->y;
-		parent = parent->parent;
+		if( parent != NULL ){
+			posX += parent->x;
+			posY += parent->y;
+		}
+		element = element->parent;
 	}
 	
 	ofRectangle me(posX-border,posY-border,width+2*border,height+2*border);

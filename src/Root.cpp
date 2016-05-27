@@ -384,7 +384,12 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 	}
 		
 	if( keyboardResponder != NULL ){
-		keyboardResponder->keyPressed(event);
+		if( !keyboardResponder->isVisibleOnScreen()){
+			keyboardResponder = NULL;
+		}
+		else{
+			keyboardResponder->keyPressed(event);
+		}
 	}
 	
 	return keyboardResponder;
