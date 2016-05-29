@@ -113,6 +113,9 @@ namespace mui{
 		Row<ToggleButton,bool> * addToggle( string label, bool selected );
 		Row<TextArea,string> * addText( string label, string text );
 		
+		Row<Container,bool> * addContainer(string label, mui::Container * container);
+		
+		
 		void setLabelColumnWidth( float width ); 
 		
 		bool getBool( string rowId );
@@ -209,6 +212,7 @@ namespace mui{
 			bool customLabel;
 			
 			Row( ParameterPanel * panel, string title, Label * existingLabel, MuiType * control, DataType & data ) : Container( 0,0, 100, 20), control(control), param(ofParameter<DataType>(title,data)), panel(panel){
+				ignoreEvents = true; 
 				if( existingLabel == NULL ){
 					titleLabel = new Label(title,0,0,70,20);
 					add(titleLabel);
@@ -253,6 +257,7 @@ namespace mui{
 			
 			Section( string sectionId, string title ) : Container( 0, 0, 100, 100 ), sectionId(sectionId){
 				titleLabel = new Label(title,0,0,60,20);
+				ignoreEvents = true;
 				add(titleLabel);
 			}
 			vector<mui::data::Attribute> rows;
@@ -266,8 +271,8 @@ namespace mui{
 					titleLabel->width = width;
 					yy = titleLabel->height;
 				}
-				for( data::Attribute & row : rows ){
-					Container * c = row.value_unsafe<Container*>();
+				for( mui::Container * c : children ){
+					if( c == titleLabel ) continue;
 					c->y = yy;
 					c->x = 5;
 					c->width = width-10;

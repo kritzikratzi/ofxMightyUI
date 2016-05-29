@@ -268,6 +268,44 @@ mui::Container * mui::Container::handleTouchMoved( ofTouchEventArgs &touch ){
 
 
 //--------------------------------------------------------------
+mui::Container * mui::Container::handleTouchHover( ofTouchEventArgs &touch ){
+	if( !visible ) return NULL;
+	
+	
+	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
+		float x, y;
+		Container * touched;
+		
+		std::vector<Container*>::reverse_iterator it = children.rbegin();
+		while( it != children.rend() ) {
+			touch.x -= ( x = (*it)->x );
+			touch.y -= ( y = (*it)->y );
+			touched = (*it)->handleTouchHover( touch );
+			touch.x += x;
+			touch.y += y;
+			
+			if( touched != NULL ){
+				// that container is touched!
+				return touched;
+			}
+			
+			++it;
+		}
+		
+		if( !ignoreEvents ){
+			if( !singleTouch || singleTouchId == -1 || ( singleTouch && singleTouchId == touch.id ) ){
+				touchHover( touch );
+			}
+			
+			return this;
+		}
+	}
+	
+	return NULL;
+}
+
+
+//--------------------------------------------------------------
 mui::Container * mui::Container::handleTouchDoubleTap( ofTouchEventArgs &touch ){
 	if( !visible ) return NULL;
 	
@@ -481,6 +519,13 @@ bool mui::Container::isVisibleOnScreen( float border ){
 	ofRectangle root(0,0,MUI_ROOT->width, MUI_ROOT->height );
 	
 	return me.intersects(root);
+}
+
+bool mui::Container::isMouseOver(){
+	ofRectangle rect = getGlobalBounds();
+	float mouseX = ofGetMouseX()/mui::MuiConfig::scaleFactor;
+	float mouseY = ofGetMouseY()/mui::MuiConfig::scaleFactor;
+	return rect.inside(mouseX,mouseY);
 }
 
 

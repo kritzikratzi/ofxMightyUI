@@ -212,3 +212,11 @@ mui::ParameterPanel::Row<mui::TextArea,string> * mui::ParameterPanel::addText( s
 	rows.insert(pair<string,data::Attribute>(title,row));
 	return row;
 }
+
+mui::ParameterPanel::Row<mui::Container,bool> * mui::ParameterPanel::addContainer( string title, mui::Container * container ){
+	auto row = new ParameterPanel::Row<Container,bool>(this, title,NULL,container,container->visible);
+	
+	getCurrentSection()->addRow(row);
+	rows.insert(pair<string,data::Attribute>(title,row));
+	return row;
+}

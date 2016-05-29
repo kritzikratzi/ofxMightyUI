@@ -30,6 +30,7 @@ namespace mui{
 		// touch events
 		virtual Container * handleTouchDown( ofTouchEventArgs &touch );
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
+		virtual Container * handleTouchHover( ofTouchEventArgs &touch );
 		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
 		virtual Container * handleTouchDoubleTap( ofTouchEventArgs &touch );
 		virtual Container * handleTouchCancelled( ofTouchEventArgs &touch );

@@ -67,7 +67,8 @@ namespace mui{
 		virtual void touchDown( ofTouchEventArgs &touch ){};
 		virtual void touchMoved( ofTouchEventArgs &touch ){};
 		virtual void touchMovedOutside( ofTouchEventArgs &touch ){}
-		virtual void touchUp( ofTouchEventArgs &touch ){}; 
+		virtual void touchHover( ofTouchEventArgs &touch ){};
+		virtual void touchUp( ofTouchEventArgs &touch ){};
 		virtual void touchUpOutside( ofTouchEventArgs &touch ){}
 		virtual void touchDoubleTap( ofTouchEventArgs &touch ){};
 		virtual void touchCanceled( ofTouchEventArgs &touch ){}; // when some other component "stole" the responder status.
@@ -78,6 +79,7 @@ namespace mui{
 		
 		virtual Container * handleTouchDown( ofTouchEventArgs &touch );
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
+		virtual Container * handleTouchHover( ofTouchEventArgs &touch );
 		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
 		virtual Container * handleTouchDoubleTap( ofTouchEventArgs &touch );
 		void handleTouchCanceled( ofTouchEventArgs &touch );
@@ -138,6 +140,7 @@ namespace mui{
 		}
 		
 		virtual bool isVisibleOnScreen(float border=0); // effectively visible on screen? border adds an additonal border around, so border<0 means isVisible return false if it's barely visible, border>0 means isVisible will return true even if the component is already slightly off screen.
+		virtual bool isMouseOver(); // check if any cursor is over the component
 		virtual string toString();
 	private:
 	};

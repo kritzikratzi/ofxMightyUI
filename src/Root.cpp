@@ -168,15 +168,34 @@ mui::Container * mui::Root::handleTouchDown( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 mui::Container * mui::Root::handleTouchMoved( ofTouchEventArgs &touch ){
-	ofTouchEventArgs copy = touch; 
-	fixTouchPosition( touch, copy, NULL ); 
+	ofTouchEventArgs copy = touch;
+	fixTouchPosition( touch, copy, NULL );
 	Container * touched = Container::handleTouchMoved( copy );
-
+	
 	if( touched != touchResponder[touch.id] && touchResponder[touch.id] != NULL ){
 		copy = touch;
 		fixTouchPosition( touch, copy, NULL );
-        copy = Helpers::translateTouch( copy, this, touchResponder[touch.id] );
-        touchResponder[touch.id]->touchMovedOutside( copy );
+		copy = Helpers::translateTouch( copy, this, touchResponder[touch.id] );
+		touchResponder[touch.id]->touchMovedOutside( copy );
+		return touchResponder[touch.id];
+	}
+	
+	return touched;
+}
+
+
+
+//--------------------------------------------------------------
+mui::Container * mui::Root::handleTouchHover( ofTouchEventArgs &touch ){
+	ofTouchEventArgs copy = touch;
+	fixTouchPosition( touch, copy, NULL );
+	Container * touched = Container::handleTouchHover( copy );
+	
+	if( touched != touchResponder[touch.id] && touchResponder[touch.id] != NULL ){
+		copy = touch;
+		fixTouchPosition( touch, copy, NULL );
+		copy = Helpers::translateTouch( copy, this, touchResponder[touch.id] );
+		touchResponder[touch.id]->touchMovedOutside( copy );
 		return touchResponder[touch.id];
 	}
 	
@@ -414,7 +433,7 @@ mui::Container * mui::Root::handleMouseMoved( float x, float y ){
 	args.x = x;
 	args.y = y;
 	args.id = 0;
-	return handleTouchMoved(args);
+	return handleTouchHover(args);
 }
 
 //--------------------------------------------------------------
