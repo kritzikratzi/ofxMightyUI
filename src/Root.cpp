@@ -123,7 +123,9 @@ void mui::Root::handleDraw(){
 			}
 			
 			ofRectangle b = active->getGlobalBounds();
-			size = (stringstream() << "Pos:" << b.x << "," << b.y << "  " << b.width << " x " << b.height).str();
+			stringstream info; 
+			info << "Pos:" << b.x << "," << b.y << "  " << b.width << " x " << b.height; 
+			size = info.str();
 			
 			
 			ofxFontStashStyle style = mui::Helpers::getStyle(10);
@@ -392,7 +394,9 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 		cout << "DUMPING VIEW HIERACHY" << endl;
 		while( active != NULL ){
 			ofRectangle b = active->getBounds();
-			string size = (stringstream() << "Pos:" << b.x << "," << b.y << "  " << b.width << " x " << b.height).str();
+			stringstream info; 
+			info << "Pos:" << b.x << "," << b.y << "  " << b.width << " x " << b.height;
+			string size = info.str(); 
 			
 			cout << "> " << active->name << size << endl;
 			active = active->parent;
