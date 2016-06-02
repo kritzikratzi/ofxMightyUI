@@ -160,7 +160,7 @@ void mui::ParameterPanel::setString( string rowId, string value ){
 	return setValue<string>( rowId, value );
 }
 
-
+/*
 mui::ParameterPanel::Row<mui::SliderWithLabel,float> * mui::ParameterPanel::addSliderInt( string title, int min, int max, int value ){
 	SliderWithLabel * slider = new SliderWithLabel(0,0,100,20,  min,max,value, 0);
 	slider->label->fg = labelFg;
@@ -169,31 +169,13 @@ mui::ParameterPanel::Row<mui::SliderWithLabel,float> * mui::ParameterPanel::addS
 	getCurrentSection()->addRow(row);
 	rows.insert(pair<string,data::Attribute>(title,row));
 	return row;
-}
+}*/
 
 
 mui::ParameterPanel::Row<mui::SliderWithLabel,float> * mui::ParameterPanel::addSlider( string title, float min, float max, float value, int decimalDigits ){
 	SliderWithLabel * slider = new SliderWithLabel(0,0,100,20,  min,max,value, decimalDigits);
 	slider->label->fg = labelFg;
 	auto row = new ParameterPanel::Row<SliderWithLabel,float>(this, title,NULL,slider,slider->slider->value);
-	
-	getCurrentSection()->addRow(row);
-	rows.insert(pair<string,data::Attribute>(title,row));
-	return row;
-}
-
-mui::ParameterPanel::Row<mui::ToggleButton,bool> * mui::ParameterPanel::addToggle( string title, bool selected ){
-	ToggleButton * button = new ToggleButton(title);
-	button->selected = selected;
-	button->label->horizontalAlign = Left;
-	button->fg = labelFg;
-	button->bg = ofColor(0,0);
-	button->selectedBg = ofColor(0,0);
-	button->selectedFg = labelFg;
-	button->checkbox = true;
-	button->checkboxAlign = Right;
-	
-	auto row = new ParameterPanel::Row<ToggleButton,bool>(this, title,button->label,button,button->selected);
 	
 	getCurrentSection()->addRow(row);
 	rows.insert(pair<string,data::Attribute>(title,row));
@@ -207,14 +189,6 @@ mui::ParameterPanel::Row<mui::TextArea,string> * mui::ParameterPanel::addText( s
 	textArea->commit(); 
 	
 	auto row = new ParameterPanel::Row<TextArea,string>(this, title,NULL,textArea,textArea->text);
-	
-	getCurrentSection()->addRow(row);
-	rows.insert(pair<string,data::Attribute>(title,row));
-	return row;
-}
-
-mui::ParameterPanel::Row<mui::Container,bool> * mui::ParameterPanel::addContainer( string title, mui::Container * container ){
-	auto row = new ParameterPanel::Row<Container,bool>(this, title,NULL,container,container->visible);
 	
 	getCurrentSection()->addRow(row);
 	rows.insert(pair<string,data::Attribute>(title,row));

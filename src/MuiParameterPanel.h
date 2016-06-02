@@ -108,12 +108,42 @@ namespace mui{
 		Section * getCurrentSection();
 		Section * getOrCreateSection( string sectionId, string label );
 		
-		Row<SliderWithLabel,float> * addSliderInt( string label, int min, int max, int value );
+		mui::ParameterPanel::Row<mui::SliderWithLabel, float> * addSliderInt(string title, int min, int max, int value) {
+			SliderWithLabel * slider = new SliderWithLabel(0, 0, 100, 20, min, max, value, 0);
+			slider->label->fg = labelFg;
+			mui::ParameterPanel::Row<mui::SliderWithLabel,float> * row = new mui::ParameterPanel::Row<SliderWithLabel, float>(this, title, NULL, slider, slider->slider->value);
+
+			getCurrentSection()->addRow<mui::SliderWithLabel,float>(row);
+			rows.insert(pair<string, data::Attribute>(title, row));
+			return row;
+		}
 		Row<SliderWithLabel,float> * addSlider( string label, float min, float max, float value, int decimalDigits = 2 );
-		Row<ToggleButton,bool> * addToggle( string label, bool selected );
+		mui::ParameterPanel::Row<ToggleButton, bool> * addToggle(string label, bool selected) {
+			ToggleButton * button = new ToggleButton(label);
+			button->selected = selected;
+			button->label->horizontalAlign = Left;
+			button->fg = labelFg;
+			button->bg = ofColor(0, 0);
+			button->selectedBg = ofColor(0, 0);
+			button->selectedFg = labelFg;
+			button->checkbox = true;
+			button->checkboxAlign = Right;
+
+			mui::ParameterPanel::Row<ToggleButton, bool> * row = new mui::ParameterPanel::Row<ToggleButton, bool>(this, label, button->label, button, button->selected);
+
+			getCurrentSection()->addRow(row);
+			rows.insert(pair<string, data::Attribute>(label, row));
+			return row;
+		}
 		Row<TextArea,string> * addText( string label, string text );
 		
-		Row<Container,bool> * addContainer(string label, mui::Container * container);
+		mui::ParameterPanel::Row<Container, bool> * addContainer(string label, mui::Container * container) {
+			auto row = new mui::ParameterPanel::Row<Container, bool>(this, label, NULL, container, container->visible);
+
+			getCurrentSection()->addRow(row);
+			rows.insert(pair<string, data::Attribute>(label, row));
+			return row;
+		}
 		
 		
 		void setLabelColumnWidth( float width ); 
@@ -284,7 +314,7 @@ namespace mui{
 			}
 			
 			template<typename MuiType,typename DataType>
-			void addRow( Row<MuiType,DataType> * row ){
+			void addRow( mui::ParameterPanel::Row<MuiType,DataType> * row ){
 				rows.push_back(row);
 				add(row);
 			}
