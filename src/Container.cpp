@@ -90,6 +90,10 @@ void mui::Container::setBounds( float x, float y, float w, float h ){
 	handleLayout();
 }
 
+void mui::Container::setBounds( ofRectangle rect ){
+	setBounds(rect.x, rect.y, rect.width, rect.height );
+}
+
 //--------------------------------------------------------------
 void mui::Container::layout(){
 	// layout managers might have been a fucking stupid idea.

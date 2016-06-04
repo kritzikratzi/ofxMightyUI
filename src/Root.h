@@ -45,6 +45,11 @@ namespace mui{
 		virtual Container * handleMousePressed( float x, float y, int button );
 		virtual Container * handleMouseReleased( float x, float y, int button );
 		
+		ofRectangle convertNativeToMui( const ofRectangle rect );
+		ofPoint convertNativeToMui( const ofPoint pt );
+		ofRectangle convertMuiToNative( const ofRectangle rect );
+		ofPoint convertMuiToNative( const ofPoint pt );
+		
 		virtual bool becomeTouchResponder( Container * container, ofTouchEventArgs &touch );
 		virtual bool becomeKeyboardResponder( Container * container );
 		virtual void showTextField( TextField * tf );

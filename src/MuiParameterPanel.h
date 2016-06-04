@@ -222,7 +222,6 @@ namespace mui{
 		}
 		
 	protected:
-		Label * titleLabel;
 		map<string,data::Attribute> rows;
 		map<type_index,data::Attribute> getters;
 		map<type_index,data::Attribute> setters;
@@ -232,6 +231,7 @@ namespace mui{
 		ofColor labelFg; 
 		
 	public:
+		Label * titleLabel;
 		
 		template<typename MuiType, typename DataType>
 		struct Row : public Container{

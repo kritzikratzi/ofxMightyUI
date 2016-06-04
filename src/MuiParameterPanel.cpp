@@ -46,6 +46,7 @@ void mui::ParameterPanel::setLabelColumnWidth(float width){
 
 void mui::ParameterPanel::layout(){
 	float yy = titleLabel->height;
+	titleLabel->width = width;
 	for( Section* section : sections ){
 		if(section->visible){
 			section->y = yy;

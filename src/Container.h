@@ -53,7 +53,8 @@ namespace mui{
 		ofRectangle getBounds();
 		ofRectangle getChildBounds(); 
 		void setBounds( float x, float y, float width, float height );
-        
+		void setBounds( const ofRectangle bounds );
+
 		virtual void update(){};
 		virtual void draw(){};
 		virtual void drawBackground(); 

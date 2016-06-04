@@ -280,6 +280,29 @@ void mui::Root::hideTextFields(){
     #endif
 }
 
+//--------------------------------------------------------------
+ofRectangle mui::Root::convertNativeToMui( const ofRectangle rect ){
+	const float s = mui::MuiConfig::scaleFactor;
+	return ofRectangle(rect.x/s, rect.y/s, rect.width/s, rect.height/s);
+}
+//--------------------------------------------------------------
+ofPoint mui::Root::convertNativeToMui( const ofPoint pt ){
+	const float s = mui::MuiConfig::scaleFactor;
+	return ofPoint(pt.x/s, pt.y/s, pt.z/s);
+}
+//--------------------------------------------------------------
+ofRectangle mui::Root::convertMuiToNative( const ofRectangle rect ){
+	const float s = mui::MuiConfig::scaleFactor;
+	return ofRectangle(rect.x*s, rect.y*s, rect.width*s, rect.height*s);
+}
+
+//--------------------------------------------------------------
+ofPoint mui::Root::convertMuiToNative( const ofPoint pt ){
+	const float s = mui::MuiConfig::scaleFactor;
+	return ofPoint(pt.x*s, pt.y*s, pt.z*s);
+}
+
+
 
 //--------------------------------------------------------------
 bool mui::Root::becomeTouchResponder( Container * c, ofTouchEventArgs &touch ){
