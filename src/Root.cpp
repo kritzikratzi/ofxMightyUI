@@ -59,7 +59,7 @@ void mui::Root::init(){
 	ofAddListener( ofEvents().touchDoubleTap, this, &mui::Root::of_touchDoubleTap, OF_EVENT_ORDER_BEFORE_APP );
 	ofAddListener( ofEvents().touchCancelled, this, &mui::Root::of_touchCancelled, OF_EVENT_ORDER_BEFORE_APP );
 	//ofAddListener( ofEvents().messageEvent, this, &mui::Root::of_messageEvent );
-	//ofAddListener( ofEvents().fileDragEvent, this, &mui::Root::of_fileDragEvent );
+	ofAddListener( ofEvents().fileDragEvent, this, &mui::Root::of_fileDragEvent, OF_EVENT_ORDER_BEFORE_APP );
 	
 	
 	// this seems unclear ... let's better put this in place!
@@ -428,6 +428,13 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 		
 		return this;
 	}
+	cout << event.keycode << endl;
+	if( mui::MuiConfig::debugDraw && getKeyPressed(OF_KEY_ALT) && event.keycode == 'I' ){
+		cout << "------------------------------------";
+		mui::Container * active = this->findChildAt( ofGetMouseX()/mui::MuiConfig::scaleFactor - this->x, ofGetMouseY()/mui::MuiConfig::scaleFactor-this->y, true );
+		cout << "Set a debug point in " << __FILE__ << ":" << __LINE__ << " to inspect this element" << endl;
+		cout << "------------------------------------";
+	}
 		
 	if( keyboardResponder != NULL ){
 		if( !keyboardResponder->isVisibleOnScreen()){
@@ -559,6 +566,10 @@ bool mui::Root::of_touchCancelled( ofTouchEventArgs &args ){
 void mui::Root::of_messageEvent( ofMessage &args ){
 	//handleMessageEvent(args);
 }
-void mui::Root::of_fileDragEvent( ofDragInfo &args ){
-	//handleFileDragEvent(args);
+bool mui::Root::of_fileDragEvent( ofDragInfo &args ){
+	ofDragInfo copy = args;
+	copy.position.x = args.position.x/mui::MuiConfig::scaleFactor;
+	copy.position.y = args.position.y/mui::MuiConfig::scaleFactor;
+	
+	return handleFileDragged(copy);
 }

@@ -36,7 +36,7 @@ void mui::Container::add( Container * c, int index ){
 
 //--------------------------------------------------------------
 void mui::Container::remove( Container * c ){
-    vector<Container*>::iterator it = find( children.begin(), children.end(), c );
+	vector<Container*>::iterator it = find( children.begin(), children.end(), c );
 	MUI_ROOT->removeFromResponders( c );
     if( it != children.end() ){
         children.erase( it );
@@ -392,6 +392,32 @@ void mui::Container::handleTouchCanceled( ofTouchEventArgs &touch ){
 	}
 }
 
+bool mui::Container::handleFileDragged(ofDragInfo & touch ){
+	float posX, posY;
+	bool touched;
+	
+	std::vector<Container*>::reverse_iterator it = children.rbegin();
+	Container * child;
+	while( it != children.rend() ) {
+		child = *it;
+		touch.position.x -= ( posX = (*it)->x );
+		touch.position.y -= ( posY = (*it)->y );
+		if(mui::Helpers::inside(child, touch.position.x, touch.position.y) && child->visible){
+			touched = (*it)->handleFileDragged( touch );
+			
+			if( touched ){
+				// that container is touched!
+				return true;
+			}
+		}
+		touch.position.x += posX;
+		touch.position.y += posY;
+		++it;
+	}
+	
+	return false;
+}
+
 
 
 //--------------------------------------------------------------
@@ -489,16 +515,16 @@ mui::Container * mui::Container::findChildAt( float posX, float posY, bool onlyV
 		// do we have a child that fits there?
 		vector<mui::Container*>::iterator it = children.begin();
 
-		mui::Container * result = this;
+		mui::Container * result = NULL;
 		mui::Container * child = NULL;
 
 		while( it != children.end() ){
 			child = (*it)->findChildAt( posX - (*it)->x, posY - (*it)->y, onlyVisible, mustAcceptTouches );
-			if( child != NULL && (!mustAcceptTouches || !child->ignoreEvents)) result = child;
+			if( child != NULL ) result = child;
 			++it;
 		}
 		
-		return result;
+		return (result == NULL && (!mustAcceptTouches || !ignoreEvents))? this : result;
 	}
 	else{
 		return NULL;
@@ -512,9 +538,9 @@ bool mui::Container::isVisibleOnScreen( float border ){
 	Container * element = this;
 	while( element != NULL ){
 		if( element->visible == false ) return false;
-		if( parent != NULL ){
-			posX += parent->x;
-			posY += parent->y;
+		if( element->parent != NULL ){
+			posX += element->x;
+			posY += element->y;
 		}
 		element = element->parent;
 	}

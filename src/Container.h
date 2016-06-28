@@ -83,8 +83,9 @@ namespace mui{
 		virtual Container * handleTouchHover( ofTouchEventArgs &touch );
 		virtual Container * handleTouchUp( ofTouchEventArgs &touch );
 		virtual Container * handleTouchDoubleTap( ofTouchEventArgs &touch );
-		void handleTouchCanceled( ofTouchEventArgs &touch );
-
+		virtual void handleTouchCanceled( ofTouchEventArgs &touch );
+		virtual bool handleFileDragged( ofDragInfo & args );
+		
 		virtual void reloadTextures();
 		virtual void handleReloadTextures();
 
@@ -138,6 +139,50 @@ namespace mui{
 				}
 			}
 			return NULL;
+		}
+		
+		template <typename T>
+		T * findChildOfType( const function<bool(Container * container, bool & checkChildren )> walker, const function<bool(T * result)> decider ){
+			bool checkChildren = true;
+			T * result = nullptr;
+			if(walker(this,checkChildren) && dynamic_cast<T>(this) != nullptr && decider((T*)this) ){
+				result = (T*)this;
+			}
+			
+			if(checkChildren){
+				T * childResult = nullptr;
+				for( Container * c : children ){
+					childResult = c->findChildOfType<T>(walker, decider);
+					if(childResult != nullptr){
+						result = childResult;
+					}
+				}
+			}
+			
+			return result;
+		}
+		
+		template <typename T>
+		T * findChildOfType( const function<bool(Container * container, bool & checkChildren )> walker, const function<bool(T * result)> decider, float x, float y ){
+			bool checkChildren = true;
+			T * result = nullptr;
+			if( x < 0 || y < 0 || x > width || y > height ) return nullptr;
+			
+			if(walker(this,checkChildren) && dynamic_cast<T>(this) != nullptr && decider((T*)this) ){
+				result = (T*)this;
+			}
+			
+			if(checkChildren){
+				T * childResult = nullptr;
+				for( Container * c : children ){
+					childResult = c->findChildOfType<T>(walker, decider, x - c->x, y - c->y);
+					if(childResult != nullptr){
+						result = childResult;
+					}
+				}
+			}
+			
+			return result;
 		}
 		
 		virtual bool isVisibleOnScreen(float border=0); // effectively visible on screen? border adds an additonal border around, so border<0 means isVisible return false if it's barely visible, border>0 means isVisible will return true even if the component is already slightly off screen.

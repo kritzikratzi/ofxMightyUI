@@ -194,6 +194,14 @@ Components
 |TextField|Deprecated. Native textfield overlay. Will be gone soon.|
 |TextArea|In progress, unusable. TextField replacement|
 
+
+
+
+Parameter Panel
+---
+
+MUI includes a handy thing named `parameter panel`
+
 Licensing 
 ---------
 

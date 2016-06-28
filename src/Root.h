@@ -97,7 +97,7 @@ namespace mui{
 		virtual bool of_touchDoubleTap( ofTouchEventArgs &args );
 		virtual bool of_touchCancelled( ofTouchEventArgs &args );
 		virtual void of_messageEvent( ofMessage &args );
-		virtual void of_fileDragEvent( ofDragInfo &args );
+		virtual bool of_fileDragEvent( ofDragInfo &args );
 	};
 }
 
