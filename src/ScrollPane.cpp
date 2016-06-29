@@ -70,7 +70,7 @@ void mui::ScrollPaneView::handleDraw(){
 
 void mui::ScrollPane::init(){
 	singleTouch = true;
-	ignoreEvents = true; 
+	ignoreEvents = false;
 	
 	for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
 		watchingTouch[i] = false; 
@@ -99,8 +99,8 @@ void mui::ScrollPane::commit(){
 	view->handleLayout();
 	ofRectangle bounds = getViewBoundingBox();
 	
-	viewportWidth = canScrollX? (width-15):width;
-	viewportHeight = canScrollY? (height-15):height;
+	viewportWidth = canScrollY? (width-15):width;
+	viewportHeight = canScrollX? (height-15):height;
 	
 	minScrollX = fminf( 0, bounds.x );
 	minScrollY = fminf( 0, bounds.y ); 
@@ -305,13 +305,13 @@ void mui::ScrollPane::handleDraw(){
 	Container::handleDraw(); 
 	mui::Helpers::popScissor();
 	
-	if( visible && minScrollY != maxScrollY ){
+	if( visible && minScrollY != maxScrollY && canScrollY ){
 		ofDrawLine(x+width-4, y+2, x+width-4, y+height-2 );
 		float scrubberHeight = ofClamp(height*height/(maxScrollY - minScrollY), 10, height/2);
 		float scrubberPos = ofMap(currentScrollY, minScrollY, maxScrollY, 2, height-2-scrubberHeight);
 		ofDrawRectangle(x+width-6, y+scrubberPos, 5, scrubberHeight );
 	}
-	if( visible && minScrollX != maxScrollX ){
+	if( visible && minScrollX != maxScrollX && canScrollX ){
 		ofDrawLine(x+2, y+height-4, x+width-2, y+height-4 );
 		float scrubberWidth = ofClamp(width*width/(maxScrollX - minScrollX), 10, width/2);
 		float scrubberPos = ofMap(currentScrollX, minScrollX, maxScrollX, 2, width-2-scrubberWidth);
@@ -443,8 +443,8 @@ void mui::ScrollPane::touchCanceled( ofTouchEventArgs &touch ){
 }
 
 void mui::ScrollPane::mouseScroll( ofMouseEventArgs &args){
-	view->x = -(currentScrollX = ofClamp(currentScrollX-args.scrollX, minScrollX, maxScrollX));
-	view->y = -(currentScrollY = ofClamp(currentScrollY-args.scrollY, minScrollY, maxScrollY));
+	if(canScrollX) view->x = -(currentScrollX = ofClamp(currentScrollX-args.scrollX, minScrollX, maxScrollX));
+	if(canScrollY) view->y = -(currentScrollY = ofClamp(currentScrollY-args.scrollY, minScrollY, maxScrollY));
 }
 
 

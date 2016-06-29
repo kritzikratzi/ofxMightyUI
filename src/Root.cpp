@@ -428,14 +428,18 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 		
 		return this;
 	}
-	cout << event.keycode << endl;
+
 	if( mui::MuiConfig::debugDraw && getKeyPressed(OF_KEY_ALT) && event.keycode == 'I' ){
 		cout << "------------------------------------";
 		mui::Container * active = this->findChildAt( ofGetMouseX()/mui::MuiConfig::scaleFactor - this->x, ofGetMouseY()/mui::MuiConfig::scaleFactor-this->y, true );
 		cout << "Set a debug point in " << __FILE__ << ":" << __LINE__ << " to inspect this element" << endl;
 		cout << "------------------------------------";
 	}
-		
+	
+	if( mui::MuiConfig::debugDraw && getKeyPressed(OF_KEY_ALT) && event.keycode == 'L' ){
+		handleLayout();
+	}
+	
 	if( keyboardResponder != NULL ){
 		if( !keyboardResponder->isVisibleOnScreen()){
 			keyboardResponder = NULL;
