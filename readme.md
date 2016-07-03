@@ -32,6 +32,9 @@ TODO:
 - ☀️ possible speed gain when combining textureatlas of fontstash and mui ui elements? (no switching textures -> drawArrays becomes non blocking?) --> better to collect draw commands as long as possible. 
 - ⛅️ clean up layouting mess --> getting there. maybe include the new `L.h` i've been using in my own projects
 - ☁️ include dropdown, instanced listview, and some other classes i have lying around here and there
+- ⛅️ added de/serialization mechanism to mui::ParameterPanel (either my IO.h, or some built in xml thingie) --> use the code from osci studio? 
+- ☁️ add support for ofParameter / ofParameterGroup to parameterpanel? (is it fast enough?, i want something lock free)
+- ☁️ create a color picker component
 
 TODO OSX: 
 
@@ -200,7 +203,30 @@ Components
 Parameter Panel
 ---
 
-MUI includes a handy thing named `parameter panel`
+MUI includes a handy thing named `parameter panel`. 
+
+#include "ofxMightyUI.h"
+#include "MuiParameterPanel.h"
+
+class ofApp{
+
+	mui::Root * root; 
+	mui::ParameterPanel * params; 
+	
+	void setup(){
+		root = new mui::Root(); 
+		params = new ParameterPanel(); 
+		root->add(params); 
+		
+		params->addSlider("radius", 10,500, 50, 1); // slider from 10-500, default 50, 1 decimal precission
+	}
+	
+	void draw(){
+		ofTranslate(ofGetWidth()/2, ofGetHeight()/2); 
+		ofSetColor(255); 
+		ofCircle(0,0, params->getFloat("radius")); 
+	}
+}
 
 Licensing 
 ---------
