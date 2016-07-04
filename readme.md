@@ -35,6 +35,7 @@ TODO:
 - ⛅️ added de/serialization mechanism to mui::ParameterPanel (either my IO.h, or some built in xml thingie) --> use the code from osci studio? 
 - ☁️ add support for ofParameter / ofParameterGroup to parameterpanel? (is it fast enough?, i want something lock free)
 - ☁️ create a color picker component
+- ☁️ bring L.h into mui? 
 
 TODO OSX: 
 

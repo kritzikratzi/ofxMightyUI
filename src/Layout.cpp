@@ -20,6 +20,7 @@ void mui::RowLayout::layout( Container * container ){
 		cout << " Y = " << y << endl; 
 		(*it)->x = 0;
 		(*it)->y = y;
+		(*it)->width = container->width; 
 		y += (*it)->height + spacing;
 		
 		++it; 
