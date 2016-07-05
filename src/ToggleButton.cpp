@@ -69,7 +69,11 @@ void mui::ToggleButton::draw(){
 		float x = checkboxAlign == Right?label->width:0;
 		float h = label->boundingBox.height;
 		if( selected ){
-			ofDrawRectangle(x+2+h*0.1,(height-h)/2,h,h);
+			float baseX = x+2+h*0.1;
+			ofDrawRectangle(baseX,(height-h)/2,h,h);
+			ofSetColor(0);
+			ofDrawLine(baseX+2,(height-h)/2+2,baseX+h-2,(height+h)/2-2);
+			ofDrawLine(baseX+2,(height+h)/2-2,baseX+h-2,(height-h)/2+2);
 		}
 		else{
 			ofNoFill();

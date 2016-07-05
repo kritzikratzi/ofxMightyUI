@@ -17,6 +17,11 @@
 namespace mui{
     class ScrollPane;
     
+	enum BarStyle{
+		IF_NEEDED,
+		ALWAYS
+	};
+	
     class ScrollPaneView : public Container{
     public:
         ScrollPaneView( float x, float y, float w, float h ) : Container( x, y, w, h ){
@@ -35,6 +40,8 @@ namespace mui{
 		float minScrollX, minScrollY; 
 		float maxScrollX, maxScrollY;
 		float viewportWidth, viewportHeight;
+		
+		BarStyle barStyleX, barStyleY; 
 		
 		bool canScrollX, canScrollY;
 		

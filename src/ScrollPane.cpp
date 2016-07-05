@@ -31,7 +31,9 @@ mui::ScrollPane::ScrollPane( float x_, float y_, float width_, float height_ )
 	trackingState(INACTIVE),
 	view( NULL ),
 	animating(false), animatingToBase(false), animatingMomentum(false),
-	usePagingH(false), numPagesAdded(0){
+	usePagingH(false), numPagesAdded(0),
+	barStyleX(BarStyle::IF_NEEDED), barStyleY(BarStyle::IF_NEEDED)
+{
 		init();
 };
 
