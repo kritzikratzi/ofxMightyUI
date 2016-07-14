@@ -22,6 +22,8 @@ namespace mui{
 		
 		Container * touchResponder[OF_MAX_TOUCHES]; // think of the responder as the elements received touchDown events.
 		Container * keyboardResponder;
+		set<Container*> hoverResponder;
+		Container * popupMenu; 
 		
 		virtual void init(); 
 		virtual void handleUpdate();
@@ -44,6 +46,10 @@ namespace mui{
 		virtual Container * handleMouseDragged( float x, float y, int button );
 		virtual Container * handleMousePressed( float x, float y, int button );
 		virtual Container * handleMouseReleased( float x, float y, int button );
+		
+		// shows a container as a popup menu
+		virtual void showPopupMenu( mui::Container * popupMenu, mui::Container * source, float x, float y, mui::HorizontalAlign horizontalAlign = mui::Left, mui::VerticalAlign verticalAlign = mui::Top );
+		
 		
 		ofRectangle convertNativeToMui( const ofRectangle rect );
 		ofPoint convertNativeToMui( const ofPoint pt );
@@ -98,6 +104,8 @@ namespace mui{
 		virtual bool of_touchCancelled( ofTouchEventArgs &args );
 		virtual void of_messageEvent( ofMessage &args );
 		virtual bool of_fileDragEvent( ofDragInfo &args );
+		
+		void removePopupIfNecessary( mui::Container * target ); 
 	};
 }
 

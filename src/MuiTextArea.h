@@ -41,8 +41,8 @@ namespace mui{
 		virtual void touchDown( ofTouchEventArgs &touch );
 		virtual void touchMoved( ofTouchEventArgs &touch );
 		
-		virtual void keyPressed( ofKeyEventArgs &key );
-		virtual void keyReleased( ofKeyEventArgs &key );
+		virtual bool keyPressed( ofKeyEventArgs &key );
+		virtual bool keyReleased( ofKeyEventArgs &key );
 		
 		// change the size to accomodate all contents
 		virtual void sizeToFit( float padX = 0, float padY = 0 );

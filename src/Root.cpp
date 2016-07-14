@@ -25,7 +25,8 @@ mui::Root * mui::Root::INSTANCE = NULL;
 mui::Root::Root() : Container( 0, 0, -1, -1 ){
 	INSTANCE = this;
 	ignoreEvents = true;
-	keyboardResponder = NULL;
+	keyboardResponder = nullptr;
+	popupMenu = nullptr;
 	init();
 };
 
@@ -84,6 +85,34 @@ void mui::Root::handleUpdate(){
 	}
 	
 	tweener.step( ofGetSystemTime() );
+	
+	// figure out where we are hovering
+	
+	set<Container*> newHoverResponder;
+	Container * c = findChildAt(ofGetMouseX()/mui::MuiConfig::scaleFactor, ofGetMouseY()/mui::MuiConfig::scaleFactor,true,true);
+	if(c){
+		ofMouseEventArgs args; //TODO: fix up coords
+		while(c!=nullptr){
+			if(!c->ignoreEvents){
+				newHoverResponder.insert(c);
+				if(hoverResponder.find(c) == hoverResponder.end() ){
+					c->mouseEnter(args);
+				}
+			}
+			
+			c = c->parent;
+		}
+	}
+	
+	for( Container * c : hoverResponder ){
+		ofMouseEventArgs args; //TODO: fix up coords
+		if(newHoverResponder.find(c) == newHoverResponder.end()){
+			c->mouseExit(args);
+		}
+	}
+	
+	hoverResponder = move(newHoverResponder); 
+	
 	#if TARGET_OS_IPHONE
 	NativeIOS::update();
 //	#elif TARGET_OS_MAC
@@ -160,9 +189,11 @@ mui::Container * mui::Root::handleTouchDown( ofTouchEventArgs &touch ){
 	ofTouchEventArgs copy = touch; 
 	fixTouchPosition( touch, copy, NULL ); 
 	
-	//return ( touchResponder[touch.id] = Container::handleTouchDown( copy ) ); 
+	//return ( touchResponder[touch.id] = Container::handleTouchDown( copy ) );
+	Container * lastPopup = popupMenu;
 	touchResponder[touch.id] = Container::handleTouchDown( copy );
 	if( touchResponder[touch.id] != keyboardResponder ) keyboardResponder = NULL;
+	if( popupMenu == lastPopup ) removePopupIfNecessary(touchResponder[touch.id]);
 	
 	return touchResponder[touch.id]; 
 }
@@ -348,14 +379,25 @@ void mui::Root::safeRemoveAndDelete( mui::Container *c ){
 
 //--------------------------------------------------------------
 void mui::Root::removeFromResponders( Container * c ){
+	if(c == nullptr ) return;
+	
 	for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
 		if( touchResponder[i] == c ){
 			touchResponder[i] = NULL;
 		}
 	}
+	
 	if( keyboardResponder == c ){
 		keyboardResponder = NULL;
 	}
+	
+	hoverResponder.erase(c);
+	
+	if(c == popupMenu ) popupMenu = nullptr;
+	// recurse
+	//for(const auto & child : c->children){
+	//	removeFromResponders(child);
+	//}
 }
 
 void mui::Root::reloadTextures(){
@@ -445,7 +487,11 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 			keyboardResponder = NULL;
 		}
 		else{
-			keyboardResponder->keyPressed(event);
+			mui::Container * c = keyboardResponder;
+			while(c != nullptr && !c->keyPressed(event)){
+				c = c->parent;
+			}
+			return c;
 		}
 	}
 	
@@ -499,6 +545,38 @@ mui::Container * mui::Root::handleMouseReleased( float x, float y, int button ){
 	args.y = y;
 	args.id = 0;
 	return handleTouchUp(args);
+}
+
+void mui::Root::showPopupMenu( mui::Container * c, mui::Container * source, float x, float y, mui::HorizontalAlign horizontalAlign, mui::VerticalAlign verticalAlign ){
+	if(popupMenu != nullptr){
+		safeRemoveAndDelete(popupMenu);
+		popupMenu = nullptr;
+	}
+	
+	add(c);
+	c->handleLayout();
+	popupMenu = c;
+	
+	if( source == nullptr ){
+		popupMenu->x = x;
+		popupMenu->y = y;
+	}
+	else{
+		ofPoint p = source->getGlobalPosition();
+		popupMenu->x = p.x + x;
+		popupMenu->y = p.y + y;
+	}
+	
+	switch(horizontalAlign){
+		case mui::Left: break;
+		case mui::Right: popupMenu->x -= popupMenu->width; break;
+		case mui::Center: popupMenu->x -= popupMenu->width/2; break;
+	}
+	switch(verticalAlign){
+		case mui::Top: break;
+		case mui::Middle: popupMenu->y -= popupMenu->height; break;
+		case mui::Bottom: popupMenu->y -= popupMenu->height/2; break;
+	}
 }
 
 
@@ -576,4 +654,19 @@ bool mui::Root::of_fileDragEvent( ofDragInfo &args ){
 	copy.position.y = args.position.y/mui::MuiConfig::scaleFactor;
 	
 	return handleFileDragged(copy);
+}
+
+void mui::Root::removePopupIfNecessary( mui::Container * target ){
+	if(popupMenu != nullptr ){
+		if(target != nullptr ){
+			// is the popup somehow a parent of what was clicked?
+			while(target != nullptr){
+				if( target == popupMenu ) return;
+				target = target->parent;
+			}
+		}
+		
+		safeRemoveAndDelete(popupMenu);
+
+	}
 }

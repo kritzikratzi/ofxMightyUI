@@ -335,7 +335,7 @@ void mui::TextArea::touchMoved(ofTouchEventArgs &touch){
 	stb_textedit_drag(&data, state, touch.x, touch.y);
 }
 
-void mui::TextArea::keyPressed( ofKeyEventArgs &key ){
+bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 	lastInteraction = ofGetElapsedTimeMillis();
 	int keyMask = MUI_ROOT->getKeyPressed(OF_KEY_SHIFT)?STB_TEXTEDIT_K_SHIFT:0;
 	
@@ -381,10 +381,12 @@ void mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 				stb_textedit_key(&data, state, ((key.codepoint >> 18)           | 0xf0) );
 			}
 	}
+	
+	return true; 
 }
 
-void mui::TextArea::keyReleased( ofKeyEventArgs &key ){
-	
+bool mui::TextArea::keyReleased( ofKeyEventArgs &key ){
+	return true; 
 }
 
 

@@ -30,12 +30,16 @@ TODO:
 - ☑︎ make a basic example
 - ⛅️ window size is very confused until the window is resized once (esp one windows) -> seems fine now! 
 - ☀️ possible speed gain when combining textureatlas of fontstash and mui ui elements? (no switching textures -> drawArrays becomes non blocking?) --> better to collect draw commands as long as possible. 
-- ⛅️ clean up layouting mess --> getting there. maybe include the new `L.h` i've been using in my own projects
 - ☁️ include dropdown, instanced listview, and some other classes i have lying around here and there
 - ⛅️ added de/serialization mechanism to mui::ParameterPanel (either my IO.h, or some built in xml thingie) --> use the code from osci studio? 
 - ☁️ add support for ofParameter / ofParameterGroup to parameterpanel? (is it fast enough?, i want something lock free)
 - ☁️ create a color picker component
-- ☁️ bring L.h into mui? 
+
+CLEANUP TASKS: 
+- ⛅️ clean up layouting mess --> remove layoutHandler, create onLayout event. maybe include the new `L.h` i've been using in my own projects
+- add event handlers (onTouchDown, onTouchUp, ...)
+- 
+
 
 TODO OSX: 
 
@@ -47,7 +51,6 @@ TODO WINDOWS:
 - ⛅️ what is need to detect retina? (using scaleFactor already works very nicely)
 - **Copy Resources**: Go to Project settings, choose "all configurations". Then go to Build Events>Post-Build Events add this to the _command line_: <br>
   		```xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxMightyUI\bin\data\mui" "$(ProjectDir)bin\data\mui"```
-
 
 ---
 

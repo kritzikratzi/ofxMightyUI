@@ -74,9 +74,11 @@ namespace mui{
 		virtual void touchDoubleTap( ofTouchEventArgs &touch ){};
 		virtual void touchCanceled( ofTouchEventArgs &touch ){}; // when some other component "stole" the responder status.
 		virtual void mouseScroll( ofMouseEventArgs &args){};
+		virtual void mouseEnter( ofMouseEventArgs &args){}; 
+		virtual void mouseExit( ofMouseEventArgs &args){};
 		
-		virtual void keyPressed( ofKeyEventArgs &touch){};
-		virtual void keyReleased( ofKeyEventArgs &touch){};
+		virtual bool keyPressed( ofKeyEventArgs &touch){ return false; };
+		virtual bool keyReleased( ofKeyEventArgs &touch){ return true; };
 		
 		virtual Container * handleTouchDown( ofTouchEventArgs &touch );
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
@@ -163,11 +165,32 @@ namespace mui{
 		}
 		
 		template <typename T>
-		T * findChildOfType( const function<bool(Container * container, bool & checkChildren )> walker, const function<bool(T * result)> decider, float x, float y ){
+		T * findChildOfTypeAt( const function<bool(Container * container, bool & checkChildren )> walker, const function<bool(T * result)> decider, float x, float y ){
 			bool checkChildren = true;
 			T * result = nullptr;
 			if( x < 0 || y < 0 || x > width || y > height ) return nullptr;
+			if(walker(this,checkChildren) && dynamic_cast<T>(this) != nullptr && decider((T*)this) ){
+				result = (T*)this;
+			}
 			
+			if(checkChildren){
+				T * childResult = nullptr;
+				for( Container * c : children ){
+					childResult = c->findChildOfType<T>(walker, decider, x - c->x, y - c->y);
+					if(childResult != nullptr){
+						result = childResult;
+					}
+				}
+			}
+			
+			return result;
+		}
+		
+		template <typename T>
+		T * findChildAt( const function<bool(Container * container, bool & checkChildren )> walker, const function<bool(T * result)> decider, float x, float y ){
+			bool checkChildren = true;
+			T * result = nullptr;
+			if( x < 0 || y < 0 || x > width || y > height ) return nullptr;
 			if(walker(this,checkChildren) && dynamic_cast<T>(this) != nullptr && decider((T*)this) ){
 				result = (T*)this;
 			}

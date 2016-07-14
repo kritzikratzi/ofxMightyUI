@@ -32,7 +32,7 @@ namespace mui{
 		virtual void fitWidthToLabel(int paddingLR = 5);
 		virtual void fitWidthToLabel(int paddingL, int paddingR );
 		virtual void layout();
-		virtual void keyPressed(ofKeyEventArgs &args); 
+		virtual bool keyPressed(ofKeyEventArgs &args);
 		
 		// simulate a click
 		virtual void clickAndNotify(); 

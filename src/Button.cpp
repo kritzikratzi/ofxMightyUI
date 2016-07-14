@@ -138,8 +138,12 @@ void mui::Button::clickAndNotify(){
 	ofNotifyEvent(onPress, args, this );
 }
 
-void mui::Button::keyPressed(ofKeyEventArgs &args){
+bool mui::Button::keyPressed(ofKeyEventArgs &args){
 	if( args.key == ' ' || args.key == OF_KEY_RETURN ){
 		clickAndNotify();
+		return true;
+	}
+	else{
+		return false;
 	}
 }

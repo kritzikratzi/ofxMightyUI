@@ -22,6 +22,10 @@ mui::Container::~Container(){
 
 //--------------------------------------------------------------
 void mui::Container::add( Container * c, int index ){
+	if(c->parent != nullptr ){
+		c->remove();
+	}
+	
     if( index == -1 ){
         children.push_back( c );
         c->parent = this;
@@ -39,6 +43,7 @@ void mui::Container::remove( Container * c ){
 	vector<Container*>::iterator it = find( children.begin(), children.end(), c );
 	MUI_ROOT->removeFromResponders( c );
     if( it != children.end() ){
+		c->parent = nullptr;
         children.erase( it );
     }
 }
@@ -557,7 +562,6 @@ bool mui::Container::isMouseOver(){
 	float mouseY = ofGetMouseY()/mui::MuiConfig::scaleFactor;
 	return rect.inside(mouseX,mouseY);
 }
-
 
 //--------------------------------------------------------------
 string mui::Container::toString(){
