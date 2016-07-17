@@ -549,7 +549,7 @@ mui::Container * mui::Root::handleMouseReleased( float x, float y, int button ){
 
 void mui::Root::showPopupMenu( mui::Container * c, mui::Container * source, float x, float y, mui::HorizontalAlign horizontalAlign, mui::VerticalAlign verticalAlign ){
 	if(popupMenu != nullptr){
-		safeRemoveAndDelete(popupMenu);
+		popupMenu->remove(); 
 		popupMenu = nullptr;
 	}
 	

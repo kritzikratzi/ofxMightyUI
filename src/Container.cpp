@@ -29,12 +29,14 @@ void mui::Container::add( Container * c, int index ){
     if( index == -1 ){
         children.push_back( c );
         c->parent = this;
+		c->afterAdd(this);
     }
     else{
         vector<Container*>::iterator it = children.begin();
         it += index;
         children.insert( it, c );
         c->parent = this;
+		c->afterAdd(this);
     }
 }
 
@@ -45,6 +47,7 @@ void mui::Container::remove( Container * c ){
     if( it != children.end() ){
 		c->parent = nullptr;
         children.erase( it );
+		c->afterRemove(this);
     }
 }
 

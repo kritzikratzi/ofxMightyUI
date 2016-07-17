@@ -114,7 +114,7 @@ void mui::ScrollPane::commit(){
 	
 	//TODO: make this -15 (the bars) optional!
 	
-	view->width = fmaxf( viewportWidth, maxScrollX + viewportWidth);
+	view->width = fmaxf( viewportWidth, canScrollX?(maxScrollX + viewportWidth):0);
 	view->height = fmaxf( viewportHeight, maxScrollY + viewportHeight);
 	
 	// todo: trigger layout (again!) when size changed?
