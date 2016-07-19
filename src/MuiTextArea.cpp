@@ -359,7 +359,7 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 			//todo: copied this from built-in utf8::append
 			if (!utf8::internal::is_code_point_valid(key.codepoint)){
 				// what is it? don't know! ignore it!
-				return;
+				return true;
 			}
 			
 			if (key.codepoint < 0x80)                        // one octet

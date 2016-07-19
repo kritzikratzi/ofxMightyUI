@@ -445,6 +445,10 @@ void mui::ScrollPane::touchCanceled( ofTouchEventArgs &touch ){
 }
 
 void mui::ScrollPane::mouseScroll( ofMouseEventArgs &args){
+#ifdef _WIN32
+	args.scrollX *= 10; 
+	args.scrollY *= 10; 
+#endif
 	if(canScrollX) view->x = -(currentScrollX = ofClamp(currentScrollX-args.scrollX, minScrollX, maxScrollX));
 	if(canScrollY) view->y = -(currentScrollY = ofClamp(currentScrollY-args.scrollY, minScrollY, maxScrollY));
 }

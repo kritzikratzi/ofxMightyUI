@@ -80,8 +80,8 @@ namespace mui{
 		virtual bool keyPressed( ofKeyEventArgs &touch){ return false; };
 		virtual bool keyReleased( ofKeyEventArgs &touch){ return true; };
 		
-		virtual bool afterAdd( mui::Container * newParent ){}; // called when added to a parent
-		virtual bool afterRemove( mui::Container * oldParent ){}; // called when reomved from a parent
+		virtual void afterAdd( mui::Container * newParent ){}; // called when added to a parent
+		virtual void afterRemove( mui::Container * oldParent ){}; // called when reomved from a parent
 		
 		virtual Container * handleTouchDown( ofTouchEventArgs &touch );
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
