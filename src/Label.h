@@ -25,6 +25,7 @@ namespace mui{
 		int fontSize;
 		string fontName; // subject to change!
 		bool ellipsisMode;
+		bool verticalAlignUseBaseline; // defaults to true. disable to v-align icons. 
 		
 		// the currently computed text boundaries
 		// the height and y offset are currently always the size of a capital 'M'

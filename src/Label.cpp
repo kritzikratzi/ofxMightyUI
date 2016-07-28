@@ -14,7 +14,7 @@
 
 mui::Label::Label( std::string text_, float x_, float y_, float width_, float height_ ) :
 	Container( x_, y_, width_, height_ ),
-	ellipsisMode(true), text( text_), fontSize(-1), horizontalAlign(Left), verticalAlign(Middle),fontName(""){
+	ellipsisMode(true), text( text_), fontSize(-1), horizontalAlign(Left), verticalAlign(Middle),fontName(""),verticalAlignUseBaseline(true){
 		ignoreEvents = true;
 		if( fontSize < 0 ) fontSize = mui::MuiConfig::fontSize;
 		commit();
@@ -115,7 +115,9 @@ void mui::Label::commit(){
 	
 	// Orient y on a simple uppercase character
 	// Otherwise things go up and down unexpectedly
-	ofRectangle baselineSize = Helpers::getFontStash().getTextBounds("M", fontStyle, 0, 0);
-	boundingBox.height = baselineSize.height;
-	boundingBox.y = baselineSize.y;
+	if(verticalAlignUseBaseline){
+		ofRectangle baselineSize = Helpers::getFontStash().getTextBounds("M", fontStyle, 0, 0);
+		boundingBox.height = baselineSize.height;
+		boundingBox.y = baselineSize.y;
+	}
 }
