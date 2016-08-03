@@ -12,6 +12,12 @@
 #include <Poco/Path.h>
 #include "ofMain.h"
 
+#if defined(TARGET_OSX)
+#define MUI_KEY_ACTION OF_KEY_SUPER
+#else
+#define MUI_KEY_ACTION OF_KEY_CONTROL
+#endif
+
 
 // default font
 #define MUI_FONT MuiConfig::font
