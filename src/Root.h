@@ -70,6 +70,8 @@ namespace mui{
 		virtual void animate( float &variable, float targetValue ); 
 		virtual void commitAnimation();
 		
+		virtual void runOnUiThread(function<void()> func);
+		
 		virtual bool getKeyPressed( int key ); 
 		
 		static mui::Root * INSTANCE;

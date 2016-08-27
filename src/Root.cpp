@@ -411,6 +411,12 @@ void mui::Root::prepareAnimation( int milliseconds, int type, int direction ){
 	param = tween::TweenerParam( milliseconds, (short)type, (short)direction );
 }
 
+//--------------------------------------------------------------
+void mui::Root::runOnUiThread(function<void()> func){
+	//TBD
+}
+
+//--------------------------------------------------------------
 bool mui::Root::getKeyPressed( int key ){
 	return activeKeys.find(key) != activeKeys.end();
 }
@@ -476,10 +482,14 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 		mui::Container * active = this->findChildAt( ofGetMouseX()/mui::MuiConfig::scaleFactor - this->x, ofGetMouseY()/mui::MuiConfig::scaleFactor-this->y, true );
 		cout << "Set a debug point in " << __FILE__ << ":" << __LINE__ << " to inspect this element" << endl;
 		cout << "------------------------------------";
+		
+		return this;
 	}
 	
 	if( mui::MuiConfig::debugDraw && getKeyPressed(OF_KEY_ALT) && event.keycode == 'L' ){
 		handleLayout();
+		
+		return this; 
 	}
 	
 	if( keyboardResponder != NULL ){

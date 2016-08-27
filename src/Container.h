@@ -31,6 +31,7 @@ namespace mui{
 		bool allowSubpixelTranslations; // translate by subpixels also? (default)
 		bool drawDirty; // force drawing clipped objects in scrollpanes. 
 		string name;
+		bool needsLayout; 
 		
 		vector<mui::Container*> children;
 		Container * parent; 

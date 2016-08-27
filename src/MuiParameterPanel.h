@@ -15,6 +15,7 @@
 #include "ToggleButton.h"
 #include "MuiTextArea.h"
 #include <typeindex>
+#include <unordered_map>
 
 namespace mui{
 	
@@ -172,7 +173,7 @@ namespace mui{
 		
 		template<typename T>
 		T getValue( string rowId ){
-			map<string,mui::data::Attribute>::iterator it = rows.find(rowId);
+			unordered_map<string,mui::data::Attribute>::iterator it = rows.find(rowId);
 			if( it != rows.end() ){
 				mui::data::Attribute &attr = it->second;
 				Row<Container,T> * row = attr.value_unsafe<Row<Container,T>*>();
@@ -197,7 +198,7 @@ namespace mui{
 		
 		template<typename T>
 		void setValue( string rowId, const T &value ){
-			map<string,mui::data::Attribute>::iterator it = rows.find(rowId);
+			unordered_map<string,mui::data::Attribute>::iterator it = rows.find(rowId);
 			if( it != rows.end() ){
 				mui::data::Attribute &attr = it->second;
 				Row<Container,T> * row = attr.value_unsafe<Row<Container,T>*>();
@@ -222,9 +223,9 @@ namespace mui{
 		}
 		
 	protected:
-		map<string,data::Attribute> rows;
-		map<type_index,data::Attribute> getters;
-		map<type_index,data::Attribute> setters;
+		unordered_map<string,data::Attribute> rows;
+		unordered_map<type_index,data::Attribute> getters;
+		unordered_map<type_index,data::Attribute> setters;
 		vector<Section*> sections;
 		Section * currentSection;
 		float labelColumnWidth;
@@ -303,6 +304,7 @@ namespace mui{
 				}
 				for( mui::Container * c : children ){
 					if( c == titleLabel ) continue;
+					if( !c->visible ) continue; 
 					c->y = yy;
 					c->x = 5;
 					c->width = width-10;

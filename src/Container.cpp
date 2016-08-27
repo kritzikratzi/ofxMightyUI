@@ -8,7 +8,7 @@
 #include "MuiConfig.h"
 #include "Root.h"
 
-mui::Container::Container( float x_, float y_, float width_, float height_ ) : x(x_), y(y_), width(width_), height(height_), opaque(false), parent(NULL), layoutHandler(NULL), visible(true), ignoreEvents(false), singleTouch(true), name( "Container" ), singleTouchId( -1 ), focusTransferable(true),bg(0,0,0,0), allowSubpixelTranslations(true), drawDirty(false), userData(NULL){
+mui::Container::Container( float x_, float y_, float width_, float height_ ) : x(x_), y(y_), width(width_), height(height_), opaque(false), parent(NULL), layoutHandler(NULL), visible(true), ignoreEvents(false), singleTouch(true), name( "Container" ), singleTouchId( -1 ), focusTransferable(true),bg(0,0,0,0), allowSubpixelTranslations(true), drawDirty(false), userData(NULL),needsLayout(false){
 	//for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
 	//	startedInside[i] = false;
 	//}
@@ -136,6 +136,8 @@ void mui::Container::handleLayout(){
 	if( sizeChanged ){
 		layout();
 	}
+	
+	needsLayout = false;
 }
 
 
@@ -187,6 +189,11 @@ void mui::Container::handleUpdate(){
         //Container * child = (*it); // just for debugging ...
 		(*it)->handleUpdate();
 		++it;
+	}
+	
+	if(needsLayout){
+		handleLayout();
+		needsLayout = false;
 	}
 }
 

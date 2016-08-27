@@ -75,10 +75,19 @@ void mui::Button::drawBackground(){
 }
 
 void mui::Button::fitWidthToLabel( int paddingLR ){
-	fitWidthToLabel(paddingLR, paddingLR );
+	sizeToFitWidth(paddingLR,paddingLR);
 }
 
 void mui::Button::fitWidthToLabel( int paddingL, int paddingR ){
+	sizeToFitWidth(paddingL,paddingR);
+}
+
+
+void mui::Button::sizeToFitWidth( int paddingLR ){
+	fitWidthToLabel(paddingLR, paddingLR );
+}
+
+void mui::Button::sizeToFitWidth( int paddingL, int paddingR ){
 	label->ellipsisMode = false; 
 	label->commit();
 	ofRectangle bounds = label->box(0, paddingR, 0, paddingL );

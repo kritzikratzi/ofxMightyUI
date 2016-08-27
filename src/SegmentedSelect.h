@@ -55,7 +55,7 @@ namespace mui{
 	template<typename T>
 	class SegmentedSelect : public Container{
 	public: 
-		SegmentedSelect( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 ): Container( x_, y_, width_, height_ ), selected(NULL){
+		SegmentedSelect( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 30 ): Container( x_, y_, width_, height_ ), selected(NULL){
 		}
 		
 		SegmentedButton<T> * selected;
@@ -126,6 +126,16 @@ namespace mui{
 
 		ofEvent<SegmentedButton<T>*> onChange;
 		ofEvent<T> onChangeValue;
+		
+		void sizeToFitWidth(){
+			commit();
+			if(children.size() == 0 ){
+				width = 0;
+			}
+			else{
+				width = children.back()->x + children.back()->width;
+			}
+		}
 		
 	private: 
 		virtual void onButtonPress( const void* sender, ofTouchEventArgs &args ){

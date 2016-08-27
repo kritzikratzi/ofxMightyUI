@@ -96,11 +96,19 @@ void mui::ToggleButton::drawBackground(){
 }
 
 void mui::ToggleButton::fitWidthToLabel( int paddingLR ){
-	fitWidthToLabel(paddingLR, paddingLR );
+	sizeToFitWidth(paddingLR,paddingLR);
 }
 
 void mui::ToggleButton::fitWidthToLabel( int paddingL, int paddingR ){
-	label->ellipsisMode = false; 
+	sizeToFitWidth(paddingL,paddingR);
+}
+
+void mui::ToggleButton::sizeToFitWidth( int paddingLR ){
+	sizeToFitWidth(paddingLR, paddingLR );
+}
+
+void mui::ToggleButton::sizeToFitWidth( int paddingL, int paddingR ){
+	label->ellipsisMode = false;
 	label->commit();
 	ofRectangle bounds = label->box(0, paddingR, 0, paddingL );
 	width = bounds.width + (checkbox?(4+bounds.height*1.2):0);

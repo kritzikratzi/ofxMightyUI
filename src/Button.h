@@ -29,8 +29,10 @@ namespace mui{
 		virtual void update();
 		virtual void draw();
 		virtual void drawBackground();
-		virtual void fitWidthToLabel(int paddingLR = 5);
-		virtual void fitWidthToLabel(int paddingL, int paddingR );
+		virtual void fitWidthToLabel(int paddingLR = 5); // deprecated
+		virtual void fitWidthToLabel(int paddingL, int paddingR ); // deprecated 
+		virtual void sizeToFitWidth(int paddingLR = 5);
+		virtual void sizeToFitWidth(int paddingL, int paddingR );
 		virtual void layout();
 		virtual bool keyPressed(ofKeyEventArgs &args);
 		
