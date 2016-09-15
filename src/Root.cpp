@@ -457,7 +457,11 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 	// for now, i'm not fixing this. i really shouldn't be, not here.
 	activeKeys.insert(event.key);
 
-	if( mui::MuiConfig::debugDraw && getKeyPressed(OF_KEY_ALT) && getKeyPressed(OF_KEY_RETURN)){
+	if( mui::MuiConfig::enableDebuggingShortcuts && getKeyPressed(MUI_KEY_ACTION) && getKeyPressed('d')){
+		mui::MuiConfig::debugDraw ^= true;
+	}
+	
+	if( mui::MuiConfig::enableDebuggingShortcuts && getKeyPressed(OF_KEY_ALT) && getKeyPressed(OF_KEY_RETURN)){
 		// dump the view hierachy!
 		mui::Container * active = this->findChildAt( ofGetMouseX()/mui::MuiConfig::scaleFactor - this->x, ofGetMouseY()/mui::MuiConfig::scaleFactor-this->y, true );
 		
@@ -477,7 +481,7 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 		return this;
 	}
 
-	if( mui::MuiConfig::debugDraw && getKeyPressed(OF_KEY_ALT) && event.keycode == 'I' ){
+	if( mui::MuiConfig::enableDebuggingShortcuts && getKeyPressed(OF_KEY_ALT) && event.keycode == 'I' ){
 		cout << "------------------------------------";
 		mui::Container * active = this->findChildAt( ofGetMouseX()/mui::MuiConfig::scaleFactor - this->x, ofGetMouseY()/mui::MuiConfig::scaleFactor-this->y, true );
 		cout << "Set a debug point in " << __FILE__ << ":" << __LINE__ << " to inspect this element" << endl;

@@ -74,6 +74,10 @@ namespace mui{
 		static Poco::Path dataPath;
 		
 		static ofLogLevel logLevel;
+		
+		// enable shortcuts for debugging
+		// (press action+d to enable)
+		static bool enableDebuggingShortcuts;
 	};
 }
 

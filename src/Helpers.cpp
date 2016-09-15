@@ -126,6 +126,7 @@ ofxFontStash2 & mui::Helpers::getFontStash(){
 
 
 void mui::Helpers::drawString( string s, float x, float y, ofColor color, int fontSize ){
+	loadFont("");
 	ofxFontStashStyle style;
 	style.fontSize = fontSize;
 	style.color = color;
