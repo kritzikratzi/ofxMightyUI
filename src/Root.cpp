@@ -641,7 +641,14 @@ bool mui::Root::of_mouseScrolled( ofMouseEventArgs &args ){
 		return true;
 	}
 	else{
-		return false;
+		mui::Container * container = findChildAt(pos.x, pos.y, true, true );
+		if( container != nullptr && container != this ){
+			container->mouseScroll(args);
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 }
 bool mui::Root::of_touchDown( ofTouchEventArgs &args ){
