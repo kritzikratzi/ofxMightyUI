@@ -24,6 +24,7 @@ namespace mui{
 		Label * label; 
 		bool pressed;
 		ofEvent<ofTouchEventArgs> onPress;
+		ofEvent<ofTouchEventArgs> onContextMenu;
 		
 		virtual void init( std::string title );
 		virtual void update();
@@ -46,6 +47,8 @@ namespace mui{
 		virtual void touchUpOutside( ofTouchEventArgs &touch ); 
 		virtual void touchDoubleTap( ofTouchEventArgs &touch ); 
 		virtual void touchCanceled( ofTouchEventArgs &touch ); 
+	private:
+		bool isRightClick{false};
 	};
 };
 

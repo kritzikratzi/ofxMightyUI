@@ -101,6 +101,7 @@ void mui::Button::layout(){
 
 //--------------------------------------------------------------
 void mui::Button::touchDown( ofTouchEventArgs &touch ){
+	isRightClick = ofGetMousePressed(OF_MOUSE_BUTTON_3);
 	pressed = true;
 }
 
@@ -120,7 +121,12 @@ void mui::Button::touchMovedOutside( ofTouchEventArgs &touch ){
 //--------------------------------------------------------------
 void mui::Button::touchUp( ofTouchEventArgs &touch ){
 	pressed = false;
-	ofNotifyEvent( onPress, touch, this );
+	if(isRightClick){
+		ofNotifyEvent( onContextMenu, touch, this);
+	}
+	else{
+		ofNotifyEvent( onPress, touch, this );
+	}
 }
 
 

@@ -26,3 +26,13 @@ void mui::RowLayout::layout( Container * container ){
 		++it; 
 	}
 }
+
+
+mui::LambdaLayout::LambdaLayout(std::function<void(Container*)> layoutFunc) : layoutFunc(layoutFunc){
+	
+}
+
+
+void mui::LambdaLayout::layout(Container * container ){
+	layoutFunc(container);
+}

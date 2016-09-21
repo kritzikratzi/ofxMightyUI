@@ -11,6 +11,7 @@
 #pragma once
 
 #include "MuiCore.h"
+#include <functional>
 
 namespace mui{
 	class Layout{
@@ -30,5 +31,12 @@ namespace mui{
 		void layout( Container * container ); 
 		
 		int spacing; 
-	}; 
+	};
+	
+	class LambdaLayout : public Layout{
+	public:
+		std::function<void(mui::Container*)> layoutFunc;
+		LambdaLayout(std::function<void(mui::Container*)> layoutFunc);
+		void layout( Container * container ); 
+	};
 }
