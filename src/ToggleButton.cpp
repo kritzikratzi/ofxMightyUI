@@ -124,6 +124,7 @@ void mui::ToggleButton::layout(){
 
 //--------------------------------------------------------------
 void mui::ToggleButton::touchDown( ofTouchEventArgs &touch ){
+	isRightClick = ofGetMousePressed(OF_MOUSE_BUTTON_3);
 	pressed = true;
 }
 
@@ -142,10 +143,15 @@ void mui::ToggleButton::touchMovedOutside( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::ToggleButton::touchUp( ofTouchEventArgs &touch ){
-	selected = !selected;
 	pressed = false;
-	ofNotifyEvent(onPress, touch, this );
-	ofNotifyEvent(onChange, selected, this );
+	if(isRightClick){
+		ofNotifyEvent( onContextMenu, touch, this);
+	}
+	else{
+		selected = !selected;
+		ofNotifyEvent(onPress, touch, this );
+		ofNotifyEvent(onChange, selected, this );
+	}
 }
 
 

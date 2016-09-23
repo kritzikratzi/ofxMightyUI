@@ -35,6 +35,7 @@ namespace mui{
 		ofColor selectedBg;
 		ofColor selectedFg;
 		ofEvent<ofTouchEventArgs> onPress;
+		ofEvent<ofTouchEventArgs> onContextMenu;
 		ofEvent<bool> onChange;
 		
 		bool checkbox;
@@ -61,7 +62,8 @@ namespace mui{
 		virtual void touchDoubleTap( ofTouchEventArgs &touch );
 		virtual void touchCanceled( ofTouchEventArgs &touch );
 		
-		
+	private:
+		bool isRightClick; 
 	};
 };
 

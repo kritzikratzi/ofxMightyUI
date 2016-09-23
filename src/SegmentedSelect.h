@@ -107,10 +107,32 @@ namespace mui{
 			return selected == NULL? defaultValue : selected->value;
 		}
 		
+		virtual const int getSelectedIndex(){
+			int i = 0;
+			for( mui::Container * c : children ){
+				mui::SegmentedButton<T> * button = (mui::SegmentedButton<T>*)c;
+				if( button != nullptr && button == selected ){
+					return i;
+				}
+				i++;
+			}
+			return -1; 
+		}
+		
+		virtual SegmentedButton<T> * setSelectedIndex( const int num ){
+			setSelected(getSegment(num)->value);
+			return selected;
+		}
+		
+		virtual SegmentedButton<T> * setSelectedIndexAndNotify( const int num ){
+			setSelectedAndNotify(getSegment(num)->value);
+			return selected;
+		}
+		
 		virtual SegmentedButton<T> * setSelected( const T value ){
 			for( mui::Container * c : children ){
 				mui::SegmentedButton<T> * button = (mui::SegmentedButton<T>*)c;
-				if( button->value == value ){
+				if( button != nullptr && button->value == value ){
 					selected = button;
 					commit();
 					return button;
