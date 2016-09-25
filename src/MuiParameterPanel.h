@@ -43,6 +43,7 @@ namespace mui{
 		public:
 			Attribute(): data(nullptr) {}
 			Attribute(const Attribute& src): data(src.copy()) {}
+			Attribute& operator= (const Attribute & src){ data = src.copy(); return *this; }
 			Attribute(Attribute&& src): data(src.data) { src.data = nullptr; }
 			template <class T> Attribute(const T& src): data(
 															 new(new(malloc(sizeof(Head) + sizeof(T))) THead<T>() + 1) T(src)) {}
