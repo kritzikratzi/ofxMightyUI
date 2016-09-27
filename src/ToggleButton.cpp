@@ -117,7 +117,7 @@ void mui::ToggleButton::sizeToFitWidth( int paddingL, int paddingR ){
 //--------------------------------------------------------------
 void mui::ToggleButton::layout(){
 	label->x = checkbox?(4+label->boundingBox.height*1.2):0;
-	label->width = width;
+	label->width = width - label->x;
 	label->height = height;
 	label->fg = selected?selectedFg:fg;
 }
