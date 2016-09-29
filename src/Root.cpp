@@ -591,6 +591,9 @@ void mui::Root::showPopupMenu( mui::Container * c, mui::Container * source, floa
 		case mui::Middle: popupMenu->y -= popupMenu->height; break;
 		case mui::Bottom: popupMenu->y -= popupMenu->height/2; break;
 	}
+	
+	popupMenu->x = ofClamp(popupMenu->x, 1, width - popupMenu->width );
+	popupMenu->y = ofClamp(popupMenu->y, 1, height - popupMenu->height );
 }
 
 

@@ -36,6 +36,7 @@ mui::ParameterPanel::ParameterPanel( string title ) : mui::Container(0,0,100,100
 	registerSetter<ToggleButton,int>([](ToggleButton * obj,const int & val){ obj->selected = val==0; } );
 
 	bg = ofColor(50);
+	ignoreEvents = true; 
 	opaque = true;
 }
 
