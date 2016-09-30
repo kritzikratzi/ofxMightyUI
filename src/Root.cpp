@@ -690,7 +690,7 @@ void mui::Root::removePopupIfNecessary( mui::Container * target ){
 			}
 		}
 		
-		safeRemoveAndDelete(popupMenu);
+		safeRemove(popupMenu);
 
 	}
 }

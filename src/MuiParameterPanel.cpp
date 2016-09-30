@@ -58,7 +58,7 @@ void mui::ParameterPanel::layout(){
 		}
 	}
 	
-	height = yy;
+	height = yy + 2;
 }
 
 string mui::ParameterPanel::getTitle(){
