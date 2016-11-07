@@ -185,8 +185,8 @@ void mui::TextArea::draw(){
 	ofRectangle size = Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign );
 	
 	if( hasKeyboardFocus() && state->select_start != state->select_end ){
-		int left = min(state->select_start,state->select_end);
-		int right = max(state->select_start,state->select_end);
+		int left = state_select_min();
+		int right = state_select_max();
 		
 		/*ofRectangle bounds1 = mui::Helpers::getFontStash().getTextBounds(data.text.substr(0,left), data.fontStyle, size.x-boundingBox.x, size.y-boundingBox.y);
 		ofRectangle bounds2 = mui::Helpers::getFontStash().getTextBounds(data.text.substr(0,right), data.fontStyle, size.x-boundingBox.x, size.y-boundingBox.y);
@@ -337,48 +337,91 @@ void mui::TextArea::touchMoved(ofTouchEventArgs &touch){
 
 bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 	lastInteraction = ofGetElapsedTimeMillis();
-	int keyMask = MUI_ROOT->getKeyPressed(OF_KEY_SHIFT)?STB_TEXTEDIT_K_SHIFT:0;
+	int keyMask =
+		(MUI_ROOT->getKeyPressed(OF_KEY_SHIFT)?STB_TEXTEDIT_K_SHIFT:0) |
+		#if defined(TARGET_OSX)
+		(MUI_ROOT->getKeyPressed(OF_KEY_ALT)?STB_TEXTEDIT_K_CONTROL:0)
+		#else
+		(MUI_ROOT->getKeyPressed(OF_KEY_CONTROL)?STB_TEXTEDIT_K_CONTROL:0)
+		#endif
+	;
 	
 	switch(key.key){
+		case OF_KEY_UP:
+			stb_textedit_key(&data, state, STB_TEXTEDIT_K_UP|keyMask);
+			break;
+		case OF_KEY_DOWN:
+			stb_textedit_key(&data, state, STB_TEXTEDIT_K_DOWN|keyMask);
+			break;
 		case OF_KEY_LEFT:
-			stb_textedit_key(&data, state, STB_TEXTEDIT_K_LEFT|keyMask );
+			if(MUI_ROOT->getKeyPressed(OF_KEY_SUPER)) stb_textedit_key(&data, state, STB_TEXTEDIT_K_LINESTART|keyMask );
+			else stb_textedit_key(&data, state, STB_TEXTEDIT_K_LEFT|keyMask);
 			break;
 		case OF_KEY_RIGHT:
-			stb_textedit_key(&data, state, STB_TEXTEDIT_K_RIGHT|keyMask );
+			if(MUI_ROOT->getKeyPressed(OF_KEY_SUPER)) stb_textedit_key(&data, state, STB_TEXTEDIT_K_LINEEND|keyMask );
+			else stb_textedit_key(&data, state, STB_TEXTEDIT_K_RIGHT|keyMask);
 			break;
 		case OF_KEY_BACKSPACE:
-			stb_textedit_key(&data, state, STB_TEXTEDIT_K_BACKSPACE|keyMask );
+			stb_textedit_key(&data, state, STB_TEXTEDIT_K_BACKSPACE|keyMask);
 			break;
 		case OF_KEY_DEL:
-			stb_textedit_key(&data, state, STB_TEXTEDIT_K_DELETE|keyMask );
+			stb_textedit_key(&data, state, STB_TEXTEDIT_K_DELETE|keyMask);
 			break;
 		case OF_KEY_RETURN:
 			stb_textedit_key(&data, state, STB_TEXTEDIT_NEWLINE|keyMask);
-			break; 
+			break;
+		case OF_KEY_ESC:
+			// do nothing!
+			break;
 		default:
-			//todo: copied this from built-in utf8::append
-			if (!utf8::internal::is_code_point_valid(key.codepoint)){
-				// what is it? don't know! ignore it!
-				return true;
+			//ok, what about other shortcuts? ...
+			if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.keycode==GLFW_KEY_A ){
+				state->select_start = 0;
+				state->select_end = data.strlenWithLineStarts;
+				state->cursor = state->select_end;
 			}
-			
-			if (key.codepoint < 0x80)                        // one octet
-				stb_textedit_key(&data, state, key.codepoint );
-			else if (key.codepoint < 0x800) {                // two octets
-				stb_textedit_key(&data, state, ((key.codepoint >> 6)            | 0xc0) );
-				stb_textedit_key(&data, state, ((key.codepoint & 0x3f)          | 0x80) );
+			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'z'){
+				stb_text_undo(&data, state);
 			}
-			else if (key.codepoint < 0x10000) {              // three octets
-				stb_textedit_key(&data, state, ((key.codepoint >> 12)           | 0xe0) );
-				stb_textedit_key(&data, state, (((key.codepoint >> 6) & 0x3f)   | 0x80) );
-				stb_textedit_key(&data, state, ((key.codepoint & 0x3f)          | 0x80) );
+			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'Z'){
+				stb_text_redo(&data, state);
 			}
-			else {                                // four octets
-				stb_textedit_key(&data, state, ((key.codepoint >> 18)           | 0xf0) );
-				stb_textedit_key(&data, state, (((key.codepoint >> 12) & 0x3f)  | 0x80) );
-				stb_textedit_key(&data, state, (((key.codepoint >> 6) & 0x3f)   | 0x80) );
-				stb_textedit_key(&data, state, ((key.codepoint & 0x3f)          | 0x80) );
-				stb_textedit_key(&data, state, ((key.codepoint >> 18)           | 0xf0) );
+			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'x'){
+				ofGetWindowPtr()->setClipboardString(data.text.substr(state_select_min(),state_select_len()));
+				stb_textedit_key(&data, state, STB_TEXTEDIT_K_DELETE|keyMask );
+			}
+			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'c'){
+				ofGetWindowPtr()->setClipboardString(data.text.substr(state_select_min(),state_select_len()));
+			}
+			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'v'){
+				string text = ofGetWindowPtr()->getClipboardString();
+				stb_textedit_paste(&data, state, text.c_str(), text.size());
+			}
+			else{
+				//todo: copied this from built-in utf8::append
+				if (!utf8::internal::is_code_point_valid(key.codepoint)){
+					// what is it? don't know! ignore it!
+					return true;
+				}
+				
+				if (key.codepoint < 0x80)                        // one octet
+					stb_textedit_key(&data, state, key.codepoint );
+				else if (key.codepoint < 0x800) {                // two octets
+					stb_textedit_key(&data, state, ((key.codepoint >> 6)            | 0xc0) );
+					stb_textedit_key(&data, state, ((key.codepoint & 0x3f)          | 0x80) );
+				}
+				else if (key.codepoint < 0x10000) {              // three octets
+					stb_textedit_key(&data, state, ((key.codepoint >> 12)           | 0xe0) );
+					stb_textedit_key(&data, state, (((key.codepoint >> 6) & 0x3f)   | 0x80) );
+					stb_textedit_key(&data, state, ((key.codepoint & 0x3f)          | 0x80) );
+				}
+				else {                                // four octets
+					stb_textedit_key(&data, state, ((key.codepoint >> 18)           | 0xf0) );
+					stb_textedit_key(&data, state, (((key.codepoint >> 12) & 0x3f)  | 0x80) );
+					stb_textedit_key(&data, state, (((key.codepoint >> 6) & 0x3f)   | 0x80) );
+					stb_textedit_key(&data, state, ((key.codepoint & 0x3f)          | 0x80) );
+					stb_textedit_key(&data, state, ((key.codepoint >> 18)           | 0xf0) );
+				}
 			}
 	}
 	
@@ -455,4 +498,18 @@ mui::TextArea::EditorCursor mui::TextArea::getEditorCursorForIndex( int cursorPo
 	// this is SLOW!
 	// maybe at least remember it?
 	return result;
+}
+
+
+int mui::TextArea::state_select_min(){
+	return min(state->select_start,state->select_end);
+}
+
+int mui::TextArea::state_select_max(){
+	return max(state->select_start,state->select_end);
+}
+
+int mui::TextArea::state_select_len(){
+	int res = state->select_start - state->select_end;
+	return res<0?-res:res;
 }

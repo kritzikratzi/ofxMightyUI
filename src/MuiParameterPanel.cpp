@@ -175,13 +175,19 @@ mui::ParameterPanel::Row<mui::SliderWithLabel,float> * mui::ParameterPanel::addS
 
 
 mui::ParameterPanel::Row<mui::SliderWithLabel,float> * mui::ParameterPanel::addSlider( string title, float min, float max, float value, int decimalDigits ){
-	SliderWithLabel * slider = new SliderWithLabel(0,0,100,20,  min,max,value, decimalDigits);
-	slider->label->fg = labelFg;
-	auto row = new ParameterPanel::Row<SliderWithLabel,float>(this, title,NULL,slider,slider->slider->value);
-	
-	getCurrentSection()->addRow(row);
-	rows.insert(pair<string,data::Attribute>(title,row));
-	return row;
+	const auto existing = rows.find(title);
+	if(existing == rows.end()){
+		SliderWithLabel * slider = new SliderWithLabel(0,0,100,20,  min,max,value, decimalDigits);
+		slider->label->fg = labelFg;
+		auto row = new ParameterPanel::Row<SliderWithLabel,float>(this, title,NULL,slider,slider->slider->value);
+		
+		getCurrentSection()->addRow(row);
+		rows.insert(pair<string,data::Attribute>(title,row));
+		return row;
+	}
+	else{
+		return existing->second.value<ParameterPanel::Row<SliderWithLabel,float>*>();
+	}
 }
 
 mui::ParameterPanel::Row<mui::TextArea,string> * mui::ParameterPanel::addText( string title, string text ){

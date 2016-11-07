@@ -95,6 +95,10 @@ namespace mui{
 		EditorState *state;
 		uint64_t lastInteraction;
 		EditorCursor getEditorCursorForIndex( int pos );
+		
+		int state_select_min();
+		int state_select_max();
+		int state_select_len();
 	};
 };
 
