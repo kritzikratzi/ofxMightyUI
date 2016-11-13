@@ -322,6 +322,14 @@ namespace mui{
 				add(row);
 			}
 			
+			void sort( function<bool(string,string)> comp ){
+				std::sort(children.begin(), children.end(), [&](mui::Container * a, mui::Container * b){
+					if(a == titleLabel ) return true;
+					else if( b == titleLabel ) return false;
+					else return comp(((Row<mui::Container*,void*>*)a)->titleLabel->text, ((Row<mui::Container*,void*>*)b)->titleLabel->text);
+				});
+			}
+			
 			string getTitle(){
 				return titleLabel->text;
 			}

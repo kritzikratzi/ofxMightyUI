@@ -418,7 +418,7 @@ void mui::Root::runOnUiThread(function<void()> func){
 
 //--------------------------------------------------------------
 bool mui::Root::getKeyPressed( int key ){
-	return activeKeys.find(key) != activeKeys.end();
+	return ofGetKeyPressed(key);
 }
 
 //--------------------------------------------------------------
@@ -455,7 +455,6 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 	// this is a bit awkward, there seems to be a bug in
 	// glfw that re-sends modifier key when they are released.
 	// for now, i'm not fixing this. i really shouldn't be, not here.
-	activeKeys.insert(event.key);
 
 	if( mui::MuiConfig::enableDebuggingShortcuts && getKeyPressed(MUI_KEY_ACTION) && getKeyPressed('d')){
 		mui::MuiConfig::debugDraw ^= true;
@@ -514,10 +513,6 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 
 //--------------------------------------------------------------
 mui::Container * mui::Root::handleKeyReleased( ofKeyEventArgs &event ){
-	set<int>::iterator it = activeKeys.find(event.key);
-	if( it != activeKeys.end() ){
-		activeKeys.erase(event.key);
-	}
 	if( keyboardResponder != NULL ){
 		keyboardResponder->keyReleased(event);
 	}

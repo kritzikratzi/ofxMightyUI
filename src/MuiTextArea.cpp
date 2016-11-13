@@ -134,6 +134,51 @@ int insert_chars(mui::TextArea::EditorData *str, int pos, const STB_TEXTEDIT_CHA
 #define STB_TEXTEDIT_K_PGUP            (KEYDOWN_BIT | 10) // VK_PGUP -- not implemented
 #define STB_TEXTEDIT_K_PGDOWN          (KEYDOWN_BIT | 11) // VK_PGDOWN -- not implemented
 
+#define STB_TEXTEDIT_MOVEWORDLEFT mui_textedit_move_to_word_previous
+#define STB_TEXTEDIT_MOVEWORDRIGHT mui_textedit_move_to_word_next
+
+
+static int mui_is_word_boundary( STB_TEXTEDIT_STRING *str, int idx )
+{
+	return idx > 0 ? (STB_TEXTEDIT_IS_SPACE( STB_TEXTEDIT_GETCHAR(str,idx-1) ) && !STB_TEXTEDIT_IS_SPACE( STB_TEXTEDIT_GETCHAR(str, idx) ) ) : 1;
+}
+
+static bool mui_textedit_is_cool_coding_char(STB_TEXTEDIT_CHARTYPE c){
+	const static char * chars = "[]|{}().!=-_,;:";
+	for(int i = strlen(chars)-1;i>=0; i--){
+		if(chars[i] == c) return true;
+	}
+	return false;
+}
+
+static int mui_textedit_move_to_word_previous( STB_TEXTEDIT_STRING *str, int c )
+{
+	--c; // always move at least one character
+	while( c >= 0 && !mui_is_word_boundary( str, c ) && !mui_textedit_is_cool_coding_char(STB_TEXTEDIT_GETCHAR(str,c)))
+		--c;
+	
+	if( c < 0 )
+		c = 0;
+	
+	return c;
+}
+
+
+static int mui_textedit_move_to_word_next( STB_TEXTEDIT_STRING *str, int c )
+{
+	const int len = STB_TEXTEDIT_STRINGLEN(str);
+	++c; // always move at least one character
+	while( c < len && !mui_is_word_boundary( str, c ) && !mui_textedit_is_cool_coding_char(STB_TEXTEDIT_GETCHAR(str,c)))
+		++c;
+	
+	if( c > len )
+		c = len;
+	
+	return c;
+}
+
+
+
 #define STB_TEXTEDIT_IMPLEMENTATION
 #include "../libs/stb_textedit/include/stb_textedit/stb_textedit.h"
 #undef STB_TEXTEDIT_IMPLEMENTATION
@@ -255,6 +300,11 @@ void mui::TextArea::setText( string text ){
 	update();
 }
 
+void mui::TextArea::setTextAndNotify( string text ){
+	setText(text);
+	ofNotifyEvent(onChange, text, this);
+}
+
 //--------------------------------------------------------------
 void mui::TextArea::drawBackground(){
     Container::drawBackground(); 
@@ -348,10 +398,14 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 	
 	switch(key.key){
 		case OF_KEY_UP:
-			stb_textedit_key(&data, state, STB_TEXTEDIT_K_UP|keyMask);
+			// on osx cmd+up goes to the start
+			if(ofGetKeyPressed(OF_KEY_COMMAND)) stb_textedit_key(&data, state, STB_TEXTEDIT_K_TEXTSTART);
+			else stb_textedit_key(&data, state, STB_TEXTEDIT_K_UP|keyMask);
 			break;
 		case OF_KEY_DOWN:
-			stb_textedit_key(&data, state, STB_TEXTEDIT_K_DOWN|keyMask);
+			// on osx cmd+down goes to the end
+			if(ofGetKeyPressed(OF_KEY_COMMAND)) stb_textedit_key(&data, state, STB_TEXTEDIT_K_TEXTEND);
+			else stb_textedit_key(&data, state, STB_TEXTEDIT_K_DOWN|keyMask);
 			break;
 		case OF_KEY_LEFT:
 			if(MUI_ROOT->getKeyPressed(OF_KEY_SUPER)) stb_textedit_key(&data, state, STB_TEXTEDIT_K_LINESTART|keyMask );

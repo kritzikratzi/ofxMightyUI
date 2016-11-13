@@ -52,7 +52,8 @@ namespace mui{
 		virtual void sizeToFitHeight( float padY = 0 );
 		
 		// changes text + commit
-		void setText( string text ); 
+		void setText( string text );
+		void setTextAndNotify( string text ); 
 		
 		// call this after you made changes to any variables (changing x/y is okay without doing a commit() ).
 		// doing text-maths too insane to do on every frame!

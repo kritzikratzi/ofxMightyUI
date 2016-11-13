@@ -77,7 +77,6 @@ namespace mui{
 		static mui::Root * INSTANCE;
 		
 	private:
-		std::set<int> activeKeys;
 		void fixTouchPosition( ofVec2f &touch, ofVec2f &copy, Container * c );
         void handleRemovals(); 
         
