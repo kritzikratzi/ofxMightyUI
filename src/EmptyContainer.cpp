@@ -1,6 +1,6 @@
 /*
  *  EmptyContainer.cpp
- *  iPhoneEmptyExample
+ *  ofxMightyUI
  *
  *  Created by hansi on 29.01.11.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.
@@ -21,8 +21,8 @@
 #include "EmptyContainer.h"
 using namespace mui;
 
-mui::EmptyContainer::EmptyContainer( float x_, float y_, float width_, float height_ )
-	: Container( x_, y_, width_, height_ ) {
+mui::EmptyContainer::EmptyContainer( float x, float y, float width, float height )
+	: Container( x, y, width, height ) {
 };
 
 //--------------------------------------------------------------

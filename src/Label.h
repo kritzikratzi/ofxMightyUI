@@ -2,9 +2,12 @@
  *  Label.h
  *
  *  Created by hansi on 29.01.11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
  *
  *  A single line text label with alignments.
+ *  - Supports vertical and horizontal alignments
+ *  - Call commit() after changing text, fontSize, fontName, ellipsis mode or any of the other variables (except bounds!).
+ *  - fg variable affects text color (no commit needed)
+ *  - Doesn't support multiline
  */
 
 #ifndef MUI_LABEL

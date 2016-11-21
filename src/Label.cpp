@@ -1,12 +1,5 @@
 /*
  *  Label.cpp
- *  iPhoneEmptyExample
- *
- *  Text label
- *  - Supports vertical and horizontal alignments
- *  - Call commit() after changing text, fontSize, fontName, ellipsis mode or any of the other variables (except bounds!).
- *  - fg variable affects text color (no commit needed)
- *  - Doesn't support multiline
  */
 
 #include "Label.h"

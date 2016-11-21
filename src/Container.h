@@ -1,5 +1,13 @@
 /**
- * ofxMightyUI
+ * Container.h
+ *
+ * Container is the base class of everything and is meant to be override to be useful. 
+ *
+ * Basic features: 
+ * - handling of touch, mouse and key events
+ * - a layout callback. layout is performed: 1.)manually by calling handleLayout() 2.)after any window resize 3.)by setting needsLayout=true
+ * - update is called all the time as long as the container is reachable from the root
+ * - draw is called only when visible=true
  *
  * Hansi Raber, 2010-2016
  */
@@ -38,11 +46,11 @@ namespace mui{
 		Layout * layoutHandler;
 		
 		// put anything you like here...
-		void * userData;
+		void * userData; // deprecated
 
 		//bool startedInside[OF_MAX_TOUCHES]; // don't use this. unless you're you really want to.
 		
-		Container( float x_ = 0, float y_ = 0, float width_ = 10, float height_ = 10 );
+		Container( float x = 0, float y = 0, float width = 10, float height = 10 );
 		
 		~Container();
 		
@@ -66,6 +74,7 @@ namespace mui{
 		virtual void handleDraw();
 		virtual void handleUpdate();
 		
+		// override points for touch/mouse events
 		virtual void touchDown( ofTouchEventArgs &touch ){};
 		virtual void touchMoved( ofTouchEventArgs &touch ){};
 		virtual void touchMovedOutside( ofTouchEventArgs &touch ){}
@@ -78,12 +87,17 @@ namespace mui{
 		virtual void mouseEnter( ofMouseEventArgs &args){}; 
 		virtual void mouseExit( ofMouseEventArgs &args){};
 		
+		// override points for key events
+		// return true if you took care of the event, false if it wasn't handled.
 		virtual bool keyPressed( ofKeyEventArgs &touch){ return false; };
 		virtual bool keyReleased( ofKeyEventArgs &touch){ return true; };
 		
+		// override points for hierachy events
 		virtual void afterAdd( mui::Container * newParent ){}; // called when added to a parent
 		virtual void afterRemove( mui::Container * oldParent ){}; // called when reomved from a parent
 		
+		// handler events. these efficiently perform the event handling internally.
+		// only override if necessary and always call the super method!
 		virtual Container * handleTouchDown( ofTouchEventArgs &touch );
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );
 		virtual Container * handleTouchHover( ofTouchEventArgs &touch );
@@ -92,16 +106,21 @@ namespace mui{
 		virtual void handleTouchCanceled( ofTouchEventArgs &touch );
 		virtual bool handleFileDragged( ofDragInfo & args );
 		
+		// override point + handler when the gl state was reset
 		virtual void reloadTextures();
 		virtual void handleReloadTextures();
-
+		
+		// check for focus / request touch focus
+		// this is often important during touch events to follow a finger outside the container.
 		virtual bool hasFocus();
 		virtual bool hasFocus( ofTouchEventArgs &touch );
 		virtual bool requestFocus( ofTouchEventArgs &args );
-
+		
+		// check for keyboard focus / request keyboard focus
 		virtual bool hasKeyboardFocus();
 		virtual bool requestKeyboardFocus();
 		
+		// sum up all element transformation until the parent is null
 		virtual ofPoint getGlobalPosition();
 		
 		// make this the front most child in the parent container
@@ -109,6 +128,7 @@ namespace mui{
 		// make this the last child in the parent container
 		virtual void toBack();
 		
+		// finds a direct child by it's name.
 		mui::Container * byName( string name );
 		
 		// recursively find children of a certain type at a position
@@ -147,6 +167,7 @@ namespace mui{
 			return NULL;
 		}
 		
+		// in progress?
 		template <typename T>
 		T * findChildOfType( const function<bool(Container * container, bool & checkChildren )> walker, const function<bool(T * result)> decider ){
 			bool checkChildren = true;
@@ -168,6 +189,7 @@ namespace mui{
 			return result;
 		}
 		
+		// in progress?
 		template <typename T>
 		T * findChildOfTypeAt( const function<bool(Container * container, bool & checkChildren )> walker, const function<bool(T * result)> decider, float x, float y ){
 			bool checkChildren = true;
@@ -190,6 +212,7 @@ namespace mui{
 			return result;
 		}
 		
+		// in progress?
 		template <typename T>
 		T * findChildAt( const function<bool(Container * container, bool & checkChildren )> walker, const function<bool(T * result)> decider, float x, float y ){
 			bool checkChildren = true;
@@ -212,8 +235,12 @@ namespace mui{
 			return result;
 		}
 		
-		virtual bool isVisibleOnScreen(float border=0); // effectively visible on screen? border adds an additonal border around, so border<0 means isVisible return false if it's barely visible, border>0 means isVisible will return true even if the component is already slightly off screen.
-		virtual bool isMouseOver(); // check if any cursor is over the component
+		// tests if the element and all of it's parent are visible.
+		// the border parameter slightly enlargers the element, so that visible seems true even when the container is slightly outside
+		virtual bool isVisibleOnScreen(float border=0);
+		
+		 // check if any cursor is over the component
+		virtual bool isMouseOver();
 		virtual string toString();
 	private:
 	};

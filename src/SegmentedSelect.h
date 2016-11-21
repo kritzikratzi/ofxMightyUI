@@ -1,9 +1,7 @@
 /*
  *  SegmentedSelect.h
- *  iPhoneEmptyExample
- *  
- *  Use this as a starting point for a new element! 
- * 
+ *  ofxMightyUI
+ *
  *  Created by hansi on 29.01.11.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.
  *

@@ -1,6 +1,6 @@
 /*
  *  ScrollPane.h
- *  iPhoneEmptyExample
+ *  ofxMightyUI
  *  
  * um.. the scrol pane :) 
  * use scrollpane->view->add to add elements. 

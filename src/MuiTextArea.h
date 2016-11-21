@@ -1,10 +1,10 @@
 /*
  *  TextArea.h
+ *  part of ofxMightyUI 
  *
- *  Created by hansi on 29.01.11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
+ *  In development, do not use! 
  *
- *  A single line text TextArea with alignments.
+ *  Created by hansi some point in 2016
  */
 
 #ifndef MUI_TextArea

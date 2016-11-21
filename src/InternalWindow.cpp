@@ -1,6 +1,5 @@
 /*
  *  InternalWindow.cpp
- *  iPhoneEmptyExample
  *
  *  Created by hansi on 29.01.11.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.
@@ -12,8 +11,8 @@
 
 #include <algorithm>
 
-//--------------------------------------------------------------
-void mui::InternalWindow::init( std::string title ){
+mui::InternalWindow::InternalWindow( std::string title, float x, float y, float width, float height, float radius ) :
+Container( x, y, width, height ), radius(radius), leftBarButton(nullptr), rightBarButton(nullptr), view(nullptr), padding(10) {
 	label = new Label( title, 0, 0, width, 44 ); 
 	label->horizontalAlign = Center; 
 	label->verticalAlign = Middle; 

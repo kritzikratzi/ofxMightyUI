@@ -1,6 +1,5 @@
 /*
  *  Layout.h
- *  iPhoneEmptyExample
  *
  *  Created by hansi on 26.03.11.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.

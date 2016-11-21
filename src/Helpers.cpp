@@ -1,6 +1,6 @@
 /*
  *  Images.cpp
- *  iPhoneEmptyExample
+ *  ofxMightyUI
  *
  *  Created by hansi on 29.01.11.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.
@@ -218,51 +218,6 @@ void mui::Helpers::popScissor(){
 	}
 }
 
-
-// compares two strings with a strict weak order,
-// so stringLtString(a,a) will return false (obviously)
-bool mui::Helpers::stringLtString(string strA, string strB){
-	static std::locale loc;
-    int N = MIN( strA.length(), strB.length() );
-    for( int i = 0; i < N; i++ ){
-        char chA = std::toupper( strA[i], loc );
-        char chB = std::toupper( strB[i], loc );
-        bool isLetterA = chA >= 'A' && chA <= 'Z';
-        bool isLetterB = chB >= 'A' && chB <= 'Z';
-        bool isDigitA = chA >= '0' && chA <= '9';
-        bool isDigitB = chB >= '0' && chB <= '9';
-        bool isSpecialA = !isLetterA && !isDigitA;
-        bool isSpecialB = !isLetterB && !isDigitB;
-        
-        
-        // first the cases where we have two chars of the same type,
-        // in all these we sort naturally
-        if( chA == chB ){
-            continue;
-        }
-        else if( ( isLetterA && isLetterB ) || ( isDigitA && isDigitB ) || ( isSpecialA && isSpecialB ) ){
-            return chA < chB;
-        }
-        // then digits
-        else if( isDigitA || isDigitB ){
-            return isDigitB;
-        }
-        // special chars after everything ...
-        else if( isSpecialA || isSpecialB ){
-            return isSpecialB;
-        }
-        // rofl, they're not both letters,
-        // so you can't really ever end up here...
-        else{
-            cout << "odd, but whatever..." << endl;
-            return isLetterB;
-        }
-    }
-    
-	if( strA.length() == 0 ) return false;
-	else if( strB.length() == 0 ) return true;
-    else return strA.length() < strB.length();
-}
 ofRectangle mui::Helpers::alignBox( Container * container, float width, float height, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign ){
 	return ofRectangle( 
 		horizontalAlign == Left? 0 : ( horizontalAlign == Right? (container->width - width) : ((container->width-width)/2)), 

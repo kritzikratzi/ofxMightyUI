@@ -8,10 +8,7 @@
 #include "MuiConfig.h"
 #include "Root.h"
 
-mui::Container::Container( float x_, float y_, float width_, float height_ ) : x(x_), y(y_), width(width_), height(height_), opaque(false), parent(NULL), layoutHandler(NULL), visible(true), ignoreEvents(false), singleTouch(true), name( "Container" ), singleTouchId( -1 ), focusTransferable(true),bg(0,0,0,0), allowSubpixelTranslations(true), drawDirty(false), userData(NULL),needsLayout(false){
-	//for( int i = 0; i < OF_MAX_TOUCHES; i++ ){
-	//	startedInside[i] = false;
-	//}
+mui::Container::Container( float x, float y, float width, float height ) : x(x), y(y), width(width), height(height), opaque(false), parent(nullptr), layoutHandler(nullptr), visible(true), ignoreEvents(false), singleTouch(true), name( "Container" ), singleTouchId( -1 ), focusTransferable(true),bg(0,0,0,0), allowSubpixelTranslations(true), drawDirty(false), userData(nullptr),needsLayout(false){
 };
 
 //--------------------------------------------------------------

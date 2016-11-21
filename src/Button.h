@@ -1,14 +1,14 @@
 /*
  *  Button.h
  *  
- *  yyyy, a button! 
- 
- void onEvent(const void* pSender, ofTouchEventArgs& arg)
- {
- std::cout << "onEvent: " << arg << std::endl;
- }
- 
- then do button.onPress += Delegate<YourClass,ofTouchEventArgs>( this, %YourClass::yourEventFunc ); 
+ *  Hurray, it's a button. 
+ *  Default behavior: 
+ *    - button has gray background with white text
+ *    - during clicking the background becomes semi transparent
+ *    - a left click will trigger onPress()
+ *    - a right click, or (osx) ctrl+click will trigger onContextMenu()
+ *    - releasing the mouse outside the button will no trigger any event
+ * 
  */
 
 #ifndef MUI_BUTTON
@@ -19,14 +19,13 @@
 namespace mui{
 	class Button : public Container{
 	public: 
-		Button( std::string title_, float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 );
+		Button( std::string title, float x = 0, float y = 0, float width = 200, float height = 20 );
 		
 		Label * label; 
 		bool pressed;
 		ofEvent<ofTouchEventArgs> onPress;
 		ofEvent<ofTouchEventArgs> onContextMenu;
 		
-		virtual void init( std::string title );
 		virtual void update();
 		virtual void draw();
 		virtual void drawBackground();

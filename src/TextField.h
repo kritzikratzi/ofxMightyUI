@@ -1,6 +1,6 @@
 /*
  *  TextField.h
- *  iPhoneEmptyExample
+ *  ofxMightyUI
  *  
  *  Use this as a starting point for a new element! 
  * 

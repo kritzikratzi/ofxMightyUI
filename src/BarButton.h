@@ -1,12 +1,9 @@
 /*
  *  BarButton.h
- *  iPhoneEmptyExample
+ *	A special button that is only used inside the internal window.
  *  
- *  TODO:move inside internal window
+ *  Deprecated, do not use, will be removed!
  * 
- *  Created by hansi on 29.01.11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
- *
  */
 
 #ifndef MUI_BAR_BUTTON
@@ -20,7 +17,6 @@ namespace mui{
 	public: 
 		BarButton( std::string title_, float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 30 );
 		
-		virtual void initBarButton(); 
 		virtual void drawBackground();
 	private: 
 	};

@@ -1,9 +1,13 @@
 #include "Image.h"
 
 
-mui::Image::Image( std::string filename, float x_, float y_, float width_, float height_ )
-: Container( x_, y_, width_, height_ ), texRef(NULL),horizontalAlign(Center),verticalAlign(Middle),scaleMethod(ScaleMethodFitInside) {
+mui::Image::Image( std::string filename, float x, float y, float width, float height )
+: Container( x, y, width, height ), texRef(nullptr),horizontalAlign(Center),verticalAlign(Middle),scaleMethod(ScaleMethodFitInside) {
 	ofLoadImage(tex, filename);
+}
+
+mui::Image::Image( ofTexture * texRef, float x, float y, float width, float height )
+: Container( x, y, width, height ), texRef(texRef),horizontalAlign(Center),verticalAlign(Middle),scaleMethod(ScaleMethodFitInside) {
 }
 
 //--------------------------------------------------------------

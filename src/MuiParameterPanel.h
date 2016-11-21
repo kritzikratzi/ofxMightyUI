@@ -1,5 +1,6 @@
 //
 //  MuiParameterPanel.h
+//  Sorry, deprecated! 
 //  MuiEditorTest
 //
 //  Created by Hansi on 30.04.16.

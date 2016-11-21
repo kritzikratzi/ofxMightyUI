@@ -1,6 +1,6 @@
 /*
  *  BarButton.cpp
- *  iPhoneEmptyExample
+ *  ofxMightyUI
  *
  *  Created by hansi on 29.01.11.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.
@@ -14,11 +14,6 @@ using namespace mui;
 //--------------------------------------------------------------
 mui::BarButton::BarButton( std::string title_, float x_, float y_, float width_, float height_ )
 : Button( title_, x_, y_, width_, height_ ){
-		initBarButton();
-};
-
-//--------------------------------------------------------------
-void mui::BarButton::initBarButton(){
 	label->fontSize = 10; 
 	label->commit(); 
 }
