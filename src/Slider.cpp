@@ -13,10 +13,14 @@
 int mui::Slider::paddingLR = 11; 
 
 
+mui::Slider::Slider( float x_, float y_, float width_, float height_, float min_, float max_, float value_ )
+: Container( x_, y_, width_, height_ ), min(min_), max(max_), value(value_),valueMapper(make_shared<MapperLinear>()) {
+};
+
 //--------------------------------------------------------------
 void mui::Slider::draw(){
 	ofSetColor( 255, 255, 255 ); 
-	float x = valueToScreen( value ); 
+	float x = ofMap(valueMapper->toScreen( this, value ), 0, 1, paddingLR, width-paddingLR,true);
 	float startY = (int)( height/2 - 9.0/2 );
 	// draw bg... 
 	// Helpers::getImage( "slider_inactive_left", 0, startY ); // not needed!
@@ -41,7 +45,7 @@ void mui::Slider::touchDown( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::Slider::touchMoved( ofTouchEventArgs &touch ){
-	value = fminf( max, fmaxf( min, screenToValue( touch.x ) ) );
+	value = ofClamp( valueMapper->toValue( this, ofMap(touch.x,paddingLR,width-paddingLR,0,1,true) ), min, max );
 	ofNotifyEvent(onChange, value, this);
 }
 
@@ -62,12 +66,29 @@ void mui::Slider::touchDoubleTap( ofTouchEventArgs &touch ){
 }
 
 //--------------------------------------------------------------
-float mui::Slider::screenToValue( float x ){
-	return min + ( max - min ) * ( x - paddingLR )/( width - 2*paddingLR ); 
+float mui::Slider::MapperLinear::toValue( mui::Slider * s, float x ){
+	return ofMap(x,0,1,s->min,s->max);
 }
 
 
 //--------------------------------------------------------------
-float mui::Slider::valueToScreen( float val ){
-	return paddingLR + ( width - 2*paddingLR ) * ( val - min ) / ( max - min ); 
+float mui::Slider::MapperLinear::toScreen( mui::Slider * s, float val ){
+	return ofMap(val,s->min,s->max,0,1);
 }
+
+//--------------------------------------------------------------
+mui::Slider::MapperLog::MapperLog(float strength):strength(strength){
+	
+}
+
+//--------------------------------------------------------------
+float mui::Slider::MapperLog::toValue( mui::Slider * s, float x ){
+	return (expf(x*logf(strength + 1)) - 1)/strength*(s->max - s->min) + s->min;
+}
+
+
+//--------------------------------------------------------------
+float mui::Slider::MapperLog::toScreen( mui::Slider * s, float val ){
+	return logf((val - s->min)/(s->max - s->min)*strength + 1)/logf(strength + 1);
+}
+

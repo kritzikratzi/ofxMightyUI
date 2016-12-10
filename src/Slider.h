@@ -13,14 +13,16 @@
 #include "MuiCore.h"
 
 namespace mui{
+	
 	class Slider : public Container{
-	public: 
-		float min; 
+	public:
+		
+		class Mapper;
+		float min;
 		float max; 
 		float value;
 		
-		Slider( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20, float min_ = 0, float max_ = 1, float value_ = 0 ) 
-			: Container( x_, y_, width_, height_ ), min(min_), max(max_), value(value_) {};  
+		Slider( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20, float min_ = 0, float max_ = 1, float value_ = 0 ); 
 		
 		virtual void update(){}; 
 		virtual void draw(); 
@@ -32,15 +34,36 @@ namespace mui{
 		virtual void touchDoubleTap( ofTouchEventArgs &touch ); 
 		
 		
-		virtual float screenToValue( float x ); 
-		virtual float valueToScreen( float val ); 
-		
+		shared_ptr<Mapper> valueMapper;
 		ofEvent<float> onChange;
-        
+		
+
 		
 	private: 
 		static int paddingLR;
-	}; 
+	
+		
+	public:
+		class Mapper{
+		public: 
+			virtual float toValue( Slider * slider, float x ) = 0;
+			virtual float toScreen( Slider * slider, float val ) = 0;
+		};
+		
+		class MapperLinear : public Mapper{
+		public:
+			float toValue( Slider * slider, float x );
+			float toScreen( Slider * slider, float val );
+		};
+		
+		class MapperLog : public Mapper{
+		public:
+			MapperLog(float strength);
+			float strength{10}; 
+			float toValue( Slider * slider, float x );
+			float toScreen( Slider * slider, float val );
+		};
+	};
 }
 
 #endif
