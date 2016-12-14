@@ -404,7 +404,11 @@ namespace tween {
 							(*tweensIT).onStepCallBack = 0;
 						}	
 						
-						// HANSI::: 
+						
+						// HANSI:::
+						if((*tweensIT).onComplete){
+							(*tweensIT).onComplete();
+						}
 						for (unsigned int i =0 ; i < (*tweensIT).total_properties; i++ ) {
 							TweenerProperty prop = (*tweensIT).properties[i]; 
 							*(prop.ptrValue) = prop.finalValue; 

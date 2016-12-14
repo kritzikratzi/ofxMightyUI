@@ -23,12 +23,14 @@
 #include<list>
 #include<vector>
 #include<iostream>
+#include <functional>
 
 #ifndef PI
 #define PI 3.1415926535897932384626433832795
 #endif
 
 namespace tween {
+	class Tweener;
 	
 	
 	
@@ -206,6 +208,7 @@ namespace tween {
 		int reverseCount;
 		TweenerCallBack onCompleteCallBack;
 		TweenerCallBack onStepCallBack;
+		std::function<void()> onComplete{nullptr};
 		
 		TweenerParam() {
 			useMilliSeconds = true;
