@@ -156,6 +156,15 @@ void mui::ScrollPane::beginMomentumAnimation(){
 	animatingMomentum = true; 
 }
 
+void mui::ScrollPane::scrollIntoView(mui::Container * container){
+	beginBaseAnimation(ofClamp(x,minScrollX,maxScrollX), ofClamp(y,minScrollY,maxScrollY));
+}
+
+void mui::ScrollPane::scrollTo( float x, float y ){
+	beginBaseAnimation(ofClamp(x,minScrollX,maxScrollX), ofClamp(y,minScrollY,maxScrollY));
+}
+
+
 mui::Container * mui::ScrollPane::createPage(){
 	static int pageCount = 0;
 	mui::Container * container = new mui::Container( width*numPagesAdded, 0, width, height );

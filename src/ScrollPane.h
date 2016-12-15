@@ -57,6 +57,12 @@ namespace mui{
 		virtual void handleDraw();
 		virtual void handleLayout();
 
+		// scroll the least amount possible so that the element becomes visible
+		void scrollIntoView(mui::Container * container);
+		// scrolls to a position
+		void scrollTo( float x, float y );
+		
+		// internal stuff ^^
 		void beginBaseAnimation( float toX, float toY );
 		void beginMomentumAnimation();
 		
