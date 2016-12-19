@@ -16,11 +16,12 @@ void mui::RowLayout::layout( Container * container ){
 	int y = 0; 
 	
 	while( it != children->end() ){
-		cout << " Y = " << y << endl; 
-		(*it)->x = 0;
-		(*it)->y = y;
-		(*it)->width = container->width; 
-		y += (*it)->height + spacing;
+		if((*it)->visible){
+			(*it)->x = 0;
+			(*it)->y = y;
+			(*it)->width = container->width;
+			y += (*it)->height + spacing;
+		}
 		
 		++it; 
 	}

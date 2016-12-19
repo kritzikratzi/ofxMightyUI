@@ -131,6 +131,23 @@ namespace mui{
 		// finds a direct child by it's name.
 		mui::Container * byName( string name );
 		
+
+		// recursively find children of a certain type at a position
+		// implemented directly in the header because templates ... have some issues
+		template <typename T>
+		vector<T*> findChildrenOfType(){
+			vector<T*> result;
+			std::function<void(Container*)> rec = [&](Container * c){
+				T * t = dynamic_cast<T*>(c);
+				if(t) result.push_back(t);
+				for( auto * child : c->children ){
+					rec(child);
+				}
+			};
+			rec(this);
+			return result;
+		}
+		
 		// recursively find children of a certain type at a position
 		// implemented directly in the header because templates ... have some issues
 		template <typename T>
