@@ -157,7 +157,21 @@ void mui::ScrollPane::beginMomentumAnimation(){
 }
 
 void mui::ScrollPane::scrollIntoView(mui::Container * container){
-	beginBaseAnimation(ofClamp(x,minScrollX,maxScrollX), ofClamp(y,minScrollY,maxScrollY));
+	ofVec2f pos;
+	mui::Container * parent = container;
+	bool found = false;
+	while(parent != nullptr ){
+		if(parent == view){
+			found = true;
+			break;
+		}
+		pos.x += parent->x;
+		pos.y += parent->y;
+		parent = parent->parent;
+	}
+	if(found){
+		beginBaseAnimation(ofClamp(pos.x,minScrollX,maxScrollX), ofClamp(pos.y,minScrollY,maxScrollY));
+	}
 }
 
 void mui::ScrollPane::scrollTo( float x, float y ){
