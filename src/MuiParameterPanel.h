@@ -237,7 +237,8 @@ namespace mui{
 		Label * titleLabel;
 		
 		template<typename MuiType, typename DataType>
-		struct Row : public Container{
+		class Row : public Container{
+		public: 
 			ParameterPanel * panel;
 			Label * titleLabel;
 			ofParameter<DataType> param;
@@ -284,7 +285,8 @@ namespace mui{
 			}
 		};
 		
-		struct Section : public Container{
+		class Section : public Container{
+		public: 
 			Label * titleLabel;
 			string sectionId;
 			
@@ -327,7 +329,7 @@ namespace mui{
 				std::sort(children.begin(), children.end(), [&](mui::Container * a, mui::Container * b){
 					if(a == titleLabel ) return true;
 					else if( b == titleLabel ) return false;
-					else return comp(((Row<mui::Container*,void*>*)a)->titleLabel->text, ((Row<mui::Container*,void*>*)b)->titleLabel->text);
+					else return comp(((Row<mui::Container,void*>*)a)->titleLabel->text, ((Row<mui::Container,void*>*)b)->titleLabel->text);
 				});
 			}
 			
