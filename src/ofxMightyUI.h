@@ -42,3 +42,6 @@
 #include "Image.h"
 
 void mui_init();
+
+ofVec2f muiGetMousePos();
+string muiToDataPath(string path, bool abs = true );

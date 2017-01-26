@@ -105,3 +105,11 @@ void mui_init(){
 	mui::Helpers::getFontStash().fontScale = 1.3;
 }
 
+
+ofVec2f muiGetMousePos(){
+	return ofVec2f(ofGetMouseX(),ofGetMouseY())/mui::MuiConfig::scaleFactor;
+}
+
+string muiToDataPath( string path, bool abs ){
+	return mui::Helpers::muiPath(path);
+}
