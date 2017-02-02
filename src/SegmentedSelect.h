@@ -33,18 +33,18 @@ namespace mui{
 			ofSetColor( 255, 255, 255 );
 			Helpers::beginImages();
 			if( selected || pressed ){
-				if( roundedLeft ) Helpers::drawImage( "segment_left_active", 0, 0, 5, 29 );
-				Helpers::drawImage( "segment_center_active", roundedLeft?5:0, 0, width-((roundedLeft?5:0)+(roundedRight?5:0)), 29 );
-				if( roundedRight ) Helpers::drawImage( "segment_right_active", width-5, 0, 5, 29 );
+				if( roundedLeft ) Helpers::drawImage( "segment_left_active", 0, 0, 5, height-1 );
+				Helpers::drawImage( "segment_center_active", roundedLeft?5:0, 0, width-((roundedLeft?5:0)+(roundedRight?5:0)), height-1 );
+				if( roundedRight ) Helpers::drawImage( "segment_right_active", width-5, 0, 5, height-1 );
 			}
 			else{
-				if( roundedLeft ) Helpers::drawImage( "segment_left", 0, 0, 5, 29 );
-				Helpers::drawImage( "segment_center", roundedLeft?5:0, 0, width-((roundedLeft?5:0)+(roundedRight?5:0)), 29 );
-				if( roundedRight ) Helpers::drawImage( "segment_right", width-5, 0, 5, 29 );
+				if( roundedLeft ) Helpers::drawImage( "segment_left", 0, 0, 5, height-1 );
+				Helpers::drawImage( "segment_center", roundedLeft?5:0, 0, width-((roundedLeft?5:0)+(roundedRight?5:0)), height-1 );
+				if( roundedRight ) Helpers::drawImage( "segment_right", width-5, 0, 5, height-1 );
 			}
 			
 			if( !roundedRight ){
-				Helpers::drawImage( "segment_separator", width-1, 0, 1, 29 );
+				Helpers::drawImage( "segment_separator", width-1, 0, 1, height-1 );
 			}
 			Helpers::endImages();
 		}
@@ -58,13 +58,15 @@ namespace mui{
 		
 		SegmentedButton<T> * selected;
 		
-		virtual void addSegment( string text, T value ){
+		virtual SegmentedButton<T> * addSegment( string text, T value ){
 			SegmentedButton<T> * button = new SegmentedButton<T>( text, value );
 			button->width = button->label->boundingBox.width + 10;
+			button->height = height;
 			ofAddListener(button->onPress, this, &SegmentedSelect::onButtonPress );
 			
 			add( button );
 			commit();
+			return button;
 		}
 		
 		virtual void commit(){
@@ -73,10 +75,18 @@ namespace mui{
 			bool first = true;
 			SegmentedButton<T> * last = NULL;
 			
+			float eqWidth = width/max((int)children.size(),1);
 			while( it != children.end() ){
 				SegmentedButton<T> * button = (SegmentedButton<T>*) *it;
 				button->x = x;
+				if(equallySizedButtons){
+					button->width = eqWidth;
+				}
+				else{
+					button->width = button->label->boundingBox.width + 10;
+				}
 				x += button->width;
+				button->height = height;
 				button->selected = button == selected;
 				button->roundedLeft = first;
 				button->roundedRight = false;
@@ -90,6 +100,10 @@ namespace mui{
 			if( last != NULL ){
 				last->roundedRight = true; 
 			}
+		}
+		
+		virtual void layout(){
+			commit();
 		}
 
 		// iterator?
@@ -146,6 +160,7 @@ namespace mui{
 
 		ofEvent<SegmentedButton<T>*> onChange;
 		ofEvent<T> onChangeValue;
+		bool equallySizedButtons{false};
 		
 		void sizeToFitWidth(){
 			commit();
