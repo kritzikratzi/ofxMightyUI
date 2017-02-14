@@ -150,6 +150,8 @@ void mui::Root::handleDraw(){
 				name = c->name + (name==""?"":">") + name;
 				c = c->parent;
 			}
+
+			name = name + " [" + typeid(*active).name() + "]"; 
 			
 			ofRectangle b = active->getGlobalBounds();
 			stringstream info; 
@@ -461,12 +463,12 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 		return this;
 	}
 	
-	if( mui::MuiConfig::enableDebuggingShortcuts && getKeyPressed(MUI_KEY_ACTION) && getKeyPressed('d')){
+	if( mui::MuiConfig::enableDebuggingShortcuts && getKeyPressed(MUI_KEY_ACTION) && event.keycode == GLFW_KEY_D ){
 		mui::MuiConfig::debugDraw ^= true;
 		return this;
 	}
 	
-	if( mui::MuiConfig::enableDebuggingShortcuts && getKeyPressed(OF_KEY_ALT) && getKeyPressed(OF_KEY_RETURN)){
+	if( mui::MuiConfig::enableDebuggingShortcuts && getKeyPressed(OF_KEY_ALT) && event.keycode == OF_KEY_RETURN){
 		// dump the view hierachy!
 		mui::Container * active = this->findChildAt( ofGetMouseX()/mui::MuiConfig::scaleFactor - this->x, ofGetMouseY()/mui::MuiConfig::scaleFactor-this->y, true );
 		
@@ -614,6 +616,7 @@ void mui::Root::of_exit( ofEventArgs &args ){
 }
 void mui::Root::of_windowResized( ofResizeEventArgs &args ){
 	//handleWindowResized(args);
+	if (args.width <= 0 || args.height <= 0) return; 
 	width = args.width/mui::MuiConfig::scaleFactor;
 	height = args.height/mui::MuiConfig::scaleFactor;
 	handleLayout();

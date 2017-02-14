@@ -218,13 +218,22 @@ void mui::Helpers::popScissor(){
 	}
 }
 
-ofRectangle mui::Helpers::alignBox( Container * container, float width, float height, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign ){
-	return ofRectangle( 
-		horizontalAlign == Left? 0 : ( horizontalAlign == Right? (container->width - width) : ((container->width-width)/2)), 
-		verticalAlign == Top? 0 : ( verticalAlign == Bottom? (container->height - height) : ((container->height-height)/2)), 
-		width, 
+ofRectangle mui::Helpers::alignBox(Container * container, float width, float height, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign) {
+	return ofRectangle(
+		horizontalAlign == Left ? 0 : (horizontalAlign == Right ? (container->width - width) : ((container->width - width) / 2)),
+		verticalAlign == Top ? 0 : (verticalAlign == Bottom ? (container->height - height) : ((container->height - height) / 2)),
+		width,
 		height
-	); 
+	);
+}
+
+ofRectangle mui::Helpers::alignBox(Container * container, const Inset & inset, float width, float height, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign) {
+	return ofRectangle(
+		horizontalAlign == Left ? inset.left : (horizontalAlign == Right ? (container->width - width - inset.right) : (inset.left + (container->width - inset.left - inset.right - width) / 2)),
+		verticalAlign == Top ? inset.top : (verticalAlign == Bottom ? (container->height - height - inset.top - inset.bottom) : (inset.top + (container->height - inset.top - inset.bottom - height) / 2)),
+		width,
+		height
+	);
 }
 
 bool mui::Helpers::inside( Container * container, float x, float y ){

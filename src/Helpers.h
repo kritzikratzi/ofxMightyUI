@@ -58,8 +58,9 @@ namespace mui{
         static void popScissor();
 		
 		// Align a box sized width x height inside a container.
-		static ofRectangle alignBox( Container * container, float width, float height, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign );
-		
+		static ofRectangle alignBox(Container * container, float width, float height, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign);
+		static ofRectangle alignBox(Container * container, const Inset & inset, float width, float height, HorizontalAlign horizontalAlign, VerticalAlign verticalAlign);
+
 		// check if a point is inside a container.
 		// move to container?
 		static bool inside( Container * container, float x, float y );
