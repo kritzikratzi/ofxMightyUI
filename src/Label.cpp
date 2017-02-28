@@ -22,7 +22,7 @@ void mui::Label::update(){
 
 //--------------------------------------------------------------
 void mui::Label::draw(){
-	ofRectangle size = Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign );
+	ofRectangle size = Helpers::alignBox( this, inset, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign );
 	mui::Helpers::getFontStash().draw(displayText, fontStyle, size.x-boundingBox.x, size.y-boundingBox.y);
 	//cout << "tris = " << displayTextNumTris << endl;
 	//displayTextVbo.draw( GL_TRIANGLES, 0, displayTextNumTris );
@@ -46,21 +46,21 @@ void mui::Label::layout(){
 void mui::Label::sizeToFit( float padX, float padY ){
 	ellipsisMode = false;
 	commit(); // update bounding box
-	width = boundingBox.width + padX;
-	height = boundingBox.height + padY;
+	width = boundingBox.width + padX + inset.left + inset.right;
+	height = boundingBox.height + padY + inset.top + inset.bottom;
 	layout(); // tell ourselves about the size change
 }
 
 void mui::Label::sizeToFitWidth( float padX ){
 	ellipsisMode = false;
 	commit();
-	width = boundingBox.width + padX;
+	width = boundingBox.width + padX + inset.left + inset.right;
 	layout();
 }
 
 void mui::Label::sizeToFitHeight( float padY ){
 	commit();
-	height = boundingBox.height + padY;
+	height = boundingBox.height + padY + inset.top + inset.bottom;
 	layout();
 }
 
@@ -81,6 +81,8 @@ void mui::Label::commit(){
 	boundingBox = Helpers::getFontStash().getTextBounds(text, fontStyle, 0, 0);
 	// NASTY HACK#158
 	boundingBox.x = 0;
+
+	float width = this->width - inset.left - inset.right; 
 
     if( ellipsisMode ){
         if( boundingBox.width > width && text.length() > 3 ){

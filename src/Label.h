@@ -29,7 +29,8 @@ namespace mui{
 		string fontName; // subject to change!
 		bool ellipsisMode;
 		bool verticalAlignUseBaseline; // defaults to true. disable to v-align icons. 
-		
+		Inset inset; 
+
 		// the currently computed text boundaries
 		// the height and y offset are currently always the size of a capital 'M'
 		ofRectangle boundingBox;

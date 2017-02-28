@@ -29,6 +29,14 @@ namespace mui{
 	enum Direction{
 		Horizontal = 1, Vertical = 2, Both = 3
 	};
+
+	class Inset {
+	public: 
+		float left{ 0 }, right{ 0 }, top{ 0 }, bottom{ 0 };
+		Inset(float v = 0) : top(v), right(v), bottom(v), left(v){};
+		Inset(float tb, float lr) : top(tb), right(lr), bottom(tb), left(lr) {};
+		Inset(float top, float right, float bottom, float left) : top(top), right(right), bottom(bottom), left(left) {}; 
+	};
 	
 	// forward declare all classes not added directly
 	class BarButton;
