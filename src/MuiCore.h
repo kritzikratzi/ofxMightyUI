@@ -53,6 +53,7 @@ namespace mui{
 
 // now include bare minimum
 #include "MuiConfig.h"
+#include "MuiEvents.h"
 #include "Helpers.h"
 #include "Layout.h"
 #include "Container.h"

@@ -27,6 +27,7 @@ void mui::Container::add( Container * c, int index ){
         children.push_back( c );
         c->parent = this;
 		c->afterAdd(this);
+		c->onAfterAdd.notify(this);
     }
     else{
         vector<Container*>::iterator it = children.begin();
@@ -34,6 +35,7 @@ void mui::Container::add( Container * c, int index ){
         children.insert( it, c );
         c->parent = this;
 		c->afterAdd(this);
+		c->onAfterAdd.notify(this);
     }
 }
 
@@ -45,6 +47,7 @@ void mui::Container::remove( Container * c ){
 		c->parent = nullptr;
         children.erase( it );
 		c->afterRemove(this);
+		c->onAfterRemove.notify(this);
     }
 }
 
@@ -116,6 +119,7 @@ void mui::Container::handleLayout(){
 	else{
 		layoutHandler->layout(this);
 	}
+	onLayout.notify(this); 
 
 	vector<mui::Container*>::iterator it = children.begin();
 	bool sizeChanged = false;
@@ -157,8 +161,13 @@ void mui::Container::handleDraw(){
 	if( allowSubpixelTranslations ) ofTranslate( x, y );
 	else ofTranslate( (int)x, (int)y );
 	
-	if( opaque ) drawBackground();
+	if( opaque ){
+		drawBackground();
+		onDrawBackground.notify(this);
+	}
+	
 	draw();
+	onDraw.notify(this);
 	
 	if( MUI_DEBUG_DRAW ){
 		ofNoFill();
@@ -167,12 +176,15 @@ void mui::Container::handleDraw(){
 		ofFill(); 
 	}
 	
+	
 	std::vector<Container*>::iterator it = children.begin();
 	while( it != children.end() ) {
         (*it)->handleDraw();
 		++it;
 	}
-    
+	
+	onDrawAbove.notify(this); 
+	
 	ofPopMatrix();
 }
 
@@ -180,6 +192,7 @@ void mui::Container::handleDraw(){
 //--------------------------------------------------------------
 void mui::Container::handleUpdate(){
 	update();
+	onUpdate.notify(this);
 	
 	std::vector<Container*>::iterator it = children.begin();
 	while( it != children.end() ) {
@@ -230,6 +243,7 @@ mui::Container * mui::Container::handleTouchDown( ofTouchEventArgs &touch ){
 			
 			if( !singleTouch || ( singleTouch && singleTouchId == touch.id ) ){
 				touchDown( touch );
+				onTouchDown.notify(touch); 
 			}
 			
 			if( MUI_ROOT->touchResponder[touch.id] != NULL ){
@@ -273,6 +287,7 @@ mui::Container * mui::Container::handleTouchMoved( ofTouchEventArgs &touch ){
 		if( !ignoreEvents ){
 			if( !singleTouch || ( singleTouch && singleTouchId == touch.id ) ){
 				touchMoved( touch );
+				onTouchMoved.notify(touch);
 			}
 			
 			return this;
@@ -311,6 +326,7 @@ mui::Container * mui::Container::handleTouchHover( ofTouchEventArgs &touch ){
 		if( !ignoreEvents ){
 			if( !singleTouch || singleTouchId == -1 || ( singleTouch && singleTouchId == touch.id ) ){
 				touchHover( touch );
+				onTouchHover.notify(touch);
 			}
 			
 			return this;
@@ -348,6 +364,7 @@ mui::Container * mui::Container::handleTouchDoubleTap( ofTouchEventArgs &touch )
 		
 		if( !ignoreEvents ){
 			if( !singleTouch || ( singleTouch && singleTouchId == touch.id ) ){
+				onTouchDoubleTap.notify(touch);
 				touchDoubleTap( touch );
 			}
 			
@@ -387,6 +404,7 @@ mui::Container * mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
 		if( !ignoreEvents ){
 			if( !singleTouch || ( singleTouch && singleTouchId == touch.id ) ){
 				touchUp( touch );
+				onTouchUp.notify(touch);
 				singleTouchId = -1;
 			}
 			
@@ -399,32 +417,35 @@ mui::Container * mui::Container::handleTouchUp( ofTouchEventArgs &touch ){
 
 void mui::Container::handleTouchCanceled( ofTouchEventArgs &touch ){
 	touchCanceled(touch);
+	onTouchCanceled.notify(touch);
 	if( parent != NULL ){
 		parent->handleTouchCanceled(touch);
 	}
 }
 
-bool mui::Container::handleFileDragged(ofDragInfo & touch ){
-	float posX, posY;
-	bool touched;
+bool mui::Container::handleFileDragged(ofDragInfo & info ){
+	if( !visible ) return NULL;
 	
-	std::vector<Container*>::reverse_iterator it = children.rbegin();
-	Container * child;
-	while( it != children.rend() ) {
-		child = *it;
-		touch.position.x -= ( posX = (*it)->x );
-		touch.position.y -= ( posY = (*it)->y );
-		if(mui::Helpers::inside(child, touch.position.x, touch.position.y) && child->visible){
-			touched = (*it)->handleFileDragged( touch );
+	ofPoint & touch = info.position;
+	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
+		float posX, posY;
+		
+		std::vector<Container*>::reverse_iterator it = children.rbegin();
+		while( it != children.rend() ) {
+			touch.x -= ( posX = (*it)->x );
+			touch.y -= ( posY = (*it)->y );
+			if( (*it)->handleFileDragged( info ) ) return true;
+			touch.x += posX;
+			touch.y += posY;
 			
-			if( touched ){
-				// that container is touched!
-				return true;
-			}
+			++it;
 		}
-		touch.position.x += posX;
-		touch.position.y += posY;
-		++it;
+		
+		if( !ignoreEvents ){
+			if(fileDragged(info)) return true;
+			if(onFileDragged.notify(info)) return true;
+			
+		}
 	}
 	
 	return false;
@@ -550,12 +571,16 @@ bool mui::Container::isVisibleOnScreen( float border ){
 	Container * element = this;
 	while( element != NULL ){
 		if( element->visible == false ) return false;
-		if( element->parent != NULL ){
+		if( element->parent != nullptr ){
 			posX += element->x;
 			posY += element->y;
 		}
+		else if( dynamic_cast<mui::Root*>(element) == nullptr ){
+			return false;
+		}
 		element = element->parent;
 	}
+	
 	
 	ofRectangle me(posX-border,posY-border,width+2*border,height+2*border);
 	ofRectangle root(0,0,MUI_ROOT->width, MUI_ROOT->height );

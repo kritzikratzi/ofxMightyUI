@@ -87,6 +87,9 @@ namespace mui{
 		virtual void mouseEnter( ofMouseEventArgs &args){}; 
 		virtual void mouseExit( ofMouseEventArgs &args){};
 		
+		// file dragging
+		virtual bool fileDragged( ofDragInfo & args ){return false;};
+		
 		// override points for key events
 		// return true if you took care of the event, false if it wasn't handled.
 		virtual bool keyPressed( ofKeyEventArgs &touch){ return false; };
@@ -105,6 +108,33 @@ namespace mui{
 		virtual Container * handleTouchDoubleTap( ofTouchEventArgs &touch );
 		virtual void handleTouchCanceled( ofTouchEventArgs &touch );
 		virtual bool handleFileDragged( ofDragInfo & args );
+
+		// lambda party here
+		EventHandler<mui::Container*> onDrawBackground{this};
+		EventHandler<mui::Container*> onDraw{this};
+		EventHandler<mui::Container*> onDrawAbove{this};
+		EventHandler<mui::Container*> onUpdate{this};
+		EventHandler<mui::Container*> onLayout{this};
+		EventHandler<ofTouchEventArgs> onTouchDown{this};
+		EventHandler<ofTouchEventArgs> onTouchMoved{this};
+		EventHandler<ofTouchEventArgs> onTouchMovedOutside{this};
+		EventHandler<ofTouchEventArgs> onTouchHover{this};
+		EventHandler<ofTouchEventArgs> onTouchUp{this};
+		EventHandler<ofTouchEventArgs> onTouchUpOutside{this};
+		EventHandler<ofTouchEventArgs> onTouchDoubleTap{this};
+		EventHandler<ofTouchEventArgs> onTouchCanceled{this};
+		EventHandler<ofMouseEventArgs> onMouseScroll{this};
+		EventHandler<ofMouseEventArgs> onMouseEnter{this};
+		EventHandler<ofMouseEventArgs> onMouseExit{this};
+		
+		EventHandlerConsumable<ofKeyEventArgs> onKeyPressed{this};
+		EventHandlerConsumable<ofKeyEventArgs> onKeyReleased{this};
+		
+		EventHandler<mui::Container*> onAfterAdd{this};
+		EventHandler<mui::Container*> onAfterRemove{this};
+		
+		EventHandlerConsumable<ofDragInfo> onFileDragged{this};
+
 		
 		// override point + handler when the gl state was reset
 		virtual void reloadTextures();

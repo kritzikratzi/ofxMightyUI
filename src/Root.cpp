@@ -97,6 +97,7 @@ void mui::Root::handleUpdate(){
 				newHoverResponder.insert(c);
 				if(hoverResponder.find(c) == hoverResponder.end() ){
 					c->mouseEnter(args);
+					c->onMouseEnter.notify(args);
 				}
 			}
 			
@@ -108,6 +109,7 @@ void mui::Root::handleUpdate(){
 		ofMouseEventArgs args; //TODO: fix up coords
 		if(newHoverResponder.find(c) == newHoverResponder.end()){
 			c->mouseExit(args);
+			c->onMouseExit.notify(args);
 		}
 	}
 	
@@ -153,7 +155,8 @@ void mui::Root::handleDraw(){
 			
 			ofRectangle b = active->getGlobalBounds();
 			stringstream info; 
-			info << "Pos:" << b.x << "," << b.y << "  " << b.width << " x " << b.height; 
+			info << "Pos:" << b.x << "," << b.y << "  " << b.width << " x " << b.height << endl;
+			info << "Rel:" << active->x << "," << active->y;
 			size = info.str();
 			
 			
@@ -210,6 +213,8 @@ mui::Container * mui::Root::handleTouchMoved( ofTouchEventArgs &touch ){
 		fixTouchPosition( touch, copy, NULL );
 		copy = Helpers::translateTouch( copy, this, touchResponder[touch.id] );
 		touchResponder[touch.id]->touchMovedOutside( copy );
+		touchResponder[touch.id]->onTouchMovedOutside.notify(copy);
+		
 		return touchResponder[touch.id];
 	}
 	
@@ -229,6 +234,7 @@ mui::Container * mui::Root::handleTouchHover( ofTouchEventArgs &touch ){
 		fixTouchPosition( touch, copy, NULL );
 		copy = Helpers::translateTouch( copy, this, touchResponder[touch.id] );
 		touchResponder[touch.id]->touchMovedOutside( copy );
+		touchResponder[touch.id]->onTouchMovedOutside.notify(copy);
 		return touchResponder[touch.id];
 	}
 	
@@ -246,6 +252,7 @@ mui::Container * mui::Root::handleTouchUp( ofTouchEventArgs &touch ){
 		fixTouchPosition( touch, copy, touchResponder[touch.id] );
 		Container *c = touchResponder[touch.id];
 		touchResponder[touch.id]->touchUpOutside( copy );
+		touchResponder[touch.id]->onTouchUpOutside.notify( copy );
 		c->singleTouchId = -1;
 	}
 	
@@ -507,7 +514,7 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 		}
 		else{
 			mui::Container * c = keyboardResponder;
-			while(c != nullptr && !c->keyPressed(event)){
+			while(c != nullptr && !c->onKeyPressed.notify(event) && !c->keyPressed(event)){
 				c = c->parent;
 			}
 			return c;
@@ -520,6 +527,7 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 //--------------------------------------------------------------
 mui::Container * mui::Root::handleKeyReleased( ofKeyEventArgs &event ){
 	if( keyboardResponder != NULL ){
+		if(keyboardResponder->onKeyReleased.notify(event)) return keyboardResponder;
 		keyboardResponder->keyReleased(event);
 	}
 	
@@ -642,12 +650,14 @@ bool mui::Root::of_mouseScrolled( ofMouseEventArgs &args ){
 	mui::Container * container = (mui::Container*)findChildOfType<mui::ScrollPane>(pos.x, pos.y, true, true);
 	if( container != NULL ){
 		container->mouseScroll(args);
+		container->onMouseScroll.notify(args);
 		return true;
 	}
 	else{
 		mui::Container * container = findChildAt(pos.x, pos.y, true, true );
 		if( container != nullptr && container != this ){
 			container->mouseScroll(args);
+			container->onMouseScroll.notify(args);
 			return true;
 		}
 		else{
