@@ -22,25 +22,25 @@ namespace mui{
 		listenerId(listenerId), listenerElement(listenerElement), type(FTypeXXX), body(f){};
 		
 		EventFunction(int listenerId, mui::Container * listenerElement, std::function<void(EventType&)> f) :
-		listenerId(listenerId), listenerElement(listenerElement), type(FTypeXXE){ body.funcXXE = f; };
+		listenerId(listenerId), listenerElement(listenerElement), type(FTypeXXE), body(f){};
 		
 		EventFunction(int listenerId, mui::Container * listenerElement, std::function<void(mui::Container*)> f) :
-		listenerId(listenerId), listenerElement(listenerElement), type(FTypeXSX){ body.funcXSX = f; };
+		listenerId(listenerId), listenerElement(listenerElement), type(FTypeXSX), body(f){};
 		
 		EventFunction(int listenerId, mui::Container * listenerElement, std::function<void(mui::Container*, EventType &)> f) :
-		listenerId(listenerId), listenerElement(listenerElement), type(FTypeXSE){ body.funcXSE = f; };
+		listenerId(listenerId), listenerElement(listenerElement), type(FTypeXSE), body(f){};
 		
 		EventFunction(int listenerId, mui::Container * listenerElement, std::function<bool()> f) :
-		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCXX){ body.funcCXX = f; };
+		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCXX), body(f){};
 		
 		EventFunction(int listenerId, mui::Container * listenerElement, std::function<bool(EventType&)> f) :
-		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCXE){ body.funcCXE = f; };
+		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCXE), body(f){};
 		
 		EventFunction(int listenerId, mui::Container * listenerElement, std::function<bool(mui::Container*)> f) :
-		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCSX){ body.funcCSX = f; };
+		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCSX), body(f){};
 
 		EventFunction(int listenerId, mui::Container * listenerElement, std::function<bool(mui::Container*, EventType&)> f) :
-		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCSE){ body.funcCSE = f;};
+		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCSE), body(f){};
 		~EventFunction(){};
 		EventFunction(EventFunction&&) = default;
 		
@@ -166,8 +166,18 @@ namespace mui{
 		
 	protected:
 		std::list<EventFunction<EventType>> listeners;
-		int nextListenerId;
 		mui::Container * owner;
+	};
+	
+	class EventHandlerId{
+	protected:
+		static int nextListenerId;
+		template<typename T>
+		friend class EventHandlerBase;
+		template<typename T>
+		friend class EventHandler;
+		template<typename T>
+		friend class EventHandlerConsumable;
 	};
 	
 	template<typename EventType>
@@ -177,24 +187,24 @@ namespace mui{
 		// adds a function and returns a code you can use to remove
 		// your listener again
 		int add(std::function<void()> func){
-			this->listeners.emplace_back(this->nextListenerId,nullptr,func);
-			return this->nextListenerId++;
+			this->listeners.emplace_back(EventHandlerId::nextListenerId,nullptr,func);
+			return EventHandlerId::nextListenerId++;
 		}
 		int add(std::function<void(EventType &)> funcNoSender){
-			this->listeners.emplace_back(this->nextListenerId,nullptr,funcNoSender);
-			return this->nextListenerId++;
+			this->listeners.emplace_back(EventHandlerId::nextListenerId,nullptr,funcNoSender);
+			return EventHandlerId::nextListenerId++;
 		}
 		int add(std::function<void(mui::Container *, EventType &)> funcWithSender){
-			this->listeners.emplace_back(this->nextListenerId,nullptr,funcWithSender);
-			return this->nextListenerId++;
+			this->listeners.emplace_back(EventHandlerId::nextListenerId,nullptr,funcWithSender);
+			return EventHandlerId::nextListenerId++;
 		}
 		int add(mui::Container * listenerElement, std::function<void(EventType &)> funcNoSender ){
-			this->listeners.emplace_back(this->nextListenerId,nullptr,funcNoSender);
-			return this->nextListenerId++;
+			this->listeners.emplace_back(EventHandlerId::nextListenerId,nullptr,funcNoSender);
+			return EventHandlerId::nextListenerId++;
 		}
 		int add(mui::Container * listenerElement, std::function<void(mui::Container *, EventType &)> funcWithSender ){
-			this->listeners.push_back(this->nextListenerId,listenerElement,funcWithSender);
-			return this->nextListenerId++;
+			this->listeners.push_back(EventHandlerId::nextListenerId,listenerElement,funcWithSender);
+			return EventHandlerId::nextListenerId++;
 		}
 	};
 	
@@ -203,24 +213,24 @@ namespace mui{
 	public:
 		using EventHandlerBase<EventType>::EventHandlerBase;
 		int add(std::function<bool()> func){
-			this->listeners.emplace_back(this->nextListenerId,nullptr,func);
-			return this->nextListenerId++;
+			this->listeners.emplace_back(EventHandlerId::nextListenerId,nullptr,func);
+			return EventHandlerId::nextListenerId++;
 		}
 		int add(std::function<bool(EventType &)> funcNoSenderConsumable){
-			this->listeners.emplace_back(this->nextListenerId,nullptr,funcNoSenderConsumable);
-			return this->nextListenerId++;
+			this->listeners.emplace_back(EventHandlerId::nextListenerId,nullptr,funcNoSenderConsumable);
+			return EventHandlerId::nextListenerId++;
 		}
 		int add(std::function<bool(mui::Container *, EventType &)> funcWithSenderConsumable){
-			this->listeners.emplace_back(this->nextListenerId,nullptr,funcWithSenderConsumable);
-			return this->nextListenerId++;
+			this->listeners.emplace_back(EventHandlerId::nextListenerId,nullptr,funcWithSenderConsumable);
+			return EventHandlerId::nextListenerId++;
 		}
 		int add(mui::Container * listenerElement, std::function<bool(EventType &)> funcNoSenderConsumable ){
-			this->listeners.emplace_back(this->nextListenerId,nullptr,funcNoSenderConsumable);
-			return this->nextListenerId++;
+			this->listeners.emplace_back(EventHandlerId::nextListenerId,nullptr,funcNoSenderConsumable);
+			return EventHandlerId::nextListenerId++;
 		}
 		int add(mui::Container * listenerElement, std::function<bool(mui::Container *, EventType &)> funcWithSenderConsumable ){
-			this->listeners.emplace_back(this->nextListenerId,listenerElement,funcWithSenderConsumable);
-			return this->nextListenerId++;
+			this->listeners.emplace_back(EventHandlerId::nextListenerId,listenerElement,funcWithSenderConsumable);
+			return EventHandlerId::nextListenerId++;
 		}
 	};
 };

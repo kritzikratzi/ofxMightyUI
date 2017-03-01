@@ -7,3 +7,5 @@
 //
 
 #include "MuiEvents.h"
+
+int mui::EventHandlerId::nextListenerId = 0;

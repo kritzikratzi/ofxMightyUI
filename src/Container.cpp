@@ -589,10 +589,11 @@ bool mui::Container::isVisibleOnScreen( float border ){
 }
 
 bool mui::Container::isMouseOver(){
-	ofRectangle rect = getGlobalBounds();
+/*	ofRectangle rect = getGlobalBounds();
 	float mouseX = ofGetMouseX()/mui::MuiConfig::scaleFactor;
 	float mouseY = ofGetMouseY()/mui::MuiConfig::scaleFactor;
-	return rect.inside(mouseX,mouseY);
+	return rect.inside(mouseX,mouseY);*/
+	return MUI_ROOT->hoverResponder.find(this) != MUI_ROOT->hoverResponder.end();
 }
 
 //--------------------------------------------------------------

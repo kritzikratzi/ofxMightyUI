@@ -1,10 +1,7 @@
 ofxMightyUI
 ===========
 
-Instructions are not exactly up to date. 
-
-~~Active working ongoing in the `fs2` branch~~ ofxFontStash2 is stable enough. Development is back on master! 
-
+Documentation is not exactly up to date. 
 
 
 
@@ -20,25 +17,20 @@ TODO:
 - ⛅️ test android (+retina)
 - ⛅️ test ios (+retina)
 - ⛅️ test windows (hidpi partially supported. needs testing when moving between monitors, needs testing on win10)
-- 🔴 ~~finish textfield overlays~~ --> or make simple textfield?
 - ⛅️ look into stb_textedit https://github.com/nothings/stb/blob/master/stb_textedit.h
-- ☁️ stupid mobile rotation issues
 - ☀️ see if i can depend on the "proper" ofxFontStash<br>Don't care for now. Waiting for fontstash2 to look
 - ☀️ cleanup include structure. how does it even compile? 
-- ☁️ prefix all filenames with `Mui` to avoid include conflicts
+- ⛅️ prefix all filenames with `Mui` to avoid include conflicts
 - ☁️ create a ofxMightyUI.h that can be included (including MUI.h feels odd in OF)
-- ☑︎ make a basic example
-- ⛅️ window size is very confused until the window is resized once (esp one windows) -> seems fine now! 
+- ☀️ make a basic example
+- ☀️ window size is very confused until the window is resized once (esp one windows) -> seems fine now! 
 - ☀️ possible speed gain when combining textureatlas of fontstash and mui ui elements? (no switching textures -> drawArrays becomes non blocking?) --> better to collect draw commands as long as possible. 
 - ☁️ include dropdown, instanced listview, and some other classes i have lying around here and there
-- ⛅️ added de/serialization mechanism to mui::ParameterPanel (either my IO.h, or some built in xml thingie) --> use the code from osci studio? 
+- ☁️ added de/serialization mechanism to mui::ParameterPanel (either my IO.h, or some built in xml thingie) --> use the code from osci studio? 
 - ☁️ add support for ofParameter / ofParameterGroup to parameterpanel? (is it fast enough?, i want something lock free)
 - ☁️ create a color picker component
-
-CLEANUP TASKS: 
-- ⛅️ clean up layouting mess --> remove layoutHandler, create onLayout event. maybe include the new `L.h` i've been using in my own projects
-- add event handlers (onTouchDown, onTouchUp, ...)
-- 
+- ☀️ ~~clean up layouting mess --> remove layoutHandler~~, create onLayout event. maybe include the new `L.h` i've been using in my own projects
+- ☀️ add event handlers (onTouchDown, onTouchUp, ...)
 
 
 TODO OSX: 
@@ -48,7 +40,7 @@ TODO OSX:
 
 TODO WINDOWS: 
 
-- ⛅️ what is need to detect retina? (using scaleFactor already works very nicely)
+- ☀️ what is need to detect retina? (using scaleFactor already works very nicely)
 - **Copy Resources**: Go to Project settings, choose "all configurations". Then go to Build Events>Post-Build Events add this to the _command line_: <br>
   		```xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxMightyUI\bin\data\mui" "$(ProjectDir)bin\data\mui"```
 
@@ -148,7 +140,7 @@ There's a longer example in the `src/` folder.
 
 
 
-**testApp.h**
+**ofApp.h**
 
 	#include "MUI.h"
 	
@@ -163,12 +155,13 @@ There's a longer example in the `src/` folder.
 		void onButtonPress( const void* sender, ofTouchEventArgs &args ); 
 	}
 	
-**testApp.cpp**
+**ofApp.cpp**
 
 	void testApp::setup(){	
 		...
 		
 		// create root element
+		// this attaches to OF and handles draw/update/mouse/key/... by itself. 
 		root = new mui::Root();
 		
 		// create button and register add listener
@@ -198,39 +191,69 @@ Components
 |SegmentedSelected|A set of buttons to choose between various options (e.g. color=red/green/blue). Uses templates to attach data to the options|
 |Slider|A simple horizontal slider|
 |SliderWithLabel|A slider, with a label that displays the current value.|
-|TextField|Deprecated. Native textfield overlay. Will be gone soon.|
+|TextField|Deprecated! Native textfield overlay. Will be gone soon.|
 |TextArea|In progress, unusable. TextField replacement|
 
 
 
+Layouting 
+---------
 
-Parameter Panel
----
+Especially more complex layouts can be tricky to get right. ofxMightyUI uses a very straight forward approach without springs, layout managers or bindings. 
 
-MUI includes a handy thing named `parameter panel`. 
+Here is a simple example. We have a form with two labels+sliders (hue and size). 
 
-#include "ofxMightyUI.h"
-#include "MuiParameterPanel.h"
-
-class ofApp{
-
-	mui::Root * root; 
-	mui::ParameterPanel * params; 
+	#include "MuiL.h" // L for layout ^^
 	
-	void setup(){
-		root = new mui::Root(); 
-		params = new ParameterPanel(); 
-		root->add(params); 
+	class MyForm : public mui::Container{
+		mui::Label * sizeLabel; 
+		mui::Slider * sizeSlider; 
 		
-		params->addSlider("radius", 10,500, 50, 1); // slider from 10-500, default 50, 1 decimal precission
-	}
-	
-	void draw(){
-		ofTranslate(ofGetWidth()/2, ofGetHeight()/2); 
-		ofSetColor(255); 
-		ofCircle(0,0, params->getFloat("radius")); 
-	}
-}
+		mui::Label * hueLabel; 
+		mui::Slider * sizeSlider; 
+		
+		MyForm(){
+			sizeLabel = mui::Label("Size:", 0,0,100,30); 
+			add(sizeLabel); 
+			
+			sizeSlider = new mui::Slider(0,0,100,30, 100,200,150 ); // a slider 100x30 large, values 100.200, default 150
+			add(sizeSlider); 
+			
+			hueLabel = new mui::Label("Hue:", 0,0, 100,30); 
+			add(hueLabel); 
+			
+			hueSlider = new mui::Slider(0,0,100,30, 100,200,150 ); // a slider 100x30 large, values 100.200, default 150
+			add(hueSlider); 
+		}
+		
+		~MyForm(){
+			delete sizeLabel; 
+			delete sizeSlider; 
+			delete hueLabel; 
+			delete hueSlider; 
+		}
+		
+		// call on the first frame, and whenever the size of the window changes
+		void layout(){
+			// move the size label 10 px from top left
+			mui::L(sizeLabel).posTL(10,10); 
+			
+			// place the slider next to the label (5px space), and use all available width (minus ten pixels)
+			mui::L(sizeSlider).rightOf(sizeLabel, 5); 
+			
+			// place the hue label below the size label, leaving a 5 px space. 
+			mui::L(hueLabel).below(sizeLabel,5); 
+			
+			// and the hue slider next to the hue label. 
+			mui::L(hueSlider).rightOf(hueLabel, 5); 
+			
+			// in this case, we want our own size 
+			ofRectangle size = getChildBounds(); 
+			width = size.width; 
+			height = size.height; 
+		}
+	};
+
 
 Licensing 
 ---------
