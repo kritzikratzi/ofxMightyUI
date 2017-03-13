@@ -14,6 +14,7 @@ bool mui::MuiConfig::debugDraw = false;
 int mui::MuiConfig::scrollPaneBleed = 30;
 int mui::MuiConfig::scrollToBaseDuration = 600;
 int mui::MuiConfig::scrollVelocityDecrease = 300;
+int mui::MuiConfig::fontAtlasSize = 2048; 
 int mui::MuiConfig::fontSize = 12;
 bool mui::MuiConfig::detectRetina = true;
 bool mui::MuiConfig::useRetinaAssets = true;

@@ -32,22 +32,6 @@ mui::ToggleButton::ToggleButton( std::string title, float x, float y, float widt
 
 //--------------------------------------------------------------
 void mui::ToggleButton::update(){
-	if( checkbox ){
-		float checkboxWidth = (4+label->boundingBox.height*1.2);
-		switch(checkboxAlign){
-			case Left:
-			case Center:
-				label->x = checkboxWidth;
-				label->width = width - checkboxWidth;
-				break;
-			case Right:
-				label->x = 0;
-				label->width = width - checkboxWidth;
-				break;
-		}
-	}
-	label->height = height;
-	label->fg = selected?selectedFg:fg;
 }
 
 
@@ -60,7 +44,7 @@ void mui::ToggleButton::draw(){
 		if( selected ){
 			float baseX = x+2+h*0.1;
 			ofDrawRectangle(baseX,(height-h)/2,h,h);
-			ofSetColor(0);
+			ofSetColor(fg.getInverted());
 			ofDrawLine(baseX+2,(height-h)/2+2,baseX+h-2,(height+h)/2-2);
 			ofDrawLine(baseX+2,(height+h)/2-2,baseX+h-2,(height-h)/2+2);
 		}
@@ -105,8 +89,24 @@ void mui::ToggleButton::sizeToFitWidth( int paddingL, int paddingR ){
 
 //--------------------------------------------------------------
 void mui::ToggleButton::layout(){
-	label->x = checkbox?(4+label->boundingBox.height*1.2):0;
-	label->width = width - label->x;
+	if( checkbox ){
+		float checkboxWidth = (4+label->boundingBox.height*1.2);
+		switch(checkboxAlign){
+			case Left:
+			case Center:
+				label->x = checkboxWidth;
+				label->width = width - checkboxWidth;
+				break;
+			case Right:
+				label->x = 0;
+				label->width = width - checkboxWidth;
+				break;
+		}
+	}
+	else{
+		label->x = 0;
+		label->width = width; 
+	}
 	label->height = height;
 	label->fg = selected?selectedFg:fg;
 }

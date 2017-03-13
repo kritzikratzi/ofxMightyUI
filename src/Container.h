@@ -60,9 +60,15 @@ namespace mui{
 		
 		ofRectangle getGlobalBounds();
 		ofRectangle getBounds();
-		ofRectangle getChildBounds(); 
+
+		ofRectangle getChildBounds();
 		void setBounds( float x, float y, float width, float height );
 		void setBounds( const ofRectangle bounds );
+
+		ofVec2f getSize();
+		void setSize(ofVec2f size);
+		ofVec2f getPosition();
+		void setPosition(ofVec2f position);
 
 		virtual void update(){};
 		virtual void draw(){};

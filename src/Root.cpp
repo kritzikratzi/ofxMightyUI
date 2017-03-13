@@ -578,6 +578,8 @@ void mui::Root::showPopupMenu( mui::Container * c, mui::Container * source, floa
 		popupMenu = nullptr;
 	}
 	
+	if(c == nullptr) return;
+	
 	add(c);
 	c->handleLayout();
 	popupMenu = c;

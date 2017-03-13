@@ -59,6 +59,10 @@ namespace mui{
 		// guessing around ...
 		static int scrollVelocityDecrease;
 		
+		// size of the fontstash font atlas
+		// set this before calling mui_init()! 
+		static int fontAtlasSize;
+		
 		// standard font size
 		static int fontSize;
 		

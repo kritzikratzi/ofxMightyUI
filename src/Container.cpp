@@ -103,6 +103,29 @@ void mui::Container::setBounds( ofRectangle rect ){
 }
 
 //--------------------------------------------------------------
+ofVec2f mui::Container::getSize(){
+	return ofVec2f(width,height);
+}
+
+//--------------------------------------------------------------
+void mui::Container::setSize(ofVec2f size){
+	width = size.x;
+	height = size.y;
+}
+
+//--------------------------------------------------------------
+ofVec2f mui::Container::getPosition(){
+	return ofVec2f(x,y);
+}
+
+//--------------------------------------------------------------
+void mui::Container::setPosition(ofVec2f position){
+	x = position.x;
+	y = position.y;
+}
+
+
+//--------------------------------------------------------------
 void mui::Container::layout(){
 	// layout managers might have been a fucking stupid idea.
 	// or maybe not. this is definitely gonna change!
