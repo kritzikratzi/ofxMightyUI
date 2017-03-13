@@ -143,18 +143,19 @@ namespace mui{
 			return n;
 		}
 		
+		/*
 		// returns true if the event was consumed
-		bool notify(EventType && event){
-			for( auto & listener : listeners ){
-				bool res = listener.call(owner,event);
-				if(listener.type >= 5 && res) return true;
+		bool notify(EventType & event) {
+			for (auto & listener : listeners) {
+				bool res = listener.call(owner, event);
+				if (listener.type >= 5 && res) return true;
 			}
-			
+
 			return false;
-		}
+		}*/
 		
 		// returns true if the event was consumed
-		bool notify(EventType & event){
+		bool notify(EventType event){
 			for( auto & listener : listeners ){
 				bool res = listener.call(owner,event);
 				if(listener.type >= 5 && res) return true;
@@ -162,6 +163,7 @@ namespace mui{
 			
 			return false;
 		}
+
 		
 		
 	protected:
