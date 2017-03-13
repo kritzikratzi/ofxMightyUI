@@ -32,6 +32,7 @@ mui::ToggleButton::ToggleButton( std::string title, float x, float y, float widt
 
 //--------------------------------------------------------------
 void mui::ToggleButton::update(){
+	label->fg = selected?selectedFg:fg;
 }
 
 
@@ -108,7 +109,6 @@ void mui::ToggleButton::layout(){
 		label->width = width; 
 	}
 	label->height = height;
-	label->fg = selected?selectedFg:fg;
 }
 
 //--------------------------------------------------------------

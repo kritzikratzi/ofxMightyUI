@@ -24,14 +24,15 @@ namespace mui{
 		
 		Slider( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20, float min_ = 0, float max_ = 1, float value_ = 0 ); 
 		
-		virtual void update(){}; 
-		virtual void draw(); 
+		virtual void draw() override;
 		
-		virtual void touchDown( ofTouchEventArgs &touch ); 
-		virtual void touchMoved( ofTouchEventArgs &touch ); 
-		virtual void touchMovedOutside( ofTouchEventArgs &touch ); 
-		virtual void touchUp( ofTouchEventArgs &touch ); 
-		virtual void touchDoubleTap( ofTouchEventArgs &touch ); 
+		void setValueAndNotify(float val);
+		
+		virtual void touchDown( ofTouchEventArgs &touch ) override;
+		virtual void touchMoved( ofTouchEventArgs &touch ) override;
+		virtual void touchMovedOutside( ofTouchEventArgs &touch ) override;
+		virtual void touchUp( ofTouchEventArgs &touch ) override;
+		virtual void touchDoubleTap( ofTouchEventArgs &touch ) override;
 		
 		
 		shared_ptr<Mapper> valueMapper;

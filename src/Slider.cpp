@@ -36,6 +36,12 @@ void mui::Slider::draw(){
 }
 
 
+//--------------------------------------------------------------
+void mui::Slider::setValueAndNotify(float val){
+	value = ofClamp(val,min,max);
+	ofNotifyEvent(onChange, value, this);
+}
+
 
 //--------------------------------------------------------------
 void mui::Slider::touchDown( ofTouchEventArgs &touch ){
