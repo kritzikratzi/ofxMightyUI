@@ -4,10 +4,21 @@ ofxMightyUI
 Documentation is not exactly up to date. 
 
 
+##About
 
----
+In the long run this is supposed to be a small but flexible 
+UI library that runs cross-platform
+with multitouch support. 
 
-TODO: 
+The library aims to only provide a minimal set of elements 
+needed for basic interactive artworks:
+sliders, segmented controls, buttons, labels, 
+toolbars/navigation bars, internal windows, textfields
+
+ofxMightyUI is a personal project and developed for my specific needs. 
+
+
+##TODO
 
 - ☀️ use dependencies instead of including everything (ofxUnicode, ofxEasyRetina, ofxFontStash)
 - ☀️ switch from poco events to ofEvent (same behind the scenes, but nicer to use)
@@ -49,7 +60,7 @@ TODO WINDOWS:
 
 A handy UI addon for [openFrameworks](http://www.openframeworks.cc). 
 
-# Features
+##Features
 
 
 This is very much a work in progress. The following works: 
@@ -64,7 +75,7 @@ This is very much a work in progress. The following works:
 - Retina support 
 
 
-# Setup
+##Setup
 
 
 Download the current master branch, either as zip or clone from git with
@@ -134,8 +145,8 @@ Also find the excludes section in config.make and add those same folders:
 	PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/ofxMightyUI/addons/ofxMUI/native-osx
 	PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/ofxMightyUI/src
 
-Usage
--------
+##Usage
+
 There's a longer example in the `src/` folder. 
 
 
@@ -175,8 +186,7 @@ There's a longer example in the `src/` folder.
 		cout << "the button was pressed!" << endl; 
 	}
 
-Components
-----------
+##Components
 
 
 |Component|Description|
@@ -196,8 +206,7 @@ Components
 
 
 
-Layouting 
----------
+##Layouting 
 
 Especially more complex layouts can be tricky to get right. ofxMightyUI uses a very straight forward approach without springs, layout managers or bindings. 
 
@@ -255,8 +264,27 @@ Here is a simple example. We have a form with two labels+sliders (hue and size).
 	};
 
 
-Licensing 
----------
+
+##Events/Listeners
+
+All events (update,draw,mouse,touch,keyboard,layouting) can be intercepted with lambda functions. 
+
+See `Container.h` for a full list. 
+
+	// create a button with a border 
+	mui::Button * button = new mui::Button(); 
+	button->onDraw.add([button](){
+		// red when over, otherwise gray
+		if(isMouseOver()) ofSetColor(255,0,0); 
+		else ofSetColor(150); 
+		
+		ofDrawRectangle(0,0,button->width,button->height); 
+		ofSetColor(255); // always reset to white after drawing!
+	});
+	
+
+
+##Licensing 
 
 Third party software/assets used: 
 
@@ -265,21 +293,5 @@ Third party software/assets used:
 - [iPhone4 GUI for Photoshop](http://www.teehanlax.com/blog/2010/08/12/iphone-4-gui-psd-retina-display/) cc-sa-by
 - [Lato Regular font](http://www.fontsquirrel.com/fonts/lato): Sil open font license
  
-The project itself is released under [WTFPL](http://sam.zoy.org/wtfpl/). 
-
-About
------
-
-In the long run this is supposed to be a small but flexible 
-UI library that runs cross-platform
-with multitouch support. 
-
-The library aims to only provide a minimal set of elements 
-needed for basic interactive artworks:
-sliders, segmented controls, buttons, labels, 
-toolbars/navigation bars, internal windows, textfields
-
-ofxMightyUI is (and most likely won't be suitable)
-as neither a proper GUI replacement or as a scenegraph. 
-turns out: it is a neat little scenegraph. so maybe yes. 
+The project itself is released under the [MIT](https://opensource.org/licenses/MIT) License. 
 
