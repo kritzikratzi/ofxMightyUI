@@ -4,7 +4,7 @@ ofxMightyUI
 Documentation is not exactly up to date. 
 
 
-##About
+## About
 
 In the long run this is supposed to be a small but flexible 
 UI library that runs cross-platform
@@ -25,7 +25,7 @@ ofxMightyUI is a personal project and developed for my specific needs.
 
 
 
-##TODO
+## TODO
 
 - ☀️ use dependencies instead of including everything (ofxUnicode, ofxEasyRetina, ofxFontStash)
 - ☀️ switch from poco events to ofEvent (same behind the scenes, but nicer to use)
@@ -67,7 +67,7 @@ TODO WINDOWS:
 
 A handy UI addon for [openFrameworks](http://www.openframeworks.cc). 
 
-##Features
+## Features
 
 
 This is very much a work in progress. The following works: 
@@ -82,7 +82,7 @@ This is very much a work in progress. The following works:
 - Retina support 
 
 
-##Setup
+## Setup
 
 
 Download the current master branch, either as zip or clone from git with
@@ -152,7 +152,7 @@ Also find the excludes section in config.make and add those same folders:
 	PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/ofxMightyUI/addons/ofxMUI/native-osx
 	PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/ofxMightyUI/src
 
-##Usage
+## Usage
 
 There's a longer example in the `src/` folder. 
 
@@ -193,7 +193,7 @@ There's a longer example in the `src/` folder.
 		cout << "the button was pressed!" << endl; 
 	}
 
-##Components
+## Components
 
 
 |Component|Description|
@@ -213,7 +213,7 @@ There's a longer example in the `src/` folder.
 
 
 
-##Layouting 
+## Layouting 
 
 Especially more complex layouts can be tricky to get right. ofxMightyUI uses a very straight forward approach without springs, layout managers or bindings. 
 
@@ -272,7 +272,7 @@ Here is a simple example. We have a form with two labels+sliders (hue and size).
 
 
 
-##Events/Listeners
+## Events/Listeners
 
 All events (update,draw,mouse,touch,keyboard,layouting) can be intercepted with lambda functions. 
 
@@ -291,7 +291,7 @@ See `Container.h` for a full list.
 	
 
 
-##Licensing 
+## Licensing 
 
 Third party software/assets used: 
 
