@@ -4,6 +4,8 @@
 //  Created by Hansi on 26.07.15.
 //
 //
+// V1.12
+//      * added a filter(func) function
 // V1.11
 //      * added spreadEvenlyVertically to complement spreadEvenlyHorizontally
 // V1.10
@@ -328,6 +330,16 @@ namespace mui{
 		}
 		
 		L filterVisible(){
+			std::vector<mui::Container*> newTargets;
+			for(auto & target : targets){
+				if(target->visible){
+					newTargets.push_back(target);
+				}
+			}
+			return L(newTargets);
+		}
+		
+		L filter(function<bool(mui::Container*)> filterFunc){
 			std::vector<mui::Container*> newTargets;
 			for(auto & target : targets){
 				if(target->visible){

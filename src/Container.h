@@ -67,8 +67,10 @@ namespace mui{
 
 		ofVec2f getSize();
 		void setSize(ofVec2f size);
+		void setSize(float w, float h);
 		ofVec2f getPosition();
 		void setPosition(ofVec2f position);
+		void setPosition(float x, float y);
 
 		virtual void update(){};
 		virtual void draw(){};

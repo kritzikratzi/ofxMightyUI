@@ -114,6 +114,12 @@ void mui::Container::setSize(ofVec2f size){
 }
 
 //--------------------------------------------------------------
+void mui::Container::setSize(float w, float h){
+	width = w;
+	height = h;
+}
+
+//--------------------------------------------------------------
 ofVec2f mui::Container::getPosition(){
 	return ofVec2f(x,y);
 }
@@ -122,6 +128,12 @@ ofVec2f mui::Container::getPosition(){
 void mui::Container::setPosition(ofVec2f position){
 	x = position.x;
 	y = position.y;
+}
+
+//--------------------------------------------------------------
+void mui::Container::setPosition(float x, float y){
+	this->x = x;
+	this->y = y;
 }
 
 
