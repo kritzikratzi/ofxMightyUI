@@ -17,6 +17,13 @@ toolbars/navigation bars, internal windows, textfields
 
 ofxMightyUI is a personal project and developed for my specific needs. 
 
+## Screenshots
+
+
+<img alt="OsciStudio Screenshot" src="docs/screenshot-oscistudio.png" width="100%">
+<img alt="Oscilloscope Screenshot" src="docs/screenshot-oscilloscope.png" width="100%">
+
+
 
 ##TODO
 
