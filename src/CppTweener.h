@@ -199,7 +199,7 @@ namespace tween {
 		short equation;
 		float delay;
 		float timeCount;
-		int total_properties;
+		size_t total_properties;
 		bool useMilliSeconds;
 		bool started;
 		bool delayFinished;
@@ -292,7 +292,7 @@ namespace tween {
 		void addProperty(float *valor, float valorFinal) {
 			TweenerProperty prop = {valor, valorFinal, *valor};
 			properties.push_back(prop);
-			total_properties = properties.size();
+			total_properties = (int)properties.size();
 		}
 		
 		void setUseMilliSeconds(bool use ){
@@ -348,7 +348,7 @@ namespace tween {
 		std::list<TweenerParam>::iterator tweensIT;
 		std::list<TweenerListener*> listeners;
 		std::list<TweenerListener*>::iterator listenerIT;
-		int total_tweens ;
+		size_t total_tweens ;
 		
 		float runEquation(int transition,int equation, float t,float b , float c, float d);
 		void dispatchEvent(TweenerParam *param, short eventType);

@@ -94,6 +94,7 @@ void mui::Label::commit(){
 				box = Helpers::getFontStash().getTextBounds(displayText, fontStyle, 0, 0 );
                 len --;
             }
+			boundingBox = box; 
         }
         else{
             displayText = text;

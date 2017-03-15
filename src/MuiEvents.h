@@ -54,6 +54,7 @@ namespace mui{
 				case FTypeCXE: return body.funcCXE(evt);
 				case FTypeCSX: return body.funcCSX(owner);
 				case FTypeCSE: return body.funcCSE(owner,evt);
+				default: return false; 
 			}
 		}
 		

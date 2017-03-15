@@ -19,8 +19,8 @@
 
 // a lot of the stb implementation comes from the example:
 // https://github.com/nothings/stb/blob/master/tests/textedit_sample.c
-static int count_chars( const StyledLine & line ){
-	int count = 0;
+static size_t count_chars( const StyledLine & line ){
+	size_t count = 0;
 	//TODO:unicodify!
 	for( LineElement element : line.elements ){
 		count += element.content.styledText.text.size();
@@ -40,7 +40,7 @@ static void layout_func(StbTexteditRow *row, mui::TextArea::EditorData *data, in
 	int pos = 0;
 	float y = 0;
 	for( const StyledLine & line : data->lines ){
-		int lineLen = count_chars(line);
+		size_t lineLen = count_chars(line);
 		
 		if( pos >= start_i ){
 			assert(line.elements.size()>0);
@@ -102,7 +102,7 @@ int insert_chars(mui::TextArea::EditorData *str, int pos, const STB_TEXTEDIT_CHA
 
 #define STB_TEXTEDIT_POSITIONTYPE int
 //TODO: utf8 support
-#define STB_TEXTEDIT_STRINGLEN(obj) (obj->text.size())
+#define STB_TEXTEDIT_STRINGLEN(obj) ((int)(obj->text.size()))
 #define STB_TEXTEDIT_LAYOUTROW(r,obj,n) layout_func(r,obj,n)
 #define STB_TEXTEDIT_GETWIDTH(obj,n,i) layout_width(obj,n,i)
 #define STB_TEXTEDIT_KEYTOTEXT(key)    (((key) & KEYDOWN_BIT) ? 0 : (key))

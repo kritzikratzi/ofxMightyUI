@@ -110,13 +110,6 @@ void mui::TextureAtlas::addSubsection(float x, float y, float z, float w, float 
 		py1 -= h/2;
 	}
 	
-	//we translate our drawing points by our anchor point.
-	//we still respect ofRectMode so if you have rect mode set to
-	//OF_RECTMODE_CENTER your anchor will be relative to that.
-	GLfloat anchorX;
-	GLfloat anchorY;
-	
-	
 	// -------------------------------------------------
 	// complete hack to remove border artifacts.
 	// slightly, slightly alters an image, scaling...
@@ -142,11 +135,6 @@ void mui::TextureAtlas::addSubsection(float x, float y, float z, float w, float 
 	GLfloat tx1 = bottomRight.x - offsetw;
 	GLfloat ty1 = bottomRight.y - offseth;
 	
-	/*if(z>0 || z<0){
-		ofPushMatrix();
-	 
-		ofTranslate(0,0,z);
-	 }*/
 
 	add.addVertex(ofVec3f(px0,py0,z));
 	add.addVertex(ofVec3f(px1,py0,z));
@@ -187,12 +175,6 @@ void mui::TextureAtlas::drawSubsection(float x, float y, float z, float w, float
 		px1 -= w/2;
 		py1 -= h/2;
 	}
-	
-	//we translate our drawing points by our anchor point.
-	//we still respect ofRectMode so if you have rect mode set to
-	//OF_RECTMODE_CENTER your anchor will be relative to that.
-	GLfloat anchorX;
-	GLfloat anchorY;
 	
 	
 	// -------------------------------------------------

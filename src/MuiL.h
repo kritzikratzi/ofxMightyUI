@@ -261,7 +261,7 @@ namespace mui{
 		}
 		
 		L & spreadEvenlyHorizontally( float x, float width, float padding = 0 ){
-			int N = targets.size();
+			size_t N = targets.size();
 			if(N==1){
 				targets.front()->x = x;
 				targets.front()->width = width;
@@ -277,7 +277,7 @@ namespace mui{
 		}
 		
 		L & spreadEvenlyHorizontally( float x, float width, mui::HorizontalAlign align ){
-			int N = targets.size();
+			size_t N = targets.size();
 			if( N > 0 ){
 				float w = width/N;
 				float move = align==mui::Left?0:(align==mui::Center?0.5:1.0);
@@ -289,7 +289,7 @@ namespace mui{
 		}
 		
 		L & spreadEvenlyVertically( float y, float height, float padding = 0 ){
-			int N = targets.size();
+			size_t N = targets.size();
 			if(N==1){
 				targets.front()->y = y;
 				targets.front()->height = height;
@@ -305,7 +305,7 @@ namespace mui{
 		}
 		
 		L & spreadEvenlyVertically( float y, float height, mui::VerticalAlign align ){
-			int N = targets.size();
+			size_t N = targets.size();
 			if( N > 0 ){
 				float h = height/N;
 				float move = align==mui::Top?0:(align==mui::Middle?0.5:1.0);
@@ -317,7 +317,7 @@ namespace mui{
 		}
 		
 		L & rows( ofVec2f p0, float spacing = 1 ){
-			int N = targets.size();
+			size_t N = targets.size();
 			float y = p0.y;
 			for(int i = 0; i < N; i++ ){
 				if(targets[i]->visible){

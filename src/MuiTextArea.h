@@ -81,7 +81,7 @@ namespace mui{
 			string text;
 			ofxFontStashStyle fontStyle;
 			vector<StyledLine> lines;
-			int strlenWithLineStarts;
+			size_t strlenWithLineStarts;
 			bool changed;
 			TextArea * textarea;
 			
