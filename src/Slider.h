@@ -36,7 +36,7 @@ namespace mui{
 		
 		
 		shared_ptr<Mapper> valueMapper;
-		ofEvent<float> onChange;
+		EventHandler<float> onChange{this};
 		
 
 		

@@ -13,8 +13,149 @@
 
 #define STB_TEXTEDIT_STRING mui::TextArea::EditorData
 #define STB_TEXTEDIT_CHARTYPE char
+
+#define STB_TEXTEDIT_POSITIONTYPE int
+//TODO: utf8 support
+#define STB_TEXTEDIT_STRINGLEN(obj) ((int)utf8_count_chars(obj->text))
+#define STB_TEXTEDIT_CHARARR_LEN(arr,len) utf8_count_chars(arr)
+#define STB_TEXTEDIT_LAYOUTROW(r,obj,n) layout_func(r,obj,n)
+#define STB_TEXTEDIT_GETWIDTH(obj,n,i) layout_width(obj,n,i)
+#define STB_TEXTEDIT_KEYTOTEXT(key)    (((key) & KEYDOWN_BIT) ? 0 : (key))
+// this only returns the first byte of a multi byte sequence :(
+#define STB_TEXTEDIT_GETCHAR(tc,i)     ((tc)->text[unicode_idx_to_utf8_idx((tc)->text,i)])
+#define STB_TEXTEDIT_NEWLINE           '\n'
+#define STB_TEXTEDIT_IS_SPACE(ch)      isspace(ch)
+#define STB_TEXTEDIT_DELETECHARS       delete_chars
+#define STB_TEXTEDIT_INSERTCHARS       insert_chars
+
+#define KEYDOWN_BIT 0x8000
+
+#define STB_TEXTEDIT_K_SHIFT           0x4000
+#define STB_TEXTEDIT_K_CONTROL         0x2000
+#define STB_TEXTEDIT_K_LEFT            (KEYDOWN_BIT | 1) // actually use VK_LEFT, SDLK_LEFT, etc
+#define STB_TEXTEDIT_K_RIGHT           (KEYDOWN_BIT | 2) // VK_RIGHT
+#define STB_TEXTEDIT_K_UP              (KEYDOWN_BIT | 3) // VK_UP
+#define STB_TEXTEDIT_K_DOWN            (KEYDOWN_BIT | 4) // VK_DOWN
+#define STB_TEXTEDIT_K_LINESTART       (KEYDOWN_BIT | 5) // VK_HOME
+#define STB_TEXTEDIT_K_LINEEND         (KEYDOWN_BIT | 6) // VK_END
+#define STB_TEXTEDIT_K_TEXTSTART       (STB_TEXTEDIT_K_LINESTART | STB_TEXTEDIT_K_CONTROL)
+#define STB_TEXTEDIT_K_TEXTEND         (STB_TEXTEDIT_K_LINEEND   | STB_TEXTEDIT_K_CONTROL)
+#define STB_TEXTEDIT_K_DELETE          (KEYDOWN_BIT | 7) // VK_DELETE
+#define STB_TEXTEDIT_K_BACKSPACE       (KEYDOWN_BIT | 8) // VK_BACKSPACE
+#define STB_TEXTEDIT_K_UNDO            (KEYDOWN_BIT | STB_TEXTEDIT_K_CONTROL | 'z')
+#define STB_TEXTEDIT_K_REDO            (KEYDOWN_BIT | STB_TEXTEDIT_K_CONTROL | 'y')
+#define STB_TEXTEDIT_K_INSERT          (KEYDOWN_BIT | 9) // VK_INSERT
+#define STB_TEXTEDIT_K_WORDLEFT        (STB_TEXTEDIT_K_LEFT  | STB_TEXTEDIT_K_CONTROL)
+#define STB_TEXTEDIT_K_WORDRIGHT       (STB_TEXTEDIT_K_RIGHT | STB_TEXTEDIT_K_CONTROL)
+#define STB_TEXTEDIT_K_PGUP            (KEYDOWN_BIT | 10) // VK_PGUP -- not implemented
+#define STB_TEXTEDIT_K_PGDOWN          (KEYDOWN_BIT | 11) // VK_PGDOWN -- not implemented
+#define STB_TEXTEDIT_MOVEWORDLEFT mui_textedit_move_to_word_previous
+#define STB_TEXTEDIT_MOVEWORDRIGHT mui_textedit_move_to_word_next
+
 #include "../libs/stb_textedit/include/stb_textedit/stb_textedit.h"
 
+static inline int octect_size( uint32_t codepoint ){
+	if (codepoint < 0x80) // two octets
+		return 1;
+	else if (codepoint < 0x800) // two octets
+		return 2;
+	else if (codepoint < 0x10000) // three octets
+		return 3;
+	else // four octets
+		return 4;
+}
+
+static int utf8_expect_len( char first ){
+	switch((unsigned char)first){
+		case 0xc0: return 2;
+		case 0xe0: return 3;
+		case 0xf0: return 4;
+		default: return 1;
+	}
+}
+
+static string unicode_to_utf( uint32_t codepoint ){
+	if (codepoint < 0x80)                        // one octet
+		return string({(char)codepoint});
+	else if (codepoint < 0x800) {                // two octets
+		return string({
+			(char)((codepoint >> 6)            | 0xc0),
+			(char)((codepoint & 0x3f)          | 0x80)
+		});
+	}
+	else if (codepoint < 0x10000) {              // three octets
+		return string({
+			(char)((codepoint >> 12)           | 0xe0),
+			(char)(((codepoint >> 6) & 0x3f)   | 0x80),
+			(char)((codepoint & 0x3f)          | 0x80)
+		});
+	}
+	else {
+		return string({
+			(char)((codepoint >> 18)           | 0xf0),
+			(char)(((codepoint >> 12) & 0x3f)  | 0x80),
+			(char)(((codepoint >> 6) & 0x3f)   | 0x80),
+			(char)((codepoint & 0x3f)          | 0x80),
+			(char)((codepoint >> 18)           | 0xf0)
+		}); 
+	}
+}
+
+static inline size_t unicode_idx_to_utf8_idx(const string & str, int unicode_idx ){
+	size_t i= 0;
+	int utf8_idx = 0;
+	
+	ofUTF8Iterator oit(str);
+	auto it = oit.begin();
+	auto end = oit.end();
+	while(it != end && unicode_idx != i){
+		uint32_t codepoint = *it;
+		utf8_idx += octect_size(codepoint);
+		++it;
+		++i;
+	}
+	
+	return utf8_idx;
+}
+
+
+static inline string utf8_substr(const string & str, int unicode_idx, int unicode_len ){
+	if(unicode_len == 0) return "";
+	
+	size_t i= 0;
+	int utf8_idx = 0;
+	
+	ofUTF8Iterator oit(str);
+	auto it = oit.begin();
+	auto end = oit.end();
+	while(it != end && unicode_idx != i){
+		uint32_t codepoint = *it;
+		utf8_idx += octect_size(codepoint);
+		++it;
+		++i;
+	}
+	
+	i = 0;
+	int utf8_len = 0;
+	while(it != end && unicode_len != i){
+		uint32_t codepoint = *it;
+		utf8_len += octect_size(codepoint);
+		++it;
+		++i;
+	}
+	
+	return str.substr(utf8_idx,utf8_len);
+}
+
+
+
+static inline size_t utf8_count_chars(const string & line ){
+	size_t i = 0;
+	for( auto c : ofUTF8Iterator(line) ){
+		++i;
+	}
+	return i;
+}
 
 
 // a lot of the stb implementation comes from the example:
@@ -23,7 +164,7 @@ static size_t count_chars( const StyledLine & line ){
 	size_t count = 0;
 	//TODO:unicodify!
 	for( LineElement element : line.elements ){
-		count += element.content.styledText.text.size();
+		count += utf8_count_chars(element.content.styledText.text);
 	}
 	
 	return count;
@@ -64,7 +205,7 @@ static void layout_func(StbTexteditRow *row, mui::TextArea::EditorData *data, in
 	row->ymin = y;
 	row->ymax = y + 10;
 	
-/*	int remaining_chars = data->text.size() - start_i;
+/*	int remaining_chars = utf8_count_chars(data->text) - start_i;
 	//row->num_chars = remaining_chars > 20 ? 20 : remaining_chars; // should do real word wrap here
 	row->num_chars = remaining_chars;
 	row->x0 = size.x;
@@ -76,66 +217,43 @@ static void layout_func(StbTexteditRow *row, mui::TextArea::EditorData *data, in
 
 float layout_width(mui::TextArea::EditorData * data, int n, int i ){
 	//TODO: use lines
-	ofRectangle size = mui::Helpers::getFontStash().getTextBounds(data->text.substr(n+i,1), data->fontStyle, 0, 0);
+	int idx = unicode_idx_to_utf8_idx(data->text, n+i);
+	int len = utf8_expect_len(data->text[idx]);
+	ofRectangle size = mui::Helpers::getFontStash().getTextBounds(data->text.substr(idx,len), data->fontStyle, 0, 0);
 	if( i == 0 ){
 		return size.x + size.width;
 	}
 	else{
-		ofRectangle size2 = mui::Helpers::getFontStash().getTextBounds(data->text.substr(n+i-1,2), data->fontStyle, 0, 0);
+		int idx2 = unicode_idx_to_utf8_idx(data->text, n+i-1);
+		int len2 = len+utf8_expect_len(data->text[idx2]);
+		ofRectangle size2 = mui::Helpers::getFontStash().getTextBounds(data->text.substr(idx2,len2), data->fontStyle, 0, 0);
 		return size2.width+size2.x - size.width - size.x;
 	}
 }
 
-int delete_chars(mui::TextArea::EditorData *str, int pos, int num)
+// pos is the position in unicode chars
+int delete_chars(mui::TextArea::EditorData *data, int pos, int num)
 {
-	str->text.erase(str->text.begin()+pos, str->text.begin()+pos+num);
-	str->changed = true;
-	return 1; // always succeeds
+	size_t idx = unicode_idx_to_utf8_idx(data->text,pos);
+	num = unicode_idx_to_utf8_idx(data->text, pos+num) - idx;
+	idx = min(idx,data->text.size());
+	num = min(idx+num,data->text.size())-idx;
+	if(idx == num) return 0;
+	
+	data->text.erase(data->text.begin()+idx, data->text.begin()+idx+num);
+	data->changed = true;
+	return 1;
 }
 
-int insert_chars(mui::TextArea::EditorData *str, int pos, const STB_TEXTEDIT_CHARTYPE *newtext, int num)
+// pos is the position in unicode chars
+int insert_chars(mui::TextArea::EditorData *data, int pos, const STB_TEXTEDIT_CHARTYPE *newtext, int num)
 {
-	str->text.insert(pos, newtext,num);
-	str->changed = true;
+	size_t idx = unicode_idx_to_utf8_idx(data->text, pos);
+	idx = min(data->text.size(), idx);
+	data->text.insert(idx, newtext,num);
+	data->changed = true;
 	return 1; // always succeeds
 }
-
-#define STB_TEXTEDIT_POSITIONTYPE int
-//TODO: utf8 support
-#define STB_TEXTEDIT_STRINGLEN(obj) ((int)(obj->text.size()))
-#define STB_TEXTEDIT_LAYOUTROW(r,obj,n) layout_func(r,obj,n)
-#define STB_TEXTEDIT_GETWIDTH(obj,n,i) layout_width(obj,n,i)
-#define STB_TEXTEDIT_KEYTOTEXT(key)    (((key) & KEYDOWN_BIT) ? 0 : (key))
-#define STB_TEXTEDIT_GETCHAR(tc,i)     ((tc)->text[i])
-#define STB_TEXTEDIT_NEWLINE           '\n'
-#define STB_TEXTEDIT_IS_SPACE(ch)      isspace(ch)
-#define STB_TEXTEDIT_DELETECHARS       delete_chars
-#define STB_TEXTEDIT_INSERTCHARS       insert_chars
-
-#define KEYDOWN_BIT 0x8000
-
-#define STB_TEXTEDIT_K_SHIFT           0x4000
-#define STB_TEXTEDIT_K_CONTROL         0x2000
-#define STB_TEXTEDIT_K_LEFT            (KEYDOWN_BIT | 1) // actually use VK_LEFT, SDLK_LEFT, etc
-#define STB_TEXTEDIT_K_RIGHT           (KEYDOWN_BIT | 2) // VK_RIGHT
-#define STB_TEXTEDIT_K_UP              (KEYDOWN_BIT | 3) // VK_UP
-#define STB_TEXTEDIT_K_DOWN            (KEYDOWN_BIT | 4) // VK_DOWN
-#define STB_TEXTEDIT_K_LINESTART       (KEYDOWN_BIT | 5) // VK_HOME
-#define STB_TEXTEDIT_K_LINEEND         (KEYDOWN_BIT | 6) // VK_END
-#define STB_TEXTEDIT_K_TEXTSTART       (STB_TEXTEDIT_K_LINESTART | STB_TEXTEDIT_K_CONTROL)
-#define STB_TEXTEDIT_K_TEXTEND         (STB_TEXTEDIT_K_LINEEND   | STB_TEXTEDIT_K_CONTROL)
-#define STB_TEXTEDIT_K_DELETE          (KEYDOWN_BIT | 7) // VK_DELETE
-#define STB_TEXTEDIT_K_BACKSPACE       (KEYDOWN_BIT | 8) // VK_BACKSPACE
-#define STB_TEXTEDIT_K_UNDO            (KEYDOWN_BIT | STB_TEXTEDIT_K_CONTROL | 'z')
-#define STB_TEXTEDIT_K_REDO            (KEYDOWN_BIT | STB_TEXTEDIT_K_CONTROL | 'y')
-#define STB_TEXTEDIT_K_INSERT          (KEYDOWN_BIT | 9) // VK_INSERT
-#define STB_TEXTEDIT_K_WORDLEFT        (STB_TEXTEDIT_K_LEFT  | STB_TEXTEDIT_K_CONTROL)
-#define STB_TEXTEDIT_K_WORDRIGHT       (STB_TEXTEDIT_K_RIGHT | STB_TEXTEDIT_K_CONTROL)
-#define STB_TEXTEDIT_K_PGUP            (KEYDOWN_BIT | 10) // VK_PGUP -- not implemented
-#define STB_TEXTEDIT_K_PGDOWN          (KEYDOWN_BIT | 11) // VK_PGDOWN -- not implemented
-
-#define STB_TEXTEDIT_MOVEWORDLEFT mui_textedit_move_to_word_previous
-#define STB_TEXTEDIT_MOVEWORDRIGHT mui_textedit_move_to_word_next
 
 
 static int mui_is_word_boundary( STB_TEXTEDIT_STRING *str, int idx )
@@ -191,6 +309,7 @@ mui::TextArea::TextArea( std::string text_, float x_, float y_, float width_, fl
 	Container( x_, y_, width_, height_ ),
 	text( text_), fontSize(-1), horizontalAlign(Left), verticalAlign(Middle),fontName(""),data(this),lastInteraction(0),selectAllOnFocus(false){
 		state = new EditorState();
+		focusTransferable = false; 
 		stb_textedit_initialize_state(state,0);
 		if( fontSize < 0 ) fontSize = mui::MuiConfig::fontSize;
 		commit();
@@ -283,7 +402,8 @@ void mui::TextArea::draw(){
 		ofNoFill();
 		ofDrawRectangle(0,0,width,height);
 		ofFill();
-		
+		// getting the time is slow, but it can only happen
+		// for a single textfield here because of the focus (so we're fine)
 		uint64_t time = ofGetElapsedTimeMillis();
 		if( ((time-lastInteraction)%1000) < 500 ){
 			ofRectangle bounds = getEditorCursorForIndex(state->cursor).rect;
@@ -441,40 +561,52 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 				stb_text_redo(&data, state);
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'x'){
-				ofGetWindowPtr()->setClipboardString(data.text.substr(state_select_min(),state_select_len()));
+				ofGetWindowPtr()->setClipboardString(getSelectedText());
 				stb_textedit_key(&data, state, STB_TEXTEDIT_K_DELETE|keyMask );
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'c'){
-				ofGetWindowPtr()->setClipboardString(data.text.substr(state_select_min(),state_select_len()));
+				ofGetWindowPtr()->setClipboardString(getSelectedText());
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'v'){
 				string text = ofGetWindowPtr()->getClipboardString();
 				stb_textedit_paste(&data, state, text.c_str(), text.size());
 			}
 			else{
-				//todo: copied this from built-in utf8::append
-				if (!utf8::internal::is_code_point_valid(key.codepoint)){
+				int codept = key.codepoint;
+				
+				if (!utf8::internal::is_code_point_valid(codept)){
 					// what is it? don't know! ignore it!
 					return true;
 				}
+				else if(codept < 0x1F || codept == 0x7F || (codept >= 0x0080 && codept <= 0x009F) ){
+					// control character
+					return true;
+				}
 				
-				if (key.codepoint < 0x80)                        // one octet
-					stb_textedit_key(&data, state, key.codepoint );
-				else if (key.codepoint < 0x800) {                // two octets
-					stb_textedit_key(&data, state, ((key.codepoint >> 6)            | 0xc0) );
-					stb_textedit_key(&data, state, ((key.codepoint & 0x3f)          | 0x80) );
-				}
-				else if (key.codepoint < 0x10000) {              // three octets
-					stb_textedit_key(&data, state, ((key.codepoint >> 12)           | 0xe0) );
-					stb_textedit_key(&data, state, (((key.codepoint >> 6) & 0x3f)   | 0x80) );
-					stb_textedit_key(&data, state, ((key.codepoint & 0x3f)          | 0x80) );
-				}
-				else {                                // four octets
-					stb_textedit_key(&data, state, ((key.codepoint >> 18)           | 0xf0) );
-					stb_textedit_key(&data, state, (((key.codepoint >> 12) & 0x3f)  | 0x80) );
-					stb_textedit_key(&data, state, (((key.codepoint >> 6) & 0x3f)   | 0x80) );
-					stb_textedit_key(&data, state, ((key.codepoint & 0x3f)          | 0x80) );
-					stb_textedit_key(&data, state, ((key.codepoint >> 18)           | 0xf0) );
+				// the next 20 or so lines are basically a verbatim copy from
+				// stb_textedit_key() with a tiny change:
+				// a char doesn't have a fixed size 
+				EditorData * str = &data;
+				string insertStr = unicode_to_utf(codept);
+				
+				// can't add newline in single-line mode
+				if (codept == '\n' && state->single_line)
+					break;
+				
+				if (state->insert_mode && !STB_TEXT_HAS_SELECTION(state) && state->cursor < STB_TEXTEDIT_STRINGLEN(str)) {
+					stb_text_makeundo_replace(str, state, state->cursor, 1, 1);
+					STB_TEXTEDIT_DELETECHARS(str, state->cursor, 1);
+					if (STB_TEXTEDIT_INSERTCHARS(str, state->cursor, insertStr.c_str(), insertStr.size())) {
+						++state->cursor;
+						state->has_preferred_x = 0;
+					}
+				} else {
+					stb_textedit_delete_selection(str,state); // implicity clamps
+					if (STB_TEXTEDIT_INSERTCHARS(str, state->cursor, insertStr.c_str(), insertStr.size())) {
+						stb_text_makeundo_insert(state, state->cursor, insertStr.size());
+						++state->cursor;
+						state->has_preferred_x = 0;
+					}
 				}
 			}
 	}
@@ -505,13 +637,13 @@ mui::TextArea::EditorCursor mui::TextArea::getEditorCursorForIndex( int cursorPo
 		else{
 			for( vector<LineElement>::iterator elementIt = line.elements.begin(); elementIt != line.elements.end(); ++elementIt ){
 				LineElement &element = *elementIt;
-				len = element.content.styledText.text.length();
+				len = utf8_count_chars(element.content.styledText.text);
 				if( pos + len <= cursorPos ){
 					pos += len;
 				}
 				else{
 					float x = element.area.x;
-					int idx = cursorPos - pos;
+					int idx = unicode_idx_to_utf8_idx(element.content.styledText.text, cursorPos - pos);
 					bounds = mui::Helpers::getFontStash().getTextBounds(element.content.styledText.text.substr(0,idx), element.content.styledText.style, 0,0);
 					bounds.height = line.lineH;
 					bounds.x = size.x - boundingBox.x + x + bounds.width;
@@ -566,4 +698,8 @@ int mui::TextArea::state_select_max(){
 int mui::TextArea::state_select_len(){
 	int res = state->select_start - state->select_end;
 	return res<0?-res:res;
+}
+
+string mui::TextArea::getSelectedText(){
+	return utf8_substr(data.text, state_select_min(), state_select_len());
 }

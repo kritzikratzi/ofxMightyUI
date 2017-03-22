@@ -53,7 +53,8 @@ namespace mui{
 		
 		// changes text + commit
 		void setText( string text );
-		void setTextAndNotify( string text ); 
+		void setTextAndNotify( string text );
+		string getSelectedText();
 		
 		// call this after you made changes to any variables (changing x/y is okay without doing a commit() ).
 		// doing text-maths too insane to do on every frame!

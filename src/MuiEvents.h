@@ -164,8 +164,11 @@ namespace mui{
 			
 			return false;
 		}
-
 		
+		// for compatibility with ofAddListener()
+		void notify(void * sender, EventType event){
+			notify(event); // just ignore the sender
+		}
 		
 	protected:
 		std::list<EventFunction<EventType>> listeners;
