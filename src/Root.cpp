@@ -79,7 +79,8 @@ void mui::Root::handleUpdate(){
 		handleLayout();
 		cout << "updating width width = " << width << ", height = " << height << endl;
 	}
-	else if( ofGetFrameNum() == 1 ){
+	else if( numLayoutFrames > 0 ){
+		numLayoutFrames--; 
 		handleLayout();
 		cout << "updating width width = " << width << ", height = " << height << endl;
 	}
@@ -629,6 +630,7 @@ void mui::Root::of_windowResized( ofResizeEventArgs &args ){
 	if (args.width <= 0 || args.height <= 0) return; 
 	width = args.width/mui::MuiConfig::scaleFactor;
 	height = args.height/mui::MuiConfig::scaleFactor;
+	numLayoutFrames = 1;
 	handleLayout();
 }
 bool mui::Root::of_keyPressed( ofKeyEventArgs &args ){
