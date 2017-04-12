@@ -4,6 +4,8 @@
 //  Created by Hansi on 26.07.15.
 //
 //
+// V1.13
+//      * fixed boundingBox() calculation
 // V1.12
 //      * added a filter(func) function
 // V1.11
@@ -351,8 +353,11 @@ namespace mui{
 		
 		ofRectangle boundingBox(){
 			ofRectangle result;
+			bool first = true;
+			
 			for( auto target : targets ){
-				result = result.getUnion(target->getBounds());
+				if(first) result = target->getBounds(), first = false;
+				else result = result.getUnion(target->getBounds());
 			}
 			return result; 
 		}
