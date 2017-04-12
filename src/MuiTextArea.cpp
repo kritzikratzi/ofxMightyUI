@@ -508,13 +508,22 @@ void mui::TextArea::touchMoved(ofTouchEventArgs &touch){
 bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 	lastInteraction = ofGetElapsedTimeMillis();
 	int keyMask =
-		(MUI_ROOT->getKeyPressed(OF_KEY_SHIFT)?STB_TEXTEDIT_K_SHIFT:0) |
+		(ofGetKeyPressed(OF_KEY_SHIFT)?STB_TEXTEDIT_K_SHIFT:0) |
 		#if defined(TARGET_OSX)
-		(MUI_ROOT->getKeyPressed(OF_KEY_ALT)?STB_TEXTEDIT_K_CONTROL:0)
+		(ofGetKeyPressed(OF_KEY_ALT)?STB_TEXTEDIT_K_CONTROL:0)
 		#else
-		(MUI_ROOT->getKeyPressed(OF_KEY_CONTROL)?STB_TEXTEDIT_K_CONTROL:0)
+		(ofGetKeyPressed(OF_KEY_CONTROL)?STB_TEXTEDIT_K_CONTROL:0)
 		#endif
 	;
+
+#ifdef _WIN32
+	// windows is funny with ctrl shortcuts
+	cout << key.key << endl;
+	if (ofGetKeyPressed(OF_KEY_CONTROL) && key.key >= 1 && key.key <= 26) {
+		key.key = key.codepoint = 'a' + (key.key - 1);
+	}
+	cout << key.key << endl; 
+#endif
 	
 	switch(key.key){
 		case OF_KEY_UP:
@@ -555,14 +564,15 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 				state->cursor = state->select_end;
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'z'){
-				stb_text_undo(&data, state);
+				if (ofGetKeyPressed(OF_KEY_SHIFT)) stb_text_redo(&data, state);
+				else stb_text_undo(&data, state);
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'Z'){
 				stb_text_redo(&data, state);
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'x'){
 				ofGetWindowPtr()->setClipboardString(getSelectedText());
-				stb_textedit_key(&data, state, STB_TEXTEDIT_K_DELETE|keyMask );
+				stb_textedit_key(&data, state, STB_TEXTEDIT_K_DELETE );
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'c'){
 				ofGetWindowPtr()->setClipboardString(getSelectedText());
