@@ -12,17 +12,17 @@
 #include "Root.h"
 
 #define STB_TEXTEDIT_STRING mui::TextArea::EditorData
-#define STB_TEXTEDIT_CHARTYPE char
+#define STB_TEXTEDIT_CHARTYPE uint32_t
 
 #define STB_TEXTEDIT_POSITIONTYPE int
 //TODO: utf8 support
-#define STB_TEXTEDIT_STRINGLEN(obj) ((int)utf8_count_chars(obj->text))
-#define STB_TEXTEDIT_CHARARR_LEN(arr,len) utf8_count_chars(arr)
+#define STB_TEXTEDIT_STRINGLEN(obj) ((int)obj->unicode.size())
+#define STB_TEXTEDIT_CHARARR_LEN(arr,len) (len)
 #define STB_TEXTEDIT_LAYOUTROW(r,obj,n) layout_func(r,obj,n)
 #define STB_TEXTEDIT_GETWIDTH(obj,n,i) layout_width(obj,n,i)
 #define STB_TEXTEDIT_KEYTOTEXT(key)    (((key) & KEYDOWN_BIT) ? 0 : (key))
 // this only returns the first byte of a multi byte sequence :(
-#define STB_TEXTEDIT_GETCHAR(tc,i)     ((tc)->text[unicode_idx_to_utf8_idx((tc)->text,i)])
+#define STB_TEXTEDIT_GETCHAR(tc,i)     ((tc)->unicode[i])
 #define STB_TEXTEDIT_NEWLINE           '\n'
 #define STB_TEXTEDIT_IS_SPACE(ch)      isspace(ch)
 #define STB_TEXTEDIT_DELETECHARS       delete_chars
@@ -54,6 +54,8 @@
 
 #include "../libs/stb_textedit/include/stb_textedit/stb_textedit.h"
 
+#pragma mark UTF8-Helpers
+
 static inline int octect_size( uint32_t codepoint ){
 	if (codepoint < 0x80) // two octets
 		return 1;
@@ -65,7 +67,7 @@ static inline int octect_size( uint32_t codepoint ){
 		return 4;
 }
 
-static int utf8_expect_len( char first ){
+static int utf8_expected_len( char first ){
 	switch((unsigned char)first){
 		case 0xc0: return 2;
 		case 0xe0: return 3;
@@ -74,7 +76,8 @@ static int utf8_expect_len( char first ){
 	}
 }
 
-static string unicode_to_utf( uint32_t codepoint ){
+
+static string unicode_to_utf8( uint32_t codepoint ){
 	if (codepoint < 0x80)                        // one octet
 		return string({(char)codepoint});
 	else if (codepoint < 0x800) {                // two octets
@@ -101,55 +104,7 @@ static string unicode_to_utf( uint32_t codepoint ){
 	}
 }
 
-static inline size_t unicode_idx_to_utf8_idx(const string & str, int unicode_idx ){
-	size_t i= 0;
-	int utf8_idx = 0;
-	
-	ofUTF8Iterator oit(str);
-	auto it = oit.begin();
-	auto end = oit.end();
-	while(it != end && unicode_idx != i){
-		uint32_t codepoint = *it;
-		utf8_idx += octect_size(codepoint);
-		++it;
-		++i;
-	}
-	
-	return utf8_idx;
-}
-
-
-static inline string utf8_substr(const string & str, int unicode_idx, int unicode_len ){
-	if(unicode_len == 0) return "";
-	
-	size_t i= 0;
-	int utf8_idx = 0;
-	
-	ofUTF8Iterator oit(str);
-	auto it = oit.begin();
-	auto end = oit.end();
-	while(it != end && unicode_idx != i){
-		uint32_t codepoint = *it;
-		utf8_idx += octect_size(codepoint);
-		++it;
-		++i;
-	}
-	
-	i = 0;
-	int utf8_len = 0;
-	while(it != end && unicode_len != i){
-		uint32_t codepoint = *it;
-		utf8_len += octect_size(codepoint);
-		++it;
-		++i;
-	}
-	
-	return str.substr(utf8_idx,utf8_len);
-}
-
-
-
-static inline size_t utf8_count_chars(const string & line ){
+static inline size_t utf8_strlen(const string & line ){
 	size_t i = 0;
 	for( auto c : ofUTF8Iterator(line) ){
 		++i;
@@ -157,7 +112,31 @@ static inline size_t utf8_count_chars(const string & line ){
 	return i;
 }
 
+static inline size_t utf8_to_unicode(const string & text, vector<uint32_t> & unicode, vector<size_t> & utf8_positions){
+	size_t i = 0;
+	size_t pos = 0;
+	unicode.clear();
+	utf8_positions.clear();
+	
+	for( auto c : ofUTF8Iterator(text) ){
+		unicode.push_back(c);
+		utf8_positions.push_back(pos);
+		pos += octect_size(c);
+		++i;
+	}
+	
+	return i;
+}
 
+static inline vector<uint32_t> utf8_to_unicode(const string & text){
+	vector<uint32_t> res;
+	for( auto c : ofUTF8Iterator(text) ){
+		res.push_back(c);
+	}
+	return res;
+}
+
+/*
 // a lot of the stb implementation comes from the example:
 // https://github.com/nothings/stb/blob/master/tests/textedit_sample.c
 static size_t count_chars( const StyledLine & line ){
@@ -168,7 +147,7 @@ static size_t count_chars( const StyledLine & line ){
 	}
 	
 	return count;
-}
+}*/
 
 // define the functions we need
 static void layout_func(StbTexteditRow *row, mui::TextArea::EditorData *data, int start_i)
@@ -180,8 +159,9 @@ static void layout_func(StbTexteditRow *row, mui::TextArea::EditorData *data, in
 	// figure out where we currently are
 	int pos = 0;
 	float y = 0;
-	for( const StyledLine & line : data->lines ){
-		size_t lineLen = count_chars(line);
+	for( int i = 0; i < data->lines.size(); i++){
+		const StyledLine & line = data->lines[i];
+		size_t lineLen = data->unicode_line_length[i];
 		
 		if( pos >= start_i ){
 			assert(line.elements.size()>0);
@@ -216,16 +196,16 @@ static void layout_func(StbTexteditRow *row, mui::TextArea::EditorData *data, in
 }
 
 float layout_width(mui::TextArea::EditorData * data, int n, int i ){
-	//TODO: use lines
-	int idx = unicode_idx_to_utf8_idx(data->text, n+i);
-	int len = utf8_expect_len(data->text[idx]);
+	//TODO: we could use the layout info already stored in the lines here?
+	int idx = data->utf8_positions[n+i];
+	int len = utf8_expected_len(data->text[idx]);
 	ofRectangle size = mui::Helpers::getFontStash().getTextBounds(data->text.substr(idx,len), data->fontStyle, 0, 0);
 	if( i == 0 ){
 		return size.x + size.width;
 	}
 	else{
-		int idx2 = unicode_idx_to_utf8_idx(data->text, n+i-1);
-		int len2 = len+utf8_expect_len(data->text[idx2]);
+		int idx2 = data->utf8_positions[n+i-1];
+		int len2 = len+utf8_expected_len(data->text[idx2]);
 		ofRectangle size2 = mui::Helpers::getFontStash().getTextBounds(data->text.substr(idx2,len2), data->fontStyle, 0, 0);
 		return size2.width+size2.x - size.width - size.x;
 	}
@@ -234,23 +214,32 @@ float layout_width(mui::TextArea::EditorData * data, int n, int i ){
 // pos is the position in unicode chars
 int delete_chars(mui::TextArea::EditorData *data, int pos, int num)
 {
-	size_t idx = unicode_idx_to_utf8_idx(data->text,pos);
-	num = unicode_idx_to_utf8_idx(data->text, pos+num) - idx;
+	size_t idx = data->utf8_positions[pos];
+	num = data->utf8_positions[pos+num] - idx;
 	idx = min(idx,data->text.size());
 	num = min(idx+num,data->text.size())-idx;
 	if(idx == num) return 0;
 	
 	data->text.erase(data->text.begin()+idx, data->text.begin()+idx+num);
 	data->changed = true;
+	// do an immediate commit() here?
 	return 1;
 }
 
 // pos is the position in unicode chars
-int insert_chars(mui::TextArea::EditorData *data, int pos, const STB_TEXTEDIT_CHARTYPE *newtext, int num)
-{
-	size_t idx = unicode_idx_to_utf8_idx(data->text, pos);
+// newtext is utf32 encoded!
+int insert_chars(mui::TextArea::EditorData *data, int pos, const STB_TEXTEDIT_CHARTYPE *newtext, int num){
+	size_t idx = data->utf8_positions[pos];
 	idx = min(data->text.size(), idx);
-	data->text.insert(idx, newtext,num);
+	
+	
+	stringstream str;
+	for( int i = 0; i < num; i++){
+		str << unicode_to_utf8(num);
+	}
+	
+	data->text.insert(idx, str.str());
+	//git-forbid update everything here?
 	data->changed = true;
 	return 1; // always succeeds
 }
@@ -262,7 +251,7 @@ static int mui_is_word_boundary( STB_TEXTEDIT_STRING *str, int idx )
 }
 
 static bool mui_textedit_is_cool_coding_char(STB_TEXTEDIT_CHARTYPE c){
-	const static char * chars = "[]|{}().!=-_,;:";
+	const static char * chars = "[]|{}().!=+-_,;:^&|#";
 	for(int i = strlen(chars)-1;i>=0; i--){
 		if(chars[i] == c) return true;
 	}
@@ -326,20 +315,8 @@ void mui::TextArea::update(){
 	data.fontStyle.fontID = fontName;
 	
 	if( data.changed ){
-		data.changed = false;
-		
-		vector<StyledText> blocks{ {data.text,data.fontStyle} };
-		data.lines = Helpers::getFontStash().layoutLines(blocks, width);
-		data.strlenWithLineStarts = 0;
-		bool first = false;
-		for( StyledLine line : data.lines ){
-			data.strlenWithLineStarts += count_chars(line);
-			if( first ) first = false;
-			else data.strlenWithLineStarts ++;
-		}
-		text = data.text;
-		ofNotifyEvent(onChange, text, this); 
 		commit();
+		ofNotifyEvent(onChange, text, this);
 	}
 }
 
@@ -416,6 +393,8 @@ void mui::TextArea::draw(){
 void mui::TextArea::setText( string text ){
 	this->text = text;
 	data.text = text;
+	utf8_to_unicode(data.text, data.unicode, data.utf8_positions);
+	//git-forbid update all state immediately
 	data.changed = true;
 	update();
 }
@@ -476,8 +455,9 @@ void mui::TextArea::commit(){
 	data.lines = Helpers::getFontStash().layoutLines(blocks, width);
 	data.strlenWithLineStarts = 0;
 	bool first = false;
-	for( StyledLine line : data.lines ){
-		data.strlenWithLineStarts += count_chars(line);
+	for( int i = 0; i < data.lines.size(); i++){
+		StyledLine & line = data.lines[i];
+		data.strlenWithLineStarts += data.unicode_line_length[i];
 		if( first ) first = false;
 		else data.strlenWithLineStarts ++;
 	}
@@ -579,10 +559,11 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'v'){
 				string text = ofGetWindowPtr()->getClipboardString();
-				stb_textedit_paste(&data, state, text.c_str(), text.size());
+				vector<uint32_t> text_unicode = utf8_to_unicode(text);
+				stb_textedit_paste(&data, state, &text_unicode[0], text_unicode.size());
 			}
 			else{
-				int codept = key.codepoint;
+				uint32_t codept = key.codepoint;
 				
 				if (!utf8::internal::is_code_point_valid(codept)){
 					// what is it? don't know! ignore it!
@@ -597,7 +578,6 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 				// stb_textedit_key() with a tiny change:
 				// a char doesn't have a fixed size 
 				EditorData * str = &data;
-				string insertStr = unicode_to_utf(codept);
 				
 				// can't add newline in single-line mode
 				if (codept == '\n' && state->single_line)
@@ -606,14 +586,14 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 				if (state->insert_mode && !STB_TEXT_HAS_SELECTION(state) && state->cursor < STB_TEXTEDIT_STRINGLEN(str)) {
 					stb_text_makeundo_replace(str, state, state->cursor, 1, 1);
 					STB_TEXTEDIT_DELETECHARS(str, state->cursor, 1);
-					if (STB_TEXTEDIT_INSERTCHARS(str, state->cursor, insertStr.c_str(), insertStr.size())) {
+					if (STB_TEXTEDIT_INSERTCHARS(str, state->cursor, &codept, 1)) {
 						++state->cursor;
 						state->has_preferred_x = 0;
 					}
 				} else {
 					stb_textedit_delete_selection(str,state); // implicity clamps
-					if (STB_TEXTEDIT_INSERTCHARS(str, state->cursor, insertStr.c_str(), insertStr.size())) {
-						stb_text_makeundo_insert(state, state->cursor, insertStr.size());
+					if (STB_TEXTEDIT_INSERTCHARS(str, state->cursor, &codept, 1)) {
+						stb_text_makeundo_insert(state, state->cursor, 1);
 						++state->cursor;
 						state->has_preferred_x = 0;
 					}
@@ -637,9 +617,9 @@ mui::TextArea::EditorCursor mui::TextArea::getEditorCursorForIndex( int cursorPo
 	int pos = 0;
 	float yy = 0;
 	ofRectangle bounds;
-	for( vector<StyledLine>::iterator lineIt = data.lines.begin(); lineIt != data.lines.end(); ++lineIt ){
-		StyledLine &line = *lineIt;
-		int len = count_chars(line);
+	for( int lineIdx = 0; lineIdx < data.lines.size(); lineIdx++ ){
+		StyledLine &line = data.lines[lineIdx];
+		int len = data.unicode_line_length[lineIdx];
 		if( pos + len <= cursorPos ){
 			pos += len; // +1 for the \n that goes missing
 			yy += line.lineH;
@@ -647,14 +627,16 @@ mui::TextArea::EditorCursor mui::TextArea::getEditorCursorForIndex( int cursorPo
 		else{
 			for( vector<LineElement>::iterator elementIt = line.elements.begin(); elementIt != line.elements.end(); ++elementIt ){
 				LineElement &element = *elementIt;
-				len = utf8_count_chars(element.content.styledText.text);
+				len = utf8_strlen(element.content.styledText.text);
 				if( pos + len <= cursorPos ){
 					pos += len;
 				}
 				else{
 					float x = element.area.x;
-					int idx = unicode_idx_to_utf8_idx(element.content.styledText.text, cursorPos - pos);
-					bounds = mui::Helpers::getFontStash().getTextBounds(element.content.styledText.text.substr(0,idx), element.content.styledText.style, 0,0);
+					
+					string sub = data.substr_utf8(cursorPos,cursorPos-pos);
+					
+					bounds = mui::Helpers::getFontStash().getTextBounds(sub, element.content.styledText.style, 0,0);
 					bounds.height = line.lineH;
 					bounds.x = size.x - boundingBox.x + x + bounds.width;
 					bounds.y = size.y - boundingBox.y + yy - line.lineH;
@@ -662,7 +644,7 @@ mui::TextArea::EditorCursor mui::TextArea::getEditorCursorForIndex( int cursorPo
 					bounds.height = line.lineH;
 					
 					result.rect = bounds;
-					result.lineIt = lineIt;
+					result.lineIt = data.lines.begin()+lineIdx;
 					result.elementIt = elementIt;
 					return result;
 				}
@@ -711,5 +693,39 @@ int mui::TextArea::state_select_len(){
 }
 
 string mui::TextArea::getSelectedText(){
-	return utf8_substr(data.text, state_select_min(), state_select_len());
+	return data.substr_utf8(state_select_min(),state_select_len());
+}
+
+
+
+#pragma mark Editor Data
+
+mui::TextArea::EditorData::EditorData(TextArea * textarea) : changed(false),textarea(textarea){
+}
+
+void mui::TextArea::EditorData::setTextUtf8( string utf8Text ){
+	text = utf8Text;
+	unicode.clear();
+	utf8_positions.clear();
+	
+	unicode.reserve(text.size()*1.5);
+	utf8_positions.reserve(text.size()*1.5);
+	
+	size_t pos = 0;
+	for(uint32_t ch : ofUTF8Iterator(text)){
+		unicode.push_back(ch);
+		utf8_positions.push_back(pos);
+		pos += utf8_expected_len(ch);
+	}
+}
+
+size_t mui::TextArea::EditorData::idx_utf8(size_t unicode_idx){
+	return utf8_positions[unicode_idx];
+}
+
+string mui::TextArea::EditorData::substr_utf8( size_t unicode_index, size_t len){
+	size_t from = idx_utf8(unicode_index);
+	size_t to = idx_utf8(unicode_index+len) + utf8_expected_len(text[unicode_index+len]);
+	
+	return text.substr(from,to-from);
 }

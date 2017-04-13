@@ -79,18 +79,29 @@ namespace mui{
 		};
 		
 		struct EditorData{
-			string text;
+			string text; // utf-8 text
+			vector<uint32_t> unicode; // utf-32 text
+			vector<size_t> utf8_positions; // mapping from utf-32 pos to utf-8 pos
+			
 			ofxFontStashStyle fontStyle;
 			vector<StyledLine> lines;
+			vector<int> unicode_line_length; // runlength of each line in utf8 
+			
 			size_t strlenWithLineStarts;
 			bool changed;
 			TextArea * textarea;
 			
-			EditorData(TextArea * textarea) : changed(false),textarea(textarea){}
+			EditorData(TextArea * textarea);
+			void setTextUtf8( string utf8Text);
+			
+		private:
+			size_t idx_utf8(size_t unicode_index);
+			string substr_utf8( size_t unicode_index, size_t len);
+			
+			friend class mui::TextArea;
 		};
 		
 	private:
-		
 		
 		class EditorState;
 		EditorData data;
