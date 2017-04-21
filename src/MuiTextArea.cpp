@@ -103,8 +103,7 @@ string mui::TextArea::unicode_to_utf8( uint32_t codepoint ){
 			(char)((codepoint >> 18)           | 0xf0),
 			(char)(((codepoint >> 12) & 0x3f)  | 0x80),
 			(char)(((codepoint >> 6) & 0x3f)   | 0x80),
-			(char)((codepoint & 0x3f)          | 0x80),
-			(char)((codepoint >> 18)           | 0xf0)
+			(char)((codepoint & 0x3f)          | 0x80)
 		});
 	}
 }
@@ -195,7 +194,7 @@ int mui::TextArea::delete_chars_impl(mui::TextArea *data, int pos, int num)
 {
 	if(num==0) return 0;
 	size_t from = data->idx_utf8(pos);
-	size_t to = data->idx_utf8(pos+num-1) + utf8_expected_len(data->text[pos+num-1]);
+	size_t to = data->idx_utf8(pos+num);
 	
 	if(from==to) return 0;
 	
@@ -208,7 +207,10 @@ int mui::TextArea::delete_chars_impl(mui::TextArea *data, int pos, int num)
 // pos is the position in unicode chars
 // newtext is utf32 encoded!
 int mui::TextArea::insert_chars_impl(mui::TextArea *data, int pos, const STB_TEXTEDIT_CHARTYPE *newtext, int num){
-	size_t idx = data->utf8_positions[pos];
+	size_t idx;
+	if(pos==0) idx = 0;
+	else if(pos<data->unicode.size()) idx = data->utf8_positions[pos-1]+octect_size(data->unicode[pos-1]);
+	else idx = data->text.length();
 	idx = min(data->text.size(), idx);
 	
 	
@@ -434,7 +436,7 @@ void mui::TextArea::commit(){
 	for(uint32_t ch : ofUTF8Iterator(text)){
 		unicode.push_back(ch);
 		utf8_positions.push_back(pos);
-		pos += utf8_expected_len(ch);
+		pos += octect_size(ch);
 	}
 	
 	
@@ -704,13 +706,18 @@ string mui::TextArea::getSelectedText(){
 #pragma mark Editor Data
 
 size_t mui::TextArea::idx_utf8(size_t unicode_idx){
-	return utf8_positions[unicode_idx];
+	int sz = utf8_positions.size();
+	return sz==0?0:(unicode_idx<sz?
+					utf8_positions[unicode_idx]:
+					(utf8_positions[sz-1]+octect_size(unicode[sz-1]))
+					);
+	
 }
 
 string mui::TextArea::substr_utf8( size_t unicode_index, size_t len){
 	if(len==0) return "";
 	size_t from = idx_utf8(unicode_index);
-	size_t to = idx_utf8(unicode_index+len-1) + utf8_expected_len(text[unicode_index+len-1]);
+	size_t to = idx_utf8(unicode_index+len-1) + octect_size(unicode[unicode_index+len-1]);
 	
 	return text.substr(from,to-from);
 }
