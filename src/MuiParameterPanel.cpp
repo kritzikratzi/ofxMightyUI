@@ -25,13 +25,13 @@ mui::ParameterPanel::ParameterPanel( string title ) : mui::Container(0,0,100,100
 	registerGetter<SliderWithLabel,int>([](SliderWithLabel * obj){
 		return (int)obj->slider->value; }
 	);
-	registerGetter<TextArea,string>([](TextArea * obj){ return obj->text; } );
+	registerGetter<TextArea,string>([](TextArea * obj){ return obj->getText(); } );
 	registerGetter<ToggleButton,bool>([](ToggleButton * obj){ return obj->selected; } );
 	registerGetter<ToggleButton,int>([](ToggleButton * obj){ return obj->selected?1:0; } );
 	
 	registerSetter<SliderWithLabel,float>([](SliderWithLabel * obj,const float & val){ obj->slider->value = val; } );
 	registerSetter<SliderWithLabel,int>([](SliderWithLabel * obj,const int & val){ obj->slider->value = val; } );
-	registerSetter<TextArea,string>([](TextArea * obj,const string & val){ obj->text = val; } );
+	registerSetter<TextArea,string>([](TextArea * obj,const string & val){ obj->setText(val); } );
 	registerSetter<ToggleButton,bool>([](ToggleButton * obj,const float & val){ obj->selected = val; } );
 	registerSetter<ToggleButton,int>([](ToggleButton * obj,const int & val){ obj->selected = val==0; } );
 
@@ -179,7 +179,7 @@ mui::ParameterPanel::Row<mui::SliderWithLabel,float> * mui::ParameterPanel::addS
 	if(existing == rows.end()){
 		SliderWithLabel * slider = new SliderWithLabel(0,0,100,20,  min,max,value, decimalDigits);
 		slider->label->fg = labelFg;
-		auto row = new ParameterPanel::Row<SliderWithLabel,float>(this, title,NULL,slider,slider->slider->value);
+		auto row = new ParameterPanel::Row<SliderWithLabel,float>(this, title,NULL,slider);
 		
 		getCurrentSection()->addRow(row);
 		rows.insert(pair<string,data::Attribute>(title,row));
@@ -196,7 +196,7 @@ mui::ParameterPanel::Row<mui::TextArea,string> * mui::ParameterPanel::addText( s
 	textArea->selectAllOnFocus = true;
 	textArea->commit(); 
 	
-	auto row = new ParameterPanel::Row<TextArea,string>(this, title,NULL,textArea,textArea->text);
+	auto row = new ParameterPanel::Row<TextArea,string>(this, title,NULL,textArea);
 	
 	getCurrentSection()->addRow(row);
 	rows.insert(pair<string,data::Attribute>(title,row));

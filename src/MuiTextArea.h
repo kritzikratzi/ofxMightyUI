@@ -12,8 +12,21 @@
 
 #include "MuiCore.h"
 
+
 namespace mui{
-	class TextArea : public Container{
+	class TextArea;
+	class TextAreaInternal{
+	public:
+		vector<uint32_t> unicode; // utf-32 text
+		static void layout_func(void *row, TextArea *data, int start_i);
+		static float layout_width(mui::TextArea * data, int n, int i ); 
+		static int delete_chars(mui::TextArea *data, int pos, int num);
+		static int insert_chars(mui::TextArea *data, int pos, const uint32_t *newtext, int num);
+		static int move_to_word_previous( mui::TextArea *str, int c );
+		static int move_to_word_next( mui::TextArea *str, int c );
+	};
+	
+	class TextArea : public Container, private TextAreaInternal{
 	public: 
 		TextArea( std::string text_ = "TextArea", float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 );
 		~TextArea(); 
@@ -22,7 +35,6 @@ namespace mui{
 		VerticalAlign verticalAlign;
 		
 		// text settings
-		std::string text;
 		int fontSize;
 		string fontName; // subject to change!
 		bool selectAllOnFocus;
@@ -52,6 +64,7 @@ namespace mui{
 		virtual void sizeToFitHeight( float padY = 0 );
 		
 		// changes text + commit
+		const string getText();
 		void setText( string text );
 		void setTextAndNotify( string text );
 		string getSelectedText();
@@ -77,23 +90,37 @@ namespace mui{
 				return !(*this == other);
 			}
 		};
-		
-		struct EditorData{
-			string text;
-			ofxFontStashStyle fontStyle;
-			vector<StyledLine> lines;
-			size_t strlenWithLineStarts;
-			bool changed;
-			TextArea * textarea;
-			
-			EditorData(TextArea * textarea) : changed(false),textarea(textarea){}
-		};
-		
+
+	private:
+		size_t idx_utf8(size_t unicode_index);
+		string substr_utf8( size_t unicode_index, size_t len);
+		vector<size_t> utf8_positions; // mapping from utf-32 pos to utf-8 pos
+		string text; // utf-8 text
+		ofxFontStashStyle fontStyle;
+
+		static string unicode_to_utf8( uint32_t codepoint );
+		static size_t utf8_strlen(const string & line );
+		static size_t utf8_to_unicode(const string & text, vector<uint32_t> & unicode, vector<size_t> & utf8_positions);
+		static vector<uint32_t> utf8_to_unicode(const string & text);
+		static size_t count_chars( const StyledLine & line );
+		static void layout_func_impl(void *row, TextArea *data, int start_i);
+		static float layout_width_impl(mui::TextArea * data, int n, int i );
+		static int delete_chars_impl(mui::TextArea *data, int pos, int num);
+		static int insert_chars_impl(mui::TextArea *data, int pos, const uint32_t *newtext, int num);
+		static int is_word_boundary( mui::TextArea *str, int idx );
+		static int move_to_word_previous_impl( mui::TextArea *str, int c );
+		static int move_to_word_next_impl( mui::TextArea *str, int c );
+		static int utf8_expected_len( char first );
+		static int octect_size( uint32_t codepoint );
 	private:
 		
+		vector<StyledLine> lines;
+		vector<int> unicode_line_length; // runlength of each line in utf8
+		
+		size_t strlenWithLineStarts;
+
 		
 		class EditorState;
-		EditorData data;
 		EditorState *state;
 		uint64_t lastInteraction;
 		EditorCursor getEditorCursorForIndex( int pos );
@@ -101,6 +128,8 @@ namespace mui{
 		int state_select_min();
 		int state_select_max();
 		int state_select_len();
+		
+		friend class TextAreaInternal; 
 	};
 };
 

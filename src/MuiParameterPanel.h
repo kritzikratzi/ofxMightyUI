@@ -114,7 +114,7 @@ namespace mui{
 		mui::ParameterPanel::Row<mui::SliderWithLabel, float> * addSliderInt(string title, int min, int max, int value) {
 			SliderWithLabel * slider = new SliderWithLabel(0, 0, 100, 20, min, max, value, 0);
 			slider->label->fg = labelFg;
-			mui::ParameterPanel::Row<mui::SliderWithLabel,float> * row = new mui::ParameterPanel::Row<SliderWithLabel, float>(this, title, NULL, slider, slider->slider->value);
+			mui::ParameterPanel::Row<mui::SliderWithLabel,float> * row = new mui::ParameterPanel::Row<SliderWithLabel, float>(this, title, NULL, slider);
 
 			getCurrentSection()->addRow<mui::SliderWithLabel,float>(row);
 			rows.insert(pair<string, data::Attribute>(title, row));
@@ -132,7 +132,7 @@ namespace mui{
 			button->checkbox = true;
 			button->checkboxAlign = Right;
 
-			mui::ParameterPanel::Row<ToggleButton, bool> * row = new mui::ParameterPanel::Row<ToggleButton, bool>(this, label, button->label, button, button->selected);
+			mui::ParameterPanel::Row<ToggleButton, bool> * row = new mui::ParameterPanel::Row<ToggleButton, bool>(this, label, button->label, button);
 
 			getCurrentSection()->addRow(row);
 			rows.insert(pair<string, data::Attribute>(label, row));
@@ -141,7 +141,7 @@ namespace mui{
 		Row<TextArea,string> * addText( string label, string text );
 		
 		mui::ParameterPanel::Row<Container, bool> * addContainer(string label, mui::Container * container) {
-			auto row = new mui::ParameterPanel::Row<Container, bool>(this, label, NULL, container, container->visible);
+			auto row = new mui::ParameterPanel::Row<Container, bool>(this, label, NULL, container);
 
 			getCurrentSection()->addRow(row);
 			rows.insert(pair<string, data::Attribute>(label, row));
@@ -241,11 +241,10 @@ namespace mui{
 		public: 
 			ParameterPanel * panel;
 			Label * titleLabel;
-			ofParameter<DataType> param;
 			MuiType * control;
 			bool customLabel;
 			
-			Row( ParameterPanel * panel, string title, Label * existingLabel, MuiType * control, DataType & data ) : Container( 0,0, 100, 20), control(control), param(ofParameter<DataType>(title,data)), panel(panel){
+			Row( ParameterPanel * panel, string title, Label * existingLabel, MuiType * control ) : Container( 0,0, 100, 20), control(control), panel(panel){
 				ignoreEvents = true; 
 				if( existingLabel == NULL ){
 					titleLabel = new Label(title,0,0,70,20);
