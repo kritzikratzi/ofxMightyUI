@@ -19,42 +19,95 @@ namespace mui{
 	class EventFunction{
 	public:
 		EventFunction(int listenerId, mui::Container * listenerElement, std::function<void()> f) :
-		listenerId(listenerId), listenerElement(listenerElement), type(FTypeXXX), body(f){};
+		listenerId(listenerId), listenerElement(listenerElement), type(FTypeXXX), funcXXX(f){};
 		
 		EventFunction(int listenerId, mui::Container * listenerElement, std::function<void(EventType&)> f) :
-		listenerId(listenerId), listenerElement(listenerElement), type(FTypeXXE), body(f){};
+		listenerId(listenerId), listenerElement(listenerElement), type(FTypeXXE), funcXXE(f){};
 		
 		EventFunction(int listenerId, mui::Container * listenerElement, std::function<void(mui::Container*)> f) :
-		listenerId(listenerId), listenerElement(listenerElement), type(FTypeXSX), body(f){};
+		listenerId(listenerId), listenerElement(listenerElement), type(FTypeXSX), funcXSX(f){};
 		
 		EventFunction(int listenerId, mui::Container * listenerElement, std::function<void(mui::Container*, EventType &)> f) :
-		listenerId(listenerId), listenerElement(listenerElement), type(FTypeXSE), body(f){};
+		listenerId(listenerId), listenerElement(listenerElement), type(FTypeXSE), funcXSE(f){};
 		
 		EventFunction(int listenerId, mui::Container * listenerElement, std::function<bool()> f) :
-		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCXX), body(f){};
+		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCXX), funcCXX(f){};
 		
 		EventFunction(int listenerId, mui::Container * listenerElement, std::function<bool(EventType&)> f) :
-		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCXE), body(f){};
+		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCXE), funcCXE(f){};
 		
 		EventFunction(int listenerId, mui::Container * listenerElement, std::function<bool(mui::Container*)> f) :
-		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCSX), body(f){};
-
+		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCSX), funcCSX(f){};
+		
 		EventFunction(int listenerId, mui::Container * listenerElement, std::function<bool(mui::Container*, EventType&)> f) :
-		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCSE), body(f){};
-		~EventFunction(){};
-		EventFunction(EventFunction&&) = default;
+		listenerId(listenerId), listenerElement(listenerElement), type(FTypeCSE), funcCSE(f){};
+		
+		EventFunction(const EventFunction& other){
+			if(&other==this) return;
+			reset();
+			type = other.type;
+			switch(type){
+				case None: break;
+				case FTypeXXX: new(&funcXXX) std::function<void()>(other.funcXXX);break;
+				case FTypeXXE: new(&funcXXE) std::function<void(EventType&)>(other.funcXXE);break;
+				case FTypeXSX: new(&funcXSX) std::function<void(mui::Container*)>(other.funcXSX);break;
+				case FTypeXSE: new(&funcXSE) std::function<void(mui::Container*, EventType&)>(other.funcXSE);break;
+				case FTypeCXX: new(&funcCXX) std::function<bool()>(other.funcCXX);break;
+				case FTypeCXE: new(&funcCXE) std::function<bool(EventType&)>(other.funcCXE);break;
+				case FTypeCSX: new(&funcCSX) std::function<bool(mui::Container*)>(other.funcCSX);break;
+				case FTypeCSE: new(&funcCSE) std::function<bool(mui::Container*, EventType&)>(other.funcCSE);break;
+			}
+		};
+		
+		EventFunction(EventFunction&& other){
+			if(&other == this) return;
+			reset();
+			type = other.type;
+			switch(type){
+				case None: break;
+				case FTypeXXX: new(&funcXXX) std::function<void()>(move(other.funcXXX));break;
+				case FTypeXXE: new(&funcXXE) std::function<void(EventType&)>(move(other.funcXXE));break;
+				case FTypeXSX: new(&funcXSX) std::function<void(mui::Container*)>(move(other.funcXSX));break;
+				case FTypeXSE: new(&funcXSE) std::function<void(mui::Container*, EventType&)>(move(other.funcXSE));break;
+				case FTypeCXX: new(&funcCXX) std::function<bool()>(move(other.funcCXX));break;
+				case FTypeCXE: new(&funcCXE) std::function<bool(EventType&)>(move(other.funcCXE));break;
+				case FTypeCSX: new(&funcCSX) std::function<bool(mui::Container*)>(move(other.funcCSX));break;
+				case FTypeCSE: new(&funcCSE) std::function<bool(mui::Container*, EventType&)>(move(other.funcCSE));break;
+			}
+			other.reset();
+		};
+		
+		~EventFunction(){
+			reset();
+		};
+		
+		void reset(){
+			switch(type){
+				case FTypeXXX: funcXXX.~function();break;
+				case FTypeXXE: funcXXE.~function();break;
+				case FTypeXSX: funcXSX.~function();break;
+				case FTypeXSE: funcXSE.~function();break;
+				case FTypeCXX: funcCXX.~function();break;
+				case FTypeCXE: funcCXE.~function();break;
+				case FTypeCSX: funcCSX.~function();break;
+				case FTypeCSE: funcCSE.~function();break;
+				default: break;
+			}
+			type = None;
+		}
+		
 		
 		bool call(mui::Container * owner, EventType & evt){
 			switch(type){
-				case FTypeXXX: body.funcXXX(); return false;
-				case FTypeXXE: body.funcXXE(evt); return false;
-				case FTypeXSX: body.funcXSX(owner); return false;
-				case FTypeXSE: body.funcXSE(owner,evt); return false;
-				case FTypeCXX: return body.funcCXX();
-				case FTypeCXE: return body.funcCXE(evt);
-				case FTypeCSX: return body.funcCSX(owner);
-				case FTypeCSE: return body.funcCSE(owner,evt);
-				default: return false; 
+				case FTypeXXX: funcXXX(); return false;
+				case FTypeXXE: funcXXE(evt); return false;
+				case FTypeXSX: funcXSX(owner); return false;
+				case FTypeXSE: funcXSE(owner,evt); return false;
+				case FTypeCXX: return funcCXX();
+				case FTypeCXE: return funcCXE(evt);
+				case FTypeCSX: return funcCSX(owner);
+				case FTypeCSE: return funcCSE(owner,evt);
+				default: return false;
 			}
 		}
 		
@@ -62,6 +115,7 @@ namespace mui{
 		// S = use sender argument
 		// E = use event argument
 		enum FType{
+			None = 0,
 			FTypeXXX = 1,
 			FTypeXXE = 2,
 			FTypeXSX = 3,
@@ -71,25 +125,25 @@ namespace mui{
 			FTypeCSX = 7,
 			FTypeCSE = 8
 		};
-		union FBody{
-			FBody(){}
-			~FBody(){}
-			FBody(const std::function<void()> & funcXXX) : funcXXX(funcXXX){};
-			FBody(const std::function<void(EventType&)> & funcXXE) : funcXXE(funcXXE){};
-			FBody(const std::function<void(mui::Container*)> & funcXSX) : funcXSX(funcXSX){};
-			FBody(const std::function<void(mui::Container*, EventType&)> & funcXSE) : funcXSE(funcXSE){};
-			FBody(const std::function<bool()> & funcCXX) : funcCXX(funcCXX){};
-			FBody(const std::function<bool(EventType&)> & funcCXE) : funcCXE(funcCXE){};
-			FBody(const std::function<bool(mui::Container*)> & funcCSX) : funcCSX(funcCSX){};
-			FBody(const std::function<bool(mui::Container*, EventType&)> & funcCSE) : funcCSE(funcCSE){};
-			FBody& operator=(const std::function<void()> fXXX){ new (&funcXXX) function<void()>(fXXX); return *this; }
-			FBody& operator=(const std::function<void(EventType&)> fXXE){ new (&funcXXE) function<void(EventType&)>(fXXE); return *this; }
-			FBody& operator=(const std::function<void(mui::Container*)> fXSX){ new (&funcXSX) function<void(mui::Container * owner)>(fXSX); return *this; }
-			FBody& operator=(const std::function<void(mui::Container*, EventType&)> fXSE){ new (&funcXSE) function<void(mui::Container*, EventType&)>(fXSE); return *this; }
-			FBody& operator=(const std::function<bool()> fCXX){ new (&funcCXX) function<bool()>(fCXX); return *this; }
-			FBody& operator=(const std::function<bool(EventType&)> fCXE){ new (&funcCXE) function<bool(EventType&)>(fCXE); return *this; }
-			FBody& operator=(const std::function<bool(mui::Container*)> fCSX){ new (&funcCSX) function<bool(mui::Container * owner)>(fCSX); return *this; }
-			FBody& operator=(const std::function<bool(mui::Container*, EventType&)> fCSE){ new (&funcCSE) function<bool(mui::Container*, EventType&)>(fCSE); return *this; }
+		union{
+			/*			FBody(){}
+			 ~FBody(){}
+			 FBody(const std::function<void()> & funcXXX) : funcXXX(funcXXX){};
+			 FBody(const std::function<void(EventType&)> & funcXXE) : funcXXE(funcXXE){};
+			 FBody(const std::function<void(mui::Container*)> & funcXSX) : funcXSX(funcXSX){};
+			 FBody(const std::function<void(mui::Container*, EventType&)> & funcXSE) : funcXSE(funcXSE){};
+			 FBody(const std::function<bool()> & funcCXX) : funcCXX(funcCXX){};
+			 FBody(const std::function<bool(EventType&)> & funcCXE) : funcCXE(funcCXE){};
+			 FBody(const std::function<bool(mui::Container*)> & funcCSX) : funcCSX(funcCSX){};
+			 FBody(const std::function<bool(mui::Container*, EventType&)> & funcCSE) : funcCSE(funcCSE){};
+			 FBody& operator=(const std::function<void()> fXXX){ new (&funcXXX) function<void()>(fXXX); return *this; }
+			 FBody& operator=(const std::function<void(EventType&)> fXXE){ new (&funcXXE) function<void(EventType&)>(fXXE); return *this; }
+			 FBody& operator=(const std::function<void(mui::Container*)> fXSX){ new (&funcXSX) function<void(mui::Container * owner)>(fXSX); return *this; }
+			 FBody& operator=(const std::function<void(mui::Container*, EventType&)> fXSE){ new (&funcXSE) function<void(mui::Container*, EventType&)>(fXSE); return *this; }
+			 FBody& operator=(const std::function<bool()> fCXX){ new (&funcCXX) function<bool()>(fCXX); return *this; }
+			 FBody& operator=(const std::function<bool(EventType&)> fCXE){ new (&funcCXE) function<bool(EventType&)>(fCXE); return *this; }
+			 FBody& operator=(const std::function<bool(mui::Container*)> fCSX){ new (&funcCSX) function<bool(mui::Container * owner)>(fCSX); return *this; }
+			 FBody& operator=(const std::function<bool(mui::Container*, EventType&)> fCSE){ new (&funcCSE) function<bool(mui::Container*, EventType&)>(fCSE); return *this; }*/
 			std::function<void()> funcXXX;
 			std::function<void(EventType&)> funcXXE;
 			std::function<void(mui::Container*)> funcXSX;
@@ -101,7 +155,6 @@ namespace mui{
 		};
 		int listenerId;
 		Container * listenerElement;
-		FBody body;
 		FType type;
 	};
 	
@@ -145,15 +198,15 @@ namespace mui{
 		}
 		
 		/*
-		// returns true if the event was consumed
-		bool notify(EventType & event) {
+		 // returns true if the event was consumed
+		 bool notify(EventType & event) {
 			for (auto & listener : listeners) {
-				bool res = listener.call(owner, event);
-				if (listener.type >= 5 && res) return true;
+		 bool res = listener.call(owner, event);
+		 if (listener.type >= 5 && res) return true;
 			}
-
+		 
 			return false;
-		}*/
+		 }*/
 		
 		// returns true if the event was consumed
 		bool notify(EventType event){
