@@ -4,6 +4,8 @@
 //  Created by Hansi on 26.07.15.
 //
 //
+// V1.14
+//      * added columns() to complete rows()
 // V1.13
 //      * fixed boundingBox() calculation
 // V1.12
@@ -313,6 +315,19 @@ namespace mui{
 				float move = align==mui::Top?0:(align==mui::Middle?0.5:1.0);
 				for(int i = 0; i < N; i++ ){
 					targets[i]->y = y+i*h + (h-targets[i]->height)*move;
+				}
+			}
+			return *this;
+		}
+		
+		L & colums( ofVec2f p0, float spacing = 1 ){
+			size_t N = targets.size();
+			float x = p0.x;
+			for(int i = 0; i < N; i++ ){
+				if(targets[i]->visible){
+					targets[i]->x = x;
+					targets[i]->y = p0.y;
+					x += targets[i]->width + spacing;
 				}
 			}
 			return *this;
