@@ -171,6 +171,7 @@ void mui::Container::handleLayout(){
 	
 	if( sizeChanged ){
 		layout();
+		onLayout.notify(this); 
 	}
 	
 	needsLayout = false;

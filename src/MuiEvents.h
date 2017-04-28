@@ -166,8 +166,11 @@ namespace mui{
 		
 		// remove all containers belonging to listenerElement
 		// returns the number of removed elements
-		// pass listenerElement=nullptr to remove all unattached listeners
+		// old:pass listenerElement=nullptr to remove all unattached listeners
+		// new:passing listenerElement=nullptr will remove NO elements. to remove lambdas you will have to remember your listenerId!
 		int remove(mui::Container * listenerElement){
+			if(listenerElement == nullptr) return;
+			
 			int n = 0;
 			for( auto it = listeners.begin(); it != listeners.end(); ){
 				if((*it)->listenerElement == listenerElement){
@@ -251,6 +254,10 @@ namespace mui{
 		}
 		int add(std::function<void(EventType &)> funcNoSender){
 			this->listeners.emplace_back(EventHandlerId::nextListenerId,nullptr,funcNoSender);
+			return EventHandlerId::nextListenerId++;
+		}
+		int add(std::function<void(mui::Container * el)> funcOnlySender){
+			this->listeners.emplace_back(EventHandlerId::nextListenerId,nullptr,funcOnlySender);
 			return EventHandlerId::nextListenerId++;
 		}
 		int add(std::function<void(mui::Container *, EventType &)> funcWithSender){

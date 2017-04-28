@@ -23,8 +23,8 @@ namespace mui{
 		
 		Label * label; 
 		bool pressed;
-		ofEvent<ofTouchEventArgs> onPress;
-		ofEvent<ofTouchEventArgs> onContextMenu;
+		ofEvent<ofTouchEventArgs> onPress; //todo: replace with mui::EventHandler
+		ofEvent<ofTouchEventArgs> onContextMenu; //todo: replace with mui::EventHandler
 		
 		virtual void update();
 		virtual void draw();
