@@ -169,7 +169,7 @@ namespace mui{
 		// old:pass listenerElement=nullptr to remove all unattached listeners
 		// new:passing listenerElement=nullptr will remove NO elements. to remove lambdas you will have to remember your listenerId!
 		int remove(mui::Container * listenerElement){
-			if(listenerElement == nullptr) return;
+			if(listenerElement == nullptr) return 0;
 			
 			int n = 0;
 			for( auto it = listeners.begin(); it != listeners.end(); ){
