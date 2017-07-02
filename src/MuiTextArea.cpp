@@ -457,10 +457,23 @@ void mui::TextArea::commit(){
 	ofRectangle baselineSize = Helpers::getFontStash().getTextBounds("M", fontStyle, 0, 0);
 	boundingBox.height = baselineSize.height;
 	boundingBox.y = baselineSize.y;
+	
+	if(autoChangeHeight){
+		float h = minHeight;
+		for( int i = lines.size()-1;i>=0;i--){
+			StyledLine & line = lines[i];
+			for(int j = line.elements.size()-1; j>=0; j--){
+				h = MAX(h,line.elements[j].baseLineY);
+			}
+		}
+		
+		if( h != height){
+			height = h;
+		}
+	}
 }
 
 void mui::TextArea::touchDown(ofTouchEventArgs &touch){
-	lastInteraction = ofGetElapsedTimeMillis();
 	if( selectAllOnFocus && !hasKeyboardFocus()){
 		stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTEND);
 		stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTSTART | STB_TEXTEDIT_K_SHIFT);
@@ -476,7 +489,10 @@ void mui::TextArea::touchMoved(ofTouchEventArgs &touch){
 }
 
 bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
-	lastInteraction = ofGetElapsedTimeMillis();
+	short redoPt = state->undostate.redo_point;
+	short undoPt = state->undostate.undo_point;
+	short undoWhere = state->undostate.undo_rec[MIN(98,undoPt)].where;
+
 	int keyMask =
 	(ofGetKeyPressed(OF_KEY_SHIFT)?STB_TEXTEDIT_K_SHIFT:0) |
 #if defined(TARGET_OSX)
@@ -488,11 +504,9 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 	
 #ifdef _WIN32
 	// windows is funny with ctrl shortcuts
-	cout << key.key << endl;
 	if (ofGetKeyPressed(OF_KEY_CONTROL) && key.key >= 1 && key.key <= 26) {
 		key.key = key.codepoint = 'a' + (key.key - 1);
 	}
-	cout << key.key << endl;
 #endif
 	
 	switch(key.key){
@@ -593,7 +607,10 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 				}
 			}
 	}
-	ofNotifyEvent(onChange, text, this);
+	
+	if(undoPt != state->undostate.undo_point || redoPt != state->undostate.redo_point || undoWhere != state->undostate.undo_rec[MIN(98,state->undostate.undo_point)].where ){
+		ofNotifyEvent(onChange, text, this);
+	}
 	return true;
 }
 

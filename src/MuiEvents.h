@@ -272,6 +272,18 @@ namespace mui{
 			this->listeners.push_back(EventHandlerId::nextListenerId,listenerElement,funcWithSender);
 			return EventHandlerId::nextListenerId++;
 		}
+		
+		// below is just OF compatibility. not great either.
+		template<typename T>
+		int add(T * listener, void (T::*member)(const void *,EventType&), int prio = 0){
+			return add([listener,member](mui::Container * sender, EventType & arg){
+				(listener->*member)(sender,arg);
+			});
+		}
+		
+		template<typename T>
+		int remove(T * listener, void (T::*member)(const void *,EventType&), int prio = 0){
+		}
 	};
 	
 	template<typename EventType>
