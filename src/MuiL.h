@@ -333,6 +333,19 @@ namespace mui{
 			return *this;
 		}
 		
+		L & columsFromRight( ofVec2f p0, float spacing = 1 ){
+			size_t N = targets.size();
+			float x = p0.x;
+			for(int i = 0; i < N; i++ ){
+				if(targets[i]->visible){
+					targets[i]->x = x - targets[i]->width;
+					targets[i]->y = p0.y;
+					x -= targets[i]->width + spacing;
+				}
+			}
+			return *this;
+		}
+		
 		L & rows( ofVec2f p0, float spacing = 1 ){
 			size_t N = targets.size();
 			float y = p0.y;

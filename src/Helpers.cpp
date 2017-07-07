@@ -97,7 +97,7 @@ void mui::Helpers::endImages(){
 
 bool mui::Helpers::loadFont(string fontName){
 	if( !fontStash.isFontLoaded(fontName) ){
-		cout << "Font: [" << fontName << "] not loaded yet, doing this now!" << endl;
+		//cout << "Font: [" << fontName << "] not loaded yet, doing this now!" << endl;
 		fontStash.addFont(fontName, muiPath(fontName==""?MUI_FONT:fontName));
 	}
 	
