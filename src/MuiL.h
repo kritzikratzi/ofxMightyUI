@@ -336,7 +336,7 @@ namespace mui{
 		L & columsFromRight( ofVec2f p0, float spacing = 1 ){
 			size_t N = targets.size();
 			float x = p0.x;
-			for(int i = 0; i < N; i++ ){
+			for(int i = N-1; i >= 0; i-- ){
 				if(targets[i]->visible){
 					targets[i]->x = x - targets[i]->width;
 					targets[i]->y = p0.y;
