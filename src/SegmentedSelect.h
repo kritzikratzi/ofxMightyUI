@@ -5,6 +5,7 @@
  *  Created by hansi on 29.01.11.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.
  *
+ *
  */
 
 #ifndef MUI_SEGMENTED_SELECTED
@@ -16,37 +17,24 @@
 
 namespace mui{
 	template<typename T>
+	class SegmentedSelect;
+	
+	template<typename T>
 	class SegmentedButton : public Button{
 	public: 
 		SegmentedButton( std::string title_, T value, float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 30 ) : Button( title_, x_, y_, width_, height_ ), selected(false), value(value) {
-			label->fontSize -= 2;
-			label->commit();
+			opaque = true;
 		}
 		
 		bool selected;
-		bool roundedLeft; 
-		bool roundedRight;
+		bool isLeftmost;
+		bool isRightmost;
+		SegmentedSelect<T> * segmentedSelect; // reference back to parent
 		T value;
 		
 		
 		virtual void drawBackground(){
-			ofSetColor( 255, 255, 255 );
-			Helpers::beginImages();
-			if( selected || pressed ){
-				if( roundedLeft ) Helpers::drawImage( "segment_left_active", 0, 0, 5, height-1 );
-				Helpers::drawImage( "segment_center_active", roundedLeft?5:0, 0, width-((roundedLeft?5:0)+(roundedRight?5:0)), height-1 );
-				if( roundedRight ) Helpers::drawImage( "segment_right_active", width-5, 0, 5, height-1 );
-			}
-			else{
-				if( roundedLeft ) Helpers::drawImage( "segment_left", 0, 0, 5, height-1 );
-				Helpers::drawImage( "segment_center", roundedLeft?5:0, 0, width-((roundedLeft?5:0)+(roundedRight?5:0)), height-1 );
-				if( roundedRight ) Helpers::drawImage( "segment_right", width-5, 0, 5, height-1 );
-			}
-			
-			if( !roundedRight ){
-				Helpers::drawImage( "segment_separator", width-1, 0, 1, height-1 );
-			}
-			Helpers::endImages();
+			segmentedSelect->onDrawButtonBackground(this);
 		}
 	};
 	
@@ -54,9 +42,26 @@ namespace mui{
 	class SegmentedSelect : public Container{
 	public: 
 		SegmentedSelect( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 30 ): Container( x_, y_, width_, height_ ), selected(NULL){
+			
+			
+			// default implementation for onDrawButtonBackground():
+			onDrawButtonBackground = [&](mui::SegmentedButton<T>* button){
+				if( button->selected || button->pressed ){
+					ofSetColor(button->segmentedSelect->buttonBgSelected);
+					ofDrawRectangle(0, 0, button->width, button->height);
+				}
+				else{
+					ofSetColor(button->segmentedSelect->buttonBgDefault);
+					ofDrawRectangle(0, 0, button->width, button->height);
+				}
+				
+				if( !button->isRightmost ){
+					ofSetColor(button->segmentedSelect->buttonSeparatorColor);
+					ofDrawRectangle(button->width-1, 0, 1, button->height );
+				}
+				ofSetColor(255); // restore to default!
+			};
 		}
-		
-		SegmentedButton<T> * selected;
 		
 		virtual SegmentedButton<T> * addSegment( string text, T value ){
 			SegmentedButton<T> * button = new SegmentedButton<T>( text, value );
@@ -78,18 +83,23 @@ namespace mui{
 			float eqWidth = width/max((int)children.size(),1);
 			while( it != children.end() ){
 				SegmentedButton<T> * button = (SegmentedButton<T>*) *it;
+				button->segmentedSelect = this;
 				button->x = x;
+				button->label->fontSize = buttonFontSize;
+				button->label->fontName = buttonFontName;
+				button->label->commit();
+
 				if(equallySizedButtons){
-					button->width = eqWidth;
+					button->width = ceilf(eqWidth);
 				}
 				else{
-					button->width = button->label->boundingBox.width + 10;
+					button->width = ceilf(button->label->boundingBox.width + 10);
 				}
 				x += button->width;
 				button->height = height;
 				button->selected = button == selected;
-				button->roundedLeft = first;
-				button->roundedRight = false;
+				button->isLeftmost = first;
+				button->isRightmost = false;
 				
 				first = false;
 				last = button;
@@ -98,14 +108,14 @@ namespace mui{
 			}
 			
 			if( last != NULL ){
-				last->roundedRight = true; 
+				last->isRightmost = true; 
 			}
 		}
 		
 		virtual void layout(){
 			commit();
 		}
-
+		
 		// iterator?
 		virtual size_t getNumSegments(){
 			return children.size();
@@ -158,10 +168,6 @@ namespace mui{
 			return selected;
 		}
 
-		ofEvent<SegmentedButton<T>*> onChange;
-		ofEvent<T> onChangeValue;
-		bool equallySizedButtons{false};
-		
 		void sizeToFitWidth(){
 			commit();
 			if(children.size() == 0 ){
@@ -172,7 +178,7 @@ namespace mui{
 			}
 		}
 		
-	private: 
+	private:
 		virtual void onButtonPress( const void* sender, ofTouchEventArgs &args ){
 			SegmentedButton<T> * button = (SegmentedButton<T>*) sender;
 			selected = button;
@@ -180,7 +186,23 @@ namespace mui{
 			ofNotifyEvent(onChangeValue, selected->value, this);
 			commit();
 		}
+	
+	public:
+		ofEvent<SegmentedButton<T>*> onChange;
+		ofEvent<T> onChangeValue;
+		SegmentedButton<T> * selected;
+		
+		bool equallySizedButtons{false};
+		
+		// button drawing is handled here (mostly)
+		function<void(SegmentedButton<T>*)> onDrawButtonBackground; // see constructor for default implementation
+		ofColor buttonBgDefault{100};
+		ofColor buttonBgSelected{150};
+		ofColor buttonSeparatorColor{255};
+		int buttonFontSize{13}; // needs a commit() after change!
+		string buttonFontName{""}; // needs a commit() after change!
 	};
+	
 };
 
 #endif
