@@ -575,12 +575,14 @@ mui::Container * mui::Root::handleMouseReleased( float x, float y, int button ){
 
 void mui::Root::showPopupMenu( mui::Container * c, mui::Container * source, float x, float y, mui::HorizontalAlign horizontalAlign, mui::VerticalAlign verticalAlign ){
 	if(popupMenu != nullptr){
+		popupMenu->visible = false;
 		popupMenu->remove(); 
 		popupMenu = nullptr;
 	}
 	
 	if(c == nullptr) return;
 	
+	c->visible = true; 
 	add(c);
 	c->handleLayout();
 	popupMenu = c;
@@ -708,6 +710,7 @@ void mui::Root::removePopupIfNecessary( mui::Container * target ){
 			}
 		}
 		
+		popupMenu->visible = false; 
 		safeRemove(popupMenu);
 
 	}
