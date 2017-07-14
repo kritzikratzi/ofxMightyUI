@@ -93,7 +93,7 @@ namespace mui{
 					button->width = ceilf(eqWidth);
 				}
 				else{
-					button->width = ceilf(button->label->boundingBox.width + 10);
+					button->width = ceilf(button->label->boundingBox.width + buttonPadding);
 				}
 				x += button->width;
 				button->height = height;
@@ -201,6 +201,7 @@ namespace mui{
 		ofColor buttonSeparatorColor{255};
 		int buttonFontSize{13}; // needs a commit() after change!
 		string buttonFontName{""}; // needs a commit() after change!
+		float buttonPadding{10}; // total (l+r) padding
 	};
 	
 };
