@@ -1,3 +1,4 @@
+//take care: custom modifications marked with //hansi: !!
 // stb_textedit.h - v1.11  - public domain - Sean Barrett
 // Development of this library was sponsored by RAD Game Tools
 //
@@ -880,8 +881,10 @@ retry:
                   break;
                #endif
                x += dx;
-               if (x > goal_x)
+				//hansi:
+               if (x > goal_x || STB_TEXTEDIT_GETCHAR(str, start+i) == STB_TEXTEDIT_NEWLINE)
                   break;
+               
                ++state->cursor;
             }
             stb_textedit_clamp(str, state);
@@ -931,7 +934,8 @@ retry:
                   break;
                #endif
                x += dx;
-               if (x > goal_x)
+				//hansi:
+               if (x > goal_x || STB_TEXTEDIT_GETCHAR(str, find.prev_first+i) == STB_TEXTEDIT_NEWLINE)
                   break;
                ++state->cursor;
             }
