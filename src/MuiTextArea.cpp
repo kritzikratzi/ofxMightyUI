@@ -664,7 +664,7 @@ mui::TextArea::EditorCursor mui::TextArea::getEditorCursorForIndex( int cursorPo
 						case SEPARATOR:
 							x = el.area.x + el.area.width;
 							
-						case WORD:
+						case WORD_BLOCK:
 							// it's here, and we know the offset inside the word already.
 							// now let's find it within the string.
 							size_t len = cursorPos-pos;
