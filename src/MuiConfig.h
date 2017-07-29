@@ -72,7 +72,7 @@ namespace mui{
 		static bool useRetinaAssets;
 		
 		// pixels per pixel.
-		static int scaleFactor;
+		static float scaleFactor;
 		
 		// path to the data folder (containing the mui folder)
 		static Poco::Path dataPath;
