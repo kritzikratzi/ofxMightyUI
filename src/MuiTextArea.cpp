@@ -5,7 +5,7 @@
  *  - Supports vertical and horizontal alignments
  *  - Call commit() after changing text, fontSize, fontName or any of the other variables (except bounds!).
  *  - fg variable affects text color (no commit needed)
- *  - Doesn't support multiline
+ *  - Only support multiline
  */
 
 #include "MuiTextArea.h"
@@ -424,6 +424,9 @@ void mui::TextArea::commit(){
 	
 	vector<StyledText> blocks{ {text,fontStyle} };
 	lines = Helpers::getFontStash().layoutLines(blocks, width);
+	if(lines.size() == 0){
+		lines = Helpers::getFontStash().layoutLines({{" ",fontStyle}}, 10);
+	}
 	strlenWithLineStarts = 0;
 	unicode_line_length.clear();
 	unicode.clear();
@@ -467,6 +470,10 @@ void mui::TextArea::commit(){
 			}
 		}
 		
+		h -= baselineSize.y;
+		// add one more line! to be sure we have enough space for the decenders
+		h += baselineSize.height;
+		
 		if( h != height){
 			height = h;
 		}
@@ -474,6 +481,8 @@ void mui::TextArea::commit(){
 }
 
 void mui::TextArea::touchDown(ofTouchEventArgs &touch){
+	lastInteraction = ofGetElapsedTimeMillis();
+	
 	if( selectAllOnFocus && !hasKeyboardFocus()){
 		stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTEND);
 		stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTSTART | STB_TEXTEDIT_K_SHIFT);
@@ -489,6 +498,7 @@ void mui::TextArea::touchMoved(ofTouchEventArgs &touch){
 }
 
 bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
+	lastInteraction = ofGetElapsedTimeMillis();
 	short redoPt = state->undostate.redo_point;
 	short undoPt = state->undostate.undo_point;
 	short undoWhere = state->undostate.undo_rec[MIN(98,undoPt)].where;
@@ -510,6 +520,12 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 #endif
 	
 	switch(key.key){
+		case OF_KEY_HOME:
+			stb_textedit_key(this, state, STB_TEXTEDIT_K_LINESTART);
+			break;
+		case OF_KEY_END:
+			stb_textedit_key(this, state, STB_TEXTEDIT_K_LINEEND);
+			break;
 		case OF_KEY_UP:
 			// on osx cmd+up goes to the start
 			if(ofGetKeyPressed(OF_KEY_COMMAND)) stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTSTART);
@@ -648,7 +664,7 @@ mui::TextArea::EditorCursor mui::TextArea::getEditorCursorForIndex( int cursorPo
 						case SEPARATOR:
 							x = el.area.x + el.area.width;
 							
-						case WORD:
+						case WORD_BLOCK:
 							// it's here, and we know the offset inside the word already.
 							// now let's find it within the string.
 							size_t len = cursorPos-pos;

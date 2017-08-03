@@ -43,7 +43,6 @@ namespace mui{
 	public: 
 		SegmentedSelect( float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 30 ): Container( x_, y_, width_, height_ ), selected(NULL){
 			
-			
 			// default implementation for onDrawButtonBackground():
 			onDrawButtonBackground = [&](mui::SegmentedButton<T>* button){
 				if( button->selected || button->pressed ){
@@ -199,11 +198,10 @@ namespace mui{
 		ofColor buttonBgDefault{100};
 		ofColor buttonBgSelected{150};
 		ofColor buttonSeparatorColor{255};
-		int buttonFontSize{13}; // needs a commit() after change!
+		int buttonFontSize{mui::MuiConfig::fontSize}; // needs a commit() after change!
 		string buttonFontName{""}; // needs a commit() after change!
 		float buttonPadding{10}; // total (l+r) padding
 	};
-	
 };
 
 #endif
