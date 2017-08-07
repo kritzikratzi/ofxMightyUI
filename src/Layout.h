@@ -16,7 +16,7 @@ namespace mui{
 	class Layout{
 		public: 
 		Layout(){}; 
-		~Layout(){};
+		virtual ~Layout(){};
 		virtual void layout( Container * container ) = 0;
 		
 		Container * container; 
