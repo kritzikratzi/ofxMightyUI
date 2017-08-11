@@ -365,10 +365,11 @@ const string mui::TextArea::getText(){
 }
 
 void mui::TextArea::setText( string text ){
-	this->text = text;
-	text = text;
-	utf8_to_unicode(text, unicode, utf8_positions);
-	commit();
+	state->select_start = 0;
+	state->select_end = strlenWithLineStarts;
+	state->cursor = state->select_end;
+	vector<uint32_t> text_unicode = utf8_to_unicode(text);
+	stb_textedit_paste(this, state, &text_unicode[0], text_unicode.size());
 }
 
 void mui::TextArea::setTextAndNotify( string text ){

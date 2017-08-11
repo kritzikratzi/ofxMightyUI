@@ -530,9 +530,21 @@ static void stb_textedit_find_charpos(StbFindState *find, STB_TEXTEDIT_STRING *s
          find->height = 1;
          while (i < z) {
             STB_TEXTEDIT_LAYOUTROW(&r, str, i);
-            prev_start = i;
-            i += r.num_chars;
+			//hansi: only move to the next line if we wouldn't go beyond the end of the line,
+			//or if there is a linebreak
+			if(i+r.num_chars<z || STB_TEXTEDIT_GETCHAR(str, i+r.num_chars-1) == STB_TEXTEDIT_NEWLINE){
+				prev_start = i;
+				i += r.num_chars;
+				// hansi: break if the line has no length, we can't progress beyond it! 
+				if(r.num_chars == 0) break;
+			}
+			else{
+				break;
+			}
          }
+		 // hansi: do a final layout pass on the 'i' we ultimately decided on
+		 STB_TEXTEDIT_LAYOUTROW(&r, str, i);
+		 find->x = r.x1;
          find->first_char = i;
          find->length = 0;
          find->prev_first = prev_start;
