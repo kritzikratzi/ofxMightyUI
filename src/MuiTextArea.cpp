@@ -416,15 +416,33 @@ ofRectangle mui::TextArea::box( float t, float r, float b, float l ){
 //--------------------------------------------------------------
 void mui::TextArea::commit(){
 	mui::Helpers::loadFont(fontName);
-	boundingBox = Helpers::getFontStash().getTextBounds(text, fontStyle, 0, 0);
 	
 	fontStyle.fontSize = fontSize;
 	fontStyle.color = fg;
 	fontStyle.fontID = fontName;
-	text = text;
+
+	boundingBox = Helpers::getFontStash().getTextBounds(text, fontStyle, 0, 0);
 	
 	vector<StyledText> blocks{ {text,fontStyle} };
 	lines = Helpers::getFontStash().layoutLines(blocks, width);
+	lineNumberSourceToDisplay.clear();
+	lineNumberDisplayToSource.clear();
+	
+	int lineNumSrc = 0;
+	int lineNumDisp = 0;
+	int lastLineStart = 0;
+	for( auto & line : lines ){
+		auto & last = line.elements.back();
+		lineNumberDisplayToSource.push_back(lineNumSrc);
+		if(last.content.styledText.text == "\n"){
+			lineNumberSourceToDisplay.push_back(lastLineStart);
+			lineNumSrc ++;
+			lastLineStart = lineNumDisp+1;
+		}
+		lineNumDisp ++;
+	}
+	lineNumberSourceToDisplay.push_back(lastLineStart);
+	
 	if(lines.size() == 0){
 		lines = Helpers::getFontStash().layoutLines({{" ",fontStyle}}, 10);
 	}

@@ -119,6 +119,8 @@ namespace mui{
 	private:
 		
 		vector<StyledLine> lines;
+		vector<size_t> lineNumberSourceToDisplay; // map source lines to the first display line. start at 0
+		vector<size_t> lineNumberDisplayToSource; // map display lines to source lines. start at 0. 
 		vector<int> unicode_line_length; // runlength of each line in utf8
 		
 		size_t strlenWithLineStarts;

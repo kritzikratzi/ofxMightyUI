@@ -148,6 +148,10 @@ void mui::Container::layout(){
 
 void mui::Container::handleLayout(){
 	// does this order make sense?
+	int numPasses = 0;
+rerun_layout:
+	needsLayout = false;
+	
 	if( layoutHandler == NULL ){
 		layout();
 	}
@@ -169,9 +173,15 @@ void mui::Container::handleLayout(){
 		++it;
 	}
 	
-	if( sizeChanged ){
-		layout();
-		onLayout.notify(this); 
+	
+	if( sizeChanged || needsLayout ){
+		numPasses ++;
+		if( numPasses <= 3 ){
+			goto rerun_layout;
+		}
+		else{
+			ofLogWarning() << "[ofxMighty] Num layout passes seems high, layout possibly unstable. " << endl;
+		}
 	}
 	
 	needsLayout = false;

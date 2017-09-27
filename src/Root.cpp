@@ -158,21 +158,25 @@ void mui::Root::handleDraw(){
 			
 			ofRectangle b = active->getGlobalBounds();
 			stringstream info; 
-			info << "Pos:" << b.x << "," << b.y << "  " << b.width << " x " << b.height << endl;
+			info << "Pos:" << b.x << "," << b.y << "  " << b.width << " x " << b.height << " / ";
 			info << "Rel:" << active->x << "," << active->y;
 			size = info.str();
 			
 			
 			ofxFontStashStyle style = mui::Helpers::getStyle(10);
-			ofRectangle nameB = mui::Helpers::getFontStash().getTextBounds(name, style, p.x, p.y+10);
-			ofRectangle sizeB = mui::Helpers::getFontStash().getTextBounds(size, style, p.x, p.y+20);
-			ofDrawRectangle( nameB );
-			ofDrawRectangle( sizeB );
 			ofNoFill();
 			ofSetColor( 255,255,0 );
 			ofDrawRectangle( p.x, p.y, active->width, active->height );
 			ofSetColor(255);
 			ofFill();
+			style.color = ofColor(0);
+			style.blur = 5;
+			for(int i = 0; i < 10; i++){
+				mui::Helpers::getFontStash().draw(name, style, p.x, p.y+10);
+				mui::Helpers::getFontStash().draw(size, style, p.x, p.y+20);
+			}
+			style.color = ofColor(255);
+			style.blur = 0;
 			mui::Helpers::getFontStash().draw(name, style, p.x, p.y+10);
 			mui::Helpers::getFontStash().draw(size, style, p.x, p.y+20);
 			ofPopMatrix();
@@ -197,6 +201,7 @@ mui::Container * mui::Root::handleTouchDown( ofTouchEventArgs &touch ){
 	
 	//return ( touchResponder[touch.id] = Container::handleTouchDown( copy ) );
 	Container * lastPopup = popupMenu;
+	touchResponder[touch.id] = nullptr;
 	touchResponder[touch.id] = Container::handleTouchDown( copy );
 	if( touchResponder[touch.id] != keyboardResponder ) keyboardResponder = NULL;
 	if( popupMenu == lastPopup ) removePopupIfNecessary(touchResponder[touch.id]);
@@ -714,13 +719,15 @@ void mui::Root::removePopupIfNecessary( mui::Container * target ){
 		if(target != nullptr ){
 			// is the popup somehow a parent of what was clicked?
 			while(target != nullptr){
-				if( target == popupMenu ) return;
+				if( target == popupMenu ){
+					return;
+				}
 				target = target->parent;
 			}
 		}
 		
-		popupMenu->visible = false; 
+		popupMenu->visible = false;
 		safeRemove(popupMenu);
-
+		popupMenu = nullptr;
 	}
 }

@@ -359,6 +359,15 @@ namespace mui{
 			return *this;
 		}
 		
+		L & bounds(float x, float y, float w, float h){
+			for(auto target : targets){
+				target->x = x;
+				target->y = y;
+				target->width = w;
+				target->height = h;
+			}
+		}
+		
 		L filterVisible(){
 			std::vector<mui::Container*> newTargets;
 			for(auto & target : targets){
