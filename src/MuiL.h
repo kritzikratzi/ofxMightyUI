@@ -366,6 +366,8 @@ namespace mui{
 				target->width = w;
 				target->height = h;
 			}
+
+			return *this; 
 		}
 		
 		L filterVisible(){
