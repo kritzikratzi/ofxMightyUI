@@ -153,7 +153,7 @@ void mui::TextArea::layout_func_impl(void *row_ptr, mui::TextArea *data, int sta
 	float y = 0;
 	for( int i = 0; i < data->lines.size(); i++){
 		const StyledLine & line = data->lines[i];
-		size_t lineLen = data->unicode_line_length[i];
+		int lineLen = (int)data->unicode_line_length[i];
 		
 		if( pos >= start_i ){
 			assert(line.elements.size()>0);

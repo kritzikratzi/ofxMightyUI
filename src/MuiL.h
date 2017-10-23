@@ -336,11 +336,14 @@ namespace mui{
 		L & columsFromRight( ofVec2f p0, float spacing = 1 ){
 			size_t N = targets.size();
 			float x = p0.x;
-			for(int i = N-1; i >= 0; i-- ){
-				if(targets[i]->visible){
-					targets[i]->x = x - targets[i]->width;
-					targets[i]->y = p0.y;
-					x -= targets[i]->width + spacing;
+			if (N > 0) {
+				for (size_t i = N; i > 0; ) {
+					auto target = targets[--i]; 
+					if (target->visible) {
+						target->x = x - target->width;
+						target->y = p0.y;
+						x -= target->width + spacing;
+					}
 				}
 			}
 			return *this;
