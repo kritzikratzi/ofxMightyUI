@@ -3,7 +3,8 @@
 //
 //  Created by Hansi on 26.07.15.
 //
-//
+// V1.15 (2017/11/8)
+//      * fixed typo, renamed colums* to columns*
 // V1.14
 //      * added columns() to complete rows()
 // V1.13
@@ -320,7 +321,7 @@ namespace mui{
 			return *this;
 		}
 		
-		L & colums( ofVec2f p0, float spacing = 1 ){
+		L & columns( ofVec2f p0, float spacing = 1 ){
 			size_t N = targets.size();
 			float x = p0.x;
 			for(int i = 0; i < N; i++ ){
@@ -333,7 +334,7 @@ namespace mui{
 			return *this;
 		}
 		
-		L & columsFromRight( ofVec2f p0, float spacing = 1 ){
+		L & columnsFromRight( ofVec2f p0, float spacing = 1 ){
 			size_t N = targets.size();
 			float x = p0.x;
 			if (N > 0) {
