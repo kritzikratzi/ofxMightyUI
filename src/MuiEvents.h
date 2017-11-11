@@ -282,6 +282,7 @@ namespace mui{
 		
 		template<typename T>
 		int remove(T * listener, void (T::*member)(const void *,EventType&), int prio = 0){
+			return 0; 
 		}
 	};
 	
