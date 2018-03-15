@@ -55,8 +55,11 @@ namespace mui{
 		virtual void layout();
 		
 		virtual void touchDown( ofTouchEventArgs &touch );
-		virtual void touchMoved( ofTouchEventArgs &touch );
-		
+		virtual void touchUp(ofTouchEventArgs &touch);
+		virtual void touchUpOutside(ofTouchEventArgs &touch);
+		virtual void touchMoved(ofTouchEventArgs &touch);
+		virtual void touchMovedOutside(ofTouchEventArgs &touch);
+
 		virtual bool keyPressed( ofKeyEventArgs &key );
 		virtual bool keyReleased( ofKeyEventArgs &key );
 		

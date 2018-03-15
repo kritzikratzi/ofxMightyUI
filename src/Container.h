@@ -51,8 +51,7 @@ namespace mui{
 		//bool startedInside[OF_MAX_TOUCHES]; // don't use this. unless you're you really want to.
 		
 		Container( float x = 0, float y = 0, float width = 10, float height = 10 );
-		
-		~Container();
+		virtual ~Container();
 		
 		void add( Container * c, int index = -1 ); 
 		void remove( Container * c ); 

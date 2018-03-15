@@ -150,7 +150,9 @@ void mui::Root::handleDraw(){
 			mui::Container * c = active;
 			string size;
 			while( c != NULL  ){
-				name = c->name + (name==""?"":">") + name;
+				bool empty = c->name == ""; 
+				auto n = empty ? (typeid(*c).name()) : c->name;
+				name = (empty?"::":"") + n + (name==""?"":">") + name;
 				c = c->parent;
 			}
 

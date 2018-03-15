@@ -278,7 +278,8 @@ namespace tween {
 	}
 	
 	
-	void Tweener::addTween(TweenerParam& param) {
+	void Tweener::addTween(const TweenerParam & p) {
+		TweenerParam param = p; //copy so we can change it 
 		param.timeCount = 0;
 		if (param.delay > 0){
 			param.delayFinished = false;
@@ -291,7 +292,6 @@ namespace tween {
 			}
 		}
 		//std::cout<<" \nParam: props"<< (param).total_properties  << " time" << (param).time;
-		
 		tweens.push_back(param);
 		total_tweens = tweens.size();
 		
@@ -303,6 +303,10 @@ namespace tween {
 		tweensIT = tweens.begin();
 		for (int i=0; i <  total_tweens; i++,tweensIT++) {
 			if ((*param) == (*tweensIT)) {
+				if((*tweensIT).onComplete){
+					(*tweensIT).onComplete();
+				}
+
 				(*tweensIT).cleanProperties();
 				tweens.erase(tweensIT);
 				//std::cout<<"\n-Tween Removed";
@@ -311,6 +315,12 @@ namespace tween {
 			}
 		}
 		
+	}
+
+	void Tweener::removeAllTweens() {
+		while (tweens.size() > 0) {
+			removeTween(&tweens.back()); 
+		}
 	}
 	
 	
@@ -405,16 +415,10 @@ namespace tween {
 						}	
 						
 						
-						// HANSI:::
-						if((*tweensIT).onComplete){
-							(*tweensIT).onComplete();
-						}
 						for (unsigned int i =0 ; i < (*tweensIT).total_properties; i++ ) {
 							TweenerProperty prop = (*tweensIT).properties[i]; 
 							*(prop.ptrValue) = prop.finalValue; 
 						}
-						std::cout << "remove tween!" << std::endl; 
-						// end hansi. 
 							
 						removeTween(&(*tweensIT));
 						tweensIT = tweens.begin();

@@ -512,7 +512,17 @@ void mui::TextArea::touchDown(ofTouchEventArgs &touch){
 	requestKeyboardFocus();
 }
 
+void mui::TextArea::touchUp(ofTouchEventArgs &touch) {
+}
+
+void mui::TextArea::touchUpOutside(ofTouchEventArgs &touch) {
+}
+
 void mui::TextArea::touchMoved(ofTouchEventArgs &touch){
+	stb_textedit_drag(this, state, touch.x, touch.y);
+}
+
+void mui::TextArea::touchMovedOutside(ofTouchEventArgs &touch) {
 	stb_textedit_drag(this, state, touch.x, touch.y);
 }
 
@@ -540,10 +550,10 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 	
 	switch(key.key){
 		case OF_KEY_HOME:
-			stb_textedit_key(this, state, STB_TEXTEDIT_K_LINESTART);
+			stb_textedit_key(this, state, STB_TEXTEDIT_K_LINESTART|keyMask);
 			break;
 		case OF_KEY_END:
-			stb_textedit_key(this, state, STB_TEXTEDIT_K_LINEEND);
+			stb_textedit_key(this, state, STB_TEXTEDIT_K_LINEEND|keyMask);
 			break;
 		case OF_KEY_UP:
 			// on osx cmd+up goes to the start

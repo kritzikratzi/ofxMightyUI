@@ -367,8 +367,9 @@ namespace tween {
 			this->funcs[BOUNCE] =  &fBounce;
 			this->funcs[BACK] =  &fBack;
 		}
-		void addTween(TweenerParam& param);
+		void addTween(const TweenerParam & param);
 		void removeTween(TweenerParam  *param);
+		void removeAllTweens(); 
 		void addListener(TweenerListener *listener) ;
 		void removeListener(TweenerListener *listener) ;
 		void setFunction(short funcEnum);

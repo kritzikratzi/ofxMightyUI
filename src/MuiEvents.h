@@ -167,12 +167,12 @@ namespace mui{
 		// returns the number of removed elements
 		// old:pass listenerElement=nullptr to remove all unattached listeners
 		// new:passing listenerElement=nullptr will remove NO elements. to remove lambdas you will have to remember your listenerId!
-		int remove(mui::Container * listenerElement){
+		int removeListener(mui::Container * listenerElement){
 			if(listenerElement == nullptr) return 0;
 			
 			int n = 0;
 			for( auto it = listeners.begin(); it != listeners.end(); ){
-				if((*it)->listenerElement == listenerElement){
+				if((*it).listenerElement == listenerElement){
 					it = listeners.erase(it);
 					n++;
 				}
@@ -185,10 +185,10 @@ namespace mui{
 		
 		// remove all containers belonging with a listener id
 		// returns the number of removed elements
-		int remove(int listenerId){
+		int removeId(int listenerId){
 			int n = 0;
 			for( auto it = listeners.begin(); it != listeners.end(); ){
-				if((*it)->listenerId == listenerId){
+				if((*it).listenerId == listenerId){
 					it = listeners.erase(it);
 					n++;
 				}
@@ -282,6 +282,7 @@ namespace mui{
 		
 		template<typename T>
 		int remove(T * listener, void (T::*member)(const void *,EventType&), int prio = 0){
+			return 0; 
 		}
 	};
 	

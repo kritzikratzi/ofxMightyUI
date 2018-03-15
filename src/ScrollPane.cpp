@@ -318,16 +318,22 @@ void mui::ScrollPane::handleDraw(){
 	mui::Helpers::popScissor();
 	
 	if( visible && minScrollY != maxScrollY && canScrollY ){
-		ofDrawLine(x+width-4, y+2, x+width-4, y+height-2 );
+		float x0 = x+width - 8; 
+		float xmid = x+width - 6; 
+		float w = 5; 
+		ofDrawLine(xmid, y+2, xmid, y+height-2 );
 		float scrubberHeight = ofClamp(height*height/(maxScrollY - minScrollY), 10, height/2);
 		float scrubberPos = ofMap(currentScrollY, minScrollY, maxScrollY, 2, height-2-scrubberHeight);
-		ofDrawRectangle(x+width-6, y+scrubberPos, 5, scrubberHeight );
+		ofDrawRectangle(x0, y+scrubberPos, w, scrubberHeight );
 	}
 	if( visible && minScrollX != maxScrollX && canScrollX ){
-		ofDrawLine(x+2, y+height-4, x+width-2, y+height-4 );
+		float y0 = y+height - 8;
+		float ymid = y+height - 6;
+		float h = 5;
+		ofDrawLine(x+2, ymid, x+width-2, ymid );
 		float scrubberWidth = ofClamp(width*width/(maxScrollX - minScrollX), 10, width/2);
 		float scrubberPos = ofMap(currentScrollX, minScrollX, maxScrollX, 2, width-2-scrubberWidth);
-		ofDrawRectangle(x+scrubberPos, y+height-6, scrubberWidth, 5 );
+		ofDrawRectangle(x+scrubberPos, y0, scrubberWidth, 5 );
 	}
 }
 
@@ -456,8 +462,8 @@ void mui::ScrollPane::touchCanceled( ofTouchEventArgs &touch ){
 
 void mui::ScrollPane::mouseScroll( ofMouseEventArgs &args){
 #ifdef _WIN32
-	args.scrollX *= 10; 
-	args.scrollY *= 10; 
+	args.scrollX *= 30; 
+	args.scrollY *= 30; 
 #endif
 	if(canScrollX) view->x = -(currentScrollX = ofClamp(currentScrollX-args.scrollX, minScrollX, maxScrollX));
 	if(canScrollY) view->y = -(currentScrollY = ofClamp(currentScrollY-args.scrollY, minScrollY, maxScrollY));
