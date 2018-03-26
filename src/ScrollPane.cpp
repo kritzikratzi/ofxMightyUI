@@ -169,8 +169,17 @@ void mui::ScrollPane::scrollIntoView(mui::Container * container){
 		pos.y += parent->y;
 		parent = parent->parent;
 	}
+	cout << "c=" << &pos << endl;
+	cout << "pos = " << pos << endl;
 	if(found){
-		beginBaseAnimation(ofClamp(pos.x,minScrollX,maxScrollX), ofClamp(pos.y,minScrollY,maxScrollY));
+		ofRectangle curr(currentScrollX,currentScrollY,width-(wantsToScrollX?8:0),height-(wantsToScrollY?8:0));
+		float targetX = curr.x;
+		float targetY = curr.y;
+		if(curr.x>pos.x) targetX = pos.x;
+		if(curr.x+curr.width<pos.x+container->width) targetX = curr.x + (pos.x+container->width-curr.x-curr.width);
+		if(curr.y+height>pos.y) targetY = pos.y;
+		if(curr.y+curr.height<pos.y+container->height) targetY = curr.y + curr.height - container->height;
+		beginBaseAnimation(ofClamp(targetX,minScrollX,maxScrollX), ofClamp(targetY,minScrollY,maxScrollY));
 	}
 }
 
