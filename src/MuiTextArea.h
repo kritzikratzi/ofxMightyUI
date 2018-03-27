@@ -17,7 +17,7 @@ namespace mui{
 	class TextArea;
 	class TextAreaInternal{
 	public:
-		vector<uint32_t> unicode; // utf-32 text
+		vector<uint32_t> utf32; // utf-32 text
 		static void layout_func(void *row, TextArea *data, int start_i);
 		static float layout_width(mui::TextArea * data, int n, int i ); 
 		static int delete_chars(mui::TextArea *data, int pos, int num);
@@ -76,6 +76,9 @@ namespace mui{
 		void setTextAndNotify( string text );
 		string getSelectedText();
 		
+		int getCursorLine();
+		int getCursorColumn();
+		
 		// call this after you made changes to any variables (changing x/y is okay without doing a commit() ).
 		// doing text-maths too insane to do on every frame!
 		virtual void commit();
@@ -99,16 +102,16 @@ namespace mui{
 		};
 
 	private:
-		size_t idx_utf8(size_t unicode_index);
-		string substr_utf8( size_t unicode_index, size_t len);
+		size_t idx_utf8(size_t utf32_index);
+		string substr_utf8( size_t utf32_index, size_t len);
 		vector<size_t> utf8_positions; // mapping from utf-32 pos to utf-8 pos
 		string text; // utf-8 text
 		ofxFontStashStyle fontStyle;
 
-		static string unicode_to_utf8( uint32_t codepoint );
+		static string utf32_to_utf8( uint32_t codepoint );
 		static size_t utf8_strlen(const string & line );
-		static size_t utf8_to_unicode(const string & text, vector<uint32_t> & unicode, vector<size_t> & utf8_positions);
-		static vector<uint32_t> utf8_to_unicode(const string & text);
+		static size_t utf8_to_utf32(const string & text, vector<uint32_t> & utf32, vector<size_t> & utf8_positions);
+		static vector<uint32_t> utf8_to_utf32(const string & text);
 		static size_t count_chars( const StyledLine & line );
 		static void layout_func_impl(void *row, TextArea *data, int start_i);
 		static float layout_width_impl(mui::TextArea * data, int n, int i );
@@ -124,7 +127,7 @@ namespace mui{
 		vector<StyledLine> lines;
 		vector<size_t> lineNumberSourceToDisplay; // map source lines to the first display line. start at 0
 		vector<size_t> lineNumberDisplayToSource; // map display lines to source lines. start at 0. 
-		vector<int> unicode_line_length; // runlength of each line in utf8
+		vector<int> utf32_line_length; // runlength of each line
 		
 		size_t strlenWithLineStarts;
 

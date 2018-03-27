@@ -56,7 +56,6 @@ void mui::ScrollPaneView::handleDraw(){
 	ofPopMatrix();
 }
 
-
 void mui::ScrollPane::init(){
 	singleTouch = true;
 	ignoreEvents = false;
@@ -106,8 +105,15 @@ void mui::ScrollPane::commit(){
 	
 	// todo: trigger layout (again!) when size changed?
 	
+	bool inBoundsX = minScrollX <= currentScrollX && currentScrollX <= maxScrollX;
+	bool inBoundsY = minScrollY <= currentScrollY && currentScrollY <= maxScrollY;
+	bool inBounds = inBoundsX && inBoundsY;
+
 	if( isAutoLockingToBottom && autoLockToBottom && trackingState == INACTIVE ){
 		beginBaseAnimation( ofClamp( currentScrollX, minScrollX, maxScrollX ), maxScrollY );
+	}
+	else if(!inBounds){
+		beginBaseAnimation( ofClamp( currentScrollX, minScrollX, maxScrollX ), ofClamp(currentScrollX, minScrollX, maxScrollY));
 	}
 }
 

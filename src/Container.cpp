@@ -91,11 +91,13 @@ ofRectangle mui::Container::getChildBounds(){
 }
 
 void mui::Container::setBounds( float x, float y, float w, float h ){
-	this->x = x;
-	this->y = y;
-	this->width = w;
-	this->height = h;
-	handleLayout();
+	if(this->x!=x || this->y != y || this->width != w || this->height != h){
+		this->x = x;
+		this->y = y;
+		this->width = w;
+		this->height = h;
+		handleLayout();
+	}
 }
 
 void mui::Container::setBounds( ofRectangle rect ){

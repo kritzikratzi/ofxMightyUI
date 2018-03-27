@@ -21,13 +21,13 @@ mui::TextAreaInternal * internal(mui::TextArea * tf){
 
 #define STB_TEXTEDIT_POSITIONTYPE int
 //TODO: utf8 support
-#define STB_TEXTEDIT_STRINGLEN(obj) ((int)internal(obj)->unicode.size())
+#define STB_TEXTEDIT_STRINGLEN(obj) ((int)internal(obj)->utf32.size())
 #define STB_TEXTEDIT_CHARARR_LEN(arr,len) (len)
 #define STB_TEXTEDIT_LAYOUTROW(r,obj,n) mui::TextAreaInternal::layout_func(r,obj,n)
 #define STB_TEXTEDIT_GETWIDTH(obj,n,i) mui::TextAreaInternal::layout_width(obj,n,i)
 #define STB_TEXTEDIT_KEYTOTEXT(key)    (((key) & KEYDOWN_BIT) ? 0 : (key))
 // this only returns the first byte of a multi byte sequence :(
-#define STB_TEXTEDIT_GETCHAR(tc,i)     (internal(tc)->unicode[i])
+#define STB_TEXTEDIT_GETCHAR(tc,i)     (internal(tc)->utf32[i])
 #define STB_TEXTEDIT_NEWLINE           '\n'
 #define STB_TEXTEDIT_IS_SPACE(ch)      isspace(ch)
 #define STB_TEXTEDIT_DELETECHARS       mui::TextAreaInternal::delete_chars
@@ -82,7 +82,7 @@ int mui::TextArea::utf8_expected_len( char first ){
 }
 
 
-string mui::TextArea::unicode_to_utf8( uint32_t codepoint ){
+string mui::TextArea::utf32_to_utf8( uint32_t codepoint ){
 	if (codepoint < 0x80)                        // one octet
 		return string({(char)codepoint});
 	else if (codepoint < 0x800) {                // two octets
@@ -116,14 +116,14 @@ inline size_t mui::TextArea::utf8_strlen(const string & line ){
 	return i;
 }
 
-inline size_t mui::TextArea::utf8_to_unicode(const string & text, vector<uint32_t> & unicode, vector<size_t> & utf8_positions){
+inline size_t mui::TextArea::utf8_to_utf32(const string & text, vector<uint32_t> & utf32, vector<size_t> & utf8_positions){
 	size_t i = 0;
 	size_t pos = 0;
-	unicode.clear();
+	utf32.clear();
 	utf8_positions.clear();
 	
 	for( auto c : ofUTF8Iterator(text) ){
-		unicode.push_back(c);
+		utf32.push_back(c);
 		utf8_positions.push_back(pos);
 		pos += octect_size(c);
 		++i;
@@ -132,7 +132,7 @@ inline size_t mui::TextArea::utf8_to_unicode(const string & text, vector<uint32_
 	return i;
 }
 
-inline vector<uint32_t> mui::TextArea::utf8_to_unicode(const string & text){
+inline vector<uint32_t> mui::TextArea::utf8_to_utf32(const string & text){
 	vector<uint32_t> res;
 	for( auto c : ofUTF8Iterator(text) ){
 		res.push_back(c);
@@ -153,7 +153,7 @@ void mui::TextArea::layout_func_impl(void *row_ptr, mui::TextArea *data, int sta
 	float y = 0;
 	for( int i = 0; i < data->lines.size(); i++){
 		const StyledLine & line = data->lines[i];
-		int lineLen = (int)data->unicode_line_length[i];
+		int lineLen = (int)data->utf32_line_length[i];
 		
 		if( pos >= start_i ){
 			assert(line.elements.size()>0);
@@ -189,7 +189,7 @@ float mui::TextArea::layout_width_impl(mui::TextArea * data, int n, int i ){
 	else return data->getEditorCursorForIndex(n+i+1).rect.x-data->getEditorCursorForIndex(n+i).rect.x;
 }
 
-// pos is the position in unicode chars
+// pos is the position in utf32 chars
 int mui::TextArea::delete_chars_impl(mui::TextArea *data, int pos, int num)
 {
 	if(num==0) return 0;
@@ -209,14 +209,14 @@ int mui::TextArea::delete_chars_impl(mui::TextArea *data, int pos, int num)
 int mui::TextArea::insert_chars_impl(mui::TextArea *data, int pos, const STB_TEXTEDIT_CHARTYPE *newtext, int num){
 	size_t idx;
 	if(pos==0) idx = 0;
-	else if(pos<data->unicode.size()) idx = data->utf8_positions[pos-1]+octect_size(data->unicode[pos-1]);
+	else if(pos<data->utf32.size()) idx = data->utf8_positions[pos-1]+octect_size(data->utf32[pos-1]);
 	else idx = data->text.length();
 	idx = min(data->text.size(), idx);
 	
 	
 	stringstream str;
 	for( int i = 0; i < num; i++){
-		str << unicode_to_utf8(newtext[i]);
+		str << utf32_to_utf8(newtext[i]);
 	}
 	
 	data->text.insert(idx, str.str());
@@ -368,8 +368,8 @@ void mui::TextArea::setText( string text ){
 	state->select_start = 0;
 	state->select_end = strlenWithLineStarts;
 	state->cursor = state->select_end;
-	vector<uint32_t> text_unicode = utf8_to_unicode(text);
-	stb_textedit_paste(this, state, &text_unicode[0], text_unicode.size());
+	vector<uint32_t> text_utf32 = utf8_to_utf32(text);
+	stb_textedit_paste(this, state, &text_utf32[0], text_utf32.size());
 }
 
 void mui::TextArea::setTextAndNotify( string text ){
@@ -447,16 +447,16 @@ void mui::TextArea::commit(){
 		lines = Helpers::getFontStash().layoutLines({{" ",fontStyle}}, 10);
 	}
 	strlenWithLineStarts = 0;
-	unicode_line_length.clear();
-	unicode.clear();
+	utf32_line_length.clear();
+	utf32.clear();
 	utf8_positions.clear();
 	
-	unicode.reserve(text.size()*1.5);
+	utf32.reserve(text.size()*1.5);
 	utf8_positions.reserve(text.size()*1.5);
 	
 	size_t pos = 0;
 	for(uint32_t ch : ofUTF8Iterator(text)){
-		unicode.push_back(ch);
+		utf32.push_back(ch);
 		utf8_positions.push_back(pos);
 		pos += octect_size(ch);
 	}
@@ -465,11 +465,11 @@ void mui::TextArea::commit(){
 	bool first = false;
 	for( int i = 0; i < lines.size(); i++){
 		StyledLine & line = lines[i];
-		unicode_line_length.push_back(0);
+		utf32_line_length.push_back(0);
 		for( auto el : line.elements ){
-			unicode_line_length[i] += utf8_strlen(el.content.styledText.text);
+			utf32_line_length[i] += utf8_strlen(el.content.styledText.text);
 		}
-		strlenWithLineStarts += unicode_line_length[i];
+		strlenWithLineStarts += utf32_line_length[i];
 		if( first ) first = false;
 		else strlenWithLineStarts ++;
 	}
@@ -495,6 +495,7 @@ void mui::TextArea::commit(){
 		
 		if( h != height){
 			height = h;
+			MUI_ROOT->needsLayout = true;
 		}
 	}
 }
@@ -608,8 +609,8 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'v'){
 				string text = ofGetWindowPtr()->getClipboardString();
-				vector<uint32_t> text_unicode = utf8_to_unicode(text);
-				stb_textedit_paste(this, state, &text_unicode[0], text_unicode.size());
+				vector<uint32_t> text_utf32 = utf8_to_utf32(text);
+				stb_textedit_paste(this, state, &text_utf32[0], text_utf32.size());
 			}
 			else{
 				uint32_t codept = key.codepoint;
@@ -674,7 +675,7 @@ mui::TextArea::EditorCursor mui::TextArea::getEditorCursorForIndex( int cursorPo
 	ofRectangle bounds;
 	for( int lineIdx = 0; lineIdx < lines.size(); lineIdx++ ){
 		StyledLine &line = lines[lineIdx];
-		int len = unicode_line_length[lineIdx];
+		int len = utf32_line_length[lineIdx];
 		if( pos + len <= cursorPos ){
 			pos += len;
 			yy += line.lineH;
@@ -763,23 +764,53 @@ string mui::TextArea::getSelectedText(){
 	return substr_utf8(state_select_min(),state_select_len());
 }
 
+int mui::TextArea::getCursorLine(){
+	int cursor = state->cursor;
+	
+	for(int i = 0; i < lines.size(); i++){
+		if(utf32_line_length[i]<cursor){
+			cursor -= utf32_line_length[i];
+		}
+		else{
+			return i;
+		}
+	}
+	
+	return max(0,(int)lines.size()-1);
+}
+
+int mui::TextArea::getCursorColumn(){
+	int cursor = state->cursor;
+	
+	for(int i = 0; i < lines.size(); i++){
+		if(utf32_line_length[i]<cursor){
+			cursor -= utf32_line_length[i];
+		}
+		else{
+			return cursor;
+		}
+	}
+	
+	return lines.size()==0?0:max(0,(int)utf32_line_length[0]-1);
+}
+
 
 
 #pragma mark Editor Data
 
-size_t mui::TextArea::idx_utf8(size_t unicode_idx){
+size_t mui::TextArea::idx_utf8(size_t utf32_idx){
 	int sz = utf8_positions.size();
-	return sz==0?0:(unicode_idx<sz?
-					utf8_positions[unicode_idx]:
-					(utf8_positions[sz-1]+octect_size(unicode[sz-1]))
+	return sz==0?0:(utf32_idx<sz?
+					utf8_positions[utf32_idx]:
+					(utf8_positions[sz-1]+octect_size(utf32[sz-1]))
 					);
 	
 }
 
-string mui::TextArea::substr_utf8( size_t unicode_index, size_t len){
+string mui::TextArea::substr_utf8( size_t utf32_index, size_t len){
 	if(len==0) return "";
-	size_t from = idx_utf8(unicode_index);
-	size_t to = idx_utf8(unicode_index+len-1) + octect_size(unicode[unicode_index+len-1]);
+	size_t from = idx_utf8(utf32_index);
+	size_t to = idx_utf8(utf32_index+len-1) + octect_size(utf32[utf32_index+len-1]);
 	
 	return text.substr(from,to-from);
 }
