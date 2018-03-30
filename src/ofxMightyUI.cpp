@@ -110,6 +110,14 @@ ofVec2f muiGetMousePos(){
 	return ofVec2f(ofGetMouseX(),ofGetMouseY())/mui::MuiConfig::scaleFactor;
 }
 
+float muiGetMouseX(){
+	return ofGetMouseX()/mui::MuiConfig::scaleFactor;
+}
+
+float muiGetMouseY(){
+	return ofGetMouseY()/mui::MuiConfig::scaleFactor;
+}
+
 string muiToDataPath( string path, bool abs ){
 	return mui::Helpers::muiPath(path);
 }
