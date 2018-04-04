@@ -113,7 +113,7 @@ void mui::ScrollPane::commit(){
 		beginBaseAnimation( ofClamp( currentScrollX, minScrollX, maxScrollX ), maxScrollY );
 	}
 	else if(!inBounds){
-		beginBaseAnimation( ofClamp( currentScrollX, minScrollX, maxScrollX ), ofClamp(currentScrollX, minScrollX, maxScrollY));
+		beginBaseAnimation( ofClamp( currentScrollX, minScrollX, maxScrollX ), ofClamp(currentScrollY, minScrollY, maxScrollY));
 	}
 }
 

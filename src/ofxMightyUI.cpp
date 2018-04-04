@@ -110,11 +110,11 @@ ofVec2f muiGetMousePos(){
 	return ofVec2f(ofGetMouseX(),ofGetMouseY())/mui::MuiConfig::scaleFactor;
 }
 
-float muiGetMouseX(){
+int muiGetMouseX(){
 	return ofGetMouseX()/mui::MuiConfig::scaleFactor;
 }
 
-float muiGetMouseY(){
+int muiGetMouseY(){
 	return ofGetMouseY()/mui::MuiConfig::scaleFactor;
 }
 
