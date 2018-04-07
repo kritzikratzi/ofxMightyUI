@@ -580,6 +580,10 @@ mui::Container * mui::Root::handleMouseReleased( float x, float y, int button ){
 	return handleTouchUp(args);
 }
 
+void mui::Root::showPopupMenu( mui::Container * c, mui::Container * source, ofVec2f pos, mui::HorizontalAlign horizontalAlign, mui::VerticalAlign verticalAlign ){
+	mui::Root::showPopupMenu(c, source, pos.x, pos.y, horizontalAlign, verticalAlign );
+}
+
 void mui::Root::showPopupMenu( mui::Container * c, mui::Container * source, float x, float y, mui::HorizontalAlign horizontalAlign, mui::VerticalAlign verticalAlign ){
 	if(popupMenu != nullptr){
 		popupMenu->visible = false;

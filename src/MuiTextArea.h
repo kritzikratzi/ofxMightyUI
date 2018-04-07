@@ -76,8 +76,11 @@ namespace mui{
 		void setTextAndNotify( string text );
 		string getSelectedText();
 		
+		void insertTextAtCursor(string text);
+		
 		int getCursorLine();
 		int getCursorColumn();
+		ofVec2f getCursorPosition(); 
 		
 		// call this after you made changes to any variables (changing x/y is okay without doing a commit() ).
 		// doing text-maths too insane to do on every frame!

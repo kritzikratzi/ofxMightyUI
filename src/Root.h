@@ -48,6 +48,7 @@ namespace mui{
 		virtual Container * handleMouseReleased( float x, float y, int button );
 		
 		// shows a container as a popup menu
+		virtual void showPopupMenu( mui::Container * c, mui::Container * source, ofVec2f pos,  mui::HorizontalAlign horizontalAlign = mui::Left, mui::VerticalAlign verticalAlign = mui::Top );
 		virtual void showPopupMenu( mui::Container * popupMenu, mui::Container * source, float x, float y, mui::HorizontalAlign horizontalAlign = mui::Left, mui::VerticalAlign verticalAlign = mui::Top );
 		
 		

@@ -355,7 +355,7 @@ void mui::TextArea::draw(){
 		uint64_t time = ofGetElapsedTimeMillis();
 		if( ((time-lastInteraction)%1000) < 500 ){
 			ofRectangle bounds = getEditorCursorForIndex(state->cursor).rect;
-			ofDrawRectangle(bounds.x+bounds.width, bounds.y, 2, bounds.height);
+			ofDrawRectangle(bounds.x+bounds.width, bounds.y+2, 2, bounds.height-2);
 		}
 	}
 }
@@ -532,7 +532,8 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 	short redoPt = state->undostate.redo_point;
 	short undoPt = state->undostate.undo_point;
 	short undoWhere = state->undostate.undo_rec[MIN(98,undoPt)].where;
-
+	bool certainlyChanged = false;
+	
 	int keyMask =
 	(ofGetKeyPressed(OF_KEY_SHIFT)?STB_TEXTEDIT_K_SHIFT:0) |
 #if defined(TARGET_OSX)
@@ -642,6 +643,7 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 					if (STB_TEXTEDIT_INSERTCHARS(this, state->cursor, &codept, 1)) {
 						++state->cursor;
 						state->has_preferred_x = 0;
+						certainlyChanged = true;
 					}
 				} else {
 					stb_textedit_delete_selection(this,state); // implicity clamps
@@ -649,12 +651,13 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 						stb_text_makeundo_insert(state, state->cursor, 1);
 						++state->cursor;
 						state->has_preferred_x = 0;
+						certainlyChanged = true;
 					}
 				}
 			}
 	}
 	
-	if(undoPt != state->undostate.undo_point || redoPt != state->undostate.redo_point || undoWhere != state->undostate.undo_rec[MIN(98,state->undostate.undo_point)].where ){
+	if(certainlyChanged || undoPt != state->undostate.undo_point || redoPt != state->undostate.redo_point || undoWhere != state->undostate.undo_rec[MIN(98,state->undostate.undo_point)].where ){
 		ofNotifyEvent(onChange, text, this);
 	}
 	return true;
@@ -764,6 +767,12 @@ string mui::TextArea::getSelectedText(){
 	return substr_utf8(state_select_min(),state_select_len());
 }
 
+void mui::TextArea::insertTextAtCursor(string text){
+	vector<uint32_t> text_utf32 = utf8_to_utf32(text);
+	stb_textedit_paste(this, state, &text_utf32[0], text_utf32.size());
+}
+
+
 int mui::TextArea::getCursorLine(){
 	int cursor = state->cursor;
 	
@@ -772,11 +781,11 @@ int mui::TextArea::getCursorLine(){
 			cursor -= utf32_line_length[i];
 		}
 		else{
-			return i;
+			return lineNumberDisplayToSource[i];
 		}
 	}
 	
-	return max(0,(int)lines.size()-1);
+	return max(0,(int)lineNumberDisplayToSource.back());
 }
 
 int mui::TextArea::getCursorColumn(){
@@ -792,6 +801,11 @@ int mui::TextArea::getCursorColumn(){
 	}
 	
 	return lines.size()==0?0:max(0,(int)utf32_line_length[0]-1);
+}
+
+ofVec2f mui::TextArea::getCursorPosition(){
+	EditorCursor c = getEditorCursorForIndex(state->cursor);
+	return {c.rect.x, (*c.elementIt).baseLineY};
 }
 
 

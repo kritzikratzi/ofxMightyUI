@@ -165,8 +165,7 @@ namespace mui{
 		
 		// remove all containers belonging to listenerElement
 		// returns the number of removed elements
-		// old:pass listenerElement=nullptr to remove all unattached listeners
-		// new:passing listenerElement=nullptr will remove NO elements. to remove lambdas you will have to remember your listenerId!
+		// passing listenerElement=nullptr will remove NO elements. to remove lambdas you will have to remember your listenerId!
 		int removeListener(mui::Container * listenerElement){
 			if(listenerElement == nullptr) return 0;
 			
@@ -199,29 +198,19 @@ namespace mui{
 			return n;
 		}
 		
-		/*
-		 // returns true if the event was consumed
-		 bool notify(EventType & event) {
+		// returns true if the event was consumed
+		template<typename NotifyType>
+		bool notify(NotifyType && event) {
 			for (auto & listener : listeners) {
-		 bool res = listener.call(owner, event);
-		 if (listener.type >= 5 && res) return true;
+				bool res = listener.call(owner, event);
+				if (listener.type >= 5 && res) return true;
 			}
 		 
-			return false;
-		 }*/
-		
-		// returns true if the event was consumed
-		bool notify(EventType event){
-			for( auto & listener : listeners ){
-				bool res = listener.call(owner,event);
-				if(listener.type >= 5 && res) return true;
-			}
-			
 			return false;
 		}
 		
 		// for compatibility with ofAddListener()
-		void notify(void * sender, EventType event){
+		void notify(void * sender, EventType & event){
 			notify(event); // just ignore the sender
 		}
 		
