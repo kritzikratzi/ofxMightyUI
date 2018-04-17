@@ -613,6 +613,10 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 				vector<uint32_t> text_utf32 = utf8_to_utf32(text);
 				stb_textedit_paste(this, state, &text_utf32[0], text_utf32.size());
 			}
+			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION)){
+				// a shortcut of sorts, but not for us. 
+				return false;
+			}
 			else{
 				uint32_t codept = key.codepoint;
 				

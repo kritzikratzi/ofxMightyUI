@@ -118,6 +118,14 @@ int muiGetMouseY(){
 	return ofGetMouseY()/mui::MuiConfig::scaleFactor;
 }
 
+float muiGetWidth(){
+	return ofGetWidth()/mui::MuiConfig::scaleFactor;
+}
+
+float muiGetHeight(){
+	return ofGetHeight()/mui::MuiConfig::scaleFactor;
+}
+
 string muiToDataPath( string path, bool abs ){
 	return mui::Helpers::muiPath(path);
 }

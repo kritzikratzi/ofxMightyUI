@@ -46,4 +46,7 @@ void mui_init();
 ofVec2f muiGetMousePos();
 int muiGetMouseX();
 int muiGetMouseY();
+float muiGetWidth();
+float muiGetHeight();
+
 string muiToDataPath(string path, bool abs = true );
