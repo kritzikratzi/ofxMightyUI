@@ -132,6 +132,8 @@ void mui::ToggleButton::touchMovedOutside( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::ToggleButton::touchUp( ofTouchEventArgs &touch ){
+	if(!pressed) return;
+	
 	pressed = false;
 	if(isRightClick){
 		ofNotifyEvent( onContextMenu, touch, this);

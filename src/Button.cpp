@@ -101,6 +101,7 @@ void mui::Button::touchMovedOutside( ofTouchEventArgs &touch ){
 
 //--------------------------------------------------------------
 void mui::Button::touchUp( ofTouchEventArgs &touch ){
+	if(!pressed) return;
 	pressed = false;
 	if(isRightClick){
 		ofNotifyEvent( onContextMenu, touch, this);

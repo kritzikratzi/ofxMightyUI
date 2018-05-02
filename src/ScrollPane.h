@@ -100,13 +100,15 @@ namespace mui{
 	private:
 		enum TrackingState{
 			DRAG_CONTENT,
-			DRAG_SCROLLBAR,
+			DRAG_SCROLLBAR_X,
+			DRAG_SCROLLBAR_Y,
 			INACTIVE
 		};
 //		virtual inline float getScrollTarget( float value, float min, float max ); 
+		void beginTracking(ofTouchEventArgs &touch, TrackingState state);
 		
 		TrackingState trackingState;
-		float pressedX, pressedY; 
+		float pressedX, pressedY;
 		bool wantsToScrollX, wantsToScrollY;
 		bool isAutoLockingToBottom;
         float initialX, initialY; // positions before drag start

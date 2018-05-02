@@ -175,8 +175,6 @@ void mui::ScrollPane::scrollIntoView(mui::Container * container){
 		pos.y += parent->y;
 		parent = parent->parent;
 	}
-	cout << "c=" << &pos << endl;
-	cout << "pos = " << pos << endl;
 	if(found){
 		ofRectangle curr(currentScrollX,currentScrollY,width-(wantsToScrollX?8:0),height-(wantsToScrollY?8:0));
 		float targetX = curr.x;
@@ -220,7 +218,6 @@ mui::ScrollPane * mui::ScrollPane::createPageWithScrollPane(){
 
 //--------------------------------------------------------------
 void mui::ScrollPane::nextPage(int inc){
-	cout << getPageNum() << endl; 
 	gotoPage( getPageNum() + inc);
 }
 
@@ -253,14 +250,7 @@ int mui::ScrollPane::numPages(){
 
 //--------------------------------------------------------------
 void mui::ScrollPane::update(){
-	if( trackingState != INACTIVE ){
-/*		scrollX = ofClamp( scrollX, minScrollX - MUI_SCROLLPANE_BLEED*2, maxScrollX + MUI_SCROLLPANE_BLEED*2 );
-		scrollY = ofClamp( scrollY, minScrollY - MUI_SCROLLPANE_BLEED*2, maxScrollY + MUI_SCROLLPANE_BLEED*2 );
-		currentScrollX += ( getScrollTarget( scrollX, minScrollX, maxScrollX ) - currentScrollX )/3;
-		currentScrollY += ( getScrollTarget( scrollY, minScrollY, maxScrollY ) - currentScrollY )/3;
-		cout << "pressed, scrollX = " << scrollX << " // " << currentScrollX << endl; */
-	}
-	else if( animating ){
+	if( animating && trackingState == INACTIVE){
 		long t = ofGetElapsedTimeMicros(); 
 		float totalT = ( t - animationStartTime  ) / 1000.0f;
 		float dt = ( t - lastAnimationTime ) / 1000000.0f;
@@ -371,17 +361,23 @@ void mui::ScrollPane::updateTouchVelocity( ofTouchEventArgs &touch ){
 // they are mostly taken from my "scrolly.js"
 
 //--------------------------------------------------------------
-void mui::ScrollPane::touchDown( ofTouchEventArgs &touch ){
+void mui::ScrollPane::beginTracking(ofTouchEventArgs &touch, TrackingState state){
 	pressedX = touch.x;
-	pressedY = touch.y; 
-	touchStartX = touch.x; 
-	touchStartY = touch.y; 
-	initialX = currentScrollX; 
-	initialY = currentScrollY; 
-	velX = 0; velY = 0; 
-	trackingState = (canScrollY && touch.x > width - 13)?DRAG_SCROLLBAR:DRAG_CONTENT;
-	animating = animatingToBase = animatingMomentum = false; 
-	updateTouchVelocity( touch ); 
+	pressedY = touch.y;
+	touchStartX = touch.x;
+	touchStartY = touch.y;
+	initialX = currentScrollX;
+	initialY = currentScrollY;
+	velX = 0; velY = 0;
+	trackingState = state;
+	animating = animatingToBase = animatingMomentum = false;
+	focusTransferable = false;
+	updateTouchVelocity( touch );
+}
+
+//--------------------------------------------------------------
+void mui::ScrollPane::touchDown( ofTouchEventArgs &touch ){
+	beginTracking(touch, DRAG_CONTENT);
 }
 
 
@@ -409,10 +405,25 @@ void mui::ScrollPane::touchMoved( ofTouchEventArgs &touch ){
 		pressedX = touch.x; 
 		pressedY = touch.y; 
 	}
-	else if( trackingState == DRAG_SCROLLBAR ){
-		float scrubberHeight = ofClamp((maxScrollY - minScrollY)/height, 10, height/2);
-		//float scrubberPos = ofMap(currentScrollY, minScrollY, maxScrollY, 2, height-2-scrubberHeight);
-		currentScrollY = ofMap( touch.y, 2+scrubberHeight/2, height-2-scrubberHeight/2, minScrollY, maxScrollY, true);
+	else if( trackingState == DRAG_SCROLLBAR_Y ){
+		float scrubberHeight = ofClamp(height*height/(maxScrollY - minScrollY), 10, height/2);
+		float scrubberInitialY = ofMap(initialY, minScrollY, maxScrollY, 2+scrubberHeight/2, height-2-scrubberHeight/2);
+		if(touchStartY>=scrubberInitialY-scrubberHeight/2 && touchStartY<=scrubberInitialY+scrubberHeight/2){
+			currentScrollY = ofClamp(initialY+ofMap( touch.y-touchStartY, 0, height-4-scrubberHeight, 0, maxScrollY-minScrollY, false),minScrollY,maxScrollY);
+		}
+		else{
+			currentScrollY = ofMap( touch.y, 2+scrubberHeight/2, height-2-scrubberHeight/2, minScrollY, maxScrollY, true);
+		}
+	}
+	else if( trackingState == DRAG_SCROLLBAR_X ){
+		float scrubberWidth = ofClamp(width*width/(maxScrollX - minScrollX), 10, width/2);
+		float scrubberInitialX = ofMap(initialX, minScrollX, maxScrollX, 2+scrubberWidth/2, width-2-scrubberWidth/2);
+		if(touchStartX>=scrubberInitialX-scrubberWidth/2 && touchStartX<=scrubberInitialX+scrubberWidth/2){
+			currentScrollX = ofClamp(initialX+ofMap( touch.x-touchStartX, 0, width-4-scrubberWidth, 0, maxScrollX-minScrollX, false),minScrollX,maxScrollX);
+		}
+		else{
+			currentScrollX = ofMap( touch.x, 2+scrubberWidth/2, width-2-scrubberWidth/2, minScrollX, maxScrollX, true);
+		}
 	}
 }
 
@@ -470,7 +481,6 @@ void mui::ScrollPane::touchDoubleTap( ofTouchEventArgs &touch ){
 //--------------------------------------------------------------
 void mui::ScrollPane::touchCanceled( ofTouchEventArgs &touch ){
 	watchingTouch[touch.id] = false;
-	cout << "stop watching touch #" << touch.id << endl;
 	trackingState = INACTIVE;
 	focusTransferable = true;
 }
@@ -495,25 +505,29 @@ mui::Container * mui::ScrollPane::handleTouchDown( ofTouchEventArgs &touch ){
 		if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
 			if( animating && ( !animatingMomentum || ofDist(0,0,animateX/1000,animateY/1000) >= 0.1 ) && !animatingToBase /*&& ( !animatingToBase || ofDist(animateToX, animateToY,currentScrollX,currentScrollY ) >= 5 )*/){
 				// you want something? just take it, it's yours!
-				touchDown( touch );
+				beginTracking( touch, DRAG_CONTENT );
 				return this;
 			}
-			else if( canScrollY && wantsToScrollY && touch.x > width - 10 ){
-				touchDown(touch);
+			else if( canScrollY && wantsToScrollY && touch.x > width - 17 && requestFocus(touch)){
+				beginTracking(touch, DRAG_SCROLLBAR_Y);
+				touchMoved(touch);
+				return this;
+			}
+			else if( canScrollX && wantsToScrollX && touch.y > height - 17 && requestFocus(touch)){
+				beginTracking(touch, DRAG_SCROLLBAR_X);
+				touchMoved(touch);
 				return this;
 			}
 			else{
 				Container *c = Container::handleTouchDown( touch );
-				if( c != NULL && !c->focusTransferable ){
-					return c;
+				if(c==this){
+					beginTracking(touch, DRAG_CONTENT);
 				}
 				else{
 					watchingTouch[touch.id] = true;
-					touchStart[touch.id].x = touch.x;
-					touchStart[touch.id].y = touch.y;
-					
-					return c == NULL? this : c;
+					touchStart[touch.id] = touch;
 				}
+				return c;
 			}
 		}
 	}
@@ -534,14 +548,17 @@ mui::Container * mui::ScrollPane::handleTouchMoved( ofTouchEventArgs &touch ){
 		if(( canScrollX && /*wantsToScrollX && */fabsf( touchStart[touch.id].x - touch.x ) > 20 ) ||
 		   ( canScrollY && /*wantsToScrollY && */fabsf( touchStart[touch.id].y - touch.y ) > 20 )
 		){
-			cout << "steal focus for touch #" << touch.id << endl;
 			// steal focus!
 			if( Root::INSTANCE->becomeTouchResponder( this, touch ) ){
-				touchDown( touch ); // fake a touchdown
+				beginTracking( touch, DRAG_CONTENT );
 				watchingTouch[touch.id] = false;
-				focusTransferable = false;
+				return this;
 			}
 		}
+	}
+	else if( trackingState != INACTIVE && singleTouchId == touch.id){
+		touchMoved(touch);
+		return this;
 	}
 
 	return Container::handleTouchMoved( touch );
