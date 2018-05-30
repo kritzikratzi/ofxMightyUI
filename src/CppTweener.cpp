@@ -364,8 +364,9 @@ namespace tween {
 			}
 			
 			dispatchEvent(&(*tweensIT), ON_STEP);
+			if((*tweensIT).onStep) (*tweensIT).onStep();
 			if ((*tweensIT).onStepCallBack){
-				(*tweensIT).onStepCallBack();					
+				(*tweensIT).onStepCallBack();
 			}	
 			
 			if ((*tweensIT).useMilliSeconds == true) {

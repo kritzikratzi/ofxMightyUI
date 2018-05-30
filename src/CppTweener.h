@@ -209,6 +209,7 @@ namespace tween {
 		TweenerCallBack onCompleteCallBack;
 		TweenerCallBack onStepCallBack;
 		std::function<void()> onComplete{nullptr};
+		std::function<void()> onStep{nullptr};
 		
 		TweenerParam() {
 			useMilliSeconds = true;
