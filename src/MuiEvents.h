@@ -199,16 +199,26 @@ namespace mui{
 		}
 		
 		// returns true if the event was consumed
-		template<typename NotifyType>
-		bool notify(NotifyType && event) {
+		bool notify(EventType & event) {
 			for (auto & listener : listeners) {
 				bool res = listener.call(owner, event);
 				if (listener.type >= 5 && res) return true;
 			}
-		 
+
 			return false;
 		}
-		
+
+		// returns true if the event was consumed
+		bool notify(const EventType && event) {
+			EventType copy = event; 
+			for (auto & listener : listeners) {
+				bool res = listener.call(owner, copy);
+				if (listener.type >= 5 && res) return true;
+			}
+
+			return false;
+		}
+
 		// for compatibility with ofAddListener()
 		void notify(void * sender, EventType & event){
 			notify(event); // just ignore the sender
