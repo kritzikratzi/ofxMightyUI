@@ -826,9 +826,10 @@ size_t mui::TextArea::idx_utf8(size_t utf32_idx){
 }
 
 string mui::TextArea::substr_utf8( size_t utf32_index, size_t len){
-	if(len==0) return "";
+	size_t N = utf32.size(); 
+	if(len==0 || N == 0) return "";
 	size_t from = idx_utf8(utf32_index);
-	size_t to = idx_utf8(utf32_index+len-1) + octect_size(utf32[utf32_index+len-1]);
+	size_t to = idx_utf8(CLAMP(utf32_index+len-1,0,N-1) + octect_size(utf32[CLAMP(utf32_index+len-1,0,N-1)]));
 	
 	return text.substr(from,to-from);
 }
