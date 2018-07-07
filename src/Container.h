@@ -296,7 +296,36 @@ namespace mui{
 		 // check if any cursor is over the component
 		virtual bool isMouseOver();
 		virtual string toString();
+		
+		
+		/// \brief sets a property of arbitrary type
+		template<typename T>
+		void setProperty(string key, T && thing) {
+			data::Attribute attr{ thing };
+			properties[key] = attr;
+		}
+		
+		/// \brief Returns a pointer to the property, or a nullpointer if the property was not found or the wrong class. Do not store the resulting pointer, copy the data if you need it again later!
+		template<typename T>
+		T * getProperty(string key) {
+			auto it = properties.find(key);
+			if( it == properties.end() || it->second.empty()) return nullptr;
+			else{
+				try{
+					return &it->second.value<T>();
+				}
+				catch(exception&){
+					return nullptr;
+				}
+			}
+		}
+		
+		/// \brief Returns a copy of a property that was either stored as string or as const char *. Returns an empty string in case anything goes wrong.
+		string getPropertyString(string key);
+		
+		
 	private:
+		unordered_map<string, data::Attribute> properties;
 	};
 };
 

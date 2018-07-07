@@ -659,3 +659,22 @@ string mui::Container::toString(){
     "]"; 
 }
 
+
+string mui::Container::getPropertyString(string key){
+	auto it = properties.find(key);
+	if (it == properties.end()) return "";
+	
+	mui::data::Attribute & val = (*it).second;
+	try{
+		return val.value<string>();
+	}
+	catch(exception&){}
+
+	try{
+		const char * ch = val.value<const char*>();
+		return string(ch);
+	}
+	catch(exception &){}
+	
+	return "";
+}
