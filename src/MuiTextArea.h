@@ -42,7 +42,7 @@ namespace mui{
 		
 		float minHeight = 20;
 		float autoChangeHeight = false;
-		
+		bool drawActiveBorder = true; 
 		
 		// the currently computed text boundaries
 		// the height and y offset are currently always the size of a capital 'M'

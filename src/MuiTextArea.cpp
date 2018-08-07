@@ -347,9 +347,11 @@ void mui::TextArea::draw(){
 	mui::Helpers::getFontStash().drawLines(lines, size.x-boundingBox.x, size.y-boundingBox.y, MuiConfig::debugDraw);
 	ofSetColor( 255 );
 	if( hasKeyboardFocus()){
-		ofNoFill();
-		ofDrawRectangle(0,0,width,height);
-		ofFill();
+		if (drawActiveBorder) {
+			ofNoFill();
+			ofDrawRectangle(0, 0, width, height);
+			ofFill();
+		}
 		// getting the time is slow, but it can only happen
 		// for a single textfield here because of the focus (so we're fine)
 		uint64_t time = ofGetElapsedTimeMillis();
@@ -834,7 +836,7 @@ string mui::TextArea::substr_utf8( size_t utf32_index, size_t len){
 	size_t N = utf32.size(); 
 	if(len==0 || N == 0) return "";
 	size_t from = idx_utf8(utf32_index);
-	size_t to = idx_utf8(CLAMP(utf32_index+len-1,0,N-1) + octect_size(utf32[CLAMP(utf32_index+len-1,0,N-1)]));
+	size_t to = idx_utf8(CLAMP(utf32_index+len-1,0,N-1)) + octect_size(utf32[CLAMP(utf32_index+len-1,0,N-1)]);
 	
 	return text.substr(from,to-from);
 }
