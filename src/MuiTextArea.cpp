@@ -771,6 +771,11 @@ string mui::TextArea::getSelectedText(){
 	return substr_utf8(state_select_min(),state_select_len());
 }
 
+void mui::TextArea::selectAll(){
+	stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTEND);
+	stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTSTART | STB_TEXTEDIT_K_SHIFT);
+}
+
 void mui::TextArea::insertTextAtCursor(string text){
 	vector<uint32_t> text_utf32 = utf8_to_utf32(text);
 	stb_textedit_paste(this, state, &text_utf32[0], text_utf32.size());
