@@ -105,6 +105,10 @@ namespace mui{
 			}
 		};
 
+
+		// use this to modify the text being set/inserted/typed
+		function <string(string)> onInsert;
+
 	private:
 		size_t idx_utf8(size_t utf32_index);
 		string substr_utf8( size_t utf32_index, size_t len);

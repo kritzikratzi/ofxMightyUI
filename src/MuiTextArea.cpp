@@ -218,8 +218,11 @@ int mui::TextArea::insert_chars_impl(mui::TextArea *data, int pos, const STB_TEX
 	for( int i = 0; i < num; i++){
 		str << utf32_to_utf8(newtext[i]);
 	}
+
+	string text = str.str(); 
+	if (data->onInsert) text = data->onInsert(text);
 	
-	data->text.insert(idx, str.str());
+	data->text.insert(idx, text);
 	data->commit();
 	return 1; // always succeeds
 }
