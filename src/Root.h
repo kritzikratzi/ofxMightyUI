@@ -50,7 +50,8 @@ namespace mui{
 		// shows a container as a popup menu
 		virtual void showPopupMenu( mui::Container * c, mui::Container * source, ofVec2f pos,  mui::HorizontalAlign horizontalAlign = mui::Left, mui::VerticalAlign verticalAlign = mui::Top );
 		virtual void showPopupMenu( mui::Container * popupMenu, mui::Container * source, float x, float y, mui::HorizontalAlign horizontalAlign = mui::Left, mui::VerticalAlign verticalAlign = mui::Top );
-		
+		virtual void removePopup(mui::Container * popup);
+
 		
 		ofRectangle convertNativeToMui( const ofRectangle rect );
 		ofPoint convertNativeToMui( const ofPoint pt );

@@ -26,8 +26,8 @@ mui::Button::Button( std::string title, float x, float y, float width, float hei
 
 //--------------------------------------------------------------
 void mui::Button::update(){
-	label->width = width; 
-	label->height = height; 
+//	label->width = width; 
+//	label->height = height; 
 }
 
 

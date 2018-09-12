@@ -31,11 +31,13 @@ namespace mui{
 		bool isRightmost;
 		SegmentedSelect<T> * segmentedSelect; // reference back to parent
 		T value;
+
 		
 		
 		virtual void drawBackground(){
 			segmentedSelect->onDrawButtonBackground(this);
 		}
+
 	};
 	
 	template<typename T>
@@ -45,7 +47,12 @@ namespace mui{
 			
 			// default implementation for onDrawButtonBackground():
 			onDrawButtonBackground = [&](mui::SegmentedButton<T>* button){
-				if( button->selected || button->pressed ){
+				if (button->ignoreEvents) {
+					auto & c = button->segmentedSelect->buttonBgDefault;
+					ofSetColor(c.r/2, c.g/2, c.b/2, c.a/2);
+					ofDrawRectangle(0, 0, button->width, button->height);
+				}
+				else if( button->selected || button->pressed ){
 					ofSetColor(button->segmentedSelect->buttonBgSelected);
 					ofDrawRectangle(0, 0, button->width, button->height);
 				}
@@ -82,6 +89,7 @@ namespace mui{
 			float eqWidth = width/max((int)children.size(),1);
 			while( it != children.end() ){
 				SegmentedButton<T> * button = (SegmentedButton<T>*) *it;
+				if (!button->visible) { ++it; continue; }
 				button->segmentedSelect = this;
 				button->x = x;
 				button->label->fontSize = buttonFontSize;
@@ -125,14 +133,14 @@ namespace mui{
 		}
 		
 		virtual const T getSelectedValueOr( const T defaultValue ){
-			return selected == NULL? defaultValue : selected->value;
+			return selected == NULL || selected->ignoreEvents? defaultValue : selected->value;
 		}
 		
 		virtual const int getSelectedIndex(){
 			int i = 0;
 			for( mui::Container * c : children ){
 				mui::SegmentedButton<T> * button = (mui::SegmentedButton<T>*)c;
-				if( button != nullptr && button == selected ){
+				if( button != nullptr && button == selected && !button->ignoreEvents){
 					return i;
 				}
 				i++;

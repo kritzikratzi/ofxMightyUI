@@ -623,6 +623,13 @@ void mui::Root::showPopupMenu( mui::Container * c, mui::Container * source, floa
 	popupMenu->y = ofClamp(popupMenu->y, 1, height - popupMenu->height );
 }
 
+void mui::Root::removePopup(mui::Container * popup) {
+	if (this->popupMenu == popup) {
+		popup->visible = false; 
+		safeRemove(popup); 
+		popup = nullptr;
+	}
+}
 
 
 void mui::Root::of_setup( ofEventArgs &args ){
