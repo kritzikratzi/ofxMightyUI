@@ -474,7 +474,10 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 	// for now, i'm not fixing this. i really shouldn't be, not here.
 
 	if( getKeyPressed(OF_KEY_ESC) && popupMenu != nullptr){
-		safeRemove(popupMenu);
+		if (keyboardResponder == nullptr || !keyboardResponder->onKeyPressed.notify(event) || !keyboardResponder->keyPressed(event)) {
+			safeRemove(popupMenu);
+			popupMenu = nullptr; 
+		}
 		return this;
 	}
 	

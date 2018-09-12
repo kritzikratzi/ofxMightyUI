@@ -218,8 +218,11 @@ int mui::TextArea::insert_chars_impl(mui::TextArea *data, int pos, const STB_TEX
 	for( int i = 0; i < num; i++){
 		str << utf32_to_utf8(newtext[i]);
 	}
+
+	string text = str.str(); 
+	if (data->onInsert) text = data->onInsert(text);
 	
-	data->text.insert(idx, str.str());
+	data->text.insert(idx, text);
 	data->commit();
 	return 1; // always succeeds
 }
@@ -347,9 +350,11 @@ void mui::TextArea::draw(){
 	mui::Helpers::getFontStash().drawLines(lines, size.x-boundingBox.x, size.y-boundingBox.y, MuiConfig::debugDraw);
 	ofSetColor( 255 );
 	if( hasKeyboardFocus()){
-		ofNoFill();
-		ofDrawRectangle(0,0,width,height);
-		ofFill();
+		if (drawActiveBorder) {
+			ofNoFill();
+			ofDrawRectangle(0, 0, width, height);
+			ofFill();
+		}
 		// getting the time is slow, but it can only happen
 		// for a single textfield here because of the focus (so we're fine)
 		uint64_t time = ofGetElapsedTimeMillis();
@@ -584,6 +589,10 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 		case OF_KEY_RETURN:
 			stb_textedit_key(this, state, STB_TEXTEDIT_NEWLINE|keyMask);
 			break;
+		case OF_KEY_PAGE_UP:
+			break;
+		case OF_KEY_PAGE_DOWN:
+			break;
 		case OF_KEY_ESC:
 			// do nothing!
 			break;
@@ -771,6 +780,11 @@ string mui::TextArea::getSelectedText(){
 	return substr_utf8(state_select_min(),state_select_len());
 }
 
+void mui::TextArea::selectAll(){
+	stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTEND);
+	stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTSTART | STB_TEXTEDIT_K_SHIFT);
+}
+
 void mui::TextArea::insertTextAtCursor(string text){
 	vector<uint32_t> text_utf32 = utf8_to_utf32(text);
 	stb_textedit_paste(this, state, &text_utf32[0], text_utf32.size());
@@ -829,7 +843,7 @@ string mui::TextArea::substr_utf8( size_t utf32_index, size_t len){
 	size_t N = utf32.size(); 
 	if(len==0 || N == 0) return "";
 	size_t from = idx_utf8(utf32_index);
-	size_t to = idx_utf8(CLAMP(utf32_index+len-1,0,N-1) + octect_size(utf32[CLAMP(utf32_index+len-1,0,N-1)]));
+	size_t to = idx_utf8(CLAMP(utf32_index+len-1,0,N-1)) + octect_size(utf32[CLAMP(utf32_index+len-1,0,N-1)]);
 	
 	return text.substr(from,to-from);
 }

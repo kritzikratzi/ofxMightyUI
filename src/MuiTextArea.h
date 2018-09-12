@@ -42,7 +42,7 @@ namespace mui{
 		
 		float minHeight = 20;
 		float autoChangeHeight = false;
-		
+		bool drawActiveBorder = true; 
 		
 		// the currently computed text boundaries
 		// the height and y offset are currently always the size of a capital 'M'
@@ -75,6 +75,7 @@ namespace mui{
 		void setText( string text );
 		void setTextAndNotify( string text );
 		string getSelectedText();
+		void selectAll();
 		
 		void insertTextAtCursor(string text);
 		
@@ -103,6 +104,10 @@ namespace mui{
 				return !(*this == other);
 			}
 		};
+
+
+		// use this to modify the text being set/inserted/typed
+		function <string(string)> onInsert;
 
 	private:
 		size_t idx_utf8(size_t utf32_index);
