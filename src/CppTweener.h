@@ -208,9 +208,8 @@ namespace tween {
 		int reverseCount;
 		TweenerCallBack onCompleteCallBack;
 		TweenerCallBack onStepCallBack;
-		std::function<void()> onComplete{nullptr};
-		std::function<void()> onStep{nullptr};
-		
+		std::function<void(TweenerParam & param)> onComplete{nullptr};
+		std::function<void(TweenerParam & param)> onStep{nullptr};
 		TweenerParam() {
 			useMilliSeconds = true;
 			timeCount = 0;
@@ -300,9 +299,13 @@ namespace tween {
 			useMilliSeconds = use;
 		}
 		
+		void kill(){
+			cleanProperties();
+		}
+		
 		void cleanProperties(){
 			properties.clear();
-			//std::cout<<"\n-Parameter removed";
+			total_properties = 0;
 		}
 		
 		bool operator==( const TweenerParam& p ) {

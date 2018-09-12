@@ -589,6 +589,10 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 		case OF_KEY_RETURN:
 			stb_textedit_key(this, state, STB_TEXTEDIT_NEWLINE|keyMask);
 			break;
+		case OF_KEY_PAGE_UP:
+			break;
+		case OF_KEY_PAGE_DOWN:
+			break;
 		case OF_KEY_ESC:
 			// do nothing!
 			break;

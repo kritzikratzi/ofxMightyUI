@@ -304,7 +304,7 @@ namespace tween {
 		for (int i=0; i <  total_tweens; i++,tweensIT++) {
 			if ((*param) == (*tweensIT)) {
 				if((*tweensIT).onComplete){
-					(*tweensIT).onComplete();
+					(*tweensIT).onComplete(*tweensIT);
 				}
 
 				(*tweensIT).cleanProperties();
@@ -364,7 +364,7 @@ namespace tween {
 			}
 			
 			dispatchEvent(&(*tweensIT), ON_STEP);
-			if((*tweensIT).onStep) (*tweensIT).onStep();
+			if((*tweensIT).onStep) (*tweensIT).onStep(*tweensIT);
 			if ((*tweensIT).onStepCallBack){
 				(*tweensIT).onStepCallBack();
 			}	
