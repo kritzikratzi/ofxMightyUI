@@ -12,6 +12,7 @@
 #include "ofEvents.h"
 #include "Container.h"
 #include "ScrollPane.h"
+#include "ofxMightyUI.h"
 
 using namespace mui;
 
@@ -432,6 +433,15 @@ void mui::Root::prepareAnimation( int milliseconds, int type, int direction ){
 void mui::Root::runOnUiThread(function<void()> func){
 	//TBD
 }
+
+void mui::Root::setDisplayScaling(float reqScale){
+	float scale = reqScale == 0? muiGetDefaultDisplayScaling() : reqScale;
+	mui::MuiConfig::detectRetina = reqScale == 0;
+	mui::MuiConfig::scaleFactor = scale;
+	mui::Helpers::getFontStash().pixelDensity = scale;
+	ofEvents().notifyWindowResized(ofGetWidth(), ofGetHeight());
+}
+
 
 //--------------------------------------------------------------
 bool mui::Root::getKeyPressed( int key ){

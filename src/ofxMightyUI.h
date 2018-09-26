@@ -48,5 +48,6 @@ int muiGetMouseX();
 int muiGetMouseY();
 float muiGetWidth();
 float muiGetHeight();
+float muiGetDefaultDisplayScaling();
 
 string muiToDataPath(string path, bool abs = true );

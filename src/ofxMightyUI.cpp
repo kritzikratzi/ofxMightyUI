@@ -105,6 +105,33 @@ void mui_init(){
 	mui::Helpers::getFontStash().fontScale = 1.3;
 }
 
+float muiGetDefaultDisplayScaling(){
+#if TARGET_OS_IPHONE
+	if( mui::MuiConfig::detectRetina ){
+		ofAppiOSWindow * w = ofAppiOSWindow::getInstance();
+		return w->isRetinaEnabled()?2:1;
+	}
+#elif TARGET_OS_MAC
+	ofAppGLFWWindow * window = dynamic_cast<ofAppGLFWWindow*>(ofGetWindowPtr());
+	if( window != NULL ){
+		return window->getPixelScreenCoordScale();
+	}
+	else{
+		return 1;
+	}
+#elif _WIN32
+	SetProcessDPIAware(); //true
+	HDC screen = GetDC(NULL);
+	double hPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSX);
+	double vPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSY);
+	ReleaseDC(NULL, screen);
+	float dpi = (hPixelsPerInch + vPixelsPerInch) * 0.5/96.0;
+	return dpi;
+#else
+	return 1;
+#endif
+}
+
 
 ofVec2f muiGetMousePos(){
 	return ofVec2f(ofGetMouseX(),ofGetMouseY())/mui::MuiConfig::scaleFactor;

@@ -285,6 +285,7 @@ text( text_), fontSize(-1), horizontalAlign(Left), verticalAlign(Middle),fontNam
 	stb_textedit_initialize_state(state,0);
 	if( fontSize < 0 ) fontSize = mui::MuiConfig::fontSize;
 	commit();
+	state->cursor = strlenWithLineStarts;
 };
 
 mui::TextArea::~TextArea(){

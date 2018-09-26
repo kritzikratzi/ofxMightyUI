@@ -74,6 +74,9 @@ namespace mui{
 		
 		virtual void runOnUiThread(function<void()> func);
 		
+		/// @brief Sets the display scale. 0=auto detect
+		virtual void setDisplayScaling(float val = 0);
+		
 		virtual bool getKeyPressed( int key ); 
 		
 		static mui::Root * INSTANCE;

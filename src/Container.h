@@ -221,26 +221,26 @@ namespace mui{
 			return NULL;
 		}
 		
-		// in progress?
+		/// \brief walk until we find a child of a certain type that satisfies all our other needs.
+		/// descend: return true if you want to decend into this element (e.g. [](T * t){ return t->visible; })
+		/// decide: return true if this is the thing you want! (termination)
 		template <typename T>
-		T * findChildOfType( const function<bool(Container * container, bool & checkChildren )> walker, const function<bool(T * result)> decider ){
-			bool checkChildren = true;
+		T * findChildOfType( const function<bool(Container * container)> & decend, const function<bool(T * result)> & decide ){
 			T * result = nullptr;
-			if(walker(this,checkChildren) && dynamic_cast<T>(this) != nullptr && decider((T*)this) ){
-				result = (T*)this;
+			if((result=dynamic_cast<T*>(this)) && decide(result) ){
+				return result;
 			}
 			
-			if(checkChildren){
-				T * childResult = nullptr;
+			if(decend(this)){
 				for( Container * c : children ){
-					childResult = c->findChildOfType<T>(walker, decider);
+					T * childResult = c->findChildOfType<T>(decend, decide);
 					if(childResult != nullptr){
-						result = childResult;
+						return childResult;
 					}
 				}
 			}
 			
-			return result;
+			return nullptr;
 		}
 		
 		// in progress?

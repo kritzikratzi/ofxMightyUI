@@ -19,7 +19,7 @@ mui::ScrollPane::ScrollPane( float x_, float y_, float width_, float height_ )
 	view( NULL ),
 	animating(false), animatingToBase(false), animatingMomentum(false),
 	usePagingH(false), numPagesAdded(0),
-	barStyleX(BarStyle::IF_NEEDED), barStyleY(BarStyle::IF_NEEDED)
+	barStyleX(BarStyle::ALWAYS), barStyleY(BarStyle::ALWAYS)
 {
 		init();
 };
@@ -99,6 +99,8 @@ void mui::ScrollPane::commit(){
 	wantsToScrollY = maxScrollY != 0 || minScrollY != 0; 
 	
 	//TODO: make this -15 (the bars) optional!
+	viewportWidth = (!canScrollY || (!wantsToScrollY && barStyleY == IF_NEEDED))?width:viewportWidth;
+	viewportHeight = (!canScrollX || (!wantsToScrollX && barStyleX == IF_NEEDED))?height:viewportHeight;
 	
 	view->width = fmaxf( viewportWidth, canScrollX?(maxScrollX + viewportWidth):0);
 	view->height = fmaxf( viewportHeight, maxScrollY + viewportHeight);
