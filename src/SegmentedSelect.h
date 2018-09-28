@@ -97,7 +97,7 @@ namespace mui{
 				button->label->commit();
 
 				if(equallySizedButtons){
-					button->width = ceilf(eqWidth);
+					button->width = eqWidth;
 				}
 				else{
 					button->width = ceilf(button->label->boundingBox.width + buttonPadding);
