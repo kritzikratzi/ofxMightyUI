@@ -54,7 +54,6 @@ namespace mui{
 	
 	class Slider;
 	class SliderWithLabel;
-	class TextField;
 	class TextureAtlas;
 	class ToggleButton;
 

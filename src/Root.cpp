@@ -311,24 +311,6 @@ void mui::Root::fixTouchPosition( ofVec2f &touch, ofVec2f &copy, Container * con
 
 
 
-
-//--------------------------------------------------------------
-void mui::Root::showTextField( TextField * tf ){
-	#if TARGET_OS_IPHONE
-	NativeIOS::showTextField( tf );
-//	#elif TARGET_OS_MAC
-//	NativeOSX::showTextField( tf );
-	#endif
-}
-
-void mui::Root::hideTextFields(){
-    #if TARGET_OS_IPHONE
-    NativeIOS::hide();
-//	#elif TARGET_OS_MAC
-//	NativeOSX::hide();
-    #endif
-}
-
 //--------------------------------------------------------------
 ofRectangle mui::Root::convertNativeToMui( const ofRectangle rect ){
 	const float s = mui::MuiConfig::scaleFactor;

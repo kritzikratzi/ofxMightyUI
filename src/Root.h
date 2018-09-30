@@ -14,8 +14,6 @@
 #define MUI_ROOT (mui::Root::INSTANCE)
 
 namespace mui{
-	class TextField;
-	
 	class Root : public Container {
 	public: 
 		Root();
@@ -60,8 +58,6 @@ namespace mui{
 		
 		virtual bool becomeTouchResponder( Container * container, ofTouchEventArgs &touch );
 		virtual bool becomeKeyboardResponder( Container * container );
-		virtual void showTextField( TextField * tf );
-		virtual void hideTextFields();
 		virtual void safeRemoveAndDelete( Container * c ); 
 		virtual void safeRemove( Container * c );
 		virtual void removeFromResponders( Container * c ); 
