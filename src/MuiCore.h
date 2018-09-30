@@ -57,6 +57,9 @@ namespace mui{
 	class TextField;
 	class TextureAtlas;
 	class ToggleButton;
+
+	class FilePicker;
+	class TextArea; 
 	
 	namespace data{
 		// http://stackoverflow.com/a/25109643
@@ -125,7 +128,6 @@ namespace mui{
 					*(T*)data = it; }}
 		};
 	};
-
 }
 
 // now include bare minimum

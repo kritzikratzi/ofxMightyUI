@@ -215,8 +215,13 @@ int mui::TextArea::insert_chars_impl(mui::TextArea *data, int pos, const STB_TEX
 	
 	
 	stringstream str;
+	int len = 0;
 	for( int i = 0; i < num; i++){
-		str << utf32_to_utf8(newtext[i]);
+		uint32_t ch = newtext[i];
+		if(data->onCharacterAdded.notify(ch)){
+			str << utf32_to_utf8(ch);
+			len ++;
+		}
 	}
 
 	string text = str.str(); 
@@ -224,7 +229,7 @@ int mui::TextArea::insert_chars_impl(mui::TextArea *data, int pos, const STB_TEX
 	
 	data->text.insert(idx, text);
 	data->commit();
-	return 1; // always succeeds
+	return len; // always succeeds
 }
 
 
@@ -510,8 +515,7 @@ void mui::TextArea::touchDown(ofTouchEventArgs &touch){
 	lastInteraction = ofGetElapsedTimeMillis();
 	
 	if( selectAllOnFocus && !hasKeyboardFocus()){
-		stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTEND);
-		stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTSTART | STB_TEXTEDIT_K_SHIFT);
+		selectAll();
 	}
 	else{
 		stb_textedit_click(this, state, touch.x, touch.y);
@@ -826,6 +830,30 @@ ofVec2f mui::TextArea::getCursorPosition(){
 	EditorCursor c = getEditorCursorForIndex(state->cursor);
 	return {c.rect.x, (*c.elementIt).baseLineY};
 }
+
+void mui::TextArea::selectAll(){
+	stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTEND);
+	stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTSTART | STB_TEXTEDIT_K_SHIFT);
+}
+
+void mui::TextArea::selectNothing(){
+	state->select_start = state->select_end;
+}
+
+void mui::TextArea::setSelectedRange(size_t start, size_t end){
+	if(utf32.size()==0) return;
+	
+	start = CLAMP(start,0,utf32.size()-1);
+	end = CLAMP(end,0,utf32.size()-1);
+	
+	state->select_start = min(start,end);
+	state->select_end = max(start,end);
+}
+
+pair<size_t,size_t> mui::TextArea::getSelectedRange(){
+	return make_pair(state->select_start,state->select_end);
+}
+
 
 
 

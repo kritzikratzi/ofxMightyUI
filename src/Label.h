@@ -48,6 +48,13 @@ namespace mui{
 		// changes the height of the label to accomodate all contents
 		virtual void sizeToFitHeight( float padY = 0 );
 		
+		
+		/// \brief Sets the label's text and recalculates the bounding box
+		virtual void setText(const string & text);
+		
+		/// \brief returns the label's text
+		virtual const string & getText();
+		
 		// call this after you made changes to any variables (changing x/y is okay without doing a commit() ).
 		// doing text-maths too insane to do on every frame!
 		virtual void commit();

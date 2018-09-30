@@ -117,3 +117,12 @@ void mui::Label::commit(){
 		boundingBox.y = baselineSize.y;
 	}
 }
+
+void mui::Label::setText(const string & text){
+	this->text = text;
+	commit();
+}
+
+const string & mui::Label::getText(){
+	return text; 
+}

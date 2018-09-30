@@ -39,6 +39,7 @@ namespace mui{
 		string fontName; // subject to change!
 		bool selectAllOnFocus;
 		mui::EventHandler<string> onChange{this};
+		mui::EventHandlerConsumable<uint32_t> onCharacterAdded{this};
 		
 		float minHeight = 20;
 		float autoChangeHeight = false;
@@ -81,7 +82,15 @@ namespace mui{
 		
 		int getCursorLine();
 		int getCursorColumn();
-		ofVec2f getCursorPosition(); 
+		ofVec2f getCursorPosition();
+		
+		void selectAll();
+		void selectNothing();
+		
+		/// \brief Sets selection range. Counting is in utf32 (ie. the "Ä" in "ÜÄ" would be at index 1. remember you can't directly substring with this result!)
+		void setSelectedRange(size_t start, size_t end);
+		/// \brief Returns the selection range. Counting is in utf32 (ie. the "Ä" in "ÜÄ" would be at index 1. remember you can't directly substring with this result!)
+		pair<size_t,size_t> getSelectedRange();
 		
 		// call this after you made changes to any variables (changing x/y is okay without doing a commit() ).
 		// doing text-maths too insane to do on every frame!
