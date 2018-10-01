@@ -22,6 +22,7 @@ mui::FilePicker::FilePicker(mui::FilePicker::Operation op) : operation(op), mui:
 	
 	
 	clearButton = new mui::Button("x", 0, 0, 20, 20);
+	ofAddListener(clearButton->onPress, this, &FilePicker::buttonPressed); 
 	add(clearButton);
 	
 	resetFormatter();
@@ -62,13 +63,13 @@ void mui::FilePicker::drawBackground(){
 		wantsPick = false;
 		ofFileDialogResult res;
 		if(operation == Operation::LOAD){
-			res = mui::MuiConfig::systemLoadDialog("Pick any audio file");
+			res = mui::MuiConfig::systemLoadDialog(loadText);
 		}
 		else{
 			auto file = selectedPath==""?defaultSaveName:ofFile(selectedPath,ofFile::Reference).getFileName();
 			res = mui::MuiConfig::systemSaveDialog(
 									 file,
-									 "Please pick destination file"
+									 saveText
 									 );
 		}
 		if(res.bSuccess){
@@ -144,4 +145,10 @@ void mui::FilePicker::setDefaultSaveName(string name){
 
 string mui::FilePicker::getDefaultSaveName(){
 	return defaultSaveName;
+}
+
+void mui::FilePicker::buttonPressed(const void * sender, ofTouchEventArgs & args){
+	if(sender == clearButton){
+		setFileAndNotify({});
+	}
 }
