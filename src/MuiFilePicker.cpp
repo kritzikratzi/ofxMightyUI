@@ -62,11 +62,11 @@ void mui::FilePicker::drawBackground(){
 		wantsPick = false;
 		ofFileDialogResult res;
 		if(operation == Operation::LOAD){
-			res = ofSystemLoadDialog("Pick any audio file");
+			res = mui::MuiConfig::systemLoadDialog("Pick any audio file");
 		}
 		else{
 			auto file = selectedPath==""?defaultSaveName:ofFile(selectedPath,ofFile::Reference).getFileName();
-			res = ofSystemSaveDialog(
+			res = mui::MuiConfig::systemSaveDialog(
 									 file,
 									 "Please pick destination file"
 									 );

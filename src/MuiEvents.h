@@ -219,10 +219,35 @@ namespace mui{
 			return false;
 		}
 
+		// returns true if the event was consumed
+		bool notifyRequireAll(EventType & event) {
+			for (auto & listener : listeners) {
+				bool res = listener.call(owner, event);
+				if (listener.type >= 5 && !res) return false;
+			}
+			
+			return true;
+		}
+		
+		// returns true if the event was consumed
+		bool notifyRequireAll(const EventType && event) {
+			EventType copy = event;
+			for (auto & listener : listeners){
+				bool res = listener.call(owner, copy);
+				if (listener.type >= 5 && !res) return false;
+			}
+			
+			return true;
+		}
+		
 		// for compatibility with ofAddListener()
 		void notify(void * sender, EventType & event){
 			notify(event); // just ignore the sender
 		}
+		
+		const std::list<EventFunction<EventType>> & getListeners(){
+			return listeners;
+		};
 		
 	protected:
 		std::list<EventFunction<EventType>> listeners;

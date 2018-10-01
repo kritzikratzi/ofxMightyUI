@@ -22,3 +22,10 @@ float mui::MuiConfig::scaleFactor = 1;
 bool mui::MuiConfig::enableDebuggingShortcuts = true;
 Poco::Path mui::MuiConfig::dataPath = Poco::Path();
 ofLogLevel mui::MuiConfig::logLevel = OF_LOG_ERROR;
+function<ofFileDialogResult(string,string)> mui::MuiConfig::systemSaveDialog = [](string file, string msg){
+	return ofSystemSaveDialog(file,msg);
+};
+function<ofFileDialogResult(string)> mui::MuiConfig::systemLoadDialog = [](string msg){
+	return ofSystemLoadDialog(msg);
+};
+

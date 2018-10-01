@@ -82,6 +82,12 @@ namespace mui{
 		// enable shortcuts for debugging
 		// (press action+d to enable)
 		static bool enableDebuggingShortcuts;
+		
+		// function that can show a system "save..." dialog
+		static function<ofFileDialogResult(string,string)> systemSaveDialog;
+		
+		// function that can show a system "load..." dialog
+		static function<ofFileDialogResult(string)> systemLoadDialog;
 	};
 }
 

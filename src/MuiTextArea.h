@@ -76,7 +76,6 @@ namespace mui{
 		void setText( string text );
 		void setTextAndNotify( string text );
 		string getSelectedText();
-		void selectAll();
 		
 		void insertTextAtCursor(string text);
 		

@@ -218,7 +218,7 @@ int mui::TextArea::insert_chars_impl(mui::TextArea *data, int pos, const STB_TEX
 	int len = 0;
 	for( int i = 0; i < num; i++){
 		uint32_t ch = newtext[i];
-		if(data->onCharacterAdded.notify(ch)){
+		if(data->onCharacterAdded.notifyRequireAll(ch)){
 			str << utf32_to_utf8(ch);
 			len ++;
 		}
@@ -783,11 +783,6 @@ int mui::TextArea::state_select_len(){
 
 string mui::TextArea::getSelectedText(){
 	return substr_utf8(state_select_min(),state_select_len());
-}
-
-void mui::TextArea::selectAll(){
-	stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTEND);
-	stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTSTART | STB_TEXTEDIT_K_SHIFT);
 }
 
 void mui::TextArea::insertTextAtCursor(string text){
