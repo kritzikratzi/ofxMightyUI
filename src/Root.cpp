@@ -369,7 +369,12 @@ bool mui::Root::becomeKeyboardResponder( Container * c ){
 
 //--------------------------------------------------------------
 void mui::Root::safeRemove( Container * c ){
-    safeRemoveList.push_back( c ); 
+	safeRemoveList.push_back( c );
+}
+
+//--------------------------------------------------------------
+void mui::Root::safeDelete( Container * c ){
+	safeDeleteList.push_back( c );
 }
 
 //--------------------------------------------------------------
@@ -442,21 +447,26 @@ void mui::Root::commitAnimation(){
 }
 
 void mui::Root::handleRemovals(){
-    vector<Container*>::iterator it = safeRemoveList.begin(); 
-    while( it != safeRemoveList.end() ){
-        (*it)->remove();
-        ++it; 
-    }
-    
-    it = safeRemoveAndDeleteList.begin(); 
-    while( it != safeRemoveAndDeleteList.end() ){
-        (*it)->remove();
-        delete (*it); 
-        ++it; 
-    }
-    
-    safeRemoveList.clear(); 
-    safeRemoveAndDeleteList.clear(); 
+	vector<Container*> cp = move(safeRemoveList);
+	for(auto c : cp){
+		c->remove();
+	}
+
+	cp = move(safeDeleteList);
+	for(auto c : cp){
+		c->remove();
+	}
+	
+	cp = move(safeRemoveAndDeleteList);
+	for(auto c : cp){
+		c->remove();
+		delete c;
+	}
+	
+    safeRemoveList.clear();
+	safeDeleteList.clear();
+    safeRemoveAndDeleteList.clear();
+	
 }
 
 //--------------------------------------------------------------

@@ -58,7 +58,8 @@ namespace mui{
 		
 		virtual bool becomeTouchResponder( Container * container, ofTouchEventArgs &touch );
 		virtual bool becomeKeyboardResponder( Container * container );
-		virtual void safeRemoveAndDelete( Container * c ); 
+		virtual void safeRemoveAndDelete( Container * c );
+		virtual void safeDelete( Container * c );
 		virtual void safeRemove( Container * c );
 		virtual void removeFromResponders( Container * c ); 
 		
@@ -87,7 +88,8 @@ namespace mui{
 		int numLayoutFrames = 1; 
         
         vector<Container*> safeRemoveAndDeleteList; 
-        vector<Container*> safeRemoveList;
+		vector<Container*> safeRemoveList;
+		vector<Container*> safeDeleteList;
 		
 		virtual void of_setup( ofEventArgs &args );
 		virtual void of_update( ofEventArgs &args );
