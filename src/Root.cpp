@@ -645,8 +645,8 @@ void mui::Root::of_update( ofEventArgs &args ){
 	if(mui::MuiConfig::detectRetina){
 		auto ptr = ofGetWindowPtr();
 		auto glfw = dynamic_cast<ofAppGLFWWindow*>(ptr);
-		if(glfw && mui::MuiConfig::scaleFactor != glfw->getPixelScreenCoordScale() ){
-			mui::MuiConfig::scaleFactor = glfw->getPixelScreenCoordScale();
+		if(glfw && mui::MuiConfig::scaleFactor != muiGetDefaultDisplayScaling() ){
+			mui::MuiConfig::scaleFactor = muiGetDefaultDisplayScaling();
 			mui::Helpers::getFontStash().pixelDensity = mui::MuiConfig::scaleFactor;
 			cout << "[ofxMightyUI] updated pixel scaling factor to " << mui::MuiConfig::scaleFactor << endl;
 		}
