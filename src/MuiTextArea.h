@@ -43,6 +43,7 @@ namespace mui{
 		
 		float minHeight = 20;
 		float autoChangeHeight = false;
+		bool softWrap = true;
 		bool drawActiveBorder = true; 
 		
 		// the currently computed text boundaries

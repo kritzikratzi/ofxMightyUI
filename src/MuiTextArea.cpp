@@ -435,7 +435,7 @@ void mui::TextArea::commit(){
 	boundingBox = Helpers::getFontStash().getTextBounds(text, fontStyle, 0, 0);
 	
 	vector<StyledText> blocks{ {text,fontStyle} };
-	lines = Helpers::getFontStash().layoutLines(blocks, width);
+	lines = Helpers::getFontStash().layoutLines(blocks, softWrap?width:9999999);
 	lineNumberSourceToDisplay.clear();
 	lineNumberDisplayToSource.clear();
 	
