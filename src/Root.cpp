@@ -573,6 +573,11 @@ mui::Container * mui::Root::handleMousePressed( float x, float y, int button ){
 	args.x = x;
 	args.y = y;
 	args.id = 0;
+	uint64_t now = ofGetSystemTimeMicros();
+	if(now>lastMouseDown && (now-lastMouseDown)/1000<230){
+		args.type = ofTouchEventArgs::doubleTap;
+	}
+	lastMouseDown = now;
 	return handleTouchDown(args);
 }
 

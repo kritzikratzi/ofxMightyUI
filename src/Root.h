@@ -85,7 +85,8 @@ namespace mui{
 		tween::TweenerParam param;
 		tween::Tweener tweener;
 
-		int numLayoutFrames = 1; 
+		int numLayoutFrames = 1;
+		uint64_t lastMouseDown = 0;
         
         vector<Container*> safeRemoveAndDeleteList; 
 		vector<Container*> safeRemoveList;
