@@ -21,7 +21,8 @@ namespace mui{
 		Container * touchResponder[OF_MAX_TOUCHES]; // think of the responder as the elements received touchDown events.
 		Container * keyboardResponder;
 		set<Container*> hoverResponder;
-		Container * popupMenu; 
+		Container * popupMenu;
+		bool manageCursor{true}; 
 		
 		virtual void init(); 
 		virtual void handleUpdate();
@@ -87,7 +88,9 @@ namespace mui{
 
 		int numLayoutFrames = 1;
 		uint64_t lastMouseDown = 0;
-        
+		
+		mui::Cursor lastCursor = mui::Cursor::Default; 
+		
         vector<Container*> safeRemoveAndDeleteList; 
 		vector<Container*> safeRemoveList;
 		vector<Container*> safeDeleteList;

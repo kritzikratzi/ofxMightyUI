@@ -31,5 +31,6 @@ int muiGetMouseY();
 float muiGetWidth();
 float muiGetHeight();
 float muiGetDefaultDisplayScaling();
+void muiSetCursor(mui::Cursor cursor); // don't use directly, instead set the cursor property on a container
 
 string muiToDataPath(string path, bool abs = true );

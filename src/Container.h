@@ -45,6 +45,8 @@ namespace mui{
 		Container * parent; 
 		Layout * layoutHandler;
 		
+		Cursor cursor;
+		
 		// put anything you like here...
 		void * userData; // deprecated
 

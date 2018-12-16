@@ -38,6 +38,15 @@ namespace mui{
 		Inset(float top, float right, float bottom, float left) : top(top), right(right), bottom(bottom), left(left) {}; 
 	};
 	
+	enum class Cursor{
+		Default,
+		Hand,
+		IBeam,
+		Crosshair,
+		ResizeH,
+		ResizeV
+	};
+	
 	// forward declare all classes not added directly
 	class BarButton;
 	class Button;

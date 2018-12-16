@@ -92,6 +92,7 @@ void mui::Root::handleUpdate(){
 	
 	set<Container*> newHoverResponder;
 	Container * c = findChildAt(ofGetMouseX()/mui::MuiConfig::scaleFactor, ofGetMouseY()/mui::MuiConfig::scaleFactor,true,true);
+	Container * top = c;
 	if(c){
 		ofMouseEventArgs args; //TODO: fix up coords
 		while(c!=nullptr){
@@ -107,6 +108,14 @@ void mui::Root::handleUpdate(){
 		}
 	}
 	
+	if(manageCursor){
+		auto cursor = top? top->cursor : MUI_ROOT->cursor;
+		if( cursor != lastCursor){
+			muiSetCursor(cursor);
+			lastCursor = cursor;
+		}
+	}
+
 	for( Container * c : hoverResponder ){
 		ofMouseEventArgs args; //TODO: fix up coords
 		if(newHoverResponder.find(c) == newHoverResponder.end()){
@@ -117,14 +126,9 @@ void mui::Root::handleUpdate(){
 	
 	hoverResponder = move(newHoverResponder); 
 	
-	#if TARGET_OS_IPHONE
-	NativeIOS::update();
-//	#elif TARGET_OS_MAC
-//	NativeOSX::init();
-	#endif
 	Container::handleUpdate();
-    
     handleRemovals();
+	
 }
 
 //--------------------------------------------------------------

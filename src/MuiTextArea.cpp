@@ -285,6 +285,7 @@ class mui::TextArea::EditorState : public STB_TexteditState{
 mui::TextArea::TextArea( std::string text_, float x_, float y_, float width_, float height_ ) :
 Container( x_, y_, width_, height_ ),
 text( text_), fontSize(-1), horizontalAlign(Left), verticalAlign(Middle),fontName(""),lastInteraction(0),selectAllOnFocus(false){
+	cursor = mui::Cursor::IBeam;
 	state = new EditorState();
 	focusTransferable = false;
 	stb_textedit_initialize_state(state,0);

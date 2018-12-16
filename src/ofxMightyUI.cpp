@@ -156,3 +156,37 @@ float muiGetHeight(){
 string muiToDataPath( string path, bool abs ){
 	return mui::Helpers::muiPath(path);
 }
+
+void muiSetCursor(mui::Cursor cursor){
+	auto windowPtr = ofGetMainLoop()->getCurrentWindow();
+	int glfwCursorId = GLFW_ARROW_CURSOR;
+	switch (cursor) {
+		case mui::Cursor::Default:
+			glfwCursorId = GLFW_ARROW_CURSOR;
+			break;
+		case mui::Cursor::Hand:
+			glfwCursorId = GLFW_HAND_CURSOR;
+			break;
+		case mui::Cursor::IBeam:
+			glfwCursorId = GLFW_IBEAM_CURSOR;
+			break; 
+		case mui::Cursor::Crosshair:
+			glfwCursorId = GLFW_CROSSHAIR_CURSOR;
+			break;
+		case mui::Cursor::ResizeH:
+			glfwCursorId = GLFW_HRESIZE_CURSOR;
+			break;
+		case mui::Cursor::ResizeV:
+			glfwCursorId = GLFW_VRESIZE_CURSOR;
+			break;
+	}
+	
+	static GLFWcursor * glfwCursor = nullptr;
+	if (dynamic_cast<ofAppGLFWWindow*>(windowPtr.get())) {
+		GLFWwindow * w = ((ofAppGLFWWindow*)windowPtr.get())->getGLFWWindow();
+		if (glfwCursor) glfwDestroyCursor(glfwCursor);
+		
+		glfwCursor = glfwCreateStandardCursor(glfwCursorId);
+		glfwSetCursor(w, glfwCursor);
+	}
+}
