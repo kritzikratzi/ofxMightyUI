@@ -109,7 +109,8 @@ void mui::Root::handleUpdate(){
 	}
 	
 	if(manageCursor){
-		auto cursor = top? top->cursor : MUI_ROOT->cursor;
+		mui::Container * src = touchResponder[0] ? touchResponder[0] : top;
+		auto cursor = src? src->cursor : MUI_ROOT->cursor;
 		if( cursor != lastCursor){
 			muiSetCursor(cursor);
 			lastCursor = cursor;
@@ -526,20 +527,36 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 		
 		return this; 
 	}
-	
-	if( keyboardResponder != NULL ){
+
+	if( keyboardResponder != nullptr ){
 		if( !keyboardResponder->isVisibleOnScreen()){
-			keyboardResponder = NULL;
+			keyboardResponder = nullptr;
 		}
 		else{
 			mui::Container * c = keyboardResponder;
 			while(c != nullptr && !c->onKeyPressed.notify(event) && !c->keyPressed(event)){
 				c = c->parent;
 			}
-			return c;
 		}
 	}
 	
+	// now simulate hover/touch/drag...
+	bool pressed = ofGetMousePressed(OF_MOUSE_BUTTON_1) || ofGetMousePressed(OF_MOUSE_BUTTON_2) || ofGetMousePressed(OF_MOUSE_BUTTON_3) || ofGetMousePressed(OF_MOUSE_BUTTON_4) || ofGetMousePressed(OF_MOUSE_BUTTON_5) || ofGetMousePressed(OF_MOUSE_BUTTON_6);
+	if (pressed) {
+		// dragging...
+		ofTouchEventArgs args;
+		args.x = ofGetMouseX();
+		args.y = ofGetMouseY();
+		handleTouchMoved(args);
+	}
+	else {
+		// moving
+		ofMouseEventArgs args;
+		args.x = ofGetMouseX();
+		args.y = ofGetMouseY();
+		handleMouseMoved(args.x, args.y);
+	}
+
 	return keyboardResponder;
 }
 
@@ -550,6 +567,23 @@ mui::Container * mui::Root::handleKeyReleased( ofKeyEventArgs &event ){
 		keyboardResponder->keyReleased(event);
 	}
 	
+	// now simulate hover/touch/drag...
+	bool pressed = ofGetMousePressed(OF_MOUSE_BUTTON_1) || ofGetMousePressed(OF_MOUSE_BUTTON_2) || ofGetMousePressed(OF_MOUSE_BUTTON_3) || ofGetMousePressed(OF_MOUSE_BUTTON_4) || ofGetMousePressed(OF_MOUSE_BUTTON_5) || ofGetMousePressed(OF_MOUSE_BUTTON_6);
+	if (pressed) {
+		// dragging...
+		ofTouchEventArgs args;
+		args.x = ofGetMouseX();
+		args.y = ofGetMouseY();
+		handleTouchMoved(args);
+	}
+	else {
+		// moving
+		ofMouseEventArgs args;
+		args.x = ofGetMouseX();
+		args.y = ofGetMouseY();
+		handleMouseMoved(args.x, args.y);
+	}
+
 	return keyboardResponder;
 }
 

@@ -381,7 +381,7 @@ void mui::TextArea::setText( string text ){
 	state->select_end = strlenWithLineStarts;
 	state->cursor = state->select_end;
 	vector<uint32_t> text_utf32 = utf8_to_utf32(text);
-	stb_textedit_paste(this, state, &text_utf32[0], text_utf32.size());
+	stb_textedit_paste(this, state, &text_utf32[0], (int)text_utf32.size());
 }
 
 void mui::TextArea::setTextAndNotify( string text ){
@@ -479,7 +479,7 @@ void mui::TextArea::commit(){
 		StyledLine & line = lines[i];
 		utf32_line_length.push_back(0);
 		for( auto el : line.elements ){
-			utf32_line_length[i] += utf8_strlen(el.content.styledText.text);
+			utf32_line_length[i] += (int)utf8_strlen(el.content.styledText.text);
 		}
 		strlenWithLineStarts += utf32_line_length[i];
 		if( first ) first = false;
@@ -494,9 +494,9 @@ void mui::TextArea::commit(){
 	
 	if(autoChangeHeight){
 		float h = minHeight;
-		for( int i = lines.size()-1;i>=0;i--){
+		for( int i = (int)lines.size()-1;i>=0;i--){
 			StyledLine & line = lines[i];
-			for(int j = line.elements.size()-1; j>=0; j--){
+			for(int j = (int)line.elements.size()-1; j>=0; j--){
 				h = MAX(h,line.elements[j].baseLineY);
 			}
 		}
@@ -606,7 +606,7 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 			//ok, what about other shortcuts? ...
 			if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.keycode==GLFW_KEY_A ){
 				state->select_start = 0;
-				state->select_end = strlenWithLineStarts;
+				state->select_end = (int)strlenWithLineStarts;
 				state->cursor = state->select_end;
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'z'){
@@ -626,7 +626,7 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'v'){
 				string text = ofGetWindowPtr()->getClipboardString();
 				vector<uint32_t> text_utf32 = utf8_to_utf32(text);
-				stb_textedit_paste(this, state, &text_utf32[0], text_utf32.size());
+				stb_textedit_paste(this, state, &text_utf32[0], (int)text_utf32.size());
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION)){
 				// a shortcut of sorts, but not for us. 
@@ -705,7 +705,7 @@ mui::TextArea::EditorCursor mui::TextArea::getEditorCursorForIndex( int cursorPo
 		else{
 			for( vector<LineElement>::iterator elementIt = line.elements.begin(); elementIt != line.elements.end(); ++elementIt ){
 				LineElement &el = *elementIt;
-				len = utf8_strlen(el.content.styledText.text);
+				len = (int)utf8_strlen(el.content.styledText.text);
 				if( pos + len <= cursorPos ){
 					pos += len;
 				}
@@ -788,7 +788,7 @@ string mui::TextArea::getSelectedText(){
 
 void mui::TextArea::insertTextAtCursor(string text){
 	vector<uint32_t> text_utf32 = utf8_to_utf32(text);
-	stb_textedit_paste(this, state, &text_utf32[0], text_utf32.size());
+	stb_textedit_paste(this, state, &text_utf32[0], (int)text_utf32.size());
 }
 
 

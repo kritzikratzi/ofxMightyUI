@@ -89,7 +89,7 @@ namespace mui{
 		int numLayoutFrames = 1;
 		uint64_t lastMouseDown = 0;
 		
-		mui::Cursor lastCursor = mui::Cursor::Default; 
+		mui::Cursor lastCursor; 
 		
         vector<Container*> safeRemoveAndDeleteList; 
 		vector<Container*> safeRemoveList;

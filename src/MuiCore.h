@@ -38,13 +38,25 @@ namespace mui{
 		Inset(float top, float right, float bottom, float left) : top(top), right(right), bottom(bottom), left(left) {}; 
 	};
 	
-	enum class Cursor{
-		Default,
-		Hand,
-		IBeam,
-		Crosshair,
-		ResizeH,
-		ResizeV
+
+	struct Cursor {
+		enum CursorType {
+			Default,
+			Hand,
+			IBeam,
+			Crosshair,
+			ResizeH,
+			ResizeV,
+			Custom
+		};
+
+		Cursor(CursorType type = Default, short customId = 0) : type(type),customId(customId){}
+		Cursor& operator= (CursorType t) { type = t; if (type != Custom) customId = 0; return *this; }
+		bool operator==(const Cursor & other) const { return type == other.type && (type != Custom || customId == other.customId); }
+		bool operator!=(const Cursor & other) const { return type != other.type || (type == Custom && customId != other.customId); }
+
+		CursorType type{ Default };
+		short customId{ 0 };
 	};
 	
 	// forward declare all classes not added directly

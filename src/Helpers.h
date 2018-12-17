@@ -14,6 +14,8 @@
 #include "MuiCore.h"
 #include "ofxFontStash2.h"
 
+struct GLFWcursor; 
+
 namespace mui{
 	class TextureAtlas;
 	class Container;
@@ -42,6 +44,11 @@ namespace mui{
 		static ofxFontStashStyle getStyle( const string customFont, const int size = mui::MuiConfig::fontSize );
 		static ofxFontStash2 & getFontStash();
 		static void drawString( const string s, const float x = 0, const float y = 0, const ofColor color = ofColor(255), const int size = mui::MuiConfig::fontSize );
+
+		// loads a custom cursor as a character (utf8 encoded) from a font
+		static mui::Cursor getCustomCursor(const string & fontName, const string & character, float clickXPct, float clickYPct);
+		static short getCustomCursorId(const string & fontName, const string & character, float clickXPct, float clickYPct);
+		static GLFWcursor * getCustomCursorData(short customId);
 
 		// draw a round rect. this is so old, i haven't touched this code in years.
 		static void roundedRect(float x, float y, float w, float h, float r);
@@ -77,7 +84,11 @@ namespace mui{
         static std::stack<ofRectangle> scissorStack;
 		static mui::TextureAtlas atlas;
 		static ofxFontStash2 fontStash;
-		
+
+		static short nextCursorId; 
+		static std::map<short, GLFWcursor*> cursorIdToData;
+		static std::map<string, short> cursorNameToId;
+
 		friend class MuiFont;
 	};
 }

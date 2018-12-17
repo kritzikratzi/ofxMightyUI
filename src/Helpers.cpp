@@ -9,6 +9,7 @@
 
 #include "Helpers.h"
 #include "TextureAtlas.h"
+#include "ofxMightyUI.h"
 #include <locale>
 
 
@@ -17,6 +18,11 @@ std::map<std::string, ofImage*> mui::Helpers::images;
 std::stack<ofRectangle> mui::Helpers::scissorStack;
 mui::TextureAtlas mui::Helpers::atlas;
 ofxFontStash2 mui::Helpers::fontStash;
+short mui::Helpers::nextCursorId = 0;
+std::map<short, GLFWcursor*> mui::Helpers::cursorIdToData;
+std::map<string,short> mui::Helpers::cursorNameToId;
+
+
 
 // TODO: clear caches/regen texs should take atlas into account?
 void mui::Helpers::clearCaches(){
@@ -133,6 +139,57 @@ void mui::Helpers::drawString( string s, float x, float y, ofColor color, int fo
 	fontStash.draw(s, style, x, y);
 }
 
+mui::Cursor mui::Helpers::getCustomCursor(const string & fontName, const string & character, float xPct, float yPct) {
+	return mui::Cursor(mui::Cursor::Custom, getCustomCursorId(fontName, character, xPct, yPct));
+}
+
+short mui::Helpers::getCustomCursorId(const string & fontName, const string & character, float xPct, float yPct) {
+	string name = fontName + ":" + character;
+	auto it = cursorNameToId.find(name);
+	if (it == cursorNameToId.end()) {
+		loadFont(fontName);
+		float h = 16 * muiGetDefaultDisplayScaling();
+		ofxFontStashStyle style = getStyle(fontName, h*0.8);
+		style.alignment = static_cast<FONSalign>(FONSalign::FONS_ALIGN_CENTER | FONSalign::FONS_ALIGN_MIDDLE);
+
+
+		cursorNameToId[name] = nextCursorId;
+
+		// we leak intentionally here 
+
+		ofFbo fbo;
+		fbo.allocate(h, h, GL_RGBA, 4);
+		fbo.begin(); 
+		style.color = ofColor(0);
+		style.blur = 4;
+		getFontStash().draw(character, style, h / 2, h / 2);
+		style.color = ofColor(255);
+		style.blur = 0;
+		getFontStash().draw(character, style, h / 2, h / 2);
+		fbo.end();
+		ofPixels pixels; 
+		fbo.getTexture().readToPixels(pixels);
+		fbo.clear();
+
+		GLFWimage image;
+		image.width = h;
+		image.height = h; 
+		image.pixels = pixels.getData();
+
+		GLFWcursor * cursor = glfwCreateCursor(&image, h*xPct, h*yPct);
+		cursorIdToData[nextCursorId] = cursor; 
+
+		return nextCursorId++;
+	}
+	else {
+		return it->second;
+	}
+}
+
+GLFWcursor * mui::Helpers::getCustomCursorData(short customId){
+	auto it = cursorIdToData.find(customId);
+	return it == cursorIdToData.end() ? nullptr : it->second;
+};
 
 void mui::Helpers::roundedRect(float x, float y, float w, float h, float r){
     ofBeginShape();
