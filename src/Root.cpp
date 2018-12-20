@@ -170,11 +170,14 @@ void mui::Root::handleDraw(){
 			info << "Rel:" << active->x << "," << active->y;
 			size = info.str();
 			
-			
 			ofxFontStashStyle style = mui::Helpers::getStyle(10);
 			ofNoFill();
 			ofSetColor( 255,255,0 );
 			ofDrawRectangle( p.x, p.y, active->width, active->height );
+
+			if (p.y > 30) p.y -= 30;
+			else p.y = min(muiGetHeight() - 30, p.y + active->height);
+
 			ofSetColor(255);
 			ofFill();
 			style.color = ofColor(0);
@@ -188,6 +191,7 @@ void mui::Root::handleDraw(){
 			mui::Helpers::getFontStash().draw(name, style, p.x, p.y+10);
 			mui::Helpers::getFontStash().draw(size, style, p.x, p.y+20);
 			ofPopMatrix();
+			ofSetColor(255);
 		}
 	}
 	
