@@ -221,14 +221,6 @@ void mui::Helpers::orientedScissor( float x, float y, float w, float h ){
 	if( mui::MuiConfig::scaleFactor != 1 ){ x*=mui::MuiConfig::scaleFactor; y*=mui::MuiConfig::scaleFactor; w*=mui::MuiConfig::scaleFactor; h*=mui::MuiConfig::scaleFactor; }
 	// position 0
 	glScissor( (GLint)x, (GLint)(ofGetHeight()-y-h), (GLint)w, (GLint)h );
-    
-	// position 1
-	//glScissor( y, x, h, w );
-    
-	//TODO: clarify next line!
-	//maybe this is an ios-setup specific solution
-	// in portrait mode:
-	//    glScissor( pos.x, pos.y, width, height );
 }
 
 void mui::Helpers::pushScissor( Container * c, ofRectangle rect ){

@@ -61,7 +61,7 @@ namespace mui{
 					ofDrawRectangle(0, 0, button->width, button->height);
 				}
 				
-				if( !button->isRightmost ){
+				if( !button->isRightmost && button->segmentedSelect->buttonSeparatorColor.a > 0){
 					ofSetColor(button->segmentedSelect->buttonSeparatorColor);
 					ofDrawRectangle(button->width-1, 0, 1, button->height );
 				}
@@ -90,10 +90,12 @@ namespace mui{
 			while( it != children.end() ){
 				SegmentedButton<T> * button = (SegmentedButton<T>*) *it;
 				if (!button->visible) { ++it; continue; }
+				button->selected = button == selected;
 				button->segmentedSelect = this;
 				button->x = x;
 				button->label->fontSize = buttonFontSize;
-				button->label->fontName = buttonFontName;
+				if(buttonFontName != "") button->label->fontName = buttonFontName;
+				button->label->fg = button->selected ? buttonFgSelected : buttonFgDefault;
 				button->label->commit();
 
 				if(equallySizedButtons){
@@ -104,7 +106,6 @@ namespace mui{
 				}
 				x += button->width;
 				button->height = height;
-				button->selected = button == selected;
 				button->isLeftmost = first;
 				button->isRightmost = false;
 				
@@ -203,8 +204,10 @@ namespace mui{
 		
 		// button drawing is handled here (mostly)
 		function<void(SegmentedButton<T>*)> onDrawButtonBackground; // see constructor for default implementation
-		ofColor buttonBgDefault{100};
-		ofColor buttonBgSelected{150};
+		ofColor buttonBgDefault{ 100 };
+		ofColor buttonBgSelected{ 150 };
+		ofColor buttonFgDefault{ 255 };
+		ofColor buttonFgSelected{ 255 };
 		ofColor buttonSeparatorColor{255};
 		int buttonFontSize{mui::MuiConfig::fontSize}; // needs a commit() after change!
 		string buttonFontName{""}; // needs a commit() after change!
