@@ -541,6 +541,8 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 			while(c != nullptr && !c->onKeyPressed.notify(event) && !c->keyPressed(event)){
 				c = c->parent;
 			}
+
+			if (c == nullptr) return nullptr;
 		}
 	}
 	
