@@ -483,17 +483,40 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 	// this is a bit awkward, there seems to be a bug in
 	// glfw that re-sends modifier key when they are released.
 	// for now, i'm not fixing this. i really shouldn't be, not here.
+	
+	// resend hover/drag commands, so that we immediately see the effects of changed 
+	// cursor etc. without having to handle all code everywhere. 
+	auto retriggerMouse = [&]() {
+		// now simulate hover/touch/drag...
+		bool pressed = ofGetMousePressed(OF_MOUSE_BUTTON_1) || ofGetMousePressed(OF_MOUSE_BUTTON_2) || ofGetMousePressed(OF_MOUSE_BUTTON_3) || ofGetMousePressed(OF_MOUSE_BUTTON_4) || ofGetMousePressed(OF_MOUSE_BUTTON_5) || ofGetMousePressed(OF_MOUSE_BUTTON_6);
+		if (pressed) {
+			// dragging...
+			ofTouchEventArgs args;
+			args.x = ofGetMouseX();
+			args.y = ofGetMouseY();
+			handleTouchMoved(args);
+		}
+		else {
+			// moving
+			ofMouseEventArgs args;
+			args.x = ofGetMouseX();
+			args.y = ofGetMouseY();
+			handleMouseMoved(args.x, args.y);
+		}
+	};
 
 	if( getKeyPressed(OF_KEY_ESC) && popupMenu != nullptr){
 		if (keyboardResponder == nullptr || !keyboardResponder->onKeyPressed.notify(event) || !keyboardResponder->keyPressed(event)) {
 			safeRemove(popupMenu);
 			popupMenu = nullptr; 
 		}
+		retriggerMouse(); 
 		return this;
 	}
 	
 	if( mui::MuiConfig::enableDebuggingShortcuts && getKeyPressed(MUI_KEY_ACTION) && event.keycode == GLFW_KEY_D ){
 		mui::MuiConfig::debugDraw ^= true;
+		retriggerMouse();
 		return this;
 	}
 	
@@ -514,6 +537,7 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 		}
 		cout << "------------------------------------";
 		
+		retriggerMouse();
 		return this;
 	}
 
@@ -528,13 +552,15 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 	
 	if( mui::MuiConfig::debugDraw && getKeyPressed(OF_KEY_ALT) && event.keycode == 'L' ){
 		handleLayout();
-		
-		return this; 
+		retriggerMouse();
+		return this;
 	}
 
 	if( keyboardResponder != nullptr ){
 		if( !keyboardResponder->isVisibleOnScreen()){
 			keyboardResponder = nullptr;
+			retriggerMouse(); 
+			return nullptr; 
 		}
 		else{
 			mui::Container * c = keyboardResponder;
@@ -542,28 +568,14 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 				c = c->parent;
 			}
 
-			if (c == nullptr) return nullptr;
+			retriggerMouse(); 
+			return nullptr; 
 		}
 	}
-	
-	// now simulate hover/touch/drag...
-	bool pressed = ofGetMousePressed(OF_MOUSE_BUTTON_1) || ofGetMousePressed(OF_MOUSE_BUTTON_2) || ofGetMousePressed(OF_MOUSE_BUTTON_3) || ofGetMousePressed(OF_MOUSE_BUTTON_4) || ofGetMousePressed(OF_MOUSE_BUTTON_5) || ofGetMousePressed(OF_MOUSE_BUTTON_6);
-	if (pressed) {
-		// dragging...
-		ofTouchEventArgs args;
-		args.x = ofGetMouseX();
-		args.y = ofGetMouseY();
-		handleTouchMoved(args);
-	}
-	else {
-		// moving
-		ofMouseEventArgs args;
-		args.x = ofGetMouseX();
-		args.y = ofGetMouseY();
-		handleMouseMoved(args.x, args.y);
-	}
 
-	return keyboardResponder;
+	// still here? a bit sad... 
+	retriggerMouse();
+	return nullptr;
 }
 
 //--------------------------------------------------------------
