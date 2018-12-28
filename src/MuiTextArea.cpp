@@ -370,6 +370,7 @@ ofRectangle mui::TextArea::box( float t, float r, float b, float l ){
 void mui::TextArea::commit(){
 	mui::Helpers::loadFont(fontName);
 	
+	if (!multiLine) canScrollX = canScrollY = false;
 	fontStyle.fontSize = fontSize;
 	fontStyle.color = fg;
 	fontStyle.fontID = fontName;
@@ -434,7 +435,7 @@ void mui::TextArea::commit(){
 	boundingBox.y = baselineSize.y;
 	
 	if(true/*autoChangeHeight*/){
-		float h = minHeight;
+		float h = 0;
 		for( int i = (int)lines.size()-1;i>=0;i--){
 			StyledLine & line = lines[i];
 			for(int j = (int)line.elements.size()-1; j>=0; j--){
@@ -442,9 +443,10 @@ void mui::TextArea::commit(){
 			}
 		}
 		
-		h -= baselineSize.y;
 		// add one more line! to be sure we have enough space for the decenders
-		h += baselineSize.height;
+		if (multiLine) h += baselineSize.height / 3;
+
+		h = max(minHeight, h - baselineSize.y);
 
 		editor_view->width = viewportWidth;
 
