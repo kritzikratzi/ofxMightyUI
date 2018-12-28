@@ -51,6 +51,7 @@ namespace mui{
 		float autoChangeHeight = false;
 		bool softWrap = true;
 		bool drawActiveBorder = true;
+		bool multiLine = true; 
 
 		// the currently computed text boundaries
 		// the height and y offset are currently always the size of a capital 'M'
