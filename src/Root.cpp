@@ -556,20 +556,26 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 		return this;
 	}
 
-	if( keyboardResponder != nullptr ){
-		if( !keyboardResponder->isVisibleOnScreen()){
-			keyboardResponder = nullptr;
+	mui::Container * temp = keyboardResponder; 
+
+	if (temp == nullptr) {
+		auto pos = muiGetMousePos();
+		temp = findChildAt(pos.x, pos.y, true, true);
+	}
+
+	if( temp != nullptr ){
+		if( !temp->isVisibleOnScreen()){
+			temp = nullptr;
 			retriggerMouse(); 
 			return nullptr; 
 		}
 		else{
-			mui::Container * c = keyboardResponder;
-			while(c != nullptr && !c->onKeyPressed.notify(event) && !c->keyPressed(event)){
-				c = c->parent;
+			while(temp != nullptr && !temp->onKeyPressed.notify(event) && !temp->keyPressed(event)){
+				temp = temp->parent;
 			}
 
 			retriggerMouse(); 
-			return nullptr; 
+			return temp; 
 		}
 	}
 

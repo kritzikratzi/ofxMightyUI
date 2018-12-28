@@ -10,10 +10,11 @@
 
 #include "MuiTextArea.h"
 #include "Root.h"
+#include <regex>
 
 // how nasty is this??
 mui::TextAreaInternal * internal(mui::TextArea * tf){
-	return (mui::TextAreaInternal*)tf;
+	return tf->internalData();
 }
 
 #define STB_TEXTEDIT_STRING mui::TextArea
@@ -282,95 +283,35 @@ int mui::TextArea::move_to_word_next_impl( STB_TEXTEDIT_STRING *str, int c )
 class mui::TextArea::EditorState : public STB_TexteditState{
 };
 
-mui::TextArea::TextArea( std::string text_, float x_, float y_, float width_, float height_ ) :
-Container( x_, y_, width_, height_ ),
+mui::TextArea::TextArea( std::string text_, float x_, float y_, float width_, float height_ ) : mui::ScrollPane( x_, y_, width_, height_ ),
 text( text_), fontSize(-1), horizontalAlign(Left), verticalAlign(Middle),fontName(""),lastInteraction(0),selectAllOnFocus(false){
-	cursor = mui::Cursor::IBeam;
+	editor_view = new mui::TextAreaView(this, 0, 0, width, height);
+	editor_view->cursor = mui::Cursor::IBeam;
+	view->add(editor_view);
+
 	state = new EditorState();
 	focusTransferable = false;
 	stb_textedit_initialize_state(state,0);
 	if( fontSize < 0 ) fontSize = mui::MuiConfig::fontSize;
 	commit();
 	state->cursor = strlenWithLineStarts;
+
 };
 
 mui::TextArea::~TextArea(){
+	editor_view->remove(); 
+	delete editor_view; 
 	delete state;
 }
 
 //--------------------------------------------------------------
 void mui::TextArea::update(){
+	mui::ScrollPane::update(); 
 	fontStyle.fontSize = fontSize;
 	fontStyle.color = fg;
 	fontStyle.fontID = fontName;
 }
 
-
-//--------------------------------------------------------------
-void mui::TextArea::draw(){
-	ofRectangle size = Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign );
-	
-	if( hasKeyboardFocus() && state->select_start != state->select_end ){
-		int left = state_select_min();
-		int right = state_select_max();
-		
-		ofSetColor(fg*0.5 + bg*0.5);
-		
-		EditorCursor from = getEditorCursorForIndex(left);
-		EditorCursor to = getEditorCursorForIndex(right);
-		
-		ofRectangle rect = from.rect;
-		float yy = rect.y;
-		
-		bool reset = false;
-		if( from.lineIt != to.lineIt ){
-			// selec to end of line
-			rect.width = (*from.lineIt).lineW - rect.x;
-			ofDrawRectangle(rect);
-			from.lineIt ++;
-			reset = true;
-			
-			yy += (*from.lineIt).lineH;
-		}
-		
-		while( from.lineIt != to.lineIt ){
-			StyledLine &line = *from.lineIt;
-			float x = size.x-boundingBox.x + line.elements.front().x;
-			float y = yy;
-			ofDrawRectangle(x, y, line.lineW, line.lineH );
-			yy += line.lineH;
-			++from.lineIt;
-			reset = true;
-		}
-		
-		if( from.lineIt != lines.end() ){
-			StyledLine &line = *from.lineIt;
-			float x = reset?(size.x-boundingBox.x + line.elements.front().x):from.rect.x;
-			float y = reset?yy:from.rect.y;
-			
-			ofDrawRectangle(x, y, to.rect.x + to.rect.width - x, line.lineH );
-			++from.lineIt;
-		}
-	}
-	
-	//	mui::Helpers::getFontStash().drawColumn(text, fontStyle, size.x-boundingBox.x, size.y-boundingBox.y, width);
-	mui::Helpers::getFontStash().drawLines(lines, size.x-boundingBox.x, size.y-boundingBox.y, MuiConfig::debugDraw);
-	ofSetColor( 255 );
-	if( hasKeyboardFocus()){
-		if (drawActiveBorder) {
-			ofNoFill();
-			ofDrawRectangle(0, 0, width, height);
-			ofFill();
-		}
-		// getting the time is slow, but it can only happen
-		// for a single textfield here because of the focus (so we're fine)
-		uint64_t time = ofGetElapsedTimeMillis();
-		if( ((time-lastInteraction)%1000) < 500 ){
-			ofRectangle bounds = getEditorCursorForIndex(state->cursor).rect;
-			ofDrawRectangle(bounds.x+bounds.width, bounds.y+2, 2, bounds.height-2);
-		}
-	}
-}
 
 const string mui::TextArea::getText(){
 	return text;
@@ -396,7 +337,7 @@ void mui::TextArea::drawBackground(){
 
 //--------------------------------------------------------------
 void mui::TextArea::layout(){
-	commit();
+	mui::ScrollPane::layout();
 }
 
 void mui::TextArea::sizeToFit( float padX, float padY ){
@@ -436,7 +377,7 @@ void mui::TextArea::commit(){
 	boundingBox = Helpers::getFontStash().getTextBounds(text, fontStyle, 0, 0);
 	
 	vector<StyledText> blocks{ {text,fontStyle} };
-	lines = Helpers::getFontStash().layoutLines(blocks, softWrap?width:9999999);
+	lines = Helpers::getFontStash().layoutLines(blocks, softWrap?editor_view->width:9999999);
 	lineNumberSourceToDisplay.clear();
 	lineNumberDisplayToSource.clear();
 	
@@ -492,7 +433,7 @@ void mui::TextArea::commit(){
 	boundingBox.height = baselineSize.height;
 	boundingBox.y = baselineSize.y;
 	
-	if(autoChangeHeight){
+	if(true/*autoChangeHeight*/){
 		float h = minHeight;
 		for( int i = (int)lines.size()-1;i>=0;i--){
 			StyledLine & line = lines[i];
@@ -504,38 +445,23 @@ void mui::TextArea::commit(){
 		h -= baselineSize.y;
 		// add one more line! to be sure we have enough space for the decenders
 		h += baselineSize.height;
-		
-		if( h != height){
+
+		editor_view->width = viewportWidth;
+
+		if (autoChangeHeight) {
+			editor_view->height = h;
 			height = h;
-			MUI_ROOT->needsLayout = true;
+		}
+		else {
+			h = max(viewportHeight, h); 
+			if (h != editor_view->height) {
+				editor_view->height = h;
+				MUI_ROOT->needsLayout = true;
+			}
 		}
 	}
-}
 
-void mui::TextArea::touchDown(ofTouchEventArgs &touch){
-	lastInteraction = ofGetElapsedTimeMillis();
-	
-	if( selectAllOnFocus && !hasKeyboardFocus()){
-		selectAll();
-	}
-	else{
-		stb_textedit_click(this, state, touch.x, touch.y);
-	}
-	requestKeyboardFocus();
-}
-
-void mui::TextArea::touchUp(ofTouchEventArgs &touch) {
-}
-
-void mui::TextArea::touchUpOutside(ofTouchEventArgs &touch) {
-}
-
-void mui::TextArea::touchMoved(ofTouchEventArgs &touch){
-	stb_textedit_drag(this, state, touch.x, touch.y);
-}
-
-void mui::TextArea::touchMovedOutside(ofTouchEventArgs &touch) {
-	stb_textedit_drag(this, state, touch.x, touch.y);
+	mui::ScrollPane::commit(); 
 }
 
 bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
@@ -627,6 +553,28 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 				string text = ofGetWindowPtr()->getClipboardString();
 				vector<uint32_t> text_utf32 = utf8_to_utf32(text);
 				stb_textedit_paste(this, state, &text_utf32[0], (int)text_utf32.size());
+			}
+			else if (key.key == OF_KEY_TAB && state->select_start != state->select_end) {
+				// go back to prev line break
+				if (state->select_start > state->select_end) swap(state->select_start, state->select_end);
+				while (state->select_start > 0 && STB_TEXTEDIT_GETCHAR(this, state->select_start -1) != '\n'){
+					state->select_start--;
+				}
+
+				string text = getSelectedText();
+				if (ofGetKeyPressed(OF_KEY_SHIFT)) {
+					if (text[0] == '\t') text = text.substr(1);
+					std::regex e("\n\t");
+					text = regex_replace(text, e, "\n");
+				}
+				else {
+					std::regex e("\n");
+					text = "\t" + regex_replace(text, e, "\n\t");
+				}
+
+				
+				insertTextAtCursor(text,true);
+				return true;
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION)){
 				// a shortcut of sorts, but not for us. 
@@ -786,9 +734,14 @@ string mui::TextArea::getSelectedText(){
 	return substr_utf8(state_select_min(),state_select_len());
 }
 
-void mui::TextArea::insertTextAtCursor(string text){
+void mui::TextArea::insertTextAtCursor(string text, bool select){
+	size_t sel_start = state->select_start;
 	vector<uint32_t> text_utf32 = utf8_to_utf32(text);
 	stb_textedit_paste(this, state, &text_utf32[0], (int)text_utf32.size());
+	commit();
+	if (select) {
+		setSelectedRange(sel_start, sel_start + text_utf32.size());
+	}
 }
 
 
@@ -896,4 +849,114 @@ int mui::TextAreaInternal::move_to_word_previous( mui::TextArea *str, int c ){
 
 int mui::TextAreaInternal::move_to_word_next( mui::TextArea *str, int c ){
 	return mui::TextArea::move_to_word_next_impl( str, c );
+}
+
+
+
+
+
+//--------------------------------------------------------------
+mui::TextAreaView::TextAreaView(mui::TextArea * textArea, float x_, float y_, float width_, float height_) :t(textArea), mui::Container(x_,y_,width_,height_){
+	focusTransferable = false;
+}
+
+//--------------------------------------------------------------
+mui::TextAreaView::~TextAreaView() {
+}
+
+//--------------------------------------------------------------
+void mui::TextAreaView::draw() {
+	ofRectangle size = Helpers::alignBox(this, t->boundingBox.width, t->boundingBox.height, t->horizontalAlign, t->verticalAlign);
+
+	if (hasKeyboardFocus() && t->state->select_start != t->state->select_end) {
+		int left = t->state_select_min();
+		int right = t->state_select_max();
+
+		ofSetColor(fg*0.5 + bg*0.5);
+
+		mui::TextArea::EditorCursor from = t->getEditorCursorForIndex(left);
+		mui::TextArea::EditorCursor to = t->getEditorCursorForIndex(right);
+
+		ofRectangle rect = from.rect;
+		float yy = rect.y;
+
+		bool reset = false;
+		if (from.lineIt != to.lineIt) {
+			// selec to end of line
+			rect.width = (*from.lineIt).lineW - rect.x;
+			ofDrawRectangle(rect);
+			from.lineIt++;
+			reset = true;
+
+			yy += (*from.lineIt).lineH;
+		}
+
+		while (from.lineIt != to.lineIt) {
+			StyledLine &line = *from.lineIt;
+			float x = size.x - t->boundingBox.x + line.elements.front().x;
+			float y = yy;
+			ofDrawRectangle(x, y, line.lineW, line.lineH);
+			yy += line.lineH;
+			++from.lineIt;
+			reset = true;
+		}
+
+		if (from.lineIt != t->lines.end()) {
+			StyledLine &line = *from.lineIt;
+			float x = reset ? (size.x - t->boundingBox.x + line.elements.front().x) : from.rect.x;
+			float y = reset ? yy : from.rect.y;
+
+			ofDrawRectangle(x, y, to.rect.x + to.rect.width - x, line.lineH);
+			++from.lineIt;
+		}
+	}
+
+	//	mui::Helpers::getFontStash().drawColumn(text, fontStyle, size.x-boundingBox.x, size.y-boundingBox.y, width);
+	mui::Helpers::getFontStash().drawLines(t->lines, size.x - t->boundingBox.x, size.y - t->boundingBox.y, MuiConfig::debugDraw);
+	ofSetColor(255);
+	if (hasKeyboardFocus()) {
+		if (t->drawActiveBorder) {
+			ofNoFill();
+			ofDrawRectangle(0, 0, width - 1, height - 1);
+			ofFill();
+		}
+		// getting the time is slow, but it can only happen
+		// for a single textfield here because of the focus (so we're fine)
+		uint64_t time = ofGetElapsedTimeMillis();
+		if (((time - t->lastInteraction) % 1000) < 500) {
+			ofRectangle bounds = t->getEditorCursorForIndex(t->state->cursor).rect;
+			ofDrawRectangle(bounds.x + bounds.width, bounds.y + 2, 2, bounds.height - 2);
+		}
+	}
+}
+
+
+void mui::TextAreaView::touchDown(ofTouchEventArgs &touch) {
+	t->lastInteraction = ofGetElapsedTimeMillis();
+
+	if (t->selectAllOnFocus && !hasKeyboardFocus()) {
+		t->selectAll();
+	}
+	else {
+		stb_textedit_click(t, t->state, touch.x, touch.y);
+	}
+	requestKeyboardFocus();
+}
+
+void mui::TextAreaView::touchUp(ofTouchEventArgs &touch) {
+}
+
+void mui::TextAreaView::touchUpOutside(ofTouchEventArgs &touch) {
+}
+
+void mui::TextAreaView::touchMoved(ofTouchEventArgs &touch) {
+	stb_textedit_drag(t, t->state, touch.x, touch.y);
+}
+
+void mui::TextAreaView::touchMovedOutside(ofTouchEventArgs &touch) {
+	stb_textedit_drag(t, t->state, touch.x, touch.y);
+}
+
+void mui::TextAreaView::mouseScroll(ofMouseEventArgs &args) {
+	t->mouseScroll(args);
 }

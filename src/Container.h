@@ -302,14 +302,14 @@ namespace mui{
 		
 		/// \brief sets a property of arbitrary type
 		template<typename T>
-		void setProperty(string key, T && thing) {
+		void setProperty(const string & key, T && thing) {
 			data::Attribute attr{ thing };
 			properties[key] = attr;
 		}
 		
 		/// \brief Returns a pointer to the property, or a nullpointer if the property was not found or the wrong class. Do not store the resulting pointer, copy the data if you need it again later!
 		template<typename T>
-		T * getProperty(string key) {
+		T * getProperty(const string & key){
 			auto it = properties.find(key);
 			if( it == properties.end() || it->second.empty()) return nullptr;
 			else{
@@ -320,6 +320,24 @@ namespace mui{
 					return nullptr;
 				}
 			}
+		}
+
+		/// \brief Returns a const ref to the property, or the provided fallback
+		template<typename T>
+		const T & getPropertyOr(const string & key, const T & fallback = T()) {
+			T * t = getProperty<T>(key); 
+			return t ? *t : fallback; 
+		}
+
+
+		/// \brief Removes a property
+		template<typename T>
+		bool removeProperty(string key) {
+			auto it = properties.find(key); 
+			if (it == properties.end()) return false;
+
+			properties.erase(it); 
+			return true; 
 		}
 		
 		/// \brief Returns a copy of a property that was either stored as string or as const char *. Returns an empty string in case anything goes wrong.
