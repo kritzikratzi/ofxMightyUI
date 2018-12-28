@@ -148,7 +148,7 @@ short mui::Helpers::getCustomCursorId(const string & fontName, const string & ch
 	auto it = cursorNameToId.find(name);
 	if (it == cursorNameToId.end()) {
 		loadFont(fontName);
-		float h = 16 * muiGetDefaultDisplayScaling();
+		float h = 16; // use or don't use display scaling??
 		ofxFontStashStyle style = getStyle(fontName, h*0.8);
 		style.alignment = static_cast<FONSalign>(FONSalign::FONS_ALIGN_CENTER | FONSalign::FONS_ALIGN_MIDDLE);
 
@@ -159,7 +159,8 @@ short mui::Helpers::getCustomCursorId(const string & fontName, const string & ch
 
 		ofFbo fbo;
 		fbo.allocate(h, h, GL_RGBA, 4);
-		fbo.begin(); 
+		fbo.begin();
+		ofBackground(0,0);
 		style.color = ofColor(0);
 		style.blur = 4;
 		getFontStash().draw(character, style, h / 2, h / 2);
