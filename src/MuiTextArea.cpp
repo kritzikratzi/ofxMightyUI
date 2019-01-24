@@ -304,6 +304,15 @@ mui::TextArea::~TextArea(){
 	delete state;
 }
 
+// internally redirect those, so that it goes straight into the real textarea and not the scroller
+bool mui::TextArea::hasFocus(){return editor_view->hasFocus(); }
+bool mui::TextArea::hasFocus( ofTouchEventArgs &touch ){ return editor_view->hasFocus(touch); };
+bool mui::TextArea::requestFocus( ofTouchEventArgs &args ){ return editor_view->requestFocus(args); };
+
+// internally redirect those, so that it goes straight into the real textarea and not the scroller
+bool mui::TextArea::hasKeyboardFocus(){ return editor_view->hasKeyboardFocus(); };
+bool mui::TextArea::requestKeyboardFocus(){ return editor_view->requestKeyboardFocus(); };
+
 //--------------------------------------------------------------
 void mui::TextArea::update(){
 	mui::ScrollPane::update(); 
@@ -576,7 +585,6 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 
 				
 				insertTextAtCursor(text,true);
-				return true;
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION)){
 				// a shortcut of sorts, but not for us. 
@@ -629,6 +637,13 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 	if(certainlyChanged || undoPt != state->undostate.undo_point || redoPt != state->undostate.redo_point || undoWhere != state->undostate.undo_rec[MIN(98,state->undostate.undo_point)].where ){
 		ofNotifyEvent(onChange, text, this);
 	}
+	
+	// check if we need to scroll
+	{
+		EditorCursor cursor = getEditorCursorForIndex(state->cursor);
+		scrollIntoView(cursor.rect);
+	}
+	
 	return true;
 }
 

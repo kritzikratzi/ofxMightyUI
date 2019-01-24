@@ -57,8 +57,10 @@ namespace mui{
 		virtual void handleDraw();
 		virtual void handleLayout();
 
-		// scroll the least amount possible so that the element becomes visible
+		// scroll the least amount necessary so that the element becomes visible
 		void scrollIntoView(mui::Container * container);
+		// scroll the least amount necessary so that the target rectangle become visible.
+		void scrollIntoView(const ofRectangle & rect);
 		// scrolls to a position
 		void scrollTo( float x, float y );
 		

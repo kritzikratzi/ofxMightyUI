@@ -57,13 +57,22 @@ namespace mui{
 		// the height and y offset are currently always the size of a capital 'M'
 		ofRectangle boundingBox;
 
+		// internally redirect those, so that it goes straight into the real textarea and not the scroller
+		bool hasFocus() override;
+		bool hasFocus( ofTouchEventArgs &touch ) override;
+		bool requestFocus( ofTouchEventArgs &args ) override;
+		
+		// internally redirect those, so that it goes straight into the real textarea and not the scroller
+		bool hasKeyboardFocus() override;
+		bool requestKeyboardFocus() override;
+		
 		// used internally
-		virtual void update();
-		virtual void drawBackground();
-		virtual void layout();
+		void update() override;
+		void drawBackground() override;
+		void layout() override;
 
-		virtual bool keyPressed(ofKeyEventArgs &key);
-		virtual bool keyReleased(ofKeyEventArgs &key);
+		bool keyPressed(ofKeyEventArgs &key) override;
+		bool keyReleased(ofKeyEventArgs &key) override;
 
 		// change the size to accomodate all contents
 		virtual void sizeToFit(float padX = 0, float padY = 0);

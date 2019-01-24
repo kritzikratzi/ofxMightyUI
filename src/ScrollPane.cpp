@@ -184,10 +184,22 @@ void mui::ScrollPane::scrollIntoView(mui::Container * container){
 		if(curr.x>pos.x) targetX = pos.x;
 		if(curr.x+curr.width<pos.x+container->width) targetX = curr.x + (pos.x+container->width-curr.x-curr.width);
 		if(curr.y+height>pos.y) targetY = pos.y;
-		if(curr.y+curr.height<pos.y+container->height) targetY = curr.y + curr.height - container->height;
+		if(curr.y+curr.height<pos.y+container->height) targetY = curr.y + container->y + container->height - curr.getHeight();
 		beginBaseAnimation(ofClamp(targetX,minScrollX,maxScrollX), ofClamp(targetY,minScrollY,maxScrollY));
 	}
 }
+
+void mui::ScrollPane::scrollIntoView(const ofRectangle & rect){
+	ofRectangle curr(currentScrollX,currentScrollY,width-(wantsToScrollX?8:0),height-(wantsToScrollY?8:0));
+	float targetX = curr.x;
+	float targetY = curr.y;
+	if(curr.x>rect.x) targetX = rect.x;
+	if(curr.x+curr.width<rect.x+rect.width) targetX = curr.x + (rect.x+rect.width-curr.x-curr.width);
+	if(curr.y>rect.y) targetY = rect.y;
+	if(curr.y+curr.height<rect.y+rect.height) targetY = curr.y + rect.getBottom() - curr.getBottom();
+	beginBaseAnimation(ofClamp(targetX,minScrollX,maxScrollX), ofClamp(targetY,minScrollY,maxScrollY));
+}
+
 
 void mui::ScrollPane::scrollTo( float x, float y ){
 	beginBaseAnimation(ofClamp(x,minScrollX,maxScrollX), ofClamp(y,minScrollY,maxScrollY));
