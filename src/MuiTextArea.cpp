@@ -798,8 +798,8 @@ ofVec2f mui::TextArea::getCursorPosition(){
 }
 
 void mui::TextArea::selectAll(){
-	stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTEND);
-	stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTSTART | STB_TEXTEDIT_K_SHIFT);
+	stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTSTART);
+	stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTEND | STB_TEXTEDIT_K_SHIFT);
 }
 
 void mui::TextArea::selectNothing(){

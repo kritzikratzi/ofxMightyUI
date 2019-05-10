@@ -142,7 +142,7 @@ namespace tween {
     };
 	
 	
-    enum {
+    enum TweenType{
         LINEAR,
         SINE,
         QUINT,
@@ -157,7 +157,7 @@ namespace tween {
 		
     };
 	
-    enum {
+    enum TweenEasing{
         EASE_IN,
         EASE_OUT,
         EASE_IN_OUT
