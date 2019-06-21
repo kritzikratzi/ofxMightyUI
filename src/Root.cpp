@@ -558,10 +558,11 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 
 	mui::Container * temp = keyboardResponder; 
 
-	if (temp == nullptr) {
-		auto pos = muiGetMousePos();
-		temp = findChildAt(pos.x, pos.y, true, true);
-	}
+	// for now disable 
+	//if (temp == nullptr) {
+	//	auto pos = muiGetMousePos();
+	//	temp = findChildAt(pos.x, pos.y, true, true);
+	//}
 
 	if( temp != nullptr ){
 		if( !temp->isVisibleOnScreen()){
