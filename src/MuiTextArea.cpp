@@ -930,21 +930,24 @@ void mui::TextAreaView::draw() {
 
 	//	mui::Helpers::getFontStash().drawColumn(text, fontStyle, size.x-boundingBox.x, size.y-boundingBox.y, width);
 	mui::Helpers::getFontStash().drawLines(t->lines, size.x - t->boundingBox.x, size.y - t->boundingBox.y, MuiConfig::debugDraw);
-	ofSetColor(255);
 	if (hasKeyboardFocus()) {
 		if (t->drawActiveBorder) {
+			ofSetColor(200); 
 			ofNoFill();
-			ofDrawRectangle(0, 0, width - 1, height - 1);
+			ofDrawRectangle(0, 1, width - 1, height - 2);
 			ofFill();
 		}
 		// getting the time is slow, but it can only happen
 		// for a single textfield here because of the focus (so we're fine)
 		uint64_t time = ofGetElapsedTimeMillis();
 		if (((time - t->lastInteraction) % 1000) < 500) {
+			ofSetColor(255);
 			ofRectangle bounds = t->getEditorCursorForIndex(t->state->cursor).rect;
 			ofDrawRectangle(bounds.x + bounds.width, bounds.y + 2, 2, bounds.height - 2);
 		}
 	}
+
+	ofSetColor(255);
 }
 
 
