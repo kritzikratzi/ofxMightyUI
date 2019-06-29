@@ -541,9 +541,15 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 		return this;
 	}
 
-	if( mui::MuiConfig::enableDebuggingShortcuts && getKeyPressed(OF_KEY_ALT) && event.keycode == 'I' ){
+	if (mui::MuiConfig::debugDraw && getKeyPressed(OF_KEY_ALT) && event.keycode == 'F') {
+		mui::Container * active = this->findChildAt(muiGetMouseX() - this->x, muiGetMouseY() - this->y, true);
+		if (active) active->requestFocus(ofTouchEventArgs());
+		return this; 
+	}
+
+	if( mui::MuiConfig::debugDraw && getKeyPressed(OF_KEY_ALT) && event.keycode == 'I' ){
 		cout << "------------------------------------" << endl;
-		mui::Container * active = this->findChildAt( ofGetMouseX()/mui::MuiConfig::scaleFactor - this->x, ofGetMouseY()/mui::MuiConfig::scaleFactor-this->y, true );
+		mui::Container * active = this->findChildAt( muiGetMouseX() - this->x, muiGetMouseY()-this->y, true );
 		cout << "Set a debug point in " << __FILE__ << ":" << __LINE__ << " to inspect this element" << endl;
 		cout << "------------------------------------" << endl;
 		

@@ -132,6 +132,10 @@ float muiGetDefaultDisplayScaling(){
 #endif
 }
 
+bool muiIsContextClick() {
+	return ofGetMousePressed(OF_MOUSE_BUTTON_3) ||
+		(OF_TARGET_OSX && ofGetKeyPressed(OF_KEY_CONTROL));
+}
 
 ofVec2f muiGetMousePos(){
 	return ofVec2f(ofGetMouseX(),ofGetMouseY())/mui::MuiConfig::scaleFactor;

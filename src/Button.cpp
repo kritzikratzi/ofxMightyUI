@@ -4,7 +4,7 @@
 
 
 #include "Button.h"
-#include "MuiCore.h"
+#include "ofxMightyUI.h"
 #include "Label.h"
 
 using namespace mui; 
@@ -82,7 +82,7 @@ void mui::Button::layout(){
 
 //--------------------------------------------------------------
 void mui::Button::touchDown( ofTouchEventArgs &touch ){
-	isRightClick = ofGetMousePressed(OF_MOUSE_BUTTON_3);
+	isRightClick = muiIsContextClick();
 	pressed = true;
 }
 

@@ -934,7 +934,7 @@ void mui::TextAreaView::draw() {
 		if (t->drawActiveBorder) {
 			ofSetColor(200); 
 			ofNoFill();
-			ofDrawRectangle(0, 1, width - 1, height - 2);
+			ofDrawRectangle(0.5, 0.5, width - 1, height - 1);
 			ofFill();
 		}
 		// getting the time is slow, but it can only happen
