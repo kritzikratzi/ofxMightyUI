@@ -3,6 +3,9 @@
 //
 //  Created by Hansi on 26.07.15.
 //
+// V1.16 (2019/7/9)
+//      * guess a lot went undocumented? or unmerged?
+//      * added stretchToLeftEdgeOfParent and stretchToTopEdgeOfParent
 // V1.15 (2017/11/8)
 //      * fixed typo, renamed colums* to columns*
 // V1.14
@@ -211,9 +214,25 @@ namespace mui{
 			return *this;
 		}
 		
+		L & stretchToTopEdgeOfParent(float space = 0) {
+			for (auto target : targets) {
+				target->height += target->y - space;
+				target->y = space;
+			}
+			return *this;
+		}
+
+		L & stretchToLeftEdgeOfParent(float space = 0) {
+			for (auto target : targets) {
+				target->width += target->x - space;
+				target->x = space; 
+			}
+			return *this;
+		}
+
 		L & stretchToRightEdgeOfParent( float space = 0 ){
 			for(auto target : targets ){
-				if( target->parent == NULL ) return *this;
+				if( target->parent == NULL ) continue;
 				target->width = target->parent->width - space - target->x;
 			}
 			return *this;
@@ -221,7 +240,7 @@ namespace mui{
 		
 		L & stretchToBottomEdgeOfParent( float space = 0 ){
 			for(auto target : targets ){
-				if( target->parent == NULL ) return *this;
+				if( target->parent == NULL ) continue;
 				target->height = target->parent->height - space - target->y;
 			}
 			return *this;
