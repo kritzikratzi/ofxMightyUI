@@ -22,20 +22,18 @@ void mui::TextureAtlas::load( string absXmlPath, string absImgPath ){
 	tex.setTextureWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 	tex.setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
 	
-	ofXml xml(absXmlPath);
-//	xml.setTo("");
+    ofXml xml;
+    xml.load(absXmlPath);
 	
-	xml.setTo( "//" );
-	int numTiles = xml.getNumChildren();
-	for( int i = 0; i < numTiles; i++ ){
-		xml.setToChild(i);
+	auto atlas = xml.getChild("TextureAtlas");
+    int i = 0;
+    for( auto & sprite : atlas.getChildren() ){
 		ofRectangle rect;
-		rect.x = ofToInt(xml.getAttribute("x"));
-		rect.y = ofToInt(xml.getAttribute("y"));
-		rect.width = ofToInt(xml.getAttribute("w"));
-		rect.height = ofToInt(xml.getAttribute("h"));
-		rects[xml.getAttribute("n")] = rect;
-		xml.setToParent();
+		rect.x = sprite.getAttribute("x").getIntValue();
+		rect.y = sprite.getAttribute("y").getIntValue();
+		rect.width = sprite.getAttribute("w").getIntValue();
+		rect.height = sprite.getAttribute("h").getIntValue();
+		rects[sprite.getAttribute("n").getValue()] = rect;
 	}
 	
 	loaded = true;
@@ -144,13 +142,13 @@ void mui::TextureAtlas::addSubsection(float x, float y, float z, float w, float 
 	add.addVertex(ofVec3f(px1,py1,z));
 	add.addVertex(ofVec3f(px0,py1,z));
 	
-	add.addTexCoord(ofVec3f(tx0,ty0));
-	add.addTexCoord(ofVec3f(tx1,ty0));
-	add.addTexCoord(ofVec3f(tx1,ty1));
+    add.addTexCoord({tx0,ty0});
+    add.addTexCoord({tx1,ty0});
+    add.addTexCoord({tx1,ty1});
 	
-	add.addTexCoord(ofVec3f(tx0,ty0));
-	add.addTexCoord(ofVec3f(tx1,ty1));
-	add.addTexCoord(ofVec3f(tx0,ty1));
+    add.addTexCoord({tx0,ty0});
+    add.addTexCoord({tx1,ty1});
+    add.addTexCoord({tx0,ty1});
 }
 
 // copied almost directly from ofTexture.cpp
@@ -207,15 +205,13 @@ void mui::TextureAtlas::drawSubsection(float x, float y, float z, float w, float
 	 
 		ofTranslate(0,0,z);
 	 }*/
-	quad.getVertices()[0].set(px0,py0,z);
-	quad.getVertices()[1].set(px1,py0,z);
-	quad.getVertices()[2].set(px1,py1,z);
-	quad.getVertices()[3].set(px0,py1,z);
-	
-	quad.getTexCoords()[0].set(tx0,ty0);
-	quad.getTexCoords()[1].set(tx1,ty0);
-	quad.getTexCoords()[2].set(tx1,ty1);
-	quad.getTexCoords()[3].set(tx0,ty1);
-	
+    quad.setVertex(0,{px0,py0,z});
+    quad.setVertex(1,{px1,py0,z});
+    quad.setVertex(2,{px1,py1,z});
+    quad.setVertex(3,{px0,py1,z});
+    quad.setTexCoord(0,{tx0,ty0});
+    quad.setTexCoord(1,{tx1,ty0});
+    quad.setTexCoord(2,{tx1,ty1});
+    quad.setTexCoord(3,{tx0,ty1});
 	quad.draw();
 }

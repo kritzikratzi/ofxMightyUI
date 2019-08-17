@@ -13,6 +13,7 @@
 #include "Container.h"
 #include "ScrollPane.h"
 #include "ofxMightyUI.h"
+#include <GLFW/glfw3.h>
 
 using namespace mui;
 
@@ -307,7 +308,7 @@ mui::Container * mui::Root::handleTouchCancelled( ofTouchEventArgs &touch ){
 
 
 //--------------------------------------------------------------
-void mui::Root::fixTouchPosition( ofVec2f &touch, ofVec2f &copy, Container * container ){
+void mui::Root::fixTouchPosition( glm::vec2 &touch, glm::vec2 &copy, Container * container ){
 	copy.x = touch.x/mui::MuiConfig::scaleFactor;
 	copy.y = touch.y/mui::MuiConfig::scaleFactor;
 	
@@ -543,7 +544,8 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 
 	if (mui::MuiConfig::debugDraw && getKeyPressed(OF_KEY_ALT) && event.keycode == 'F') {
 		mui::Container * active = this->findChildAt(muiGetMouseX() - this->x, muiGetMouseY() - this->y, true);
-		if (active) active->requestFocus(ofTouchEventArgs());
+        ofTouchEventArgs temp;
+		if (active) active->requestFocus(temp);
 		return this; 
 	}
 
@@ -760,7 +762,7 @@ bool mui::Root::of_mouseReleased( ofMouseEventArgs &args ){
 	return handleMouseReleased(args.x, args.y, args.button) != NULL;
 }
 bool mui::Root::of_mouseScrolled( ofMouseEventArgs &args ){
-	ofVec2f pos;
+    glm::vec2 pos;
 	fixTouchPosition(args, pos, NULL);
 	mui::Container * container = (mui::Container*)findChildOfType<mui::ScrollPane>(pos.x, pos.y, true, true);
 	if( container != NULL ){

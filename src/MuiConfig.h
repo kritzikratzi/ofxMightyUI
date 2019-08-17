@@ -9,7 +9,6 @@
 #ifndef __Oscilloscope__MuiConfig__
 #define __Oscilloscope__MuiConfig__
 
-#include <Poco/Path.h>
 #include "ofMain.h"
 
 #if defined(TARGET_OSX)
@@ -75,7 +74,7 @@ namespace mui{
 		static float scaleFactor;
 		
 		// path to the data folder (containing the mui folder)
-		static Poco::Path dataPath;
+        static std::filesystem::path dataPath;
 		
 		static ofLogLevel logLevel;
 		

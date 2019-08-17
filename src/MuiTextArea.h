@@ -103,7 +103,7 @@ namespace mui{
 
 		// call this after you made changes to any variables (changing x/y is okay without doing a commit() ).
 		// doing text-maths too insane to do on every frame!
-		virtual void commit();
+		virtual void commit() override;
 
 		virtual ofRectangle box(float tblr = 0) { return box(tblr, tblr, tblr, tblr); }
 		virtual ofRectangle box(float tb, float lr) { return box(tb, lr, tb, lr); }
@@ -180,7 +180,7 @@ namespace mui{
 		TextAreaView( mui::TextArea * textArea, float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 );
 		~TextAreaView();
 		
-		virtual void draw();
+		virtual void draw() override;
 		
 		void touchDown( ofTouchEventArgs &touch ) override;
 		void touchUp(ofTouchEventArgs &touch) override;

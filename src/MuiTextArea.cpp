@@ -12,6 +12,8 @@
 #include "Root.h"
 #include <regex>
 
+#include <GLFW/glfw3.h>
+
 // how nasty is this??
 mui::TextAreaInternal * internal(mui::TextArea * tf){
 	return tf->internalData();

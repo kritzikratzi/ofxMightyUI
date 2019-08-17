@@ -80,7 +80,7 @@ namespace mui{
 		static mui::Root * INSTANCE;
 		
 	private:
-		void fixTouchPosition( ofVec2f &touch, ofVec2f &copy, Container * c );
+        void fixTouchPosition( glm::vec2 &touch, glm::vec2 &copy, Container * c );
         void handleRemovals(); 
         
 		tween::TweenerParam param;

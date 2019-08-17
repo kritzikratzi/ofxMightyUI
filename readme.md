@@ -6,6 +6,9 @@ Documentation is not exactly up to date.
 
 ## About
 
+A handy UI addon for [openFrameworks](http://www.openframeworks.cc) Version 0.10. 
+
+
 In the long run this is supposed to be a small but flexible 
 UI library that runs cross-platform
 with multitouch support. 
@@ -25,58 +28,17 @@ ofxMightyUI is a personal project and developed for my specific needs.
 
 
 
-## TODO
-
-- ☀️ use dependencies instead of including everything (ofxUnicode, ofxEasyRetina, ofxFontStash)
-- ☀️ switch from poco events to ofEvent (same behind the scenes, but nicer to use)
-- ☀️ moving files around to follow ofx addon standard. already sortof works with project generator. hurray! 
-- ⛅️ hm... seems the project generator doesn't set up copying of data files? <br>Yep, that's the case! 
-- ☀️ test with new pg (project generator)
-- ⛅️ test android (+retina)
-- ⛅️ test ios (+retina)
-- ⛅️ test windows (hidpi partially supported. needs testing when moving between monitors, needs testing on win10)
-- ⛅️ look into stb_textedit https://github.com/nothings/stb/blob/master/stb_textedit.h
-- ☀️ see if i can depend on the "proper" ofxFontStash<br>Don't care for now. Waiting for fontstash2 to look
-- ☀️ cleanup include structure. how does it even compile? 
-- ⛅️ prefix all filenames with `Mui` to avoid include conflicts
-- ☁️ create a ofxMightyUI.h that can be included (including MUI.h feels odd in OF)
-- ☀️ make a basic example
-- ☀️ window size is very confused until the window is resized once (esp one windows) -> seems fine now! 
-- ☀️ possible speed gain when combining textureatlas of fontstash and mui ui elements? (no switching textures -> drawArrays becomes non blocking?) --> better to collect draw commands as long as possible. 
-- ☁️ include dropdown, instanced listview, and some other classes i have lying around here and there
-- ☁️ added de/serialization mechanism to mui::ParameterPanel (either my IO.h, or some built in xml thingie) --> use the code from osci studio? 
-- ☁️ add support for ofParameter / ofParameterGroup to parameterpanel? (is it fast enough?, i want something lock free)
-- ☁️ create a color picker component
-- ☀️ ~~clean up layouting mess --> remove layoutHandler~~, create onLayout event. maybe include the new `L.h` i've been using in my own projects
-- ☀️ add event handlers (onTouchDown, onTouchUp, ...)
-
-
-TODO OSX: 
-
-- ☀️ what is needed for the user to enable retina? [should be supported] -> add the high resolution capable option to the plist
-- **Copy Resources**: ```cp -R ../../../addons/ofxMightyUI/bin/data/* "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"``` can this be done with projectgen?  --> not at the moment. not gonna mess around to get this to work. 
-
-TODO WINDOWS: 
-
-- ☀️ what is need to detect retina? (using scaleFactor already works very nicely)
-- **Copy Resources**: Go to Project settings, choose "all configurations". Then go to Build Events>Post-Build Events add this to the _command line_: <br>
-  		```xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxMightyUI\bin\data\mui" "$(ProjectDir)bin\data\mui"```
-
----
-
-
-A handy UI addon for [openFrameworks](http://www.openframeworks.cc). 
 
 ## Features
 
 
-This is very much a work in progress. The following works: 
+This is very much a work in progress. The following works/worked/should work: 
 
 - Windows (draggable, with titles and optional left/right toolbar buttons)
 - Labels (with all sorts of alignments)
 - Sliders (multitouch enabled, optionally with value labels)
 - Buttons
-- Textfields (operating system textfield is overlayed during editing so it allows copy&paste)
+- Textfields (based on stb_textedit)
 - Scrollpanes
 - Segmented buttons (the equivalent of radio buttons in a way)
 - Retina support 

@@ -477,7 +477,7 @@ void mui::Container::handleTouchCanceled( ofTouchEventArgs &touch ){
 bool mui::Container::handleFileDragged(ofDragInfo & info ){
 	if( !visible ) return NULL;
 	
-	ofPoint & touch = info.position;
+	auto & touch = info.position;
 	if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
 		float posX, posY;
 		

@@ -20,7 +20,7 @@ bool mui::MuiConfig::detectRetina = true;
 bool mui::MuiConfig::useRetinaAssets = true;
 float mui::MuiConfig::scaleFactor = 1;
 bool mui::MuiConfig::enableDebuggingShortcuts = true;
-Poco::Path mui::MuiConfig::dataPath = Poco::Path();
+std::filesystem::path mui::MuiConfig::dataPath;
 ofLogLevel mui::MuiConfig::logLevel = OF_LOG_ERROR;
 function<ofFileDialogResult(string,string)> mui::MuiConfig::systemSaveDialog = [](string file, string msg){
 	return ofSystemSaveDialog(file,msg);

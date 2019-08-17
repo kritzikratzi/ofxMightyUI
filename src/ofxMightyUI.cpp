@@ -8,8 +8,7 @@
  */
 
 #include "ofxMightyUI.h"
-#include <Poco/Util/Application.h>
-
+#include <GLFW/glfw3.h>
 
 #if TARGET_OS_IPHONE
 	#include "ofAppiOSWindow.h"
@@ -32,7 +31,8 @@ void mui_init(){
 	}
 	#endif
 
-	Poco::Path appPath;
+    std::filesystem::path appPath;
+	
 	#if TARGET_OS_IPHONE
 		// http://www.cocoabuilder.com/archive/cocoa/193451-finding-out-executable-location-from-c-program.html
 		CFBundleRef bundle = CFBundleGetMainBundle();
@@ -73,9 +73,9 @@ void mui_init(){
 		CFRelease(path);
 		CFRelease(url);
 		CFRelease(absolute);
-		appPath = Poco::Path(result);
+		appPath = result;
 		if(result != NULL ) free(result); 
-		appPath = appPath.parent().parent().pushDirectory("Resources");
+		appPath = appPath.parent_path().parent_path().append("Resources");
 	
 		if( mui::MuiConfig::detectRetina ){
 			ofAppGLFWWindow * window = dynamic_cast<ofAppGLFWWindow*>(ofGetWindowPtr());
@@ -94,12 +94,12 @@ void mui_init(){
 			mui::MuiConfig::scaleFactor = dpi;
 			cout << "scale factor = " << dpi << endl;
 		}
-		appPath = Poco::Path(ofToDataPath("./", true));
+		appPath = ofToDataPath("./", true);
 	#else
-		appPath = Poco::Path(ofToDataPath("./", true));
+		appPath = ofToDataPath("./", true);
 	#endif
 	
-	mui::MuiConfig::dataPath = appPath.absolute();
+    mui::MuiConfig::dataPath = std::filesystem::absolute(appPath);
 	mui::Helpers::getFontStash().setup(mui::MuiConfig::fontAtlasSize );
 	mui::Helpers::getFontStash().pixelDensity = mui::MuiConfig::scaleFactor;
 	mui::Helpers::getFontStash().fontScale = 1.3;

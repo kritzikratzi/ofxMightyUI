@@ -10,7 +10,9 @@
 #include "Helpers.h"
 #include "TextureAtlas.h"
 #include "ofxMightyUI.h"
+#include <GLFW/glfw3.h>
 #include <locale>
+namespace fs = std::filesystem;
 
 
 std::map<std::string, ofTexture*> mui::Helpers::textures;
@@ -43,29 +45,28 @@ void mui::Helpers::clearCaches(){
 
 std::string mui::Helpers::muiPath( std::string path ){
 	// pretty much copy&pasted from OF
-	Poco::Path outputPath;
-	Poco::Path inputPath(path);
-	string strippedDataPath = mui::MuiConfig::dataPath.toString();
+    fs::path outputPath;
+    fs::path inputPath(path);
+	string strippedDataPath = mui::MuiConfig::dataPath.string();
 	strippedDataPath = ofFilePath::removeTrailingSlash(strippedDataPath);
-	if (inputPath.toString().find(strippedDataPath) != 0) {
-		outputPath = mui::MuiConfig::dataPath;
-		outputPath.resolve(inputPath);
+	if (!inputPath.is_absolute()) {
+		outputPath = mui::MuiConfig::dataPath / inputPath;
 	} else {
 		outputPath = inputPath;
 	}
 	
-	if( !ofFile(outputPath.absolute().toString(), ofFile::Reference).exists() ){
+    if( !ofFile(fs::absolute(outputPath).string(), ofFile::Reference).exists() ){
 		// maybe in the data dir?
 		string dataFile = ofToDataPath(path, true);
 		if( ofFile(dataFile,ofFile::Reference).exists() ){
-			outputPath = Poco::Path(dataFile);
+            outputPath = fs::path(dataFile);
 		}
 	}
 	
 	if( mui::MuiConfig::logLevel <= OF_LOG_NOTICE ){
-		cout << "loading path: " << outputPath.toString() << " || " << outputPath.absolute().toString() << " || " << path << endl;
+        cout << "loading path: " << outputPath.string() << " || " << fs::absolute(outputPath).string() << " || " << path << endl;
 	}
-	return outputPath.absolute().toString();
+    return fs::absolute(outputPath).string();
 }
 
 void mui::Helpers::drawImage( string name, float x, float y, float w, float h ){

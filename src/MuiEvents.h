@@ -241,8 +241,8 @@ namespace mui{
 		}
 		
 		// for compatibility with ofAddListener()
-		void notify(void * sender, EventType & event){
-			notify(event); // just ignore the sender
+		bool notify(void * sender, EventType & event){
+			return notify(event); // just ignore the sender
 		}
 		
 		const std::list<EventFunction<EventType>> & getListeners(){
