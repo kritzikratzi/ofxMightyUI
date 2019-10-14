@@ -333,7 +333,7 @@ void mui::TextArea::setText( string text ){
 	state->select_end = strlenWithLineStarts;
 	state->cursor = state->select_end;
 	vector<uint32_t> text_utf32 = utf8_to_utf32(text);
-	stb_textedit_paste(this, state, &text_utf32[0], (int)text_utf32.size());
+	stb_textedit_paste(this, state, text_utf32.size()?&text_utf32[0]:nullptr, (int)text_utf32.size());
 }
 
 void mui::TextArea::setTextAndNotify( string text ){
