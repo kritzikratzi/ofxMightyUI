@@ -766,15 +766,17 @@ bool mui::Root::of_mouseScrolled( ofMouseEventArgs &args ){
 	fixTouchPosition(args, pos, NULL);
 	mui::Container * container = (mui::Container*)findChildOfType<mui::ScrollPane>(pos.x, pos.y, true, true);
 	if( container != NULL ){
-		container->mouseScroll(args);
-		container->onMouseScroll.notify(args);
+		if (!container->onMouseScroll.notify(args)) {
+			container->mouseScroll(args);
+		}
 		return true;
 	}
 	else{
 		mui::Container * container = findChildAt(pos.x, pos.y, true, true );
 		if( container != nullptr && container != this ){
-			container->mouseScroll(args);
-			container->onMouseScroll.notify(args);
+			if (!container->onMouseScroll.notify(args)) {
+				container->mouseScroll(args); 
+			}
 			return true;
 		}
 		else{

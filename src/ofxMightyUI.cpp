@@ -141,6 +141,11 @@ ofVec2f muiGetMousePos(){
 	return ofVec2f(ofGetMouseX(),ofGetMouseY())/mui::MuiConfig::scaleFactor;
 }
 
+ofVec2f muiGetMousePos(mui::Container * c) {
+	return muiGetMousePos() - (c?c->getGlobalPosition():ofVec2f(0)); 
+}
+
+
 int muiGetMouseX(){
 	return ofGetMouseX()/mui::MuiConfig::scaleFactor;
 }

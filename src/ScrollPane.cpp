@@ -205,6 +205,11 @@ void mui::ScrollPane::scrollTo( float x, float y ){
 	beginBaseAnimation(ofClamp(x,minScrollX,maxScrollX), ofClamp(y,minScrollY,maxScrollY));
 }
 
+void mui::ScrollPane::scrollBy(float dx, float dy) {
+	currentScrollX = ofClamp(currentScrollX + dx, minScrollX, maxScrollX);
+	currentScrollY = ofClamp(currentScrollY + dy, minScrollY, maxScrollY);
+}
+
 
 mui::Container * mui::ScrollPane::createPage(){
 	static int pageCount = 0;
@@ -516,7 +521,8 @@ mui::Container * mui::ScrollPane::handleTouchDown( ofTouchEventArgs &touch ){
 		return NULL;
 	}
 	if( trackingState == INACTIVE ){
-		if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
+		bool inside = touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height;
+		if( inside && ofGetMousePressed(OF_MOUSE_BUTTON_1) ){
 			if( animating && ( !animatingMomentum || ofDist(0,0,animateX/1000,animateY/1000) >= 0.1 ) && !animatingToBase /*&& ( !animatingToBase || ofDist(animateToX, animateToY,currentScrollX,currentScrollY ) >= 5 )*/){
 				// you want something? just take it, it's yours!
 				beginTracking( touch, DRAG_CONTENT );

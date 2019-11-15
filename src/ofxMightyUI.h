@@ -26,6 +26,7 @@
 void mui_init();
 
 ofVec2f muiGetMousePos();
+ofVec2f muiGetMousePos(mui::Container * translateToContainer); 
 int muiGetMouseX();
 int muiGetMouseY();
 float muiGetWidth();

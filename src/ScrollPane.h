@@ -63,6 +63,7 @@ namespace mui{
 		void scrollIntoView(const ofRectangle & rect);
 		// scrolls to a position
 		void scrollTo( float x, float y );
+		void scrollBy(float dx, float dy); 
 		
 		// internal stuff ^^
 		void beginBaseAnimation( float toX, float toY );

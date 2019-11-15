@@ -132,7 +132,7 @@ namespace mui{
 		EventHandler<ofTouchEventArgs> onTouchUpOutside{this};
 		EventHandler<ofTouchEventArgs> onTouchDoubleTap{this};
 		EventHandler<ofTouchEventArgs> onTouchCanceled{this};
-		EventHandler<ofMouseEventArgs> onMouseScroll{this};
+		EventHandlerConsumable<ofMouseEventArgs> onMouseScroll{this};
 		EventHandler<ofMouseEventArgs> onMouseEnter{this};
 		EventHandler<ofMouseEventArgs> onMouseExit{this};
 		
