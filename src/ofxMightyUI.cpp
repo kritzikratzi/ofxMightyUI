@@ -142,7 +142,7 @@ ofVec2f muiGetMousePos(){
 }
 
 ofVec2f muiGetMousePos(mui::Container * c) {
-	return muiGetMousePos() - (c?c->getGlobalPosition():ofVec2f(0)); 
+	return muiGetMousePos() - (c?c->getGlobalPosition():ofPoint(0)); 
 }
 
 
