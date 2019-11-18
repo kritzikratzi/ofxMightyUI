@@ -46,6 +46,8 @@ namespace mui{
 		bool canScrollX, canScrollY;
 		
 		ScrollPaneView * view;
+		float padRight = 0; 
+		float padBottom = 0; 
         
 		virtual void init();
 		
