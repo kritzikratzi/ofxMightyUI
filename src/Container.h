@@ -302,8 +302,8 @@ namespace mui{
 		
 		/// \brief sets a property of arbitrary type
 		template<typename T>
-		void setProperty(const string & key, T && thing) {
-			data::Attribute attr{ thing };
+		void setProperty(const string & key, T thing) {
+			data::Attribute attr{ move(thing) };
 			properties[key] = attr;
 		}
 		
