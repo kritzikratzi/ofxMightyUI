@@ -566,11 +566,14 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 
 	mui::Container * temp = keyboardResponder; 
 
-	// for now disable 
-	//if (temp == nullptr) {
-	//	auto pos = muiGetMousePos();
-	//	temp = findChildAt(pos.x, pos.y, true, true);
-	//}
+	if (temp == nullptr) {
+		auto pos = muiGetMousePos();
+		temp = findChildAt(pos.x, pos.y, true, true);
+		// sorry that this is a property ... :/
+		while(temp != nullptr && temp->getPropertyOr("hoverKeyEvent",false)==false){
+			temp = temp->parent;
+		}
+	}
 
 	if( temp != nullptr ){
 		if( !temp->isVisibleOnScreen()){
