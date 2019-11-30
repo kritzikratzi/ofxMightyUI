@@ -24,10 +24,11 @@ namespace mui{
 	
     class ScrollPaneView : public Container{
     public:
-        ScrollPaneView( float x, float y, float w, float h ) : Container( x, y, w, h ){
-			focusTransferable = false;
-		};
+		ScrollPaneView( mui::ScrollPane * owner, float x, float y, float w, float h );
+		virtual ~ScrollPaneView(); 
         virtual void handleDraw();
+	private:
+		mui::ScrollPane * owner;
     };
     
 	class ScrollPane : public Container{
@@ -46,7 +47,7 @@ namespace mui{
 		bool canScrollX, canScrollY;
 		
 		ScrollPaneView * view;
-		float padRight = 0; 
+		float padRight = 0;
 		float padBottom = 0; 
         
 		virtual void init();
@@ -76,16 +77,17 @@ namespace mui{
 		bool autoLockToBottom;
 		
 		// create a new page.
-		Container * createPage();
-		ScrollPane * createPageWithScrollPane();
+		Container * createPage(); // memory belongs to you, release accordingly
+		ScrollPane * createPageWithScrollPane(); // memory belongs to you, release accordingly
 		virtual void nextPage(int inc = 1);
 		virtual void prevPage(int dec = 1);
 		virtual void gotoPage( int page );
 		virtual int getPageNum();
 		virtual int numPages();
 		
-		
-		
+		void pinToTop(mui::Container * c); // adds to scrollpane (not to view!)
+		void pinToLeft(mui::Container * c); // adds to scrollpane (not to view!)
+
 		
 		virtual void updateTouchVelocity( ofTouchEventArgs &touch );
 		virtual void touchDown( ofTouchEventArgs &touch );
@@ -133,6 +135,11 @@ namespace mui{
         float animateToX, animateToY;
 		
 		int numPagesAdded;
+		
+		Inset inset; // how much to inset the scrollview from the scrollpane itself.
+		mui::Container * topPin = nullptr;
+		mui::Container * leftPin = nullptr;
+		friend class ScrollPaneView; 
 	};
 	
 };
