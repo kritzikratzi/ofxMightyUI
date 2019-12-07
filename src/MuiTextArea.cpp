@@ -397,6 +397,7 @@ void mui::TextArea::commit(){
 	int lineNumDisp = 0;
 	int lastLineStart = 0;
 	for( auto & line : lines ){
+		if(line.elements.size()==0) continue; //???
 		auto & last = line.elements.back();
 		lineNumberDisplayToSource.push_back(lineNumSrc);
 		if(last.content.styledText.text == "\n"){
@@ -481,7 +482,7 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 	lastInteraction = ofGetElapsedTimeMillis();
 	short redoPt = state->undostate.redo_point;
 	short undoPt = state->undostate.undo_point;
-	short undoWhere = state->undostate.undo_rec[MIN(98,undoPt)].where;
+	short undoWhere = state->undostate.undo_rec[MIN(STB_TEXTEDIT_UNDOSTATECOUNT-1,undoPt)].where;
 	bool certainlyChanged = false;
 	
 	int keyMask =
@@ -636,7 +637,7 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 			}
 	}
 	
-	if(certainlyChanged || undoPt != state->undostate.undo_point || redoPt != state->undostate.redo_point || undoWhere != state->undostate.undo_rec[MIN(98,state->undostate.undo_point)].where ){
+	if(certainlyChanged || undoPt != state->undostate.undo_point || redoPt != state->undostate.redo_point || undoWhere != state->undostate.undo_rec[MIN(STB_TEXTEDIT_UNDOSTATECOUNT-1,state->undostate.undo_point)].where ){
 		ofNotifyEvent(onChange, text, this);
 	}
 	
@@ -715,9 +716,10 @@ mui::TextArea::EditorCursor mui::TextArea::getEditorCursorForIndex( int cursorPo
 		if( lines.size() > 0 ){
 			float lineH = lines.back().lineH;
 			bounds = lines.back().elements.back().area;
-			bounds.x = size.x - boundingBox.x + bounds.x;
+			bounds.x = size.x - boundingBox.x + bounds.x + bounds.width;
 			bounds.y = size.y - boundingBox.y + yy - 2*lineH;
 			bounds.height = lineH;
+			bounds.width = 0;
 			
 			result.lineIt = lines.end()-1;
 			// there should be always at least one element on each line,

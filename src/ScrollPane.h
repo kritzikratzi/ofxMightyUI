@@ -24,11 +24,13 @@ namespace mui{
 	
     class ScrollPaneView : public Container{
     public:
-		ScrollPaneView( mui::ScrollPane * owner, float x, float y, float w, float h );
+		enum class Type{main,top,left};
+		ScrollPaneView( mui::ScrollPane * owner, ScrollPaneView::Type viewType, float x, float y, float w, float h );
 		virtual ~ScrollPaneView(); 
         virtual void handleDraw();
 	private:
 		mui::ScrollPane * owner;
+		Type viewType;
     };
     
 	class ScrollPane : public Container{
@@ -85,9 +87,8 @@ namespace mui{
 		virtual int getPageNum();
 		virtual int numPages();
 		
-		void pinToTop(mui::Container * c); // adds to scrollpane (not to view!)
-		void pinToLeft(mui::Container * c); // adds to scrollpane (not to view!)
-
+		mui::Container * getLeftMenu(float height = -1);
+		mui::Container * getTopMenu(float width = -1);
 		
 		virtual void updateTouchVelocity( ofTouchEventArgs &touch );
 		virtual void touchDown( ofTouchEventArgs &touch );
@@ -137,8 +138,8 @@ namespace mui{
 		int numPagesAdded;
 		
 		Inset inset; // how much to inset the scrollview from the scrollpane itself.
-		mui::Container * topPin = nullptr;
-		mui::Container * leftPin = nullptr;
+		mui::ScrollPaneView * topMenu = nullptr;
+		mui::ScrollPaneView * leftMenu = nullptr;
 		friend class ScrollPaneView; 
 	};
 	

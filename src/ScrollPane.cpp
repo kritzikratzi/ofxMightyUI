@@ -24,7 +24,7 @@ mui::ScrollPane::ScrollPane( float x_, float y_, float width_, float height_ )
 		init();
 };
 
-mui::ScrollPaneView::ScrollPaneView(mui::ScrollPane * owner, float x, float y, float w, float h) : owner(owner), mui::Container(x, y, w, h){
+mui::ScrollPaneView::ScrollPaneView(mui::ScrollPane * owner, Type type, float x, float y, float w, float h) : owner(owner), viewType(type), mui::Container(x, y, w, h){
 	focusTransferable = false;
 }
 
@@ -35,11 +35,22 @@ mui::ScrollPaneView::~ScrollPaneView(){
 void mui::ScrollPaneView::handleDraw(){
 	if( !visible ) return;
 
-	float effectivePinWidth = owner->leftPin?owner->leftPin->width : 0;
-	float effectivePinHeight = owner->topPin?owner->topPin->height : 0;
-
-	ofRectangle intersection = ofRectangle(-x+effectivePinWidth,-y+effectivePinHeight,owner->viewportWidth,owner->viewportHeight).getIntersection(ofRectangle(0,0,width,height));
-	mui::Helpers::pushScissor( this, intersection );
+	ofRectangle inter = ofRectangle(0,0,width,height);
+	if(viewType == Type::main){
+		inter = inter.getIntersection(ofRectangle(-x + (owner->leftMenu?owner->leftMenu->width : 0),
+								   -y + (owner->topMenu?owner->topMenu->height : 0),
+								   owner->viewportWidth,
+								   owner->viewportHeight
+								   ));
+	}
+	else if(viewType == Type::left){
+		inter = inter.getIntersection(ofRectangle(0, -y, width, owner->viewportHeight));
+	}
+	else if(viewType == Type::top){
+		inter = inter.getIntersection(ofRectangle(-x, 0, owner->viewportHeight, height));
+	}
+	
+	mui::Helpers::pushScissor( this, inter );
 	
 	ofPushMatrix();
 	if( allowSubpixelTranslations ) ofTranslate( x, y );
@@ -89,7 +100,7 @@ void mui::ScrollPane::init(){
 		watchingTouch[i] = false; 
 	}
 	
-	view = new ScrollPaneView( this, 0, 0, width, height );
+	view = new ScrollPaneView( this, mui::ScrollPaneView::Type::main, 0, 0, width, height );
 	view->ignoreEvents = true;
 	view->name = "scroll-view"; 
 	add( view );
@@ -97,6 +108,8 @@ void mui::ScrollPane::init(){
 
 //--------------------------------------------------------------
 mui::ScrollPane::~ScrollPane(){
+	delete leftMenu;
+	delete topMenu;
 	delete view;
 }
 
@@ -114,8 +127,8 @@ void mui::ScrollPane::commit(){
 	
 	viewportWidth = canScrollY? (width-15):width;
 	viewportHeight = canScrollX? (height-15):height;
-	float effectivePinWidth = leftPin?leftPin->width : 0;
-	float effectivePinHeight = topPin?topPin->height : 0;
+	float effectivePinWidth = leftMenu?leftMenu->width : 0;
+	float effectivePinHeight = topMenu?topMenu->height : 0;
 	viewportWidth -= effectivePinWidth;
 	viewportHeight -= effectivePinHeight;
 	
@@ -297,25 +310,25 @@ int mui::ScrollPane::numPages(){
 }
 
 //--------------------------------------------------------------
-void mui::ScrollPane::pinToTop(mui::Container * c){
-	if(topPin){
-		topPin->remove();
+mui::Container* mui::ScrollPane::getTopMenu(float h){
+	if(!topMenu){
+		topMenu = new mui::ScrollPaneView(this,mui::ScrollPaneView::Type::top,x,y,width,h>0?h:30);
 	}
-	if(c){
-		topPin = c;
-		add(topPin);
+	if(!topMenu->parent){
+		add(topMenu);
 	}
+	return topMenu;
 }
 
 //--------------------------------------------------------------
-void mui::ScrollPane::pinToLeft(mui::Container * c){
-	if(leftPin){
-		leftPin->remove();
+mui::Container* mui::ScrollPane::getLeftMenu(float w){
+	if(!leftMenu){
+		leftMenu = new mui::ScrollPaneView(this,mui::ScrollPaneView::Type::left,x,y,w>0?w:30,height);
 	}
-	if(c){
-		leftPin = c;
-		add(leftPin);
+	if(!leftMenu->parent){
+		add(leftMenu);
 	}
+	return leftMenu;
 }
 
 
@@ -369,8 +382,14 @@ void mui::ScrollPane::update(){
 		}
 	}
 
-	if( canScrollX ) view->x = -currentScrollX + (leftPin?leftPin->width:0);
-	if( canScrollY ) view->y = -currentScrollY + (topPin?topPin->height:0);
+	if( canScrollX ){
+		view->x = -currentScrollX + (leftMenu?leftMenu->width:0);
+		if(topMenu) topMenu->x = -currentScrollX + (leftMenu?leftMenu->width:0);
+	}
+	if( canScrollY ){
+		view->y = -currentScrollY + (topMenu?topMenu->height:0);
+		if(leftMenu) leftMenu->y = -currentScrollY + (topMenu?topMenu->height:0);
+	}
 }
 
 
@@ -559,8 +578,8 @@ void mui::ScrollPane::mouseScroll( ofMouseEventArgs &args){
 	args.scrollX *= 30; 
 	args.scrollY *= 30; 
 #endif
-	if(canScrollX) view->x = -(currentScrollX = ofClamp(currentScrollX-args.scrollX, minScrollX, maxScrollX))  + (leftPin?leftPin->width:0) ;
-	if(canScrollY) view->y = -(currentScrollY = ofClamp(currentScrollY-args.scrollY, minScrollY, maxScrollY))  + (topPin?topPin->height:0);
+	if(canScrollX) view->x = -(currentScrollX = ofClamp(currentScrollX-args.scrollX, minScrollX, maxScrollX))  + (leftMenu?leftMenu->width:0) ;
+	if(canScrollY) view->y = -(currentScrollY = ofClamp(currentScrollY-args.scrollY, minScrollY, maxScrollY))  + (topMenu?topMenu->height:0);
 }
 
 
