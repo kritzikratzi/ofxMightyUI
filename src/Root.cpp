@@ -171,7 +171,7 @@ void mui::Root::handleDraw(){
 			info << "Rel:" << active->x << "," << active->y;
 			size = info.str();
 			
-			ofxFontStashStyle style = mui::Helpers::getStyle(10);
+			fs2::Style style = mui::Helpers::getStyle(10);
 			ofNoFill();
 			ofSetColor( 255,255,0 );
 			ofDrawRectangle( p.x, p.y, active->width, active->height );

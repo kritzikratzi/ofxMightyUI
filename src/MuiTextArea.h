@@ -31,8 +31,8 @@ namespace mui{
 
 
 	class TextArea : public mui::ScrollPane, private TextAreaInternal {
-	public: 
-		TextArea(std::string text = "", float x = 0, float y = 0, float width = 200, float height = 20); 
+	public:
+		TextArea(std::string text = "", float x = 0, float y = 0, float width = 200, float height = 20);
 		~TextArea(); 
 
 		// alignments
@@ -113,10 +113,10 @@ namespace mui{
 		virtual ofRectangle box(float t, float r, float b, float l);
 
 		struct EditorCursor {
-			vector<StyledLine>::iterator lineIt;
-			vector<LineElement>::iterator elementIt;
+			vector<fs2::StyledLine>::iterator lineIt;
+			vector<fs2::LineElement>::iterator elementIt;
 			ofRectangle rect;
-
+			
 			bool operator==(const EditorCursor& other) {
 				return lineIt == other.lineIt && elementIt == other.elementIt;
 			}
@@ -136,7 +136,8 @@ namespace mui{
 		string substr_utf8(size_t utf32_index, size_t len);
 		vector<size_t> utf8_positions; // mapping from utf-32 pos to utf-8 pos
 		string text; // utf-8 text
-		ofxFontStashStyle fontStyle;
+		fs2::Style fontStyle;
+		using StyledLine = ofxFontStash2::StyledLine; 
 
 		static string utf32_to_utf8(uint32_t codepoint);
 		static int utf32_chlen(uint32_t codepoint); 
@@ -155,7 +156,7 @@ namespace mui{
 		static int octect_size(uint32_t codepoint);
 	private:
 
-		vector<StyledLine> lines;
+		vector<fs2::StyledLine> lines;
 		vector<size_t> lineNumberSourceToDisplay; // map source lines to the first display line. start at 0
 		vector<size_t> lineNumberDisplayToSource; // map display lines to source lines. start at 0. 
 		vector<int> utf32_line_length; // runlength of each line

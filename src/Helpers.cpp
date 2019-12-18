@@ -19,7 +19,7 @@ std::map<std::string, ofTexture*> mui::Helpers::textures;
 std::map<std::string, ofImage*> mui::Helpers::images;
 std::stack<ofRectangle> mui::Helpers::scissorStack;
 mui::TextureAtlas mui::Helpers::atlas;
-ofxFontStash2 mui::Helpers::fontStash;
+mui::fs2::Fonts mui::Helpers::fontStash;
 short mui::Helpers::nextCursorId = 0;
 std::map<short, GLFWcursor*> mui::Helpers::cursorIdToData;
 std::map<string,short> mui::Helpers::cursorNameToId;
@@ -111,30 +111,30 @@ bool mui::Helpers::loadFont(string fontName){
 	return true;
 }
 
-ofxFontStashStyle mui::Helpers::getStyle( int size ){
+mui::fs2::Style mui::Helpers::getStyle( int size ){
 	loadFont("");
-	ofxFontStashStyle style;
+	fs2::Style style;
 	style.fontSize = size;
 	style.fontID="";
 	return style;
 }
 
-ofxFontStashStyle mui::Helpers::getStyle( string customFont, int fontSize ){
+mui::fs2::Style mui::Helpers::getStyle( string customFont, int fontSize ){
 	loadFont(customFont);
-	ofxFontStashStyle style;
+	fs2::Style style;
 	style.fontID = customFont;
 	style.fontSize = fontSize;
 	return style;
 }
 
-ofxFontStash2 & mui::Helpers::getFontStash(){
+mui::fs2::Fonts & mui::Helpers::getFontStash(){
 	return fontStash;
 }
 
 
 void mui::Helpers::drawString( string s, float x, float y, ofColor color, int fontSize ){
 	loadFont("");
-	ofxFontStashStyle style;
+	fs2::Style style;
 	style.fontSize = fontSize;
 	style.color = color;
 	fontStash.draw(s, style, x, y);
@@ -150,8 +150,8 @@ short mui::Helpers::getCustomCursorId(const string & fontName, const string & ch
 	if (it == cursorNameToId.end()) {
 		loadFont(fontName);
 		float h = 16; // use or don't use display scaling??
-		ofxFontStashStyle style = getStyle(fontName, h*0.8);
-		style.alignment = static_cast<FONSalign>(FONSalign::FONS_ALIGN_CENTER | FONSalign::FONS_ALIGN_MIDDLE);
+		fs2::Style style = getStyle(fontName, h*0.8);
+		style.alignmentV = NVG_ALIGN_MIDDLE;
 
 
 		cursorNameToId[name] = nextCursorId;
@@ -164,7 +164,7 @@ short mui::Helpers::getCustomCursorId(const string & fontName, const string & ch
 		ofBackground(0,0);
 		style.color = ofColor(0);
 		style.blur = 4;
-		getFontStash().draw(character, style, h / 2, h / 2);
+		getFontStash().drawColumn(character, style, h / 2, h / 2, 2*h, OF_ALIGN_HORZ_CENTER);
 		style.color = ofColor(255);
 		style.blur = 0;
 		getFontStash().draw(character, style, h / 2, h / 2);

@@ -402,11 +402,12 @@ void mui::TextArea::commit(){
 
 	boundingBox = Helpers::getFontStash().getTextBounds(text, fontStyle, 0, 0);
 	
-	vector<StyledText> blocks{ {text,fontStyle} };
+	vector<fs2::StyledText> blocks{ {text,fontStyle} };
 	if(isnan(editor_view->width)){
 		return; 
 	}
-	lines = Helpers::getFontStash().layoutLines(blocks, softWrap?editor_view->width:9999999);
+	lines.clear();
+	Helpers::getFontStash().layoutLines(blocks, softWrap?editor_view->width:9999999, lines, OF_ALIGN_HORZ_LEFT);
 	lineNumberSourceToDisplay.clear();
 	lineNumberDisplayToSource.clear();
 	
@@ -427,7 +428,7 @@ void mui::TextArea::commit(){
 	lineNumberSourceToDisplay.push_back(lastLineStart);
 	
 	if(lines.size() == 0){
-		lines = Helpers::getFontStash().layoutLines({{" ",fontStyle}}, 10);
+		Helpers::getFontStash().layoutLines({{" ",fontStyle}}, 10, lines);
 	}
 	strlenWithLineStarts = 0;
 	utf32_line_length.clear();
@@ -688,8 +689,8 @@ mui::TextArea::EditorCursor mui::TextArea::getEditorCursorForIndex( int cursorPo
 			yy += line.lineH;
 		}
 		else{
-			for( vector<LineElement>::iterator elementIt = line.elements.begin(); elementIt != line.elements.end(); ++elementIt ){
-				LineElement &el = *elementIt;
+			for( vector<fs2::LineElement>::iterator elementIt = line.elements.begin(); elementIt != line.elements.end(); ++elementIt ){
+				fs2::LineElement &el = *elementIt;
 				len = (int)utf8_strlen(el.content.styledText.text);
 				if( pos + len <= cursorPos ){
 					pos += len;
@@ -697,11 +698,11 @@ mui::TextArea::EditorCursor mui::TextArea::getEditorCursorForIndex( int cursorPo
 				else{
 					float x;
 					switch(el.content.type){
-						case SEPARATOR_INVISIBLE:
-						case SEPARATOR:
+						case fs2::SEPARATOR_INVISIBLE:
+						case fs2::SEPARATOR:
 							x = el.area.x + el.area.width;
 							
-						case WORD_BLOCK:
+						case fs2::BLOCK_WORD:
 							// it's here, and we know the offset inside the word already.
 							// now let's find it within the string.
 							size_t len = cursorPos-pos;
@@ -835,6 +836,7 @@ void mui::TextArea::setSelectedRange(size_t start, size_t end){
 	
 	state->select_start = min(start,end);
 	state->select_end = max(start,end);
+	state->cursor = CLAMP(state->cursor,state->select_start,state->select_end); 
 	
 	EditorCursor c = getEditorCursorForIndex(state->select_start);
 	scrollIntoView(c.rect);
@@ -975,7 +977,7 @@ void mui::TextAreaView::draw() {
 		}
 
 		while (from.lineIt != to.lineIt) {
-			StyledLine &line = *from.lineIt;
+			fs2::StyledLine &line = *from.lineIt;
 			float x = size.x - t->boundingBox.x + line.elements.front().x;
 			float y = yy;
 			ofDrawRectangle(x, y, line.lineW, line.lineH);
@@ -985,7 +987,7 @@ void mui::TextAreaView::draw() {
 		}
 
 		if (from.lineIt != t->lines.end()) {
-			StyledLine &line = *from.lineIt;
+			fs2::StyledLine &line = *from.lineIt;
 			float x = reset ? (size.x - t->boundingBox.x + line.elements.front().x) : from.rect.x;
 			float y = reset ? yy : from.rect.y;
 
@@ -1013,7 +1015,7 @@ void mui::TextAreaView::draw() {
 				++render_end;
 			}
 			
-			mui::Helpers::getFontStash().drawLines(render_start, render_end, size.x - t->boundingBox.x, size.y - t->boundingBox.y, MuiConfig::debugDraw);
+			mui::Helpers::getFontStash().drawLines(render_start, render_end, size.x - t->boundingBox.x, size.y - t->boundingBox.y, OF_ALIGN_HORZ_LEFT, MuiConfig::debugDraw);
 		}
 	}
 	
