@@ -151,7 +151,7 @@ short mui::Helpers::getCustomCursorId(const string & fontName, const string & ch
 		loadFont(fontName);
 		float h = 16; // use or don't use display scaling??
 		fs2::Style style = getStyle(fontName, h*0.8);
-		style.alignmentV = NVG_ALIGN_MIDDLE;
+		style.alignmentV = NVG_ALIGN_TOP;
 
 
 		cursorNameToId[name] = nextCursorId;
