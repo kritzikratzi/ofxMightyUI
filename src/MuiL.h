@@ -415,11 +415,9 @@ namespace mui{
 			size_t N = targets.size();
 			float x = p0.x;
 			for(int i = 0; i < N; i++ ){
-				if(targets[i]->visible){
-					targets[i]->x = x;
-					targets[i]->y = p0.y;
-					x += targets[i]->width + spacing;
-				}
+				targets[i]->x = x;
+				targets[i]->y = p0.y;
+				x += targets[i]->width + spacing;
 			}
 			return *this;
 		}
@@ -430,11 +428,9 @@ namespace mui{
 			if (N > 0) {
 				for (size_t i = N; i > 0; ) {
 					auto target = targets[--i]; 
-					if (target->visible) {
-						target->x = x - target->width;
-						target->y = p0.y;
-						x -= target->width + spacing;
-					}
+					target->x = x - target->width;
+					target->y = p0.y;
+					x -= target->width + spacing;
 				}
 			}
 			return *this;
@@ -459,15 +455,13 @@ namespace mui{
 			return targets.size()>0?targets.back() : nullptr;
 		}
 		
-		const L & rows( ofVec2f p0, float spacing = 1 ) const{
+		const L & rows( ofVec2f p0, float spacing = 1) const{
 			size_t N = targets.size();
 			float y = p0.y;
 			for(int i = 0; i < N; i++ ){
-				if(targets[i]->visible){
-					targets[i]->x = p0.x;
-					targets[i]->y = y;
-					y += targets[i]->height + spacing;
-				}
+				targets[i]->x = p0.x;
+				targets[i]->y = y;
+				y += targets[i]->height + spacing;
 			}
 			return *this;
 		}
@@ -496,7 +490,7 @@ namespace mui{
 		L filter(function<bool(mui::Container*)> filterFunc){
 			std::vector<mui::Container*> newTargets;
 			for(auto & target : targets){
-				if(target->visible){
+				if(filterFunc(target)){
 					newTargets.push_back(target);
 				}
 			}
