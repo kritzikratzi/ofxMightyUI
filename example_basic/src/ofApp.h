@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "MUI.h"
+#include "ofxMightyUI.h"
 
 class ofApp : public ofBaseApp{
 
