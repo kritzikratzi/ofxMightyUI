@@ -574,7 +574,7 @@ void mui::ScrollPane::touchCanceled( ofTouchEventArgs &touch ){
 }
 
 void mui::ScrollPane::mouseScroll( ofMouseEventArgs &args){
-#ifdef _WIN32
+#if defined(_WIN32) || defined(TARGET_LINUX)
 	args.scrollX *= 30; 
 	args.scrollY *= 30; 
 #endif
