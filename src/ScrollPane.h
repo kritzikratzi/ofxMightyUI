@@ -63,15 +63,15 @@ namespace mui{
 		virtual void handleLayout();
 
 		// scroll the least amount necessary so that the element becomes visible
-		void scrollIntoView(mui::Container * container);
+		void scrollIntoView(mui::Container * container, bool animate = true);
 		// scroll the least amount necessary so that the target rectangle become visible.
-		void scrollIntoView(const ofRectangle & rect);
+		void scrollIntoView(const ofRectangle & rect, bool animate = true);
 		// scrolls to a position
-		void scrollTo( float x, float y );
-		void scrollBy(float dx, float dy); 
+		void scrollTo( float x, float y, bool animate = true );
+		void scrollBy(float dx, float dy, bool animate = true); 
 		
 		// internal stuff ^^
-		void beginBaseAnimation( float toX, float toY );
+		void beginBaseAnimation( float toX, float toY, bool animate = true );
 		void beginMomentumAnimation();
 		
 		// use horizontal paging?
