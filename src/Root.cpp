@@ -379,17 +379,17 @@ bool mui::Root::becomeKeyboardResponder( Container * c ){
 
 //--------------------------------------------------------------
 void mui::Root::safeRemove( Container * c ){
-	safeRemoveList.push_back( c );
+	if(c) safeRemoveList.push_back( c );
 }
 
 //--------------------------------------------------------------
 void mui::Root::safeDelete( Container * c ){
-	safeDeleteList.push_back( c );
+	if(c) safeDeleteList.push_back( c );
 }
 
 //--------------------------------------------------------------
 void mui::Root::safeRemoveAndDelete( mui::Container *c ){
-    safeRemoveAndDeleteList.push_back( c ); 
+    if(c) safeRemoveAndDeleteList.push_back( c ); 
 }
 
 //--------------------------------------------------------------
