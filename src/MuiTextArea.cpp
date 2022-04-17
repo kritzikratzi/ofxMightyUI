@@ -111,6 +111,20 @@ string mui::TextArea::utf32_to_utf8( uint32_t codepoint ){
 	}
 }
 
+int mui::TextArea::utf32_chlen( uint32_t codepoint ){
+	if (codepoint < 0x80)                        // one octet
+		return 1;
+	else if (codepoint < 0x800) {                // two octets
+		return 2;
+	}
+	else if (codepoint < 0x10000) {              // three octets
+		return 3;
+	}
+	else {
+		return 4;
+	}
+}
+
 inline size_t mui::TextArea::utf8_strlen(const string & line ){
 	size_t i = 0;
 	for( auto c : ofUTF8Iterator(line) ){
@@ -389,6 +403,9 @@ void mui::TextArea::commit(){
 	boundingBox = Helpers::getFontStash().getTextBounds(text, fontStyle, 0, 0);
 	
 	vector<StyledText> blocks{ {text,fontStyle} };
+	if(isnan(editor_view->width)){
+		return; 
+	}
 	lines = Helpers::getFontStash().layoutLines(blocks, softWrap?editor_view->width:9999999);
 	lineNumberSourceToDisplay.clear();
 	lineNumberDisplayToSource.clear();
@@ -397,6 +414,7 @@ void mui::TextArea::commit(){
 	int lineNumDisp = 0;
 	int lastLineStart = 0;
 	for( auto & line : lines ){
+		if(line.elements.size()==0) continue; //???
 		auto & last = line.elements.back();
 		lineNumberDisplayToSource.push_back(lineNumSrc);
 		if(last.content.styledText.text == "\n"){
@@ -481,7 +499,7 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 	lastInteraction = ofGetElapsedTimeMillis();
 	short redoPt = state->undostate.redo_point;
 	short undoPt = state->undostate.undo_point;
-	short undoWhere = state->undostate.undo_rec[MIN(98,undoPt)].where;
+	short undoWhere = state->undostate.undo_rec[MIN(STB_TEXTEDIT_UNDOSTATECOUNT-1,undoPt)].where;
 	bool certainlyChanged = false;
 	
 	int keyMask =
@@ -636,7 +654,7 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 			}
 	}
 	
-	if(certainlyChanged || undoPt != state->undostate.undo_point || redoPt != state->undostate.redo_point || undoWhere != state->undostate.undo_rec[MIN(98,state->undostate.undo_point)].where ){
+	if(certainlyChanged || undoPt != state->undostate.undo_point || redoPt != state->undostate.redo_point || undoWhere != state->undostate.undo_rec[MIN(STB_TEXTEDIT_UNDOSTATECOUNT-1,state->undostate.undo_point)].where ){
 		ofNotifyEvent(onChange, text, this);
 	}
 	
@@ -715,9 +733,10 @@ mui::TextArea::EditorCursor mui::TextArea::getEditorCursorForIndex( int cursorPo
 		if( lines.size() > 0 ){
 			float lineH = lines.back().lineH;
 			bounds = lines.back().elements.back().area;
-			bounds.x = size.x - boundingBox.x + bounds.x;
+			bounds.x = size.x - boundingBox.x + bounds.x + bounds.width;
 			bounds.y = size.y - boundingBox.y + yy - 2*lineH;
 			bounds.height = lineH;
+			bounds.width = 0;
 			
 			result.lineIt = lines.end()-1;
 			// there should be always at least one element on each line,
@@ -816,11 +835,56 @@ void mui::TextArea::setSelectedRange(size_t start, size_t end){
 	
 	state->select_start = min(start,end);
 	state->select_end = max(start,end);
+	
+	EditorCursor c = getEditorCursorForIndex(state->select_start);
+	scrollIntoView(c.rect);
 }
+
+void mui::TextArea::setSelectedRangeUtf8(size_t start, size_t end){
+	if(utf32.size()==0) return;
+	
+	size_t u32_start = 0;
+	size_t u8_start = 0;
+	for(auto & ch : utf32){
+		if(u8_start>=start) break;
+		u8_start += utf32_chlen(ch);
+		u32_start ++;
+	}
+	
+	size_t u32_end = 0;
+	size_t u8_end = 0;
+	for(auto & ch : utf32){
+		if(u8_end>=end) break;
+		u8_end += utf32_chlen(ch);
+		u32_end ++;
+	}
+	
+	setSelectedRange(u32_start, u32_end);
+}
+
 
 pair<size_t,size_t> mui::TextArea::getSelectedRange(){
 	return make_pair(state->select_start,state->select_end);
 }
+
+pair<size_t, size_t> mui::TextArea::getSelectedRangeUtf8(){
+	auto u32 = getSelectedRange();
+	auto u8 = make_pair((size_t)0,(size_t)0);
+	size_t m;
+	
+	m = min(u32.first,utf32.size());
+	for(size_t i = 0; i < m; i++){
+		u8.first += utf32_chlen(utf32[i]);
+	}
+	
+	m = min(u32.second,utf32.size());
+	for(size_t i = 0; i < m; i++){
+		u8.second += utf32_chlen(utf32[i]);
+	}
+	
+	return u8; 
+}
+
 
 
 
@@ -929,9 +993,31 @@ void mui::TextAreaView::draw() {
 			++from.lineIt;
 		}
 	}
-
-	//	mui::Helpers::getFontStash().drawColumn(text, fontStyle, size.x-boundingBox.x, size.y-boundingBox.y, width);
-	mui::Helpers::getFontStash().drawLines(t->lines, size.x - t->boundingBox.x, size.y - t->boundingBox.y, MuiConfig::debugDraw);
+	
+	if(t->lines.size()>0){
+		auto render_start = t->lines.begin();
+		
+		float sy = t->currentScrollY;
+		float y0 = 0;
+		while(render_start != t->lines.end() && render_start->elements[0].baseLineY + render_start->elements[0].lineHeight<sy){
+		
+			y0 += render_start->lineH;
+			++render_start;
+		}
+		
+		if(render_start != t->lines.end()){
+			auto render_end = render_start;
+			
+			float my = sy + t->height;
+			while(render_end != t->lines.end() && render_end->elements[0].baseLineY<my){
+				++render_end;
+			}
+			
+			mui::Helpers::getFontStash().drawLines(render_start, render_end, size.x - t->boundingBox.x, size.y - t->boundingBox.y, MuiConfig::debugDraw);
+		}
+	}
+	
+	
 	if (hasKeyboardFocus()) {
 		if (t->drawActiveBorder) {
 			ofSetColor(200); 

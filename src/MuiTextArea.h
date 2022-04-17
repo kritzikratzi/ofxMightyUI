@@ -98,8 +98,10 @@ namespace mui{
 
 		/// \brief Sets selection range. Counting is in utf32 (ie. the "Ä" in "ÜÄ" would be at index 1. remember you can't directly substring with this result!)
 		void setSelectedRange(size_t start, size_t end);
+		void setSelectedRangeUtf8(size_t start, size_t end); 
 		/// \brief Returns the selection range. Counting is in utf32 (ie. the "Ä" in "ÜÄ" would be at index 1. remember you can't directly substring with this result!)
 		pair<size_t, size_t> getSelectedRange();
+		pair<size_t, size_t> getSelectedRangeUtf8();
 
 		// call this after you made changes to any variables (changing x/y is okay without doing a commit() ).
 		// doing text-maths too insane to do on every frame!
@@ -137,6 +139,7 @@ namespace mui{
 		ofxFontStashStyle fontStyle;
 
 		static string utf32_to_utf8(uint32_t codepoint);
+		static int utf32_chlen(uint32_t codepoint); 
 		static size_t utf8_strlen(const string & line);
 		static size_t utf8_to_utf32(const string & text, vector<uint32_t> & utf32, vector<size_t> & utf8_positions);
 		static vector<uint32_t> utf8_to_utf32(const string & text);

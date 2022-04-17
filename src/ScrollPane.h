@@ -24,10 +24,13 @@ namespace mui{
 	
     class ScrollPaneView : public Container{
     public:
-        ScrollPaneView( float x, float y, float w, float h ) : Container( x, y, w, h ){
-			focusTransferable = false;
-		};
+		enum class Type{main,top,left};
+		ScrollPaneView( mui::ScrollPane * owner, ScrollPaneView::Type viewType, float x, float y, float w, float h );
+		virtual ~ScrollPaneView(); 
         virtual void handleDraw();
+	private:
+		mui::ScrollPane * owner;
+		Type viewType;
     };
     
 	class ScrollPane : public Container{
@@ -46,6 +49,8 @@ namespace mui{
 		bool canScrollX, canScrollY;
 		
 		ScrollPaneView * view;
+		float padRight = 0;
+		float padBottom = 0; 
         
 		virtual void init();
 		
@@ -58,14 +63,15 @@ namespace mui{
 		virtual void handleLayout();
 
 		// scroll the least amount necessary so that the element becomes visible
-		void scrollIntoView(mui::Container * container);
+		void scrollIntoView(mui::Container * container, bool animate = true);
 		// scroll the least amount necessary so that the target rectangle become visible.
-		void scrollIntoView(const ofRectangle & rect);
+		void scrollIntoView(const ofRectangle & rect, bool animate = true);
 		// scrolls to a position
-		void scrollTo( float x, float y );
+		void scrollTo( float x, float y, bool animate = true );
+		void scrollBy(float dx, float dy, bool animate = true); 
 		
 		// internal stuff ^^
-		void beginBaseAnimation( float toX, float toY );
+		void beginBaseAnimation( float toX, float toY, bool animate = true );
 		void beginMomentumAnimation();
 		
 		// use horizontal paging?
@@ -73,16 +79,16 @@ namespace mui{
 		bool autoLockToBottom;
 		
 		// create a new page.
-		Container * createPage();
-		ScrollPane * createPageWithScrollPane();
+		Container * createPage(); // memory belongs to you, release accordingly
+		ScrollPane * createPageWithScrollPane(); // memory belongs to you, release accordingly
 		virtual void nextPage(int inc = 1);
 		virtual void prevPage(int dec = 1);
 		virtual void gotoPage( int page );
 		virtual int getPageNum();
 		virtual int numPages();
 		
-		
-		
+		mui::Container * getLeftMenu(float height = -1);
+		mui::Container * getTopMenu(float width = -1);
 		
 		virtual void updateTouchVelocity( ofTouchEventArgs &touch );
 		virtual void touchDown( ofTouchEventArgs &touch );
@@ -130,6 +136,11 @@ namespace mui{
         float animateToX, animateToY;
 		
 		int numPagesAdded;
+		
+		Inset inset; // how much to inset the scrollview from the scrollpane itself.
+		mui::ScrollPaneView * topMenu = nullptr;
+		mui::ScrollPaneView * leftMenu = nullptr;
+		friend class ScrollPaneView; 
 	};
 	
 };

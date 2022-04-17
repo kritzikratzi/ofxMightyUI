@@ -379,17 +379,17 @@ bool mui::Root::becomeKeyboardResponder( Container * c ){
 
 //--------------------------------------------------------------
 void mui::Root::safeRemove( Container * c ){
-	safeRemoveList.push_back( c );
+	if(c) safeRemoveList.push_back( c );
 }
 
 //--------------------------------------------------------------
 void mui::Root::safeDelete( Container * c ){
-	safeDeleteList.push_back( c );
+	if(c) safeDeleteList.push_back( c );
 }
 
 //--------------------------------------------------------------
 void mui::Root::safeRemoveAndDelete( mui::Container *c ){
-    safeRemoveAndDeleteList.push_back( c ); 
+    if(c) safeRemoveAndDeleteList.push_back( c ); 
 }
 
 //--------------------------------------------------------------
@@ -566,11 +566,14 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 
 	mui::Container * temp = keyboardResponder; 
 
-	// for now disable 
-	//if (temp == nullptr) {
-	//	auto pos = muiGetMousePos();
-	//	temp = findChildAt(pos.x, pos.y, true, true);
-	//}
+	if (temp == nullptr) {
+		auto pos = muiGetMousePos();
+		temp = findChildAt(pos.x, pos.y, true, true);
+		// sorry that this is a property ... :/
+		while(temp != nullptr && temp->getPropertyOr("hoverKeyEvent",false)==false){
+			temp = temp->parent;
+		}
+	}
 
 	if( temp != nullptr ){
 		if( !temp->isVisibleOnScreen()){
@@ -766,15 +769,17 @@ bool mui::Root::of_mouseScrolled( ofMouseEventArgs &args ){
 	fixTouchPosition(args, pos, NULL);
 	mui::Container * container = (mui::Container*)findChildOfType<mui::ScrollPane>(pos.x, pos.y, true, true);
 	if( container != NULL ){
-		container->mouseScroll(args);
-		container->onMouseScroll.notify(args);
+		if (!container->onMouseScroll.notify(args)) {
+			container->mouseScroll(args);
+		}
 		return true;
 	}
 	else{
 		mui::Container * container = findChildAt(pos.x, pos.y, true, true );
 		if( container != nullptr && container != this ){
-			container->mouseScroll(args);
-			container->onMouseScroll.notify(args);
+			if (!container->onMouseScroll.notify(args)) {
+				container->mouseScroll(args); 
+			}
 			return true;
 		}
 		else{

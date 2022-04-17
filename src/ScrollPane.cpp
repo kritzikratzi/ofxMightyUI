@@ -24,15 +24,48 @@ mui::ScrollPane::ScrollPane( float x_, float y_, float width_, float height_ )
 		init();
 };
 
+mui::ScrollPaneView::ScrollPaneView(mui::ScrollPane * owner, Type type, float x, float y, float w, float h) : owner(owner), viewType(type), mui::Container(x, y, w, h){
+	focusTransferable = false;
+}
+
+mui::ScrollPaneView::~ScrollPaneView(){
+	
+}
+
 void mui::ScrollPaneView::handleDraw(){
 	if( !visible ) return;
+
+	ofRectangle inter = ofRectangle(0,0,width,height);
+	if(viewType == Type::main){
+		inter = inter.getIntersection(ofRectangle(-x + (owner->leftMenu?owner->leftMenu->width : 0),
+								   -y + (owner->topMenu?owner->topMenu->height : 0),
+								   owner->viewportWidth,
+								   owner->viewportHeight
+								   ));
+	}
+	else if(viewType == Type::left){
+		inter = inter.getIntersection(ofRectangle(0, -y, width, owner->viewportHeight));
+	}
+	else if(viewType == Type::top){
+		inter = inter.getIntersection(ofRectangle(-x, 0, owner->viewportHeight, height));
+	}
+	
+	mui::Helpers::pushScissor( this, inter );
 	
 	ofPushMatrix();
-	ofTranslate( (int)x, (int)y );
+	if( allowSubpixelTranslations ) ofTranslate( x, y );
+	else ofTranslate( (int)x, (int)y );
 	
-	if( opaque ) drawBackground();
+	if( opaque ){
+		drawBackground();
+		onDrawBackground.notify(this);
+	}
+	
+	if (needsLayout) handleLayout();
+	
 	draw();
-	
+	onDraw.notify(this);
+
 	if( MUI_DEBUG_DRAW ){
 		ofNoFill();
 		ofSetColor( 255, 0, 0 );
@@ -53,7 +86,10 @@ void mui::ScrollPaneView::handleDraw(){
 		++it;
 	}
 	
+	onDrawAbove.notify(this);
+	
 	ofPopMatrix();
+	mui::Helpers::popScissor();
 }
 
 void mui::ScrollPane::init(){
@@ -64,7 +100,7 @@ void mui::ScrollPane::init(){
 		watchingTouch[i] = false; 
 	}
 	
-	view = new ScrollPaneView( 0, 0, width, height );
+	view = new ScrollPaneView( this, mui::ScrollPaneView::Type::main, 0, 0, width, height );
 	view->ignoreEvents = true;
 	view->name = "scroll-view"; 
 	add( view );
@@ -72,6 +108,8 @@ void mui::ScrollPane::init(){
 
 //--------------------------------------------------------------
 mui::ScrollPane::~ScrollPane(){
+	delete leftMenu;
+	delete topMenu;
 	delete view;
 }
 
@@ -89,18 +127,22 @@ void mui::ScrollPane::commit(){
 	
 	viewportWidth = canScrollY? (width-15):width;
 	viewportHeight = canScrollX? (height-15):height;
+	float effectivePinWidth = leftMenu?leftMenu->width : 0;
+	float effectivePinHeight = topMenu?topMenu->height : 0;
+	viewportWidth -= effectivePinWidth;
+	viewportHeight -= effectivePinHeight;
 	
 	minScrollX = fminf( 0, bounds.x );
 	minScrollY = fminf( 0, bounds.y ); 
-	maxScrollX = fmaxf( 0, bounds.x + bounds.width - viewportWidth );
-	maxScrollY = fmaxf( 0, bounds.y + bounds.height - viewportHeight );
+	maxScrollX = fmaxf( 0, bounds.x + bounds.width + padRight - viewportWidth );
+	maxScrollY = fmaxf( 0, bounds.y + bounds.height + padBottom - viewportHeight );
 	
 	wantsToScrollX = maxScrollX != 0 || minScrollX != 0;
 	wantsToScrollY = maxScrollY != 0 || minScrollY != 0; 
 	
 	//TODO: make this -15 (the bars) optional!
-	viewportWidth = (!canScrollY || (!wantsToScrollY && barStyleY == IF_NEEDED))?width:viewportWidth;
-	viewportHeight = (!canScrollX || (!wantsToScrollX && barStyleX == IF_NEEDED))?height:viewportHeight;
+	viewportWidth = (!canScrollY || (!wantsToScrollY && barStyleY == IF_NEEDED))?(width-effectivePinWidth):viewportWidth;
+	viewportHeight = (!canScrollX || (!wantsToScrollX && barStyleX == IF_NEEDED))?(height-effectivePinHeight):viewportHeight;
 	
 	view->width = fmaxf( viewportWidth, canScrollX?(maxScrollX + viewportWidth):0);
 	view->height = fmaxf( viewportHeight, maxScrollY + viewportHeight);
@@ -117,6 +159,7 @@ void mui::ScrollPane::commit(){
 	else if(!inBounds){
 		beginBaseAnimation( ofClamp( currentScrollX, minScrollX, maxScrollX ), ofClamp(currentScrollY, minScrollY, maxScrollY));
 	}
+	
 }
 
 ofRectangle mui::ScrollPane::getViewBoundingBox(){
@@ -142,16 +185,24 @@ ofRectangle mui::ScrollPane::getViewBoundingBox(){
 	return ofRectangle( minX, minY, maxX - minX, maxY - minY ); 
 }
 
-void mui::ScrollPane::beginBaseAnimation( float toX, float toY ){
-	animateX = toX - currentScrollX; 
-	animateY = toY - currentScrollY; 
-	animateToX = toX; 
-	animateToY = toY; 
-	animationStartTime = ofGetElapsedTimeMicros(); 
-	lastAnimationTime = animationStartTime; 
-	animating = true; 
-	animatingToBase = true; 
-	animatingMomentum = false; 
+void mui::ScrollPane::beginBaseAnimation( float toX, float toY, bool animate ){
+	if(animate){
+		animateX = toX - currentScrollX;
+		animateY = toY - currentScrollY;
+		animateToX = toX;
+		animateToY = toY;
+		animationStartTime = ofGetElapsedTimeMicros();
+		lastAnimationTime = animationStartTime;
+		animating = true;
+		animatingToBase = true;
+		animatingMomentum = false;
+	}
+	else{
+		currentScrollX = toX;
+		currentScrollY = toY;
+		animatingToBase = false;
+		animating = false;
+	}
 }
 
 void mui::ScrollPane::beginMomentumAnimation(){
@@ -164,7 +215,7 @@ void mui::ScrollPane::beginMomentumAnimation(){
 	animatingMomentum = true; 
 }
 
-void mui::ScrollPane::scrollIntoView(mui::Container * container){
+void mui::ScrollPane::scrollIntoView(mui::Container * container, bool animate){
 	ofVec2f pos;
 	mui::Container * parent = container;
 	bool found = false;
@@ -185,11 +236,11 @@ void mui::ScrollPane::scrollIntoView(mui::Container * container){
 		if(curr.x+curr.width<pos.x+container->width) targetX = curr.x + (pos.x+container->width-curr.x-curr.width);
 		if(curr.y+height>pos.y) targetY = pos.y;
 		if(curr.y+curr.height<pos.y+container->height) targetY = curr.y + container->y + container->height - curr.getHeight();
-		beginBaseAnimation(ofClamp(targetX,minScrollX,maxScrollX), ofClamp(targetY,minScrollY,maxScrollY));
+		beginBaseAnimation(ofClamp(targetX,minScrollX,maxScrollX), ofClamp(targetY,minScrollY,maxScrollY), animate);
 	}
 }
 
-void mui::ScrollPane::scrollIntoView(const ofRectangle & rect){
+void mui::ScrollPane::scrollIntoView(const ofRectangle & rect, bool animate){
 	ofRectangle curr(currentScrollX,currentScrollY,width-(wantsToScrollX?8:0),height-(wantsToScrollY?8:0));
 	float targetX = curr.x;
 	float targetY = curr.y;
@@ -197,12 +248,16 @@ void mui::ScrollPane::scrollIntoView(const ofRectangle & rect){
 	if(curr.x+curr.width<rect.x+rect.width) targetX = curr.x + (rect.x+rect.width-curr.x-curr.width);
 	if(curr.y>rect.y) targetY = rect.y;
 	if(curr.y+curr.height<rect.y+rect.height) targetY = curr.y + rect.getBottom() - curr.getBottom();
-	beginBaseAnimation(ofClamp(targetX,minScrollX,maxScrollX), ofClamp(targetY,minScrollY,maxScrollY));
+	beginBaseAnimation(ofClamp(targetX,minScrollX,maxScrollX), ofClamp(targetY,minScrollY,maxScrollY), animate);
 }
 
 
-void mui::ScrollPane::scrollTo( float x, float y ){
-	beginBaseAnimation(ofClamp(x,minScrollX,maxScrollX), ofClamp(y,minScrollY,maxScrollY));
+void mui::ScrollPane::scrollTo( float x, float y, bool animate ){
+	beginBaseAnimation(ofClamp(x,minScrollX,maxScrollX), ofClamp(y,minScrollY,maxScrollY), animate);
+}
+
+void mui::ScrollPane::scrollBy(float dx, float dy, bool animate) {
+	beginBaseAnimation(ofClamp(currentScrollX + dx, minScrollX, maxScrollX), ofClamp(currentScrollY + dy, minScrollY, maxScrollY), animate);
 }
 
 
@@ -261,6 +316,29 @@ int mui::ScrollPane::numPages(){
 	return numPagesAdded;
 }
 
+//--------------------------------------------------------------
+mui::Container* mui::ScrollPane::getTopMenu(float h){
+	if(!topMenu){
+		topMenu = new mui::ScrollPaneView(this,mui::ScrollPaneView::Type::top,x,y,width,h>0?h:30);
+	}
+	if(!topMenu->parent){
+		add(topMenu);
+	}
+	return topMenu;
+}
+
+//--------------------------------------------------------------
+mui::Container* mui::ScrollPane::getLeftMenu(float w){
+	if(!leftMenu){
+		leftMenu = new mui::ScrollPaneView(this,mui::ScrollPaneView::Type::left,x,y,w>0?w:30,height);
+	}
+	if(!leftMenu->parent){
+		add(leftMenu);
+	}
+	return leftMenu;
+}
+
+
 
 //--------------------------------------------------------------
 void mui::ScrollPane::update(){
@@ -311,8 +389,14 @@ void mui::ScrollPane::update(){
 		}
 	}
 
-	if( canScrollX ) view->x = -currentScrollX;
-	if( canScrollY ) view->y = -currentScrollY;
+	if( canScrollX ){
+		view->x = -currentScrollX + (leftMenu?leftMenu->width:0);
+		if(topMenu) topMenu->x = -currentScrollX + (leftMenu?leftMenu->width:0);
+	}
+	if( canScrollY ){
+		view->y = -currentScrollY + (topMenu?topMenu->height:0);
+		if(leftMenu) leftMenu->y = -currentScrollY + (topMenu?topMenu->height:0);
+	}
 }
 
 
@@ -331,10 +415,7 @@ void mui::ScrollPane::drawBackground(){
 // mostly a copy of Container::handleDraw
 void mui::ScrollPane::handleDraw(){
 	// make the -7 (scrollbars) optional
-	ofRectangle intersection = ofRectangle(0,0,viewportWidth,viewportHeight).getIntersection(view->getBounds());
-	mui::Helpers::pushScissor( this, intersection );
-	Container::handleDraw(); 
-	mui::Helpers::popScissor();
+	Container::handleDraw();
 	
 	if( visible && minScrollY != maxScrollY && canScrollY ){
 		float x0 = x+width - 8; 
@@ -500,12 +581,12 @@ void mui::ScrollPane::touchCanceled( ofTouchEventArgs &touch ){
 }
 
 void mui::ScrollPane::mouseScroll( ofMouseEventArgs &args){
-#ifdef _WIN32
+#if defined(_WIN32) || defined(TARGET_LINUX)
 	args.scrollX *= 30; 
 	args.scrollY *= 30; 
 #endif
-	if(canScrollX) view->x = -(currentScrollX = ofClamp(currentScrollX-args.scrollX, minScrollX, maxScrollX));
-	if(canScrollY) view->y = -(currentScrollY = ofClamp(currentScrollY-args.scrollY, minScrollY, maxScrollY));
+	if(canScrollX) view->x = -(currentScrollX = ofClamp(currentScrollX-args.scrollX, minScrollX, maxScrollX))  + (leftMenu?leftMenu->width:0) ;
+	if(canScrollY) view->y = -(currentScrollY = ofClamp(currentScrollY-args.scrollY, minScrollY, maxScrollY))  + (topMenu?topMenu->height:0);
 }
 
 
@@ -516,7 +597,8 @@ mui::Container * mui::ScrollPane::handleTouchDown( ofTouchEventArgs &touch ){
 		return NULL;
 	}
 	if( trackingState == INACTIVE ){
-		if( touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height ){
+		bool inside = touch.x >= 0 && touch.x <= width && touch.y >= 0 && touch.y <= height;
+		if( inside && ofGetMousePressed(OF_MOUSE_BUTTON_1) ){
 			if( animating && ( !animatingMomentum || ofDist(0,0,animateX/1000,animateY/1000) >= 0.1 ) && !animatingToBase /*&& ( !animatingToBase || ofDist(animateToX, animateToY,currentScrollX,currentScrollY ) >= 5 )*/){
 				// you want something? just take it, it's yours!
 				beginTracking( touch, DRAG_CONTENT );
@@ -534,14 +616,24 @@ mui::Container * mui::ScrollPane::handleTouchDown( ofTouchEventArgs &touch ){
 			}
 			else{
 				Container *c = Container::handleTouchDown( touch );
-				if(c==this){
+				if(c==view){
+					touch.x -= c->x;
+					touch.y -= c->y;
+					c->touchCanceled(touch);
+					touch.x += c->x;
+					touch.y += c->y;
 					beginTracking(touch, DRAG_CONTENT);
+					return this;
+				}
+				else if(c==this){
+					beginTracking(touch, DRAG_CONTENT);
+					return c;
 				}
 				else{
 					watchingTouch[touch.id] = true;
 					touchStart[touch.id] = touch;
+					return c;
 				}
-				return c;
 			}
 		}
 	}

@@ -132,7 +132,7 @@ namespace mui{
 		EventHandler<ofTouchEventArgs> onTouchUpOutside{this};
 		EventHandler<ofTouchEventArgs> onTouchDoubleTap{this};
 		EventHandler<ofTouchEventArgs> onTouchCanceled{this};
-		EventHandler<ofMouseEventArgs> onMouseScroll{this};
+		EventHandlerConsumable<ofMouseEventArgs> onMouseScroll{this};
 		EventHandler<ofMouseEventArgs> onMouseEnter{this};
 		EventHandler<ofMouseEventArgs> onMouseExit{this};
 		
@@ -302,8 +302,8 @@ namespace mui{
 		
 		/// \brief sets a property of arbitrary type
 		template<typename T>
-		void setProperty(const string & key, T && thing) {
-			data::Attribute attr{ thing };
+		void setProperty(const string & key, T thing) {
+			data::Attribute attr{ move(thing) };
 			properties[key] = attr;
 		}
 		
