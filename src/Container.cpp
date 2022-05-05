@@ -224,7 +224,8 @@ void mui::Container::handleDraw(){
 		ofNoFill();
 		ofSetColor( 255, 0, 0 );
 		ofDrawRectangle( 0, 0, width, height );
-		ofFill(); 
+		ofSetColor( 255 );
+		ofFill();
 	}
 	
 	

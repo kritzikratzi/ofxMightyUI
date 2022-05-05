@@ -24,13 +24,16 @@ namespace mui{
 		float defaultValue;
 		Slider * slider;
 		Label * label;
-
+		
 		virtual void update();
 		virtual void layout();
 		virtual mui::Container * handleTouchDown(ofTouchEventArgs &args);
+		
+		void setFormatter(std::function<std::string(float v)> func);
 
 	private: 
 		float oldValue; 
+		std::function<std::string(float)> formatter = nullptr;
 	};
 };
 
