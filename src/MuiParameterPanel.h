@@ -32,7 +32,7 @@ namespace mui{
 		
 		ParameterPanel(string title = "");
 		
-		string getTitle();
+		string getTitle() const;
 		void setTitle( string text );
 		
 		string getSectionTitle( string sectionId );

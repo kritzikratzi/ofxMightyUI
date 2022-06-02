@@ -61,7 +61,7 @@ void mui::ParameterPanel::layout(){
 	height = yy + 2;
 }
 
-string mui::ParameterPanel::getTitle(){
+string mui::ParameterPanel::getTitle() const{
 	return titleLabel->text;
 }
 
