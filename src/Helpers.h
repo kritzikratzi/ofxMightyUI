@@ -40,10 +40,10 @@ namespace mui{
 		static bool loadFont( const string customFont );
 		
 		// methods to draw fonts, and quick access into fontstash2
-		static ofxFontStashStyle getStyle( const int size = mui::MuiConfig::fontSize );
-		static ofxFontStashStyle getStyle( const string customFont, const int size = mui::MuiConfig::fontSize );
+		static ofxFontStashStyle getStyle( const float size = mui::MuiConfig::fontSize );
+		static ofxFontStashStyle getStyle( const string customFont, const float size = mui::MuiConfig::fontSize );
 		static ofxFontStash2 & getFontStash();
-		static void drawString( const string s, const float x = 0, const float y = 0, const ofColor color = ofColor(255), const int size = mui::MuiConfig::fontSize );
+		static void drawString( const string s, const float x = 0, const float y = 0, const ofColor color = ofColor(255), const float size = mui::MuiConfig::fontSize );
 
 		// loads a custom cursor as a character (utf8 encoded) from a font
 		static mui::Cursor getCustomCursor(const string & fontName, const string & character, float clickXPct, float clickYPct);

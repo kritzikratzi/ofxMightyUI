@@ -111,7 +111,7 @@ bool mui::Helpers::loadFont(string fontName){
 	return true;
 }
 
-ofxFontStashStyle mui::Helpers::getStyle( int size ){
+ofxFontStashStyle mui::Helpers::getStyle( float size ){
 	loadFont("");
 	ofxFontStashStyle style;
 	style.fontSize = size;
@@ -119,7 +119,7 @@ ofxFontStashStyle mui::Helpers::getStyle( int size ){
 	return style;
 }
 
-ofxFontStashStyle mui::Helpers::getStyle( string customFont, int fontSize ){
+ofxFontStashStyle mui::Helpers::getStyle( string customFont, float fontSize ){
 	loadFont(customFont);
 	ofxFontStashStyle style;
 	style.fontID = customFont;
@@ -132,7 +132,7 @@ ofxFontStash2 & mui::Helpers::getFontStash(){
 }
 
 
-void mui::Helpers::drawString( string s, float x, float y, ofColor color, int fontSize ){
+void mui::Helpers::drawString( string s, float x, float y, ofColor color, float fontSize ){
 	loadFont("");
 	ofxFontStashStyle style;
 	style.fontSize = fontSize;
