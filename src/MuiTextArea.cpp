@@ -9,6 +9,7 @@
  */
 
 #include "MuiTextArea.h"
+#include "ofxMightyUI.h"
 #include "Root.h"
 #include <regex>
 
@@ -545,9 +546,11 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 			break;
 		case OF_KEY_BACKSPACE:
 			stb_textedit_key(this, state, STB_TEXTEDIT_K_BACKSPACE|keyMask);
+			certainlyChanged = true;
 			break;
 		case OF_KEY_DEL:
 			stb_textedit_key(this, state, STB_TEXTEDIT_K_DELETE|keyMask);
+			certainlyChanged = true;
 			break;
 		case OF_KEY_RETURN:
 			stb_textedit_key(this, state, STB_TEXTEDIT_NEWLINE|keyMask);
@@ -569,9 +572,11 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'z'){
 				if (ofGetKeyPressed(OF_KEY_SHIFT)) stb_text_redo(this, state);
 				else stb_text_undo(this, state);
+				setSelectedRange(state->cursor, state->cursor);
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && (key.codepoint == 'Z' || key.codepoint == 'y')){
 				stb_text_redo(this, state);
+				setSelectedRange(state->cursor, state->cursor);
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'x'){
 				ofGetWindowPtr()->setClipboardString(getSelectedText());
@@ -582,8 +587,9 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'v'){
 				string text = ofGetWindowPtr()->getClipboardString();
-				vector<uint32_t> text_utf32 = utf8_to_utf32(text);
-				stb_textedit_paste(this, state, &text_utf32[0], (int)text_utf32.size());
+				//vector<uint32_t> text_utf32 = utf8_to_utf32(text);
+				//stb_textedit_paste(this, state, &text_utf32[0], (int)text_utf32.size());
+				insertTextAtCursor(text, true);
 			}
 			else if (key.key == OF_KEY_TAB && state->select_start != state->select_end) {
 				// go back to prev line break
@@ -773,13 +779,17 @@ string mui::TextArea::getSelectedText(){
 }
 
 void mui::TextArea::insertTextAtCursor(string text, bool select){
-	size_t sel_start = state->select_start;
+	if (text.size() == 0) return;
+
+	size_t sel_start = std::min(state->select_start,state->select_end);
 	vector<uint32_t> text_utf32 = utf8_to_utf32(text);
 	stb_textedit_paste(this, state, &text_utf32[0], (int)text_utf32.size());
 	commit();
 	if (select) {
 		setSelectedRange(sel_start, sel_start + text_utf32.size());
 	}
+
+	ofNotifyEvent(onChange, this->text, this);
 }
 
 
@@ -864,7 +874,7 @@ void mui::TextArea::setSelectedRangeUtf8(size_t start, size_t end){
 
 
 pair<size_t,size_t> mui::TextArea::getSelectedRange(){
-	return make_pair(state->select_start,state->select_end);
+	return make_pair(std::min(state->select_start,state->select_end), std::max(state->select_start,state->select_end));
 }
 
 pair<size_t, size_t> mui::TextArea::getSelectedRangeUtf8(){
@@ -1040,6 +1050,12 @@ void mui::TextAreaView::draw() {
 
 
 void mui::TextAreaView::touchDown(ofTouchEventArgs &touch) {
+	if (muiIsContextClick()) {
+		mui::Helpers::translateTouch(touch, this, t);
+		t->onContextClick.notify(touch);
+		return;
+	}
+
 	t->lastInteraction = ofGetElapsedTimeMillis();
 
 	if (t->selectAllOnFocus && !hasKeyboardFocus()) {

@@ -46,6 +46,7 @@ namespace mui{
 		mui::EventHandler<string> onChange{ this };
 		mui::EventHandlerConsumable<uint32_t> onCharacterAdded{ this };
 		mui::EventHandler<string> onCursorMoved{ this };
+		mui::EventHandler<ofTouchEventArgs> onContextClick{ this };
 
 		float minHeight = 20;
 		float autoChangeHeight = false;
