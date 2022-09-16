@@ -2,7 +2,9 @@
 //  L.h
 //
 //  Created by Hansi on 26.07.15.
-//
+// V1.18 (2022/09/16)
+//      * added method to center align
+//      * added method to get the first parent of all targets
 // V1.17 (2019/11/25)
 //      * added methods for vertical alignment
 //      * added method to align in parent
@@ -254,7 +256,24 @@ namespace mui{
 			return *this; 
 		}
 		
-
+		const L & center(float space = 0) const{
+			float w = 0;
+			mui::Container * parent = firstParent();
+			
+			for(auto target : targets){
+				w += target->width;
+			}
+			
+			w += space*(targets.size()-1);
+			
+			float x0 = parent->width/2 - w/2;
+			for(auto target : targets){
+				target->x = x0;
+				x0 += target->width + space;
+			}
+			
+			return *this;
+		}
 
 		const L & maxWidth( float width ) const{
 			for(auto target : targets ){
@@ -495,6 +514,13 @@ namespace mui{
 				}
 			}
 			return L(newTargets);
+		}
+		
+		mui::Container * firstParent() const{
+			for(auto target : targets){
+				if(target->parent) return target->parent;
+			}
+			return nullptr;
 		}
 		
 		ofRectangle boundingBox() const{
