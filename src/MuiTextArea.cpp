@@ -393,6 +393,12 @@ void mui::TextArea::drawBackground(){
 //--------------------------------------------------------------
 void mui::TextArea::layout(){
 	mui::ScrollPane::layout();
+	if(lines.size()>0){
+		state->row_count_per_page = viewportHeight/MAX(lines[0].lineH,fontSize);
+	}
+	else{
+		state->row_count_per_page = 0;
+	}
 }
 
 void mui::TextArea::sizeToFit( float padX, float padY ){
@@ -585,8 +591,10 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 			stb_textedit_key(this, state, STB_TEXTEDIT_NEWLINE|keyMask);
 			break;
 		case OF_KEY_PAGE_UP:
+			stb_textedit_key(this, state, STB_TEXTEDIT_K_PGUP|keyMask);
 			break;
 		case OF_KEY_PAGE_DOWN:
+			stb_textedit_key(this, state, STB_TEXTEDIT_K_PGDOWN|keyMask);
 			break;
 		case OF_KEY_ESC:
 			// do nothing!
@@ -810,7 +818,11 @@ string mui::TextArea::getSelectedText(){
 void mui::TextArea::insertTextAtCursor(string text, bool select){
 	if (text.size() == 0) return;
 
-	size_t sel_start = std::min(state->select_start,state->select_end);
+	size_t sel_start = state->cursor;
+	//_if_ there is an active selection, pretend the cursor is at the selection start
+	auto range = getSelectedRange();
+	if(range.first != range.second) sel_start = range.first;
+	
 	vector<uint32_t> text_utf32 = utf8_to_utf32(text);
 	stb_textedit_paste(this, state, &text_utf32[0], (int)text_utf32.size());
 	commit();
