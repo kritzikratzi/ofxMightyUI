@@ -257,7 +257,7 @@ int mui::TextArea::is_word_boundary( STB_TEXTEDIT_STRING *str, int idx )
 }
 
 static bool is_cool_coding_char(STB_TEXTEDIT_CHARTYPE c){
-	const static char * chars = "[]|{}().!=+-_,;:^&|#";
+	const static char * chars = "[]|{}().!=+-_,;:^&|#*/\\";
 	for(int i = strlen(chars)-1;i>=0; i--){
 		if((uint32_t)chars[i] == c) return true;
 	}
@@ -267,8 +267,24 @@ static bool is_cool_coding_char(STB_TEXTEDIT_CHARTYPE c){
 int mui::TextArea::move_to_word_previous_impl( STB_TEXTEDIT_STRING *str, int c )
 {
 	--c; // always move at least one character
-	while( c >= 0 && !is_word_boundary( str, c ) && !is_cool_coding_char(STB_TEXTEDIT_GETCHAR(str,c)))
+	bool found_char = false;
+	while(c>=0){
+		uint32_t ch = STB_TEXTEDIT_GETCHAR(str,c);
+		bool is_space = isspace(ch);
+		bool is_special = !isalnum(ch);
+		if(!found_char && (is_space || is_special)){
+			--c;
+			continue;
+		}
+		
+		found_char = true;
+		if((is_space || is_special)){
+			// good. but we went one too far!
+			++c;
+			break;
+		}
 		--c;
+	}
 	
 	if( c < 0 )
 		c = 0;
@@ -281,8 +297,21 @@ int mui::TextArea::move_to_word_next_impl( STB_TEXTEDIT_STRING *str, int c )
 {
 	const int len = STB_TEXTEDIT_STRINGLEN(str);
 	++c; // always move at least one character
-	while( c < len && !is_word_boundary( str, c ) && !is_cool_coding_char(STB_TEXTEDIT_GETCHAR(str,c)))
+	bool found_char = false;
+	while(c<len){
+		uint32_t ch = STB_TEXTEDIT_GETCHAR(str,c);
+		bool is_space = isspace(ch);
+		bool is_special = !isalnum(ch);
+		if(!found_char && (is_space || is_special)){
+			++c;
+			continue;
+		}
+		
+		found_char = true;
+		if((is_space || is_special)) break;
 		++c;
+	}
+	
 	
 	if( c > len )
 		c = len;
@@ -589,7 +618,7 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 				string text = ofGetWindowPtr()->getClipboardString();
 				//vector<uint32_t> text_utf32 = utf8_to_utf32(text);
 				//stb_textedit_paste(this, state, &text_utf32[0], (int)text_utf32.size());
-				insertTextAtCursor(text, true);
+				insertTextAtCursor(text, false);
 			}
 			else if (key.key == OF_KEY_TAB && state->select_start != state->select_end) {
 				// go back to prev line break
@@ -678,7 +707,7 @@ bool mui::TextArea::keyReleased( ofKeyEventArgs &key ){
 }
 
 
-mui::TextArea::EditorCursor mui::TextArea::getEditorCursorForIndex( int cursorPos ){
+mui::TextArea::EditorCursor mui::TextArea::	getEditorCursorForIndex( int cursorPos ){
 	EditorCursor result;
 	ofRectangle size = mui::Helpers::alignBox( this, boundingBox.width, boundingBox.height, horizontalAlign, verticalAlign );
 	
@@ -788,6 +817,10 @@ void mui::TextArea::insertTextAtCursor(string text, bool select){
 	if (select) {
 		setSelectedRange(sel_start, sel_start + text_utf32.size());
 	}
+	else{
+		size_t end = sel_start + text_utf32.size();
+		setSelectedRange(end,end);
+	}
 
 	ofNotifyEvent(onChange, this->text, this);
 }
@@ -840,13 +873,16 @@ void mui::TextArea::selectNothing(){
 void mui::TextArea::setSelectedRange(size_t start, size_t end){
 	if(utf32.size()==0) return;
 	
-	start = CLAMP(start,0,utf32.size()-1);
-	end = CLAMP(end,0,utf32.size()-1);
+	start = CLAMP(start,0,utf32.size());
+	end = CLAMP(end,0,utf32.size());
 	
 	state->select_start = min(start,end);
 	state->select_end = max(start,end);
 	
-	EditorCursor c = getEditorCursorForIndex(state->select_start);
+	state->cursor = max(state->cursor, state->select_start);
+	state->cursor = min(state->cursor, state->select_end);
+	
+	EditorCursor c = getEditorCursorForIndex(state->cursor);
 	scrollIntoView(c.rect);
 }
 
@@ -1063,6 +1099,22 @@ void mui::TextAreaView::touchDown(ofTouchEventArgs &touch) {
 	}
 	else {
 		stb_textedit_click(t, t->state, touch.x, touch.y);
+		if(touch.type == ofTouchEventArgs::doubleTap){
+			size_t cursor = t->getSelectedRange().first;
+			size_t start =  t->move_to_word_previous_impl(t, cursor);
+			size_t start_alt = t->move_to_word_next_impl(t, start);
+			if(start_alt<=cursor) start = cursor;
+			size_t end = start;
+			const int len = STB_TEXTEDIT_STRINGLEN(t);
+			while(end<len){
+				uint32_t ch = STB_TEXTEDIT_GETCHAR(t, end);
+				bool is_space = isspace(ch);
+				bool is_special = !isalnum(ch);
+				if(is_space || is_special) break;
+				++end;
+			}
+			t->setSelectedRange(start, end);
+		}
 	}
 	requestKeyboardFocus();
 }
