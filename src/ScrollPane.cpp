@@ -487,11 +487,9 @@ void mui::ScrollPane::touchMoved( ofTouchEventArgs &touch ){
 		
 		if( wantX > maxScrollX ) wantX = ( wantX + 2*maxScrollX ) / 3;
 		else if( wantX < minScrollX ) wantX = ( wantX + 2*minScrollX ) / 3;
-		else scrollX = wantX; 
 		
 		if( wantY > maxScrollY ) wantY = ( wantY + 2*maxScrollY ) / 3;
 		else if( wantY < minScrollY ) wantY = ( wantY + 2*minScrollY ) / 3;
-		else wantY = wantY; 
 		
 		if( canScrollX ) currentScrollX = wantX; 
 		if( canScrollY ) currentScrollY = wantY;

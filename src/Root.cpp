@@ -159,7 +159,7 @@ void mui::Root::handleDraw(){
 			while( c != NULL  ){
 				bool empty = c->name == ""; 
 				auto n = empty ? (typeid(*c).name()) : c->name;
-				name = (empty?"::":"") + n + (name==""?"":">") + name;
+				name = (empty?"::":"") + n + (name==""?"":" > ") + name;
 				c = c->parent;
 			}
 
@@ -776,10 +776,16 @@ bool mui::Root::of_mouseScrolled( ofMouseEventArgs &args ){
 	}
 	else{
 		mui::Container * container = findChildAt(pos.x, pos.y, true, true );
+		
+		mui::Container * rec = container;
+		while(rec){
+			if (rec->onMouseScroll.notify(args)) return true;
+			rec = rec->parent;
+		}
+		
+		
 		if( container != nullptr && container != this ){
-			if (!container->onMouseScroll.notify(args)) {
-				container->mouseScroll(args); 
-			}
+			container->mouseScroll(args);
 			return true;
 		}
 		else{
