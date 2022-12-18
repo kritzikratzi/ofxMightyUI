@@ -58,7 +58,8 @@ namespace mui{
 		void add( Container * c, int index = -1 ); 
 		void remove( Container * c ); 
 		void remove();
-		
+		void setChildren( std::vector<Container*> children);
+
 		ofRectangle getGlobalBounds();
 		ofRectangle getBounds();
 

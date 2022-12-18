@@ -60,6 +60,34 @@ void mui::Container::remove(){
     }
 }
 
+//--------------------------------------------------------------
+void mui::Container::setChildren( std::vector<Container*> new_children_list){
+	std::set<Container*> old_children_set(children.begin(),children.end());
+	std::set<Container*> new_children_set(new_children_list.begin(),new_children_list.end());
+	std::vector<Container*> old_children_list = children;
+	children = new_children_list;
+	
+	for(Container * c : old_children_list){
+		// removed from previous children
+		if(new_children_set.find(c)==new_children_set.end()){
+			MUI_ROOT->removeFromResponders( c );
+			c->parent = nullptr;
+			c->onAfterRemove.notify(this);
+			c->afterRemove(this);
+		}
+	}
+	
+	for(Container * c : new_children_list){
+		// added, and was not previously added?
+		if(old_children_set.find(c)==old_children_set.end()){
+			c->parent = this;
+			c->afterAdd(this);
+			c->onAfterAdd.notify(this);
+		}
+	}
+}
+
+
 ofRectangle mui::Container::getGlobalBounds(){
 	return ofRectangle( getGlobalPosition(), width, height );
 }
