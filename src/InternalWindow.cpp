@@ -59,18 +59,19 @@ void mui::InternalWindow::draw(){
 
 //--------------------------------------------------------------
 void mui::InternalWindow::drawBackground(){
-	ofSetColor( 255, 255, 255, 200 ); 
+	ofSetColor( bg );
 	ofFill(); 
 	Helpers::roundedRect( 0, 0, width, height, radius );
 	ofNoFill(); 
 	//Helpers::roundedRect( 1, 22, width-2, height-22, radius ); 
 	
-	ofSetColor( 255, 255, 255 );
+	ofSetColor( 255 );
 	Helpers::beginImages();
 	Helpers::drawImage( "titlebar_left", 0, 0, 5, 44 );
 	Helpers::drawImage( "titlebar_center", 5, 0, width - 9, 44 );
 	Helpers::drawImage( "titlebar_right", width-5, 0, 5, 44 );
-	Helpers::endImages(); 
+	Helpers::endImages();
+	ofFill();
 }
 
 

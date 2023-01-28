@@ -30,7 +30,7 @@ mui::SliderWithLabel::SliderWithLabel( float x_, float y_, float width_, float h
 //--------------------------------------------------------------
 void mui::SliderWithLabel::update(){
 	if( oldValue != slider->value ){
-		label->text = ofToString( slider->value, decimalPlaces );
+		label->text = formatter?formatter(slider->value):ofToString( slider->value, decimalPlaces );
 		label->commit();
 		oldValue = slider->value;
 		// do we really need to do this on every frame?
@@ -52,4 +52,17 @@ mui::Container * mui::SliderWithLabel::handleTouchDown( ofTouchEventArgs &args )
 		ofNotifyEvent(slider->onChange, defaultValue, slider );
 	}
 	return res; 
+}
+
+void mui::SliderWithLabel::setFormatter(std::function<std::string(float v)> func){
+	formatter = func;
+	float v = -slider->min>slider->max?slider->min:slider->max;
+	label->text = formatter?formatter(v):ofToString(v, decimalPlaces);
+	label->sizeToFitWidth();
+	label->width += 5;
+	if( v < 0 ) label->width += 20;
+	
+	// refresh...
+	oldValue = slider->value + 10000;
+	update();
 }

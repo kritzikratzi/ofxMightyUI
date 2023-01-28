@@ -68,6 +68,7 @@ namespace mui{
 
 		virtual void prepareAnimation( int milliseconds, int type = tween::QUAD, int direction = tween::EASE_OUT ); 
 		virtual void animate( float &variable, float targetValue ); 
+		virtual void commitAnimation(std::function<void()> onComplete);
 		virtual void commitAnimation();
 		
 		virtual void runOnUiThread(function<void()> func);

@@ -87,7 +87,7 @@ void mui::Root::handleUpdate(){
 		cout << "updating width width = " << width << ", height = " << height << endl;
 	}
 	
-	tweener.step( ofGetSystemTime() );
+	tweener.step( ofGetSystemTimeMillis() );
 	
 	// figure out where we are hovering
 	
@@ -452,6 +452,11 @@ void mui::Root::animate( float &variable, float targetValue ){
 
 
 //--------------------------------------------------------------
+void mui::Root::commitAnimation(std::function<void()> onComplete){
+	param.onComplete = [onComplete](tween::TweenerParam & param){onComplete();};
+    tweener.addTween( param );
+}
+
 void mui::Root::commitAnimation(){
     tweener.addTween( param );
 }
