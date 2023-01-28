@@ -229,19 +229,19 @@ void mui::ScrollPane::scrollIntoView(mui::Container * container, bool animate){
 		parent = parent->parent;
 	}
 	if(found){
-		ofRectangle curr(currentScrollX,currentScrollY,width-(wantsToScrollX?8:0),height-(wantsToScrollY?8:0));
+		ofRectangle curr(currentScrollX,currentScrollY,width-(wantsToScrollX?15:0),height-(wantsToScrollY?15:0));
 		float targetX = curr.x;
 		float targetY = curr.y;
 		if(curr.x>pos.x) targetX = pos.x;
 		if(curr.x+curr.width<pos.x+container->width) targetX = curr.x + (pos.x+container->width-curr.x-curr.width);
-		if(curr.y+height>pos.y) targetY = pos.y;
-		if(curr.y+curr.height<pos.y+container->height) targetY = curr.y + container->y + container->height - curr.getHeight();
+		if(curr.y>pos.y) targetY = pos.y;
+		if(curr.y+curr.height<pos.y+container->height) targetY = curr.y + pos.y + container->height - curr.height;
 		beginBaseAnimation(ofClamp(targetX,minScrollX,maxScrollX), ofClamp(targetY,minScrollY,maxScrollY), animate);
 	}
 }
 
 void mui::ScrollPane::scrollIntoView(const ofRectangle & rect, bool animate){
-	ofRectangle curr(currentScrollX,currentScrollY,width-(wantsToScrollX?8:0),height-(wantsToScrollY?8:0));
+	ofRectangle curr(currentScrollX,currentScrollY,width-(wantsToScrollX?15:0),height-(wantsToScrollY?15:0));
 	float targetX = curr.x;
 	float targetY = curr.y;
 	if(curr.x>rect.x) targetX = rect.x;

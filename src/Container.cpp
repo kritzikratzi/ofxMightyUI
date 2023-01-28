@@ -644,16 +644,22 @@ mui::Container * mui::Container::findChildAt( float posX, float posY, bool onlyV
 	}
 }
 
-bool mui::Container::isVisibleOnScreen( float border ){
+bool mui::Container::isVisibleOnScreen( float border, bool strict ){
 	float posX = 0;
 	float posY = 0;
 	
 	Container * element = this;
+	ofPoint gpos = element->getGlobalPosition();
+	ofRectangle me(gpos.x-border,gpos.y-border,width+2*border,height+2*border);
+
+	
 	while( element != NULL ){
 		if( element->visible == false ) return false;
 		if( element->parent != nullptr ){
 			posX += element->x;
 			posY += element->y;
+			
+			if(strict && !me.intersects(element->parent->getGlobalBounds())) return false;
 		}
 		else if( dynamic_cast<mui::Root*>(element) == nullptr ){
 			return false;
@@ -662,7 +668,6 @@ bool mui::Container::isVisibleOnScreen( float border ){
 	}
 	
 	
-	ofRectangle me(posX-border,posY-border,width+2*border,height+2*border);
 	ofRectangle root(0,0,MUI_ROOT->width, MUI_ROOT->height );
 	
 	return me.intersects(root);

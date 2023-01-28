@@ -294,7 +294,7 @@ namespace mui{
 		
 		// tests if the element and all of it's parent are visible.
 		// the border parameter slightly enlargers the element, so that visible seems true even when the container is slightly outside
-		virtual bool isVisibleOnScreen(float border=0);
+		virtual bool isVisibleOnScreen(float border=0, bool strict=false);
 		
 		 // check if any cursor is over the component
 		virtual bool isMouseOver();
