@@ -31,6 +31,7 @@ namespace mui{
 		class Row;
 		
 		ParameterPanel(string title = "");
+		virtual ~ParameterPanel();
 		
 		string getTitle() const;
 		void setTitle( string text );
@@ -191,6 +192,10 @@ namespace mui{
 				add(control);
 			}
 			
+			virtual ~Row(){
+				if(!customLabel) delete titleLabel;
+			}
+			
 			void layout(){
 				if( customLabel ){
 					control->x = 0;
@@ -227,6 +232,11 @@ namespace mui{
 				ignoreEvents = true;
 				add(titleLabel);
 			}
+			
+			virtual ~Section(){
+				delete titleLabel;
+			}
+			
 			vector<mui::data::Attribute> rows;
 			
 			void layout(){

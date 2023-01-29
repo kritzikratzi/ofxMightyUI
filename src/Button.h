@@ -20,6 +20,7 @@ namespace mui{
 	class Button : public Container{
 	public: 
 		Button( std::string title, float x = 0, float y = 0, float width = 200, float height = 20 );
+		virtual ~Button();
 		
 		Label * label; 
 		bool pressed;

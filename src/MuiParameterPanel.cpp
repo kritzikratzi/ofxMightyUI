@@ -40,6 +40,11 @@ mui::ParameterPanel::ParameterPanel( string title ) : mui::Container(0,0,100,100
 	opaque = true;
 }
 
+mui::ParameterPanel::~ParameterPanel(){
+	delete titleLabel;
+	for(auto s : sections) delete s;
+}
+
 void mui::ParameterPanel::setLabelColumnWidth(float width){
 	labelColumnWidth = width;
 	handleLayout();

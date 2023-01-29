@@ -19,7 +19,7 @@ namespace mui{
 		enum class Operation{LOAD,SAVE};
 		
 		FilePicker(Operation op = Operation::LOAD);
-		~FilePicker();
+		virtual ~FilePicker();
 		
 		
 		void setOperation(Operation op);

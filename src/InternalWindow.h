@@ -14,6 +14,7 @@ namespace mui{
 	class InternalWindow : public Container{
 	public: 
 		InternalWindow( std::string title = "Window", float x = 0, float y = 0, float width = 300, float height = 300, float radius = 10 );
+		virtual ~InternalWindow();
 		
 		Label * label; 
 		BarButton * leftBarButton; 

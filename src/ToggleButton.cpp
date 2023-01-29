@@ -30,6 +30,11 @@ mui::ToggleButton::ToggleButton( std::string title, float x, float y, float widt
 	selectedFg = ofColor(0);
 }
 
+mui::ToggleButton::~ToggleButton(){
+	delete label;
+}
+
+
 //--------------------------------------------------------------
 void mui::ToggleButton::update(){
 	label->fg = selected?selectedFg:fg;

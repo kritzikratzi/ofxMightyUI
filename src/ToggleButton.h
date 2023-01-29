@@ -28,7 +28,7 @@ namespace mui{
 	class ToggleButton : public Container{
 	public:
 		ToggleButton( std::string title_, float x_ = 0, float y_ = 0, float width_ = 200, float height_ = 20 );
-		
+		virtual ~ToggleButton();
 		Label * label;
 		bool pressed;
 		bool selected;

@@ -462,25 +462,24 @@ void mui::Root::commitAnimation(){
 }
 
 void mui::Root::handleRemovals(){
-	vector<Container*> cp = move(safeRemoveList);
+	vector<Container*> cp;
+	swap(cp,safeRemoveList);
 	for(auto c : cp){
 		c->remove();
 	}
 
-	cp = move(safeDeleteList);
+	cp.clear();
+	swap(cp,safeDeleteList);
 	for(auto c : cp){
 		c->remove();
 	}
 	
-	cp = move(safeRemoveAndDeleteList);
+	cp.clear();
+	swap(cp,safeRemoveAndDeleteList);
 	for(auto c : cp){
 		c->remove();
 		delete c;
 	}
-	
-    safeRemoveList.clear();
-	safeDeleteList.clear();
-    safeRemoveAndDeleteList.clear();
 	
 }
 

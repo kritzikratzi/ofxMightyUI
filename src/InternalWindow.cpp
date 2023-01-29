@@ -29,6 +29,11 @@ Container( x, y, width, height ), radius(radius), leftBarButton(nullptr), rightB
 	view->name = "view-" + title; 
 }
 
+mui::InternalWindow::~InternalWindow(){
+	delete label;
+	delete view;
+}
+
 //--------------------------------------------------------------
 void mui::InternalWindow::update(){
 	label->width = width;

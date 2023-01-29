@@ -69,6 +69,13 @@ namespace mui{
 			};
 		}
 		
+		virtual ~SegmentedSelect(){
+			for(auto c : children){
+				auto s = dynamic_cast<SegmentedButton<T>*>(c);
+				if(s) delete s;
+			}
+		}
+		
 		virtual SegmentedButton<T> * addSegment( string text, T value ){
 			SegmentedButton<T> * button = new SegmentedButton<T>( text, value );
 			button->width = button->label->boundingBox.width + 10;
