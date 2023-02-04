@@ -132,6 +132,9 @@ void mui::ScrollPane::commit(){
 	viewportWidth -= effectivePinWidth;
 	viewportHeight -= effectivePinHeight;
 	
+	viewportWidth = fmaxf(0, viewportWidth);
+	viewportHeight = fmaxf(0, viewportHeight);
+	
 	minScrollX = fminf( 0, bounds.x );
 	minScrollY = fminf( 0, bounds.y ); 
 	maxScrollX = fmaxf( 0, bounds.x + bounds.width + padRight - viewportWidth );
