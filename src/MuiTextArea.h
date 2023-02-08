@@ -106,7 +106,7 @@ namespace mui{
 
 		// call this after you made changes to any variables (changing x/y is okay without doing a commit() ).
 		// doing text-maths too insane to do on every frame!
-		virtual void commit() override;
+		virtual void commit(bool relayoutView=true) override;
 
 		virtual ofRectangle box(float tblr = 0) { return box(tblr, tblr, tblr, tblr); }
 		virtual ofRectangle box(float tb, float lr) { return box(tb, lr, tb, lr); }

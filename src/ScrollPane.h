@@ -54,7 +54,7 @@ namespace mui{
         
 		virtual void init();
 		
-		virtual void commit(); 
+		virtual void commit(bool relayoutViews=true); 
 		virtual ofRectangle getViewBoundingBox();
 		virtual void update();
 		virtual void draw();

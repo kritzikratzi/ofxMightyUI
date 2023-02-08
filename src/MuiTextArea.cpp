@@ -365,6 +365,7 @@ void mui::TextArea::update(){
 	fontStyle.fontSize = fontSize;
 	fontStyle.color = fg;
 	fontStyle.fontID = fontName;
+	state->single_line = !multiLine;
 }
 
 
@@ -428,7 +429,13 @@ ofRectangle mui::TextArea::box( float t, float r, float b, float l ){
 }
 
 //--------------------------------------------------------------
-void mui::TextArea::commit(){
+void mui::TextArea::commit(bool relayoutView){
+	
+	//if(!relayoutView){
+	//	mui::ScrollPane::commit(relayoutView);
+	//	return;
+	//}
+	
 	mui::Helpers::loadFont(fontName);
 	
 	if (!multiLine) canScrollX = canScrollY = false;
@@ -528,7 +535,7 @@ void mui::TextArea::commit(){
 		}
 	}
 
-	mui::ScrollPane::commit(); 
+	mui::ScrollPane::commit(relayoutView); 
 }
 
 bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){

@@ -117,12 +117,13 @@ mui::ScrollPane::~ScrollPane(){
 void mui::ScrollPane::handleLayout(){
 	mui::Container::handleLayout();
 	// commit after all components got layed out.
-	commit();
+	commit(false);
 }
 
 //--------------------------------------------------------------
-void mui::ScrollPane::commit(){
-	view->handleLayout();
+void mui::ScrollPane::commit(bool relayoutViews){
+	if(relayoutViews) view->handleLayout();
+	
 	ofRectangle bounds = getViewBoundingBox();
 	
 	viewportWidth = canScrollY? (width-15):width;
