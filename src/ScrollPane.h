@@ -98,7 +98,7 @@ namespace mui{
 		virtual void touchUpOutside( ofTouchEventArgs &touch ); 
 		virtual void touchDoubleTap( ofTouchEventArgs &touch ); 
 		virtual void touchCanceled( ofTouchEventArgs &touch ); 
-		virtual void mouseScroll( ofMouseEventArgs &args);
+		virtual bool mouseScroll( ofMouseEventArgs &args);
 
 		virtual Container * handleTouchDown( ofTouchEventArgs &touch );
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );

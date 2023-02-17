@@ -59,11 +59,6 @@ namespace mui{
 		ofRectangle boundingBox;
 
 		// internally redirect those, so that it goes straight into the real textarea and not the scroller
-		bool hasFocus() override;
-		bool hasFocus( ofTouchEventArgs &touch ) override;
-		bool requestFocus( ofTouchEventArgs &args ) override;
-		
-		// internally redirect those, so that it goes straight into the real textarea and not the scroller
 		bool hasKeyboardFocus() override;
 		bool requestKeyboardFocus() override;
 		
@@ -191,7 +186,7 @@ namespace mui{
 		void touchUpOutside(ofTouchEventArgs &touch) override;
 		void touchMoved(ofTouchEventArgs &touch) override;
 		void touchMovedOutside(ofTouchEventArgs &touch) override;
-		void mouseScroll(ofMouseEventArgs &args) override;
+		bool mouseScroll(ofMouseEventArgs &args) override;
 		
 		friend class TextAreaInternal; 
 	private: 

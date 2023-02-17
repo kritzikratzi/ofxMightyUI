@@ -771,31 +771,14 @@ bool mui::Root::of_mouseReleased( ofMouseEventArgs &args ){
 bool mui::Root::of_mouseScrolled( ofMouseEventArgs &args ){
     glm::vec2 pos;
 	fixTouchPosition(args, pos, NULL);
-	mui::Container * container = (mui::Container*)findChildOfType<mui::ScrollPane>(pos.x, pos.y, true, true);
-	if( container != NULL ){
-		if (!container->onMouseScroll.notify(args)) {
-			container->mouseScroll(args);
-		}
-		return true;
+	mui::Container * container = container = findChildAt(pos.x, pos.y, true, true );
+	while( container != NULL ){
+		if( container->onMouseScroll.notify(args) ) return true;
+		if( container->mouseScroll(args) ) return true;
+		container = container->parent;
 	}
-	else{
-		mui::Container * container = findChildAt(pos.x, pos.y, true, true );
-		
-		mui::Container * rec = container;
-		while(rec){
-			if (rec->onMouseScroll.notify(args)) return true;
-			rec = rec->parent;
-		}
-		
-		
-		if( container != nullptr && container != this ){
-			container->mouseScroll(args);
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
+
+	return false;
 }
 bool mui::Root::of_touchDown( ofTouchEventArgs &args ){
 	return handleTouchDown(args) != NULL;

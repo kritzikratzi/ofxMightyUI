@@ -15,7 +15,7 @@
 
 #include <GLFW/glfw3.h>
 
-// how nasty is this??
+// how nasty is this?? => not at all
 mui::TextAreaInternal * internal(mui::TextArea * tf){
 	return tf->internalData();
 }
@@ -349,11 +349,6 @@ mui::TextArea::~TextArea(){
 	delete editor_view; 
 	delete state;
 }
-
-// internally redirect those, so that it goes straight into the real textarea and not the scroller
-bool mui::TextArea::hasFocus(){return editor_view->hasFocus(); }
-bool mui::TextArea::hasFocus( ofTouchEventArgs &touch ){ return editor_view->hasFocus(touch); };
-bool mui::TextArea::requestFocus( ofTouchEventArgs &args ){ return editor_view->requestFocus(args); };
 
 // internally redirect those, so that it goes straight into the real textarea and not the scroller
 bool mui::TextArea::hasKeyboardFocus(){ return editor_view->hasKeyboardFocus(); };
@@ -1152,6 +1147,6 @@ void mui::TextAreaView::touchMovedOutside(ofTouchEventArgs &touch) {
 	stb_textedit_drag(t, t->state, touch.x, touch.y);
 }
 
-void mui::TextAreaView::mouseScroll(ofMouseEventArgs &args) {
-	t->mouseScroll(args);
+bool mui::TextAreaView::mouseScroll(ofMouseEventArgs &args) {
+	return t->mouseScroll(args);
 }

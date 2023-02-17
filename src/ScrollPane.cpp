@@ -239,7 +239,7 @@ void mui::ScrollPane::scrollIntoView(mui::Container * container, bool animate){
 		if(curr.x>pos.x) targetX = pos.x;
 		if(curr.x+curr.width<pos.x+container->width) targetX = curr.x + (pos.x+container->width-curr.x-curr.width);
 		if(curr.y>pos.y) targetY = pos.y;
-		if(curr.y+curr.height<pos.y+container->height) targetY = curr.y + pos.y + container->height - curr.height;
+		if(curr.y+curr.height<pos.y+container->height) targetY = curr.y + (pos.y+container->height-curr.y-curr.height);
 		beginBaseAnimation(ofClamp(targetX,minScrollX,maxScrollX), ofClamp(targetY,minScrollY,maxScrollY), animate);
 	}
 }
@@ -582,13 +582,17 @@ void mui::ScrollPane::touchCanceled( ofTouchEventArgs &touch ){
 	focusTransferable = true;
 }
 
-void mui::ScrollPane::mouseScroll( ofMouseEventArgs &args){
+bool mui::ScrollPane::mouseScroll( ofMouseEventArgs &args){
 #if defined(_WIN32) || defined(TARGET_LINUX)
 	args.scrollX *= 30; 
 	args.scrollY *= 30; 
 #endif
+	float csx = currentScrollX;
+	float csy = currentScrollY;
 	if(canScrollX) view->x = -(currentScrollX = ofClamp(currentScrollX-args.scrollX, minScrollX, maxScrollX))  + (leftMenu?leftMenu->width:0) ;
 	if(canScrollY) view->y = -(currentScrollY = ofClamp(currentScrollY-args.scrollY, minScrollY, maxScrollY))  + (topMenu?topMenu->height:0);
+	
+	return csx != currentScrollX || csy != currentScrollY;
 }
 
 

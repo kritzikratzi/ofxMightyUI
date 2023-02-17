@@ -93,7 +93,7 @@ namespace mui{
 		virtual void touchUpOutside( ofTouchEventArgs &touch ){}
 		virtual void touchDoubleTap( ofTouchEventArgs &touch ){};
 		virtual void touchCanceled( ofTouchEventArgs &touch ){}; // when some other component "stole" the responder status.
-		virtual void mouseScroll( ofMouseEventArgs &args){};
+		virtual bool mouseScroll( ofMouseEventArgs &args){ return false;};
 		virtual void mouseEnter( ofMouseEventArgs &args){}; 
 		virtual void mouseExit( ofMouseEventArgs &args){};
 		
