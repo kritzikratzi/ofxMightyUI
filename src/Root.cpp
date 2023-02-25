@@ -602,29 +602,55 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 
 //--------------------------------------------------------------
 mui::Container * mui::Root::handleKeyReleased( ofKeyEventArgs &event ){
-	if( keyboardResponder != NULL ){
-		if(keyboardResponder->onKeyReleased.notify(event)) return keyboardResponder;
-		keyboardResponder->keyReleased(event);
-	}
-	
-	// now simulate hover/touch/drag...
-	bool pressed = ofGetMousePressed(OF_MOUSE_BUTTON_1) || ofGetMousePressed(OF_MOUSE_BUTTON_2) || ofGetMousePressed(OF_MOUSE_BUTTON_3) || ofGetMousePressed(OF_MOUSE_BUTTON_4) || ofGetMousePressed(OF_MOUSE_BUTTON_5) || ofGetMousePressed(OF_MOUSE_BUTTON_6);
-	if (pressed) {
-		// dragging...
-		ofTouchEventArgs args;
-		args.x = ofGetMouseX();
-		args.y = ofGetMouseY();
-		handleTouchMoved(args);
-	}
-	else {
-		// moving
-		ofMouseEventArgs args;
-		args.x = ofGetMouseX();
-		args.y = ofGetMouseY();
-		handleMouseMoved(args.x, args.y);
+	auto retriggerMouse = [&]() {
+		// now simulate hover/touch/drag...
+		bool pressed = ofGetMousePressed(OF_MOUSE_BUTTON_1) || ofGetMousePressed(OF_MOUSE_BUTTON_2) || ofGetMousePressed(OF_MOUSE_BUTTON_3) || ofGetMousePressed(OF_MOUSE_BUTTON_4) || ofGetMousePressed(OF_MOUSE_BUTTON_5) || ofGetMousePressed(OF_MOUSE_BUTTON_6);
+		if (pressed) {
+			// dragging...
+			ofTouchEventArgs args;
+			args.x = ofGetMouseX();
+			args.y = ofGetMouseY();
+			handleTouchMoved(args);
+		}
+		else {
+			// moving
+			ofMouseEventArgs args;
+			args.x = ofGetMouseX();
+			args.y = ofGetMouseY();
+			handleMouseMoved(args.x, args.y);
+		}
+	};
+
+	mui::Container * temp = keyboardResponder;
+
+	if (temp == nullptr) {
+		auto pos = muiGetMousePos();
+		temp = findChildAt(pos.x, pos.y, true, true);
+		// sorry that this is a property ... :/
+		while(temp != nullptr && temp->getPropertyOr("hoverKeyEvent",false)==false){
+			temp = temp->parent;
+		}
 	}
 
-	return keyboardResponder;
+	if( temp != nullptr ){
+		if( !temp->isVisibleOnScreen()){
+			temp = nullptr;
+			retriggerMouse();
+			return nullptr;
+		}
+		else{
+			while(temp != nullptr && !temp->onKeyReleased.notify(event) && !temp->keyReleased(event)){
+				temp = temp->parent;
+			}
+
+			retriggerMouse();
+			return temp;
+		}
+	}
+
+	// still here? a bit sad... 
+	retriggerMouse();
+	return nullptr;
 }
 
 //--------------------------------------------------------------
