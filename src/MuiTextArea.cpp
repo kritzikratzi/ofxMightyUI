@@ -565,12 +565,12 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 			break;
 		case OF_KEY_UP:
 			// on osx cmd+up goes to the start
-			if(ofGetKeyPressed(OF_KEY_COMMAND)) stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTSTART);
+			if(ofGetKeyPressed(OF_KEY_COMMAND)) stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTSTART|keyMask);
 			else stb_textedit_key(this, state, STB_TEXTEDIT_K_UP|keyMask);
 			break;
 		case OF_KEY_DOWN:
 			// on osx cmd+down goes to the end
-			if(ofGetKeyPressed(OF_KEY_COMMAND)) stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTEND);
+			if(ofGetKeyPressed(OF_KEY_COMMAND)) stb_textedit_key(this, state, STB_TEXTEDIT_K_TEXTEND|keyMask);
 			else stb_textedit_key(this, state, STB_TEXTEDIT_K_DOWN|keyMask);
 			break;
 		case OF_KEY_LEFT:
@@ -1100,6 +1100,8 @@ void mui::TextAreaView::draw() {
 
 
 void mui::TextAreaView::touchDown(ofTouchEventArgs &touch) {
+	bool shiftPressed = ofGetKeyPressed(OF_KEY_SHIFT);
+	
 	if (muiIsContextClick()) {
 		mui::Helpers::translateTouch(touch, this, t);
 		t->onContextClick.notify(touch);
@@ -1112,7 +1114,9 @@ void mui::TextAreaView::touchDown(ofTouchEventArgs &touch) {
 		t->selectAll();
 	}
 	else {
-		stb_textedit_click(t, t->state, touch.x, touch.y);
+		if(shiftPressed) stb_textedit_drag(t, t->state, touch.x, touch.y);
+		else stb_textedit_click(t, t->state, touch.x, touch.y);
+		
 		if(touch.type == ofTouchEventArgs::doubleTap){
 			size_t cursor = t->getSelectedRange().first;
 			size_t start =  t->move_to_word_previous_impl(t, cursor);
