@@ -585,7 +585,10 @@ void mui::ScrollPane::touchCanceled( ofTouchEventArgs &touch ){
 bool mui::ScrollPane::mouseScroll( ofMouseEventArgs &args){
 #if defined(_WIN32) || defined(TARGET_LINUX)
 	args.scrollX *= 30; 
-	args.scrollY *= 30; 
+	args.scrollY *= 30;
+#elif defined(__APPLE__)
+	args.scrollX *= 4;
+	args.scrollX *= 4;
 #endif
 	float csx = currentScrollX;
 	float csy = currentScrollY;
