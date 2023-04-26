@@ -25,6 +25,7 @@ namespace mui{
 		bool manageCursor{true}; 
 		
 		virtual void init(); 
+		virtual void retriggerMouse();
 		virtual void handleUpdate();
 		virtual void handleDraw();
 		

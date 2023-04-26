@@ -208,10 +208,11 @@ rerun_layout:
 	if( sizeChanged || needsLayout ){
 		numPasses ++;
 		if( numPasses <= 3 ){
+			if(numPasses == 3){
+				ofLogWarning() << "[ofxMighty] Num layout passes seems high, layout possibly unstable. Last try!" << endl;
+			}
+
 			goto rerun_layout;
-		}
-		else{
-			ofLogWarning() << "[ofxMighty] Num layout passes seems high, layout possibly unstable. " << endl;
 		}
 	}
 	
@@ -643,6 +644,38 @@ mui::Container * mui::Container::findChildAt( float posX, float posY, bool onlyV
 		return NULL;
 	}
 }
+
+ofRectangle mui::Container::getVisibleBounds(){
+	float posX = 0;
+	float posY = 0;
+	
+	Container * element = this;
+	ofRectangle result = getBounds();
+	
+	while( element != nullptr ){
+		if( element->visible == false ) return ofRectangle(); // invisible
+		if( element->parent != nullptr ){
+			ofRectangle next(0,0,element->parent->width, element->parent->height);
+			posX += element->x;
+			posY += element->y;
+			
+			result = result.getIntersection(next);
+			result.x += element->parent->x;
+			result.y += element->parent->y;
+		}
+		else if( dynamic_cast<mui::Root*>(element) == nullptr ){
+			return ofRectangle(); // invisible
+		}
+		element = element->parent;
+	}
+	
+	
+	result = result.getIntersection(MUI_ROOT->getBounds());
+	result.x -= posX;
+	result.y -= posY;
+	return result;
+}
+
 
 bool mui::Container::isVisibleOnScreen( float border, bool strict ){
 	float posX = 0;

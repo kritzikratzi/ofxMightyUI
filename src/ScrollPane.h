@@ -110,7 +110,8 @@ namespace mui{
 			DRAG_CONTENT,
 			DRAG_SCROLLBAR_X,
 			DRAG_SCROLLBAR_Y,
-			INACTIVE
+			INACTIVE,
+			FOLLOW_DURING_DRAG
 		};
 //		virtual inline float getScrollTarget( float value, float min, float max ); 
 		void beginTracking(ofTouchEventArgs &touch, TrackingState state);

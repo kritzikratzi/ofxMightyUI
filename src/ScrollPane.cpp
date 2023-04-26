@@ -6,7 +6,7 @@
  */
 
 #include "ScrollPane.h"
-#include "Root.h"
+#include "ofxMightyUI.h"
 
 mui::ScrollPane::ScrollPane( float x_, float y_, float width_, float height_ )
 	: Container( x_, y_, width_, height_ ),
@@ -392,6 +392,28 @@ void mui::ScrollPane::update(){
 			animating = false; 
 		}
 	}
+	else if( !animating && trackingState == FOLLOW_DURING_DRAG){
+		ofVec2f touch = muiGetMousePos(this);
+		if(!ofGetMousePressed(OF_MOUSE_BUTTON_1)){
+			trackingState = INACTIVE;
+		}
+		else{
+			ofRectangle vis = getVisibleBounds();
+			float followInset = 20;
+			float followSpeed = 480;
+			if(touch.x < followInset) velX = ofMap(touch.x, vis.x, vis.x+followInset, -followSpeed, 0, true);
+			else if(touch.x > width - followInset) velX = ofMap(touch.x, vis.getRight(), vis.getRight()-followInset, followSpeed, 0, true);
+			else velX = 0;
+			if(touch.y < followInset) velY = ofMap(touch.y, vis.y, vis.y+followInset, -followSpeed, 0, true);
+			else if(touch.y > height - followInset) velY = ofMap(touch.y, vis.getBottom(), vis.getBottom()-followInset, followSpeed, 0, true);
+			else velY = 0;
+			
+			float dt = ofGetLastFrameTime();
+			if( canScrollX ) currentScrollX = ofClamp(currentScrollX + velX*dt, minScrollX, maxScrollX);
+			if( canScrollY ) currentScrollY = ofClamp(currentScrollY + velY*dt, minScrollY, maxScrollY);
+			MUI_ROOT->retriggerMouse();
+		}
+	}
 
 	if( canScrollX ){
 		view->x = -currentScrollX + (leftMenu?leftMenu->width:0);
@@ -521,6 +543,9 @@ void mui::ScrollPane::touchMoved( ofTouchEventArgs &touch ){
 		else{
 			currentScrollX = ofMap( touch.x, 2+scrubberWidth/2, width-2-scrubberWidth/2, minScrollX, maxScrollX, true);
 		}
+	}
+	else if( trackingState == FOLLOW_DURING_DRAG){
+		// taken care of in update
 	}
 }
 
@@ -664,16 +689,23 @@ mui::Container * mui::ScrollPane::handleTouchMoved( ofTouchEventArgs &touch ){
 		   ( canScrollY && /*wantsToScrollY && */fabsf( touchStart[touch.id].y - touch.y ) > 20 )
 		){
 			// steal focus!
-			if( Root::INSTANCE->becomeTouchResponder( this, touch ) ){
+			if( MUI_ROOT->becomeTouchResponder( this, touch ) ){
 				beginTracking( touch, DRAG_CONTENT );
 				watchingTouch[touch.id] = false;
 				return this;
+			}
+			else{
+				beginTracking(touch, FOLLOW_DURING_DRAG);
 			}
 		}
 	}
 	else if( trackingState != INACTIVE && singleTouchId == touch.id){
 		touchMoved(touch);
 		return this;
+	}
+	else if( trackingState == FOLLOW_DURING_DRAG){
+		//taken care of in update()
+		//touchMoved(touch);
 	}
 
 	return Container::handleTouchMoved( touch );

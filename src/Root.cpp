@@ -71,6 +71,27 @@ void mui::Root::init(){
 	}
 }
 
+// resend hover/drag commands, so that we immediately see the effects of changed
+// cursor etc. without having to handle all code everywhere.
+void mui::Root::retriggerMouse(){
+	// now simulate hover/touch/drag...
+	bool pressed = ofGetMousePressed(OF_MOUSE_BUTTON_1) || ofGetMousePressed(OF_MOUSE_BUTTON_2) || ofGetMousePressed(OF_MOUSE_BUTTON_3) || ofGetMousePressed(OF_MOUSE_BUTTON_4) || ofGetMousePressed(OF_MOUSE_BUTTON_5) || ofGetMousePressed(OF_MOUSE_BUTTON_6);
+	if (pressed) {
+		// dragging...
+		ofTouchEventArgs args;
+		args.x = ofGetMouseX();
+		args.y = ofGetMouseY();
+		handleTouchMoved(args);
+	}
+	else {
+		// moving
+		ofMouseEventArgs args;
+		args.x = ofGetMouseX();
+		args.y = ofGetMouseY();
+		handleMouseMoved(args.x, args.y);
+	}
+};
+
 void mui::Root::handleUpdate(){
 	int _width = ofGetWidth()/mui::MuiConfig::scaleFactor;
 	int _height = ofGetHeight()/mui::MuiConfig::scaleFactor;
@@ -489,27 +510,6 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 	// glfw that re-sends modifier key when they are released.
 	// for now, i'm not fixing this. i really shouldn't be, not here.
 	
-	// resend hover/drag commands, so that we immediately see the effects of changed 
-	// cursor etc. without having to handle all code everywhere. 
-	auto retriggerMouse = [&]() {
-		// now simulate hover/touch/drag...
-		bool pressed = ofGetMousePressed(OF_MOUSE_BUTTON_1) || ofGetMousePressed(OF_MOUSE_BUTTON_2) || ofGetMousePressed(OF_MOUSE_BUTTON_3) || ofGetMousePressed(OF_MOUSE_BUTTON_4) || ofGetMousePressed(OF_MOUSE_BUTTON_5) || ofGetMousePressed(OF_MOUSE_BUTTON_6);
-		if (pressed) {
-			// dragging...
-			ofTouchEventArgs args;
-			args.x = ofGetMouseX();
-			args.y = ofGetMouseY();
-			handleTouchMoved(args);
-		}
-		else {
-			// moving
-			ofMouseEventArgs args;
-			args.x = ofGetMouseX();
-			args.y = ofGetMouseY();
-			handleMouseMoved(args.x, args.y);
-		}
-	};
-
 	if( getKeyPressed(OF_KEY_ESC) && popupMenu != nullptr){
 		if (keyboardResponder == nullptr || !keyboardResponder->onKeyPressed.notify(event) || !keyboardResponder->keyPressed(event)) {
 			safeRemove(popupMenu);
@@ -602,25 +602,6 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 
 //--------------------------------------------------------------
 mui::Container * mui::Root::handleKeyReleased( ofKeyEventArgs &event ){
-	auto retriggerMouse = [&]() {
-		// now simulate hover/touch/drag...
-		bool pressed = ofGetMousePressed(OF_MOUSE_BUTTON_1) || ofGetMousePressed(OF_MOUSE_BUTTON_2) || ofGetMousePressed(OF_MOUSE_BUTTON_3) || ofGetMousePressed(OF_MOUSE_BUTTON_4) || ofGetMousePressed(OF_MOUSE_BUTTON_5) || ofGetMousePressed(OF_MOUSE_BUTTON_6);
-		if (pressed) {
-			// dragging...
-			ofTouchEventArgs args;
-			args.x = ofGetMouseX();
-			args.y = ofGetMouseY();
-			handleTouchMoved(args);
-		}
-		else {
-			// moving
-			ofMouseEventArgs args;
-			args.x = ofGetMouseX();
-			args.y = ofGetMouseY();
-			handleMouseMoved(args.x, args.y);
-		}
-	};
-
 	mui::Container * temp = keyboardResponder;
 
 	if (temp == nullptr) {
