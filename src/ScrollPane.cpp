@@ -613,7 +613,7 @@ bool mui::ScrollPane::mouseScroll( ofMouseEventArgs &args){
 	args.scrollY *= 30;
 #elif defined(__APPLE__)
 	args.scrollX *= 4;
-	args.scrollX *= 4;
+	args.scrollY *= 4;
 #endif
 	float csx = currentScrollX;
 	float csy = currentScrollY;
