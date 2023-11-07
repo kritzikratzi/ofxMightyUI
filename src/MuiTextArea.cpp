@@ -610,7 +610,7 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint == 'z'){
 				if (ofGetKeyPressed(OF_KEY_SHIFT)) stb_text_redo(this, state);
-				else stb_text_undo(this, state);
+				else if(state->undostate.undo_point>1) stb_text_undo(this, state);
 				setSelectedRange(state->cursor, state->cursor);
 			}
 			else if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && (key.codepoint == 'Z' || key.codepoint == 'y')){
