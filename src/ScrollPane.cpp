@@ -346,7 +346,7 @@ mui::Container* mui::ScrollPane::getLeftMenu(float w){
 
 //--------------------------------------------------------------
 void mui::ScrollPane::update(){
-	if( animating && trackingState == INACTIVE){
+	if( animating && (trackingState == INACTIVE || trackingState == FOLLOW_DURING_DRAG) ){
 		long t = ofGetElapsedTimeMicros(); 
 		float totalT = ( t - animationStartTime  ) / 1000.0f;
 		float dt = ( t - lastAnimationTime ) / 1000000.0f;

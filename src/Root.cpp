@@ -147,7 +147,7 @@ void mui::Root::handleUpdate(){
 		}
 	}
 	
-	hoverResponder = move(newHoverResponder); 
+	hoverResponder = std::move(newHoverResponder); 
 	
 	Container::handleUpdate();
     handleRemovals();

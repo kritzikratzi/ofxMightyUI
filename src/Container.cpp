@@ -14,6 +14,7 @@ mui::Container::Container( float x, float y, float width, float height ) : x(x),
 
 //--------------------------------------------------------------
 mui::Container::~Container(){
+	parent = nullptr;
 	MUI_ROOT->removeFromResponders( this );
 }
 

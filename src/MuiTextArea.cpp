@@ -258,7 +258,7 @@ int mui::TextArea::is_word_boundary( STB_TEXTEDIT_STRING *str, int idx )
 
 static bool is_cool_coding_char(STB_TEXTEDIT_CHARTYPE c){
 	const static char * chars = "[]|{}().!=+-_,;:^&|#*/\\";
-	for(int i = strlen(chars)-1;i>=0; i--){
+	for(int i = (int)strlen(chars)-1;i>=0; i--){
 		if((uint32_t)chars[i] == c) return true;
 	}
 	return false;

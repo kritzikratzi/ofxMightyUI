@@ -353,7 +353,7 @@ namespace tween {
 		total_tweens = tweens.size();
 		float t = 0 ;
 		float d = 0;
-		int  dif = (currentMillis - lastTime);
+		long  dif = (currentMillis - lastTime);
 		
 		for (tweensIT = tweens.begin();  tweensIT != tweens.end(); ++tweensIT ) {
 			

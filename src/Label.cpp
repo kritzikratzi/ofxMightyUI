@@ -88,7 +88,7 @@ void mui::Label::commit(){
         if( boundingBox.width > width && text.length() > 3 ){
 			// don't mess with the original boundingBox object. it's publicly readable!
 			ofRectangle box = boundingBox;
-            int len = text.length() - 3;
+            ssize_t len = (ssize_t)text.length() - 3;
             while( box.width > width && len >= 0 ){
                 displayText = text.substr(0, len ) + "...";
 				box = Helpers::getFontStash().getTextBounds(displayText, fontStyle, 0, 0 );
