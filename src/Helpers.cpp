@@ -92,9 +92,18 @@ void mui::Helpers::drawImage( string name, float x, float y, float w, float h ){
 
 void mui::Helpers::beginImages(){
 	if( !atlas.loaded ){
-		string xml = mui::Helpers::muiPath("mui/atlas/ui.xml");
-		string png = mui::Helpers::muiPath("mui/atlas/ui.png");
-		atlas.load(xml, png);
+		auto user_atlas = mui::Helpers::muiPath("atlas/ui.xml");
+		if(ofFile(user_atlas,ofFile::Reference).exists()){
+			string xml = mui::Helpers::muiPath("atlas/ui.xml");
+			string png = mui::Helpers::muiPath("atlas/ui.png");
+			atlas.load(xml, png);
+		}
+		else{
+			string xml = mui::Helpers::muiPath("mui/atlas/ui.xml");
+			string png = mui::Helpers::muiPath("mui/atlas/ui.png");
+			atlas.load(xml, png);
+		}
+		
 	}
 }
 
