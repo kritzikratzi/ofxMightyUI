@@ -818,7 +818,7 @@ string mui::TextArea::getSelectedText(){
 }
 
 void mui::TextArea::insertTextAtCursor(string text, bool select){
-	if (text.size() == 0) return;
+	//if (text.size() == 0) return;
 
 	size_t sel_start = state->cursor;
 	//_if_ there is an active selection, pretend the cursor is at the selection start

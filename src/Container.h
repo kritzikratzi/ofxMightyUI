@@ -137,7 +137,9 @@ namespace mui{
 		EventHandlerConsumable<ofMouseEventArgs> onMouseScroll{this};
 		EventHandler<ofMouseEventArgs> onMouseEnter{this};
 		EventHandler<ofMouseEventArgs> onMouseExit{this};
-		
+		EventHandler<mui::Container*> onFocus{this};
+		EventHandler<mui::Container*> onBlur{this};
+
 		EventHandlerConsumable<ofKeyEventArgs> onKeyPressed{this};
 		EventHandlerConsumable<ofKeyEventArgs> onKeyReleased{this};
 		

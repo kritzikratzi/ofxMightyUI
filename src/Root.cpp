@@ -378,6 +378,7 @@ bool mui::Root::becomeTouchResponder( Container * c, ofTouchEventArgs &touch ){
         if( touchResponder[touch.id]->focusTransferable == false )
             return false; 
         
+		touchResponder[touch.id]->onBlur.notify(touchResponder[touch.id]);
 		touchResponder[touch.id]->handleTouchCanceled( touch );
 		touchResponder[touch.id]->singleTouchId = -1; 
 	}
@@ -385,6 +386,7 @@ bool mui::Root::becomeTouchResponder( Container * c, ofTouchEventArgs &touch ){
 	// alright, install new owner
 	touchResponder[touch.id] = c;
 	if( touchResponder[touch.id] != NULL ){
+		touchResponder[touch.id]->onFocus.notify(touchResponder[touch.id]);
 		touchResponder[touch.id]->singleTouchId = touch.id;
 	}
 
