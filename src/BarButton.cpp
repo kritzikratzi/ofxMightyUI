@@ -24,14 +24,14 @@ void mui::BarButton::drawBackground(){
 	ofSetColor( 255, 255, 255 );
 	Helpers::beginImages();
 	if( pressed ){
-		Helpers::drawImage( "barbutton_left_active", 0, 0, 5, 30 );
-		Helpers::drawImage( "barbutton_center_active", 5, 0, width-10, 30 );
-		Helpers::drawImage( "barbutton_right_active", width-5, 0, 5, 30 );
+		Helpers::drawImage( "barbutton_left_active", 7, 7, 5, 30 );
+		Helpers::drawImage( "barbutton_center_active", 7+5, 7, width-24, 30 );
+		Helpers::drawImage( "barbutton_right_active", width-5-7, 7, 5, 30 );
 	}
 	else{
-		Helpers::drawImage( "barbutton_left", 0, 0, 5, 30 );
-		Helpers::drawImage( "barbutton_center", 5, 0, width-10, 30 );
-		Helpers::drawImage( "barbutton_right", width-5, 0, 5, 30 );
+		Helpers::drawImage( "barbutton_left", 7, 7, 5, 30 );
+		Helpers::drawImage( "barbutton_center", 7+5, 7, width-24, 30 );
+		Helpers::drawImage( "barbutton_right", width-5-7, 7, 5, 30 );
 	}
 	Helpers::endImages();
 }

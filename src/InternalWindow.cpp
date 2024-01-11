@@ -43,16 +43,16 @@ void mui::InternalWindow::update(){
 	view->height = height - 44 - 2*padding;
 	
 	if( leftBarButton != NULL ){
-		leftBarButton->width = leftBarButton->label->boundingBox.width + 10;
-		leftBarButton->height = 30;
-		leftBarButton->x = leftBarButton->y = 7;
+		leftBarButton->width = leftBarButton->label->boundingBox.width + 24;
+		leftBarButton->height = 44;
+		leftBarButton->x = leftBarButton->y = 0;
 	}
 	
 	if( rightBarButton != NULL ){
-		rightBarButton->width = rightBarButton->label->boundingBox.width + 10; 
-		rightBarButton->height = 30; 
-		rightBarButton->x = width - 7 - rightBarButton->width; 
-		rightBarButton->y = 7;
+		rightBarButton->width = rightBarButton->label->boundingBox.width + 24;
+		rightBarButton->height = 44;
+		rightBarButton->x = width - rightBarButton->width;
+		rightBarButton->y = 0;
 	}
 }
 
