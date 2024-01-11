@@ -74,8 +74,8 @@ namespace mui{
 		L( vector<T*> targets ) : targets(targets.begin(),targets.end()){
 		}
 		
-		const L & with( function<void(mui::Container*)> func ) const{
-			for(mui::Container * c : targets) func(c); 
+		const L & with( std::function<void(mui::Container*)> func ) const{
+			for(mui::Container * c : targets) func(c);
 			return *this;
 		}
 		
@@ -277,7 +277,7 @@ namespace mui{
 
 		const L & maxWidth( float width ) const{
 			for(auto target : targets ){
-				target->width = min(width, target->width);
+				target->width = std::min(width, target->width);
 			}
 			return *this;
 		}
@@ -506,7 +506,7 @@ namespace mui{
 			return L(newTargets);
 		}
 		
-		L filter(function<bool(mui::Container*)> filterFunc){
+		L filter(std::function<bool(mui::Container*)> filterFunc){
 			std::vector<mui::Container*> newTargets;
 			for(auto & target : targets){
 				if(filterFunc(target)){

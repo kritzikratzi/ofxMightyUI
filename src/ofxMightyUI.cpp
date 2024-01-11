@@ -8,14 +8,15 @@
  */
 
 #include "ofxMightyUI.h"
-#include <GLFW/glfw3.h>
 
 #if TARGET_OS_IPHONE
 	#include "ofAppiOSWindow.h"
 	#include <CoreFoundation/CoreFoundation.h>
-#elif TARGET_OS_MAC
+#elif TARGET_OS_MAC || TARGET_OS_LINUX
+	#include <GLFW/glfw3.h>
 	#include "ofAppGLFWWindow.h"
 #elif _WIN32
+	#include <GLFW/glfw3.h>
 	#include <windows.h>
 	#include "ofAppGLFWWindow.h"
 #endif
@@ -52,8 +53,8 @@ void mui_init(){
 		CFRelease(path);
 		CFRelease(url);
 		CFRelease(absolute);
-		appPath = Poco::Path(result);
-		appPath = appPath.parent();
+		appPath = result;
+		appPath = appPath.parent_path();
 	#elif TARGET_OS_MAC
 		// http://www.cocoabuilder.com/archive/cocoa/193451-finding-out-executable-location-from-c-program.html
 		CFBundleRef bundle = CFBundleGetMainBundle();
@@ -101,7 +102,8 @@ void mui_init(){
 	
     mui::MuiConfig::dataPath = std::filesystem::absolute(appPath);
 	mui::Helpers::getFontStash().setup(mui::MuiConfig::fontAtlasSize );
-	mui::Helpers::getFontStash().pixelDensity = mui::MuiConfig::scaleFactor;
+	//xtodo: hansi: ok, this change needs to be looked into on all platforms ... ^^
+	mui::Helpers::getFontStash().pixelDensity = 1; //mui::MuiConfig::scaleFactor;
 	mui::Helpers::getFontStash().fontScale = 1.3;
 }
 
@@ -168,7 +170,7 @@ string muiToDataPath( string path, bool abs ){
 
 void muiSetCursor(mui::Cursor cursor){
 	auto windowPtr = ofGetMainLoop()->getCurrentWindow();
-	
+#ifdef MUI_USE_GLFW
 	static GLFWcursor * glfwCursor = nullptr;
 	if (dynamic_cast<ofAppGLFWWindow*>(windowPtr.get())) {
 		GLFWwindow * w = ((ofAppGLFWWindow*)windowPtr.get())->getGLFWWindow();
@@ -202,4 +204,5 @@ void muiSetCursor(mui::Cursor cursor){
 
 		if (cursor.type == mui::Cursor::Custom) glfwCursor = nullptr; // so it doesn't get destroyed... ever
 	}
+#endif
 }

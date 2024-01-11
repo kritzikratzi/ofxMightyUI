@@ -98,25 +98,25 @@ namespace mui{
 		
 		
 		template<typename MuiType, typename DataType>
-		void registerGetter( function<DataType(MuiType*)> func ){
-			getters.insert(pair<type_index,data::Attribute>(type_index(typeid(Row<MuiType,DataType>*)), func));
+		void registerGetter( std::function<DataType(MuiType*)> func ){
+			getters.insert(std::pair<std::type_index,data::Attribute>(std::type_index(typeid(Row<MuiType,DataType>*)), func));
 		};
 		
 		template<typename MuiType, typename DataType>
-		void registerSetter( function<void(MuiType*, DataType & type)> func ){
-			setters.insert(pair<type_index,data::Attribute>(type_index(typeid(Row<MuiType,DataType>*)), func));
+		void registerSetter( std::function<void(MuiType*, DataType & type)> func ){
+			setters.insert(std::pair<std::type_index,data::Attribute>(std::type_index(typeid(Row<MuiType,DataType>*)), func));
 		};
 		
 		template<typename T>
 		T getValue( string rowId ){
-			unordered_map<string,mui::data::Attribute>::iterator it = rows.find(rowId);
+			std::unordered_map<string,mui::data::Attribute>::iterator it = rows.find(rowId);
 			if( it != rows.end() ){
 				mui::data::Attribute &attr = it->second;
 				Row<Container,T> * row = attr.value_unsafe<Row<Container,T>*>();
 				
-				auto getter = getters.find(type_index(attr.type()));
+				auto getter = getters.find(std::type_index(attr.type()));
 				if( getter != getters.end() ){
-					auto & func = getter->second.value_unsafe<function<T(Container*)>>();
+					auto & func = getter->second.value_unsafe<std::function<T(Container*)>>();
 					return func(row->control);
 				}
 				else{
@@ -134,14 +134,14 @@ namespace mui{
 		
 		template<typename T>
 		void setValue( string rowId, const T &value ){
-			unordered_map<string,mui::data::Attribute>::iterator it = rows.find(rowId);
+			std::unordered_map<string,mui::data::Attribute>::iterator it = rows.find(rowId);
 			if( it != rows.end() ){
 				mui::data::Attribute &attr = it->second;
 				Row<Container,T> * row = attr.value_unsafe<Row<Container,T>*>();
 				
-				auto setter = setters.find(type_index(attr.type()));
+				auto setter = setters.find(std::type_index(attr.type()));
 				if( setter != setters.end() ){
-					auto & func = setter->second.value_unsafe<function<void(Container*,const T&)>>();
+					auto & func = setter->second.value_unsafe<std::function<void(Container*,const T&)>>();
 					func(row->control, value);
 					return;
 				}
@@ -159,9 +159,9 @@ namespace mui{
 		}
 		
 	protected:
-		unordered_map<string,data::Attribute> rows;
-		unordered_map<type_index,data::Attribute> getters;
-		unordered_map<type_index,data::Attribute> setters;
+		std::unordered_map<string,data::Attribute> rows;
+		std::unordered_map<std::type_index,data::Attribute> getters;
+		std::unordered_map<std::type_index,data::Attribute> setters;
 		vector<Section*> sections;
 		Section * currentSection;
 		float labelColumnWidth;
@@ -267,7 +267,7 @@ namespace mui{
 				add(row);
 			}
 			
-			void sort( function<bool(string,string)> comp ){
+			void sort( std::function<bool(string,string)> comp ){
 				std::sort(children.begin(), children.end(), [&](mui::Container * a, mui::Container * b){
 					if(a == titleLabel ) return true;
 					else if( b == titleLabel ) return false;

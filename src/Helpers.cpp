@@ -10,19 +10,27 @@
 #include "Helpers.h"
 #include "TextureAtlas.h"
 #include "ofxMightyUI.h"
-#include <GLFW/glfw3.h>
 #include <locale>
 namespace fs = std::filesystem;
+
+
+#ifdef MUI_USE_GLFW
+#include <GLFW/glfw3.h>
+#endif
+
 
 
 std::map<std::string, ofTexture*> mui::Helpers::textures;
 std::map<std::string, ofImage*> mui::Helpers::images;
 std::stack<ofRectangle> mui::Helpers::scissorStack;
 mui::TextureAtlas mui::Helpers::atlas;
-ofxFontStash2 mui::Helpers::fontStash;
+ofxFontStash2::Fonts mui::Helpers::fontStash;
+
 short mui::Helpers::nextCursorId = 0;
-std::map<short, GLFWcursor*> mui::Helpers::cursorIdToData;
 std::map<string,short> mui::Helpers::cursorNameToId;
+#ifdef MUI_USE_GLFW
+std::map<short, GLFWcursor*> mui::Helpers::cursorIdToData;
+#endif
 
 
 
@@ -40,7 +48,7 @@ void mui::Helpers::clearCaches(){
 	}
 	textures.clear();
 
-	cerr << "CLEAR CACHE NOT FOR REALLY IMPLEMENTED FOR FONTS. GOING TO LEAK" << endl;
+	std::cerr << "CLEAR CACHE NOT FOR REALLY IMPLEMENTED FOR FONTS. GOING TO LEAK" << endl;
 }
 
 std::string mui::Helpers::muiPath( std::string path ){
@@ -82,7 +90,7 @@ void mui::Helpers::drawImage( string name, float x, float y, float w, float h ){
 	}
 	
 	if( rect == &mui::TextureAtlas::NOT_FOUND ){
-		cerr << "Image: " << name << " not available. this is bad!" << endl;
+		std::cerr << "Image: " << name << " not available. this is bad!" << endl;
 	}
 	else{
 		ofEnableTextureEdgeHack(); 
@@ -120,30 +128,30 @@ bool mui::Helpers::loadFont(string fontName){
 	return true;
 }
 
-ofxFontStashStyle mui::Helpers::getStyle( float size ){
+ofxFontStash2::Style mui::Helpers::getStyle( float size ){
 	loadFont("");
-	ofxFontStashStyle style;
+	ofxFontStash2::Style style;
 	style.fontSize = size;
 	style.fontID="";
 	return style;
 }
 
-ofxFontStashStyle mui::Helpers::getStyle( string customFont, float fontSize ){
+ofxFontStash2::Style mui::Helpers::getStyle( string customFont, float fontSize ){
 	loadFont(customFont);
-	ofxFontStashStyle style;
+	ofxFontStash2::Style style;
 	style.fontID = customFont;
 	style.fontSize = fontSize;
 	return style;
 }
 
-ofxFontStash2 & mui::Helpers::getFontStash(){
+ofxFontStash2::Fonts & mui::Helpers::getFontStash(){
 	return fontStash;
 }
 
 
 void mui::Helpers::drawString( string s, float x, float y, ofColor color, float fontSize ){
 	loadFont("");
-	ofxFontStashStyle style;
+	ofxFontStash2::Style style;
 	style.fontSize = fontSize;
 	style.color = color;
 	fontStash.draw(s, style, x, y);
@@ -159,8 +167,9 @@ short mui::Helpers::getCustomCursorId(const string & fontName, const string & ch
 	if (it == cursorNameToId.end()) {
 		loadFont(fontName);
 		float h = 16; // use or don't use display scaling??
-		ofxFontStashStyle style = getStyle(fontName, h*0.8);
-		style.alignment = static_cast<FONSalign>(FONSalign::FONS_ALIGN_CENTER | FONSalign::FONS_ALIGN_MIDDLE);
+		ofxFontStash2::Style style = getStyle(fontName, h*0.8);
+		//xtodo fix cursors!
+		//style.alignment = static_cast<FONSalign>(FONSalign::FONS_ALIGN_CENTER | FONSalign::FONS_ALIGN_MIDDLE);
 
 
 		cursorNameToId[name] = nextCursorId;
@@ -182,6 +191,7 @@ short mui::Helpers::getCustomCursorId(const string & fontName, const string & ch
 		fbo.getTexture().readToPixels(pixels);
 		fbo.clear();
 
+#ifdef MUI_USE_GLFW
 		GLFWimage image;
 		image.width = h;
 		image.height = h; 
@@ -189,8 +199,10 @@ short mui::Helpers::getCustomCursorId(const string & fontName, const string & ch
 
 		GLFWcursor * cursor = glfwCreateCursor(&image, h*xPct, h*yPct);
 		cursorIdToData[nextCursorId] = cursor; 
-
 		return nextCursorId++;
+#else
+		return 0;
+#endif
 	}
 	else {
 		return it->second;
@@ -198,8 +210,12 @@ short mui::Helpers::getCustomCursorId(const string & fontName, const string & ch
 }
 
 GLFWcursor * mui::Helpers::getCustomCursorData(short customId){
+#ifdef MUI_USE_GLFW
 	auto it = cursorIdToData.find(customId);
 	return it == cursorIdToData.end() ? nullptr : it->second;
+#else
+	return nullptr;
+#endif
 };
 
 void mui::Helpers::roundedRect(float x, float y, float w, float h, float r){

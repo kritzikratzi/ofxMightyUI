@@ -13,8 +13,6 @@
 #include "Root.h"
 #include <regex>
 
-#include <GLFW/glfw3.h>
-
 // how nasty is this?? => not at all
 mui::TextAreaInternal * internal(mui::TextArea * tf){
 	return tf->internalData();
@@ -170,7 +168,7 @@ void mui::TextArea::layout_func_impl(void *row_ptr, mui::TextArea *data, int sta
 	int pos = 0;
 	float y = 0;
 	for( int i = 0; i < data->lines.size(); i++){
-		const StyledLine & line = data->lines[i];
+		const ofxFontStash2::StyledLine & line = data->lines[i];
 		int lineLen = (int)data->utf32_line_length[i];
 		
 		if( pos >= start_i ){
@@ -229,7 +227,7 @@ int mui::TextArea::insert_chars_impl(mui::TextArea *data, int pos, const STB_TEX
 	if(pos==0) idx = 0;
 	else if(pos<data->utf32.size()) idx = data->utf8_positions[pos-1]+octect_size(data->utf32[pos-1]);
 	else idx = data->text.length();
-	idx = min(data->text.size(), idx);
+	idx = std::min(data->text.size(), idx);
 	
 	
 	stringstream str;
@@ -440,11 +438,12 @@ void mui::TextArea::commit(bool relayoutView){
 
 	boundingBox = Helpers::getFontStash().getTextBounds(text, fontStyle, 0, 0);
 	
-	vector<StyledText> blocks{ {text,fontStyle} };
+	vector<ofxFontStash2::StyledText> blocks{ {text,fontStyle} };
 	if(isnan(editor_view->width)){
 		return; 
 	}
-	lines = Helpers::getFontStash().layoutLines(blocks, softWrap?editor_view->width:9999999);
+	lines.clear();
+	Helpers::getFontStash().layoutLines(blocks, softWrap?editor_view->width:9999999, lines);
 	lineNumberSourceToDisplay.clear();
 	lineNumberDisplayToSource.clear();
 	
@@ -465,7 +464,7 @@ void mui::TextArea::commit(bool relayoutView){
 	lineNumberSourceToDisplay.push_back(lastLineStart);
 	
 	if(lines.size() == 0){
-		lines = Helpers::getFontStash().layoutLines({{" ",fontStyle}}, 10);
+		Helpers::getFontStash().layoutLines({{" ",fontStyle}}, 10, lines);
 	}
 	strlenWithLineStarts = 0;
 	utf32_line_length.clear();
@@ -485,7 +484,7 @@ void mui::TextArea::commit(bool relayoutView){
 	
 	bool first = false;
 	for( int i = 0; i < lines.size(); i++){
-		StyledLine & line = lines[i];
+		ofxFontStash2::StyledLine & line = lines[i];
 		utf32_line_length.push_back(0);
 		for( auto el : line.elements ){
 			utf32_line_length[i] += (int)utf8_strlen(el.content.styledText.text);
@@ -504,7 +503,7 @@ void mui::TextArea::commit(bool relayoutView){
 	if(true/*autoChangeHeight*/){
 		float h = 0;
 		for( int i = (int)lines.size()-1;i>=0;i--){
-			StyledLine & line = lines[i];
+			ofxFontStash2::StyledLine & line = lines[i];
 			for(int j = (int)line.elements.size()-1; j>=0; j--){
 				h = MAX(h,line.elements[j].baseLineY);
 			}
@@ -603,7 +602,7 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 			break;
 		default:
 			//ok, what about other shortcuts? ...
-			if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.keycode==GLFW_KEY_A ){
+			if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint=='a' ){
 				state->select_start = 0;
 				state->select_end = (int)strlenWithLineStarts;
 				state->cursor = state->select_end;
@@ -726,15 +725,15 @@ mui::TextArea::EditorCursor mui::TextArea::	getEditorCursorForIndex( int cursorP
 	float yy = 0;
 	ofRectangle bounds;
 	for( int lineIdx = 0; lineIdx < lines.size(); lineIdx++ ){
-		StyledLine &line = lines[lineIdx];
+		ofxFontStash2::StyledLine &line = lines[lineIdx];
 		int len = utf32_line_length[lineIdx];
 		if( pos + len <= cursorPos ){
 			pos += len;
 			yy += line.lineH;
 		}
 		else{
-			for( vector<LineElement>::iterator elementIt = line.elements.begin(); elementIt != line.elements.end(); ++elementIt ){
-				LineElement &el = *elementIt;
+			for( vector<ofxFontStash2::LineElement>::iterator elementIt = line.elements.begin(); elementIt != line.elements.end(); ++elementIt ){
+				ofxFontStash2::LineElement &el = *elementIt;
 				len = (int)utf8_strlen(el.content.styledText.text);
 				if( pos + len <= cursorPos ){
 					pos += len;
@@ -742,11 +741,11 @@ mui::TextArea::EditorCursor mui::TextArea::	getEditorCursorForIndex( int cursorP
 				else{
 					float x;
 					switch(el.content.type){
-						case SEPARATOR_INVISIBLE:
-						case SEPARATOR:
+						case ofxFontStash2::SEPARATOR_INVISIBLE:
+						case ofxFontStash2::SEPARATOR:
 							x = el.area.x + el.area.width;
 							
-						case WORD_BLOCK:
+						case ofxFontStash2::BLOCK_WORD:
 							// it's here, and we know the offset inside the word already.
 							// now let's find it within the string.
 							size_t len = cursorPos-pos;
@@ -801,7 +800,7 @@ mui::TextArea::EditorCursor mui::TextArea::	getEditorCursorForIndex( int cursorP
 
 
 int mui::TextArea::state_select_min(){
-	return min(state->select_start,state->select_end);
+	return std::min(state->select_start,state->select_end);
 }
 
 int mui::TextArea::state_select_max(){
@@ -890,11 +889,11 @@ void mui::TextArea::setSelectedRange(size_t start, size_t end){
 	start = CLAMP(start,0,utf32.size());
 	end = CLAMP(end,0,utf32.size());
 	
-	state->select_start = min(start,end);
-	state->select_end = max(start,end);
+	state->select_start = std::min(start,end);
+	state->select_end = std::max(start,end);
 	
-	state->cursor = max(state->cursor, state->select_start);
-	state->cursor = min(state->cursor, state->select_end);
+	state->cursor = std::max(state->cursor, state->select_start);
+	state->cursor = std::min(state->cursor, state->select_end);
 	
 	EditorCursor c = getEditorCursorForIndex(state->cursor);
 	scrollIntoView(c.rect);
@@ -924,20 +923,20 @@ void mui::TextArea::setSelectedRangeUtf8(size_t start, size_t end){
 
 
 pair<size_t,size_t> mui::TextArea::getSelectedRange(){
-	return make_pair(std::min(state->select_start,state->select_end), std::max(state->select_start,state->select_end));
+	return std::make_pair(std::min(state->select_start,state->select_end), std::max(state->select_start,state->select_end));
 }
 
 pair<size_t, size_t> mui::TextArea::getSelectedRangeUtf8(){
 	auto u32 = getSelectedRange();
-	auto u8 = make_pair((size_t)0,(size_t)0);
+	auto u8 = std::make_pair((size_t)0,(size_t)0);
 	size_t m;
 	
-	m = min(u32.first,utf32.size());
+	m = std::min(u32.first,utf32.size());
 	for(size_t i = 0; i < m; i++){
 		u8.first += utf32_chlen(utf32[i]);
 	}
 	
-	m = min(u32.second,utf32.size());
+	m = std::min(u32.second,utf32.size());
 	for(size_t i = 0; i < m; i++){
 		u8.second += utf32_chlen(utf32[i]);
 	}
@@ -1035,7 +1034,7 @@ void mui::TextAreaView::draw() {
 		}
 
 		while (from.lineIt != to.lineIt) {
-			StyledLine &line = *from.lineIt;
+			ofxFontStash2::StyledLine &line = *from.lineIt;
 			float x = size.x - t->boundingBox.x + line.elements.front().x;
 			float y = yy;
 			ofDrawRectangle(x, y, line.lineW, line.lineH);
@@ -1045,7 +1044,7 @@ void mui::TextAreaView::draw() {
 		}
 
 		if (from.lineIt != t->lines.end()) {
-			StyledLine &line = *from.lineIt;
+			ofxFontStash2::StyledLine &line = *from.lineIt;
 			float x = reset ? (size.x - t->boundingBox.x + line.elements.front().x) : from.rect.x;
 			float y = reset ? yy : from.rect.y;
 
@@ -1073,7 +1072,8 @@ void mui::TextAreaView::draw() {
 				++render_end;
 			}
 			
-			mui::Helpers::getFontStash().drawLines(render_start, render_end, size.x - t->boundingBox.x, size.y - t->boundingBox.y, MuiConfig::debugDraw);
+			std::vector<ofxFontStash2::StyledLine> res;
+			mui::Helpers::getFontStash().drawLines(render_start, render_end, size.x - t->boundingBox.x, size.y - t->boundingBox.y, (ofAlignHorz)t->horizontalAlign, MuiConfig::debugDraw);
 		}
 	}
 	

@@ -40,9 +40,9 @@ namespace mui{
 		static bool loadFont( const string customFont );
 		
 		// methods to draw fonts, and quick access into fontstash2
-		static ofxFontStashStyle getStyle( const float size = mui::MuiConfig::fontSize );
-		static ofxFontStashStyle getStyle( const string customFont, const float size = mui::MuiConfig::fontSize );
-		static ofxFontStash2 & getFontStash();
+		static ofxFontStash2::Style getStyle( const float size = mui::MuiConfig::fontSize );
+		static ofxFontStash2::Style getStyle( const string customFont, const float size = mui::MuiConfig::fontSize );
+		static ofxFontStash2::Fonts & getFontStash();
 		static void drawString( const string s, const float x = 0, const float y = 0, const ofColor color = ofColor(255), const float size = mui::MuiConfig::fontSize );
 
 		// loads a custom cursor as a character (utf8 encoded) from a font
@@ -83,7 +83,7 @@ namespace mui{
 		static std::map<std::string, ofImage*> images;
         static std::stack<ofRectangle> scissorStack;
 		static mui::TextureAtlas atlas;
-		static ofxFontStash2 fontStash;
+		static ofxFontStash2::Fonts fontStash;
 
 		static short nextCursorId; 
 		static std::map<short, GLFWcursor*> cursorIdToData;

@@ -210,7 +210,7 @@ namespace mui{
 		bool equallySizedButtons{false};
 		
 		// button drawing is handled here (mostly)
-		function<void(SegmentedButton<T>*)> onDrawButtonBackground; // see constructor for default implementation
+		std::function<void(SegmentedButton<T>*)> onDrawButtonBackground; // see constructor for default implementation
 		ofColor buttonBgDefault{ 100 };
 		ofColor buttonBgSelected{ 150 };
 		ofColor buttonFgDefault{ 255 };

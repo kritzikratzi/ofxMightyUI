@@ -737,13 +737,13 @@ string mui::Container::getPropertyString(string key){
 	try{
 		return val.value<string>();
 	}
-	catch(exception&){}
+	catch(std::exception&){}
 
 	try{
 		const char * ch = val.value<const char*>();
 		return string(ch);
 	}
-	catch(exception &){}
+	catch(std::exception &){}
 	
 	return "";
 }

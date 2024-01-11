@@ -20,7 +20,7 @@ namespace mui{
 		
 		Container * touchResponder[OF_MAX_TOUCHES]; // think of the responder as the elements received touchDown events.
 		Container * keyboardResponder;
-		set<Container*> hoverResponder;
+		std::set<Container*> hoverResponder;
 		Container * popupMenu;
 		bool manageCursor{true}; 
 		
@@ -72,7 +72,7 @@ namespace mui{
 		virtual void commitAnimation(std::function<void()> onComplete);
 		virtual void commitAnimation();
 		
-		virtual void runOnUiThread(function<void()> func);
+		virtual void runOnUiThread(std::function<void()> func);
 		
 		/// @brief Sets the display scale. 0=auto detect
 		virtual void setDisplayScaling(float val = 0);

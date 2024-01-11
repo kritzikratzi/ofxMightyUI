@@ -13,7 +13,10 @@
 #include "Container.h"
 #include "ScrollPane.h"
 #include "ofxMightyUI.h"
+
+#ifdef MUI_USE_GLFW
 #include <GLFW/glfw3.h>
+#endif
 
 using namespace mui;
 
@@ -34,13 +37,7 @@ mui::Root::Root() : Container( 0, 0, -1, -1 ){
 
 //--------------------------------------------------------------
 void mui::Root::init(){
-	#if TARGET_OS_IPHONE
-	NativeIOS::init();
-//	#elif TARGET_OS_MAC
-//	NativeOSX::init();
-	#endif
-	
-	name = "Root"; 
+	name = "Root";
 	width = ofGetWidth()/mui::MuiConfig::scaleFactor;
 	height = ofGetHeight()/mui::MuiConfig::scaleFactor;
 	
@@ -112,7 +109,7 @@ void mui::Root::handleUpdate(){
 	
 	// figure out where we are hovering
 	
-	set<Container*> newHoverResponder;
+	std::set<Container*> newHoverResponder;
 	Container * c = findChildAt(ofGetMouseX()/mui::MuiConfig::scaleFactor, ofGetMouseY()/mui::MuiConfig::scaleFactor,true,true);
 	Container * top = c;
 	if(c){
@@ -192,13 +189,13 @@ void mui::Root::handleDraw(){
 			info << "Rel:" << active->x << "," << active->y;
 			size = info.str();
 			
-			ofxFontStashStyle style = mui::Helpers::getStyle(10);
+			ofxFontStash2::Style style = mui::Helpers::getStyle(10);
 			ofNoFill();
 			ofSetColor( 255,255,0 );
 			ofDrawRectangle( p.x, p.y, active->width, active->height );
 
 			if (p.y > 30) p.y -= 30;
-			else p.y = min(muiGetHeight() - 30, p.y + active->height);
+			else p.y = std::min(muiGetHeight() - 30, p.y + active->height);
 
 			ofSetColor(255);
 			ofFill();
@@ -224,12 +221,6 @@ void mui::Root::handleDraw(){
 
 //--------------------------------------------------------------
 mui::Container * mui::Root::handleTouchDown( ofTouchEventArgs &touch ){
-	#if TARGET_OS_IPHONE
-	NativeIOS::hide();
-//	#elif TARGET_OS_MAC
-//	NativeOSX::hide();
-	#endif
-	
 	ofTouchEventArgs copy = touch; 
 	fixTouchPosition( touch, copy, NULL ); 
 	
@@ -448,7 +439,7 @@ void mui::Root::prepareAnimation( int milliseconds, int type, int direction ){
 }
 
 //--------------------------------------------------------------
-void mui::Root::runOnUiThread(function<void()> func){
+void mui::Root::runOnUiThread(std::function<void()> func){
 	//TBD
 }
 
@@ -519,7 +510,7 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 		return this;
 	}
 	
-	if( mui::MuiConfig::enableDebuggingShortcuts && getKeyPressed(MUI_KEY_ACTION) && event.keycode == GLFW_KEY_D ){
+	if( mui::MuiConfig::enableDebuggingShortcuts && getKeyPressed(MUI_KEY_ACTION) && event.keycode == 'D' ){
 		mui::MuiConfig::debugDraw ^= true;
 		retriggerMouse();
 		return this;
@@ -733,6 +724,7 @@ void mui::Root::of_setup( ofEventArgs &args ){
 }
 void mui::Root::of_update( ofEventArgs &args ){
 	if(mui::MuiConfig::detectRetina){
+		#ifdef MUI_USE_GLFW
 		auto ptr = ofGetWindowPtr();
 		auto glfw = dynamic_cast<ofAppGLFWWindow*>(ptr);
 		if(glfw && mui::MuiConfig::scaleFactor != muiGetDefaultDisplayScaling() ){
@@ -740,6 +732,7 @@ void mui::Root::of_update( ofEventArgs &args ){
 			mui::Helpers::getFontStash().pixelDensity = mui::MuiConfig::scaleFactor;
 			cout << "[ofxMightyUI] updated pixel scaling factor to " << mui::MuiConfig::scaleFactor << endl;
 		}
+		#endif
 	}
 	handleUpdate();
 }

@@ -83,10 +83,10 @@ namespace mui{
 		static bool enableDebuggingShortcuts;
 		
 		// function that can show a system "save..." dialog
-		static function<ofFileDialogResult(string,string)> systemSaveDialog;
+		static std::function<ofFileDialogResult(string,string)> systemSaveDialog;
 		
 		// function that can show a system "load..." dialog
-		static function<ofFileDialogResult(string)> systemLoadDialog;
+		static std::function<ofFileDialogResult(string)> systemLoadDialog;
 	};
 }
 
