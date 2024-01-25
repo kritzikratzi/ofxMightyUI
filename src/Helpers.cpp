@@ -258,8 +258,8 @@ void mui::Helpers::pushScissor( Container * c, float x, float y, float w, float 
 		ofRectangle & m = scissorStack.top();
 		r.x = fmaxf( r.x, m.x );
 		r.y = fmaxf( r.y, m.y );
-		r.width = fminf( pos.x + r.width, m.x + m.width ) - pos.x;
-		r.height = fminf( pos.y + r.height, m.y + m.height ) - pos.y;
+		r.width = fminf( pos.x + r.width, m.x + m.width ) - r.x;
+		r.height = fminf( pos.y + r.height, m.y + m.height ) - r.y;
 	}
 	
 	scissorStack.push( r );

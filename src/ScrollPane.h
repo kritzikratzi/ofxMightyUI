@@ -22,12 +22,24 @@ namespace mui{
 		ALWAYS
 	};
 	
+	class ScrollPaneView;
+	struct ScrollPaneViewDrawInfo{
+		mui::ScrollPane * scrollPane;
+		mui::ScrollPaneView * scrollPaneView;
+		ofRectangle renderRect;
+		ofRectangle sourceRect;
+	};
+
     class ScrollPaneView : public Container{
     public:
 		enum class Type{main,top,left};
 		ScrollPaneView( mui::ScrollPane * owner, ScrollPaneView::Type viewType, float x, float y, float w, float h );
 		virtual ~ScrollPaneView(); 
         virtual void handleDraw();
+		
+		EventHandler<mui::ScrollPaneViewDrawInfo> onDrawBackgroundPartial{this};
+		EventHandler<mui::ScrollPaneViewDrawInfo> onDrawPartial{this};
+
 	private:
 		mui::ScrollPane * owner;
 		Type viewType;

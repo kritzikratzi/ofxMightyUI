@@ -56,15 +56,24 @@ void mui::ScrollPaneView::handleDraw(){
 	if( allowSubpixelTranslations ) ofTranslate( x, y );
 	else ofTranslate( (int)x, (int)y );
 	
+	ScrollPaneViewDrawInfo info{
+		owner,
+		this,
+		{0, 0, inter.width, inter.height},
+		inter
+	};
+	
 	if( opaque ){
 		drawBackground();
 		onDrawBackground.notify(this);
+		onDrawBackgroundPartial.notify(info);
 	}
 	
 	if (needsLayout) handleLayout();
 	
 	draw();
 	onDraw.notify(this);
+	onDrawPartial.notify(info);
 
 	if( MUI_DEBUG_DRAW ){
 		ofNoFill();
@@ -609,17 +618,18 @@ void mui::ScrollPane::touchCanceled( ofTouchEventArgs &touch ){
 
 bool mui::ScrollPane::mouseScroll( ofMouseEventArgs &args){
 #if defined(_WIN32) || defined(TARGET_LINUX)
-	args.scrollX *= 30; 
-	args.scrollY *= 30;
+	const float speed = 30;
 #elif defined(__APPLE__)
-	args.scrollX *= 4;
-	args.scrollY *= 4;
+	const float speed = 4;
 #endif
 	float csx = currentScrollX;
 	float csy = currentScrollY;
-	if(canScrollX) view->x = -(currentScrollX = ofClamp(currentScrollX-args.scrollX, minScrollX, maxScrollX))  + (leftMenu?leftMenu->width:0) ;
-	if(canScrollY) view->y = -(currentScrollY = ofClamp(currentScrollY-args.scrollY, minScrollY, maxScrollY))  + (topMenu?topMenu->height:0);
-	
+	if(canScrollX) view->x = -(currentScrollX = ofClamp(currentScrollX-args.scrollX*speed, minScrollX, maxScrollX))  + (leftMenu?leftMenu->width:0) ;
+	if(canScrollY) view->y = -(currentScrollY = ofClamp(currentScrollY-args.scrollY*speed, minScrollY, maxScrollY))  + (topMenu?topMenu->height:0);
+
+	if( currentScrollY >= maxScrollY ) isAutoLockingToBottom = true;
+	else isAutoLockingToBottom = false;
+
 	return csx != currentScrollX || csy != currentScrollY;
 }
 
