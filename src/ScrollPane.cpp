@@ -274,6 +274,17 @@ void mui::ScrollPane::scrollBy(float dx, float dy, bool animate) {
 }
 
 
+void mui::ScrollPane::lockToBottom(){
+	scrollTo(currentScrollX,maxScrollY,false);
+	autoLockToBottom = true;
+	isAutoLockingToBottom = true;
+}
+
+bool mui::ScrollPane::isLockedToBottom(){
+	return autoLockToBottom && isAutoLockingToBottom;
+}
+
+
 mui::Container * mui::ScrollPane::createPage(){
 	static int pageCount = 0;
 	mui::Container * container = new mui::Container( width*numPagesAdded, 0, width, height );
@@ -705,7 +716,17 @@ mui::Container * mui::ScrollPane::handleTouchMoved( ofTouchEventArgs &touch ){
 				return this;
 			}
 			else{
-				beginTracking(touch, FOLLOW_DURING_DRAG);
+				mui::Container * c = MUI_ROOT->touchResponder[touch.id];
+				while(c){
+					bool * val = c->getProperty<bool>("follow_during_drag");
+					if(val){
+						// track, but do it in secret
+						beginTracking(touch, FOLLOW_DURING_DRAG);
+						watchingTouch[touch.id] = false;
+						break;
+					}
+					c = c->parent;
+				}
 			}
 		}
 	}

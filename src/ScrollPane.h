@@ -90,6 +90,9 @@ namespace mui{
 		bool usePagingH;
 		bool autoLockToBottom;
 		
+		void lockToBottom();
+		bool isLockedToBottom();
+		
 		// create a new page.
 		Container * createPage(); // memory belongs to you, release accordingly
 		ScrollPane * createPageWithScrollPane(); // memory belongs to you, release accordingly
