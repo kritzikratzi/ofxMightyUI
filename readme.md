@@ -9,14 +9,11 @@ Documentation is not exactly up to date.
 A handy UI addon for [openFrameworks](http://www.openframeworks.cc) Version 0.10. 
 
 
-In the long run this is supposed to be a small but flexible 
-UI library that runs cross-platform
+This is supposed to be a small but flexible UI library that runs cross-platform
 with multitouch support. 
 
-The library aims to only provide a minimal set of elements 
-needed for basic interactive artworks:
-sliders, segmented controls, buttons, labels, 
-toolbars/navigation bars, internal windows, textfields
+The library aims to only provide a minimal set of elements needed for basic interactive artworks:
+sliders, segmented controls, buttons, labels, toolbars/navigation bars, internal windows, textfields
 
 ofxMightyUI is a personal project and developed for my specific needs. 
 
@@ -34,7 +31,7 @@ ofxMightyUI is a personal project and developed for my specific needs.
 
 This is very much a work in progress. The following works/worked/should work: 
 
-- Windows (draggable, with titles and optional left/right toolbar buttons)
+- Internal Windows (draggable, with titles and optional left/right toolbar buttons)
 - Labels (with all sorts of alignments)
 - Sliders (multitouch enabled, optionally with value labels)
 - Buttons
@@ -47,10 +44,11 @@ This is very much a work in progress. The following works/worked/should work:
 ## Setup
 
 
-Download the current master branch, either as zip or clone from git with
+Download the current master branch for ofxMightyUI and ofxFontStash, either as zip or clone from git with
 
 	cd OF/addons
 	git clone https://github.com/kritzikratzi/ofxMightyUI.git
+	git clone https://github.com/kritzikratzi/ofxFontStash2.git
 
 
 ### All platforms
@@ -58,61 +56,11 @@ Download the current master branch, either as zip or clone from git with
 Edit `addons.make` and add this line: 
 
 	ofxMightyUI
+	ofxFontStash2
 
 
-With this alone makefile builds should already work. 
+Then regenerate your project. If you get missing fonts, then double check that the folder addons/ofxMighty/bin/data gets copied to your bin folder. 
 
-
-### iOS 
-
-**outdated, this is much easier now**
-
-- Add the folder addons/ofxMightyUI/src to your XCode project
-- Go to Project>Targets>emptyExample>Build Phases>Link Binary with Libraries. Click the '+' icon and add the CoreText framework. 
-- Go to Project>Targets>emptyExample>Build Phases>Run Script and add <br>
-  	```cp -rf ../../../addons/ofxMightyUI/bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app"```
-
-### MacOS X
-
-**outdated, this is much easier now**
-
-- Add the folder addons/ofxMightyUI/src to your XCode project. 
-- Go to Project>Targets>emptyExample>Build Phases>Run Script and add <br>
-  	```cp -rf ../../../addons/ofxMightyUI/bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources"```
-  	
-### Windows
-
-**outdated, this is much easier now**
-
-- Create a groups (filters) for ofxMightyUI
-- Add all .cpp and .h from those folders to their respective groups
-- Go to Project>Properties, choose "All configurations" from the dropdown on top
-- Go to C/C++>General and edit additional include directories. Add the following<br>
-		```..\..\..\addons\ofxMightyUI\src```<br>
-		```..\..\..\addons\ofxMightyUI\src\fontstash```
-
-- Go to Build Events>Post-Build Events and add this to command line: <br>
-  		```xcopy /e /i /y "$(ProjectDir)..\..\..\addons\ofxMightyUI\bin\data\mui" "$(ProjectDir)bin\data\mui"```
-
-### Android
-
-**outdated, this is much easier now**
-
-- Refresh your project view (press F5), the ofxMightyUI subproject should show up
-- Right click>Resource Configuration>Exclude From Build>Release and Debug for these folders: 
-	- ofxMightyUI/addons/ofxFBO
-	- ofxMightyUI/addons/ofxEasyRetina
-	- ofxMightyUI/addons/ofxMUI/native
-	- ofxMightyUI/addons/ofxMUI/native-osx
-	- ofxMightyUI/src
-	
-Also find the excludes section in config.make and add those same folders: 
-
-	PROJECT_EXCLUSIONS = $(PROJECT_ROOT)/ofxMightyUI/addons/ofxFBO
-	PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/ofxMightyUI/addons/ofxEasyRetina
-	PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/ofxMightyUI/addons/ofxMUI/native
-	PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/ofxMightyUI/addons/ofxMUI/native-osx
-	PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/ofxMightyUI/src
 
 ## Usage
 
@@ -181,7 +129,7 @@ Especially more complex layouts can be tricky to get right. ofxMightyUI uses a v
 
 Here is a simple example. We have a form with two labels+sliders (hue and size). 
 
-	#include "MuiL.h" // L for layout ^^
+	#include "MuiL.h" // L for layout
 	
 	class MyForm : public mui::Container{
 		mui::Label * sizeLabel; 
