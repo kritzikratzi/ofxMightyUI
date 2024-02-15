@@ -233,6 +233,18 @@ mui::Container * mui::Root::handleTouchDown( ofTouchEventArgs &touch ){
 	ofTouchEventArgs copy = touch; 
 	fixTouchPosition( touch, copy, NULL ); 
 	
+	uint64_t now = ofGetSystemTimeMicros();
+	double dt = (now-lastTouchInteraction[touch.id])/1000000.0;
+	if(dt<mui::MuiConfig::doubleTapTime){
+		tapCounter[touch.id]++;
+		copy.type = ofTouchEventArgs::doubleTap;
+	}
+	else{
+		tapCounter[touch.id] = 1;
+	}
+	
+	lastTouchInteraction[touch.id] = now;
+	
 	//return ( touchResponder[touch.id] = Container::handleTouchDown( copy ) );
 	Container * lastPopup = popupMenu;
 	touchResponder[touch.id] = nullptr;
@@ -469,6 +481,12 @@ bool mui::Root::getKeyPressed( int key ){
 }
 
 //--------------------------------------------------------------
+int mui::Root::getTapCount( int touchId ){
+	return touchId<0 || touchId>=OF_MAX_TOUCHES? 0 : tapCounter[touchId];
+}
+
+
+//--------------------------------------------------------------
 void mui::Root::animate( float &variable, float targetValue ){
     param.addProperty( &variable, targetValue ); 
 }
@@ -660,11 +678,6 @@ mui::Container * mui::Root::handleMousePressed( float x, float y, int button ){
 	args.x = x;
 	args.y = y;
 	args.id = 0;
-	uint64_t now = ofGetSystemTimeMicros();
-	if(now>lastMouseDown && (now-lastMouseDown)/1000<230){
-		args.type = ofTouchEventArgs::doubleTap;
-	}
-	lastMouseDown = now;
 	return handleTouchDown(args);
 }
 

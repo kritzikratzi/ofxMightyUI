@@ -19,6 +19,9 @@ namespace mui{
 		Root();
 		
 		Container * touchResponder[OF_MAX_TOUCHES]; // think of the responder as the elements received touchDown events.
+		uint64_t lastTouchInteraction[OF_MAX_TOUCHES]; // think of the responder as the elements received touchDown events.
+		int tapCounter[OF_MAX_TOUCHES]; // how often the finger was touched in quick succession
+		
 		Container * keyboardResponder;
 		set<Container*> hoverResponder;
 		Container * popupMenu;
@@ -78,6 +81,7 @@ namespace mui{
 		virtual void setDisplayScaling(float val = 0);
 		
 		virtual bool getKeyPressed( int key ); 
+		virtual int getTapCount( int touchId );
 		
 		static mui::Root * INSTANCE;
 		
@@ -89,7 +93,6 @@ namespace mui{
 		tween::Tweener tweener;
 
 		int numLayoutFrames = 1;
-		uint64_t lastMouseDown = 0;
 		
 		mui::Cursor lastCursor; 
 		

@@ -36,6 +36,8 @@
 
 #define MUI_FONT_SIZE mui::MuiConfig::fontSize
 
+#define MUI_DOUBLE_TAP_TIME mui::MuiConfig::doubleTapTime
+
 
 namespace mui{
 	class MuiConfig{
@@ -57,6 +59,9 @@ namespace mui{
 		// rate at which the scroll velocity decreases, not sure about the unit, pixels/s?
 		// guessing around ...
 		static int scrollVelocityDecrease;
+		
+		// duration during that another clicks counts as a double click/tap, in seconds. 
+		static double doubleTapTime;
 		
 		// size of the fontstash font atlas
 		// set this before calling mui_init()! 
