@@ -52,8 +52,8 @@ void mui_init(){
 		CFRelease(path);
 		CFRelease(url);
 		CFRelease(absolute);
-		appPath = Poco::Path(result);
-		appPath = appPath.parent();
+		appPath = result;
+		appPath = appPath.parent_path();
 	#elif TARGET_OS_MAC
 		// http://www.cocoabuilder.com/archive/cocoa/193451-finding-out-executable-location-from-c-program.html
 		CFBundleRef bundle = CFBundleGetMainBundle();

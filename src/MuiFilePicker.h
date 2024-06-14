@@ -49,14 +49,14 @@ namespace mui{
 		
 		
 		void resetFormatter();
-		void setFormatter(const function<std::string(const std::filesystem::path & file)> & formatter);
-		function<string(const std::filesystem::path & file)> getFormatter() const;
+		void setFormatter(const std::function<std::string(const std::filesystem::path & file)> & formatter);
+		std::function<string(const std::filesystem::path & file)> getFormatter() const;
 		
 		string loadText = "Pick a file";
 		string saveText = "Please pick destination file";
 		
 	private:
-		function<std::string(const std::filesystem::path & file)> formatter;
+		std::function<std::string(const std::filesystem::path & file)> formatter;
 		void buttonPressed(const void * sender, ofTouchEventArgs & args);
 		
 		mui::Label * label;

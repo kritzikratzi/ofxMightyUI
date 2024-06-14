@@ -123,7 +123,7 @@ namespace mui{
 
 
 		// use this to modify the text being set/inserted/typed
-		function <string(string)> onInsert;
+		std::function <std::string(std::string)> onInsert;
 
 
 		TextAreaInternal * internalData() { return dynamic_cast<mui::TextAreaInternal*>(this); }

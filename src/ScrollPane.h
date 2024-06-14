@@ -7,6 +7,8 @@
  * after that call scrollpane->commit() to 
  * compute the new boundaries. this will not happen 
  * automatically. 
+ *
+ * 2024-06-08 added getOverlay() to add an overlay view just above the main view. 
  */
 
 #ifndef MUI_SCROLL_PANE
@@ -102,8 +104,10 @@ namespace mui{
 		virtual int getPageNum();
 		virtual int numPages();
 		
+		// this creates and places left/top/overlay views
 		mui::Container * getLeftMenu(float height = -1);
 		mui::Container * getTopMenu(float width = -1);
+		mui::Container * getOverlay();
 		
 		virtual void updateTouchVelocity( ofTouchEventArgs &touch );
 		virtual void touchDown( ofTouchEventArgs &touch );
@@ -156,7 +160,8 @@ namespace mui{
 		Inset inset; // how much to inset the scrollview from the scrollpane itself.
 		mui::ScrollPaneView * topMenu = nullptr;
 		mui::ScrollPaneView * leftMenu = nullptr;
-		friend class ScrollPaneView; 
+		mui::ScrollPaneView * overlay = nullptr;
+		friend class ScrollPaneView;
 	};
 	
 };

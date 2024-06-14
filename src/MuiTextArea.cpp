@@ -13,8 +13,6 @@
 #include "Root.h"
 #include <regex>
 
-#include <GLFW/glfw3.h>
-
 // how nasty is this?? => not at all
 mui::TextAreaInternal * internal(mui::TextArea * tf){
 	return tf->internalData();
@@ -243,7 +241,10 @@ int mui::TextArea::insert_chars_impl(mui::TextArea *data, int pos, const STB_TEX
 	}
 
 	string text = str.str(); 
-	if (data->onInsert) text = data->onInsert(text);
+	if (data->onInsert) {
+		text = data->onInsert(text);
+		len = utf8_strlen(text);
+	}
 	
 	data->text.insert(idx, text);
 	data->commit();
@@ -515,7 +516,6 @@ void mui::TextArea::commit(bool relayoutView){
 
 		h = max(minHeight, h - baselineSize.y);
 
-		editor_view->width = viewportWidth;
 
 		if (autoChangeHeight) {
 			editor_view->height = h;
@@ -531,6 +531,7 @@ void mui::TextArea::commit(bool relayoutView){
 	}
 
 	mui::ScrollPane::commit(relayoutView); 
+	editor_view->width = viewportWidth;
 }
 
 bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
@@ -603,7 +604,7 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 			break;
 		default:
 			//ok, what about other shortcuts? ...
-			if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.keycode==GLFW_KEY_A ){
+			if(MUI_ROOT->getKeyPressed(MUI_KEY_ACTION) && key.codepoint=='a' ){
 				state->select_start = 0;
 				state->select_end = (int)strlenWithLineStarts;
 				state->cursor = state->select_end;
@@ -801,7 +802,7 @@ mui::TextArea::EditorCursor mui::TextArea::	getEditorCursorForIndex( int cursorP
 
 
 int mui::TextArea::state_select_min(){
-	return min(state->select_start,state->select_end);
+	return std::min(state->select_start,state->select_end);
 }
 
 int mui::TextArea::state_select_max(){
@@ -890,11 +891,11 @@ void mui::TextArea::setSelectedRange(size_t start, size_t end){
 	start = CLAMP(start,0,utf32.size());
 	end = CLAMP(end,0,utf32.size());
 	
-	state->select_start = min(start,end);
-	state->select_end = max(start,end);
+	state->select_start = std::min(start,end);
+	state->select_end = std::max(start,end);
 	
-	state->cursor = max(state->cursor, state->select_start);
-	state->cursor = min(state->cursor, state->select_end);
+	state->cursor = std::max(state->cursor, state->select_start);
+	state->cursor = std::min(state->cursor, state->select_end);
 	
 	EditorCursor c = getEditorCursorForIndex(state->cursor);
 	scrollIntoView(c.rect);
@@ -924,20 +925,20 @@ void mui::TextArea::setSelectedRangeUtf8(size_t start, size_t end){
 
 
 pair<size_t,size_t> mui::TextArea::getSelectedRange(){
-	return make_pair(std::min(state->select_start,state->select_end), std::max(state->select_start,state->select_end));
+	return std::make_pair(std::min(state->select_start,state->select_end), std::max(state->select_start,state->select_end));
 }
 
 pair<size_t, size_t> mui::TextArea::getSelectedRangeUtf8(){
 	auto u32 = getSelectedRange();
-	auto u8 = make_pair((size_t)0,(size_t)0);
+	auto u8 = std::make_pair((size_t)0,(size_t)0);
 	size_t m;
 	
-	m = min(u32.first,utf32.size());
+	m = std::min(u32.first,utf32.size());
 	for(size_t i = 0; i < m; i++){
 		u8.first += utf32_chlen(utf32[i]);
 	}
 	
-	m = min(u32.second,utf32.size());
+	m = std::min(u32.second,utf32.size());
 	for(size_t i = 0; i < m; i++){
 		u8.second += utf32_chlen(utf32[i]);
 	}

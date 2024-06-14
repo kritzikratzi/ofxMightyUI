@@ -88,8 +88,8 @@ namespace mui{
 			struct Head {
 				virtual ~Head() {}
 				virtual void *copy() = 0;
-				const type_info& type;
-				Head(const type_info& type): type(type) {}
+				const std::type_info& type;
+				Head(const std::type_info& type): type(type) {}
 				void *data() { return this + 1; }
 			};
 			template <class T> struct THead: public Head {
@@ -115,28 +115,28 @@ namespace mui{
 				head->~Head(); free(head); }
 			bool empty() const {
 				return data == nullptr; }
-			const type_info& type() const {
+			const std::type_info& type() const {
 				assert(data);
 				return ((Head*)data - 1)->type; }
 			template <class T>
 			T& value() {
 				if (!data || type() != typeid(T))
-					throw bad_cast();
+					throw std::bad_cast();
 				return *(T*)data; }
 			template <class T>
 			const T& value() const {
 				if (!data || type() != typeid(T))
-					throw bad_cast();
+					throw std::bad_cast();
 				return *(T*)data; }
 			template <class T>
 			T& value_unsafe() {
 				if (!data)
-					throw bad_cast();
+					throw std::bad_cast();
 				return *(T*)data; }
 			template <class T>
 			const T& value_unsafe() const {
 				if (!data)
-					throw bad_cast();
+					throw std::bad_cast();
 				return *(T*)data; }
 			template <class T>
 			void setValue(const T& it) {
@@ -144,7 +144,7 @@ namespace mui{
 					data = new(new(malloc(sizeof(Head) + sizeof(T)))
 							   THead<T>() + 1) T(it);
 				else {
-					if (type() != typeid(T)) throw bad_cast();
+					if (type() != typeid(T)) throw std::bad_cast();
 					*(T*)data = it; }}
 		};
 	};
@@ -162,16 +162,17 @@ namespace mui{
 // wtf windows...
 // https://code.google.com/p/py-lepton/source/browse/trunk/lepton/renderer.h?r=222
 // um... looks like this can be cleaned up by paying more attention to float/double
-#ifndef fminf
-#define fminf(x, y) (((x) < (y)) ? (x) : (y))
+#ifdef _WIN32
+	#ifndef fminf
+	#define fminf(x, y) (((x) < (y)) ? (x) : (y))
+	#endif
+	#ifndef fmaxf
+	#define fmaxf(x, y) (((x) < (y)) ? (y) : (x))
+	#endif
+	#ifndef roundf
+	#define roundf(x) (x >= 0.0f ? floorf(x + 0.5f) : ceilf(x - 0.5f))
+	#endif
 #endif
-#ifndef fmaxf
-#define fmaxf(x, y) (((x) < (y)) ? (y) : (x))
-#endif
-#ifndef roundf
-#define roundf(x) (x >= 0.0f ? floorf(x + 0.5f) : ceilf(x - 0.5f))
-#endif
-
 
 
 #endif /* defined(__Oscilloscope__MuiCore__) */

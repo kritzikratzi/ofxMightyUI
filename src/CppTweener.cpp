@@ -296,6 +296,13 @@ namespace tween {
 		total_tweens = tweens.size();
 		
 	}
+
+	TweenerParam * Tweener::findTween(void * identifier){
+		for(TweenerParam & p : tweens){
+			if(p.identifier == identifier) return &p;
+		}
+		return nullptr;
+	}
 	
 	void Tweener::removeTween(TweenerParam  *param) {
 		

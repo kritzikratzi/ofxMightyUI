@@ -112,7 +112,7 @@ void mui::Root::handleUpdate(){
 	
 	// figure out where we are hovering
 	
-	set<Container*> newHoverResponder;
+	std::set<Container*> newHoverResponder;
 	Container * c = findChildAt(ofGetMouseX()/mui::MuiConfig::scaleFactor, ofGetMouseY()/mui::MuiConfig::scaleFactor,true,true);
 	Container * top = c;
 	if(c){
@@ -188,7 +188,7 @@ void mui::Root::handleDraw(){
 			
 			ofRectangle b = active->getGlobalBounds();
 			stringstream info; 
-			info << "Pos:" << b.x << "," << b.y << "  " << b.width << " x " << b.height << " / ";
+			info << "Pos:" << b.x << ", " << b.y << "  " << b.width << " x " << b.height << " / ";
 			info << "Rel:" << active->x << "," << active->y;
 			size = info.str();
 			
@@ -198,7 +198,7 @@ void mui::Root::handleDraw(){
 			ofDrawRectangle( p.x, p.y, active->width, active->height );
 
 			if (p.y > 30) p.y -= 30;
-			else p.y = min(muiGetHeight() - 30, p.y + active->height);
+			else p.y = std::min(muiGetHeight() - 30, p.y + active->height);
 
 			ofSetColor(255);
 			ofFill();
@@ -415,16 +415,19 @@ bool mui::Root::becomeKeyboardResponder( Container * c ){
 //--------------------------------------------------------------
 void mui::Root::safeRemove( Container * c ){
 	if(c) safeRemoveList.push_back( c );
+	removeFromResponders(c);
 }
 
 //--------------------------------------------------------------
 void mui::Root::safeDelete( Container * c ){
 	if(c) safeDeleteList.push_back( c );
+	removeFromResponders(c);
 }
 
 //--------------------------------------------------------------
 void mui::Root::safeRemoveAndDelete( mui::Container *c ){
     if(c) safeRemoveAndDeleteList.push_back( c ); 
+	removeFromResponders(c);
 }
 
 //--------------------------------------------------------------
@@ -462,7 +465,7 @@ void mui::Root::prepareAnimation( int milliseconds, int type, int direction ){
 }
 
 //--------------------------------------------------------------
-void mui::Root::runOnUiThread(function<void()> func){
+void mui::Root::runOnUiThread(std::function<void()> func){
 	//TBD
 }
 
@@ -554,8 +557,8 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 		while( active != NULL ){
 			ofRectangle b = active->getBounds();
 			stringstream info; 
-			info << "Pos:" << b.x << "," << b.y << "  " << b.width << " x " << b.height;
-			string size = info.str(); 
+			info << "Pos:" << b.x << ", " << b.y << "  " << b.width << " x " << b.height;
+			string size = info.str();
 			
 			cout << "> " << active->name << size << endl;
 			active = active->parent;
@@ -678,6 +681,11 @@ mui::Container * mui::Root::handleMousePressed( float x, float y, int button ){
 	args.x = x;
 	args.y = y;
 	args.id = 0;
+	uint64_t now = ofGetSystemTimeMicros();
+	if(now>lastMouseDown && (now-lastMouseDown)/1000<230){
+		args.type = ofTouchEventArgs::doubleTap;
+	}
+	lastMouseDown = now;
 	return handleTouchDown(args);
 }
 
@@ -725,8 +733,8 @@ void mui::Root::showPopupMenu( mui::Container * c, mui::Container * source, floa
 	}
 	switch(verticalAlign){
 		case mui::Top: break;
-		case mui::Middle: popupMenu->y -= popupMenu->height; break;
-		case mui::Bottom: popupMenu->y -= popupMenu->height/2; break;
+		case mui::Bottom: popupMenu->y -= popupMenu->height; break;
+		case mui::Middle: popupMenu->y -= popupMenu->height/2; break;
 	}
 	
 	popupMenu->x = ofClamp(popupMenu->x, 1, width - popupMenu->width );
@@ -793,7 +801,7 @@ bool mui::Root::of_mouseReleased( ofMouseEventArgs &args ){
 bool mui::Root::of_mouseScrolled( ofMouseEventArgs &args ){
     glm::vec2 pos;
 	fixTouchPosition(args, pos, NULL);
-	mui::Container * container = container = findChildAt(pos.x, pos.y, true, true );
+	mui::Container * container = findChildAt(pos.x, pos.y, true, true );
 	while( container != NULL ){
 		if( container->onMouseScroll.notify(args) ) return true;
 		if( container->mouseScroll(args) ) return true;

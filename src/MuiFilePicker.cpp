@@ -129,13 +129,13 @@ void mui::FilePicker::resetFormatter(){
 	} );
 }
 
-void mui::FilePicker::setFormatter(const function<std::string(const std::filesystem::path & file)> & formatter_){
+void mui::FilePicker::setFormatter(const std::function<std::string(const std::filesystem::path & file)> & formatter_){
 	formatter = formatter_;
 	setFile(selectedPath);
 }
 
 
-function<std::string(const std::filesystem::path & file)> mui::FilePicker::getFormatter() const{
+std::function<std::string(const std::filesystem::path & file)> mui::FilePicker::getFormatter() const{
 	return formatter; 
 }
 

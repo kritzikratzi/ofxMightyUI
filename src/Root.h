@@ -23,7 +23,7 @@ namespace mui{
 		int tapCounter[OF_MAX_TOUCHES]; // how often the finger was touched in quick succession
 		
 		Container * keyboardResponder;
-		set<Container*> hoverResponder;
+		std::set<Container*> hoverResponder;
 		Container * popupMenu;
 		bool manageCursor{true}; 
 		
@@ -75,7 +75,7 @@ namespace mui{
 		virtual void commitAnimation(std::function<void()> onComplete);
 		virtual void commitAnimation();
 		
-		virtual void runOnUiThread(function<void()> func);
+		virtual void runOnUiThread(std::function<void()> func);
 		
 		/// @brief Sets the display scale. 0=auto detect
 		virtual void setDisplayScaling(float val = 0);
@@ -93,6 +93,7 @@ namespace mui{
 		tween::Tweener tweener;
 
 		int numLayoutFrames = 1;
+		uint64_t lastMouseDown = 0;
 		
 		mui::Cursor lastCursor; 
 		

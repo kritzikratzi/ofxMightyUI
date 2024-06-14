@@ -274,7 +274,7 @@ namespace mui{
 		
 		// in progress?
 		template <typename T>
-		T * findChildAt( const function<bool(Container * container, bool & checkChildren )> walker, const function<bool(T * result)> decider, float x, float y ){
+		T * findChildAt( const std::function<bool(Container * container, bool & checkChildren )> walker, const std::function<bool(T * result)> decider, float x, float y ){
 			bool checkChildren = true;
 			T * result = nullptr;
 			if( x < 0 || y < 0 || x > width || y > height ) return nullptr;
@@ -320,7 +320,7 @@ namespace mui{
 				try{
 					return &it->second.value<T>();
 				}
-				catch(exception&){
+				catch(std::exception&){
 					return nullptr;
 				}
 			}
@@ -349,7 +349,7 @@ namespace mui{
 		
 		
 	private:
-		unordered_map<string, data::Attribute> properties;
+		std::unordered_map<string, data::Attribute> properties;
 	};
 };
 

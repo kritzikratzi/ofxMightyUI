@@ -119,6 +119,7 @@ void mui::ScrollPane::init(){
 mui::ScrollPane::~ScrollPane(){
 	delete leftMenu;
 	delete topMenu;
+	delete overlay;
 	delete view;
 }
 
@@ -131,7 +132,10 @@ void mui::ScrollPane::handleLayout(){
 
 //--------------------------------------------------------------
 void mui::ScrollPane::commit(bool relayoutViews){
-	if(relayoutViews) view->handleLayout();
+	if(relayoutViews){
+		view->handleLayout();
+		if(overlay) overlay->handleLayout();
+	}
 	
 	ofRectangle bounds = getViewBoundingBox();
 	
@@ -159,6 +163,11 @@ void mui::ScrollPane::commit(bool relayoutViews){
 	
 	view->width = fmaxf( viewportWidth, canScrollX?(maxScrollX + viewportWidth):0);
 	view->height = fmaxf( viewportHeight, maxScrollY + viewportHeight);
+	
+	if(overlay){
+		overlay->width = view->width;
+		overlay->height = view->height;
+	}
 	
 	// todo: trigger layout (again!) when size changed?
 	
@@ -362,6 +371,18 @@ mui::Container* mui::ScrollPane::getLeftMenu(float w){
 	return leftMenu;
 }
 
+//--------------------------------------------------------------
+mui::Container* mui::ScrollPane::getOverlay(){
+	if(!overlay){
+		overlay = new mui::ScrollPaneView(this,mui::ScrollPaneView::Type::main,view->x,view->y,view->width,view->height);
+		overlay->name = "scrollpane-overlay";
+	}
+	if(!overlay->parent){
+		add(overlay);
+	}
+	return overlay;
+}
+
 
 
 //--------------------------------------------------------------
@@ -437,10 +458,12 @@ void mui::ScrollPane::update(){
 
 	if( canScrollX ){
 		view->x = -currentScrollX + (leftMenu?leftMenu->width:0);
+		if(overlay) overlay->x = view->x;
 		if(topMenu) topMenu->x = -currentScrollX + (leftMenu?leftMenu->width:0);
 	}
 	if( canScrollY ){
 		view->y = -currentScrollY + (topMenu?topMenu->height:0);
+		if(overlay) overlay->y = view->y;
 		if(leftMenu) leftMenu->y = -currentScrollY + (topMenu?topMenu->height:0);
 	}
 }

@@ -40,7 +40,7 @@ void mui::Helpers::clearCaches(){
 	}
 	textures.clear();
 
-	cerr << "CLEAR CACHE NOT FOR REALLY IMPLEMENTED FOR FONTS. GOING TO LEAK" << endl;
+	std::cerr << "CLEAR CACHE NOT FOR REALLY IMPLEMENTED FOR FONTS. GOING TO LEAK" << endl;
 }
 
 std::string mui::Helpers::muiPath( std::string path ){
@@ -82,7 +82,7 @@ void mui::Helpers::drawImage( string name, float x, float y, float w, float h ){
 	}
 	
 	if( rect == &mui::TextureAtlas::NOT_FOUND ){
-		cerr << "Image: " << name << " not available. this is bad!" << endl;
+		std::cerr << "Image: " << name << " not available. this is bad!" << endl;
 	}
 	else{
 		ofEnableTextureEdgeHack(); 

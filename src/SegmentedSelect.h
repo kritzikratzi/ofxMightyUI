@@ -157,8 +157,14 @@ namespace mui{
 		}
 		
 		virtual SegmentedButton<T> * setSelectedIndex( const int num ){
-			setSelected(getSegment(num)->value);
-			return selected;
+			if(num<0 || num>= getNumSegments()){
+				selected = nullptr;
+				return nullptr;
+			}
+			else{
+				setSelected(getSegment(num)->value);
+				return selected;
+			}
 		}
 		
 		virtual SegmentedButton<T> * setSelectedIndexAndNotify( const int num ){
@@ -167,8 +173,9 @@ namespace mui{
 		}
 		
 		virtual SegmentedButton<T> * setSelected( const T value ){
+			selected = nullptr;
 			for( mui::Container * c : children ){
-				mui::SegmentedButton<T> * button = (mui::SegmentedButton<T>*)c;
+				mui::SegmentedButton<T> * button = dynamic_cast<mui::SegmentedButton<T>*>(c);
 				if( button != nullptr && button->value == value ){
 					selected = button;
 					commit();
@@ -179,7 +186,7 @@ namespace mui{
 		}
 		virtual SegmentedButton<T> * setSelectedAndNotify( const T value ){
 			setSelected(value);
-			if( selected != NULL ) selected->clickAndNotify();
+			if( selected != nullptr ) selected->clickAndNotify();
 			return selected;
 		}
 
@@ -210,7 +217,7 @@ namespace mui{
 		bool equallySizedButtons{false};
 		
 		// button drawing is handled here (mostly)
-		function<void(SegmentedButton<T>*)> onDrawButtonBackground; // see constructor for default implementation
+		std::function<void(SegmentedButton<T>*)> onDrawButtonBackground; // see constructor for default implementation
 		ofColor buttonBgDefault{ 100 };
 		ofColor buttonBgSelected{ 150 };
 		ofColor buttonFgDefault{ 255 };

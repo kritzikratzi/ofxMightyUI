@@ -60,7 +60,7 @@ namespace mui{
 		// guessing around ...
 		static int scrollVelocityDecrease;
 		
-		// duration during that another clicks counts as a double click/tap, in seconds. 
+		// duration during that another click counts as a double click/tap, in seconds. 
 		static double doubleTapTime;
 		
 		// size of the fontstash font atlas
@@ -88,10 +88,10 @@ namespace mui{
 		static bool enableDebuggingShortcuts;
 		
 		// function that can show a system "save..." dialog
-		static function<ofFileDialogResult(string,string)> systemSaveDialog;
+		static std::function<ofFileDialogResult(string,string)> systemSaveDialog;
 		
 		// function that can show a system "load..." dialog
-		static function<ofFileDialogResult(string)> systemLoadDialog;
+		static std::function<ofFileDialogResult(string)> systemLoadDialog;
 	};
 }
 

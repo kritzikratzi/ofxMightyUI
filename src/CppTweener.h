@@ -23,7 +23,7 @@
 #include<list>
 #include<vector>
 #include<iostream>
-#include <functional>
+#include<functional>
 
 #ifndef PI
 #define PI 3.1415926535897932384626433832795
@@ -193,6 +193,7 @@ namespace tween {
 		
 		
 	public:
+		void * identifier = nullptr;
 		std::vector<TweenerProperty>  properties;
 		float time;
 		short transition;
@@ -295,6 +296,16 @@ namespace tween {
 			total_properties = (int)properties.size();
 		}
 		
+		void removeProperty(float * valor){
+			for(int i = 0; i < properties.size(); i++){
+				if(properties[i].ptrValue == valor){
+					properties.erase(properties.begin()+i);
+					break;
+				}
+			}
+			total_properties = (int)properties.size();
+		}
+		
 		void setUseMilliSeconds(bool use ){
 			useMilliSeconds = use;
 		}
@@ -372,6 +383,7 @@ namespace tween {
 			this->funcs[BACK] =  &fBack;
 		}
 		void addTween(const TweenerParam & param);
+		TweenerParam * findTween(void * identifier);
 		void removeTween(TweenerParam  *param);
 		void removeAllTweens(); 
 		void addListener(TweenerListener *listener) ;
