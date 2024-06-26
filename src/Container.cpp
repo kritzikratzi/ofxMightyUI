@@ -15,7 +15,8 @@ mui::Container::Container( float x, float y, float width, float height ) : x(x),
 //--------------------------------------------------------------
 mui::Container::~Container(){
 	parent = nullptr;
-	MUI_ROOT->removeFromResponders( this );
+	bool * is_root = getProperty<bool>("mui_is_root");
+	if(!is_root || !*is_root) MUI_ROOT->removeFromResponders( this );
 }
 
 

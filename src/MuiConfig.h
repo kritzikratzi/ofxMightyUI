@@ -60,7 +60,7 @@ namespace mui{
 		// guessing around ...
 		static int scrollVelocityDecrease;
 		
-		// duration during that another click counts as a double click/tap, in seconds. 
+		// duration during which another click counts as a double click/tap, in seconds. 
 		static double doubleTapTime;
 		
 		// size of the fontstash font atlas

@@ -227,7 +227,7 @@ int mui::TextArea::insert_chars_impl(mui::TextArea *data, int pos, const STB_TEX
 	if(pos==0) idx = 0;
 	else if(pos<data->utf32.size()) idx = data->utf8_positions[pos-1]+octect_size(data->utf32[pos-1]);
 	else idx = data->text.length();
-	idx = min(data->text.size(), idx);
+	idx = std::min(data->text.size(), idx);
 	
 	
 	stringstream str;
@@ -426,6 +426,8 @@ ofRectangle mui::TextArea::box( float t, float r, float b, float l ){
 
 //--------------------------------------------------------------
 void mui::TextArea::commit(bool relayoutView){
+	mui::ScrollPane::commit(relayoutView); 
+	editor_view->width = viewportWidth;
 	
 	//if(!relayoutView){
 	//	mui::ScrollPane::commit(relayoutView);
@@ -445,7 +447,7 @@ void mui::TextArea::commit(bool relayoutView){
 	if(isnan(editor_view->width)){
 		return; 
 	}
-	lines = Helpers::getFontStash().layoutLines(blocks, softWrap?editor_view->width:9999999);
+	lines = Helpers::getFontStash().layoutLines(blocks, std::max(1.0f,softWrap?editor_view->width:9999999));
 	lineNumberSourceToDisplay.clear();
 	lineNumberDisplayToSource.clear();
 	
