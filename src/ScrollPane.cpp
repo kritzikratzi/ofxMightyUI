@@ -707,8 +707,22 @@ mui::Container * mui::ScrollPane::handleTouchDown( ofTouchEventArgs &touch ){
 					beginTracking(touch, DRAG_CONTENT);
 					return c;
 				}
-				else{
+				else if(c==nullptr){
 					watchingTouch[touch.id] = true;
+					return nullptr;
+				}
+				else{
+					mui::Container * v = c;
+					bool watch = true;
+					while(v != this && v != nullptr){
+						bool * val = v->getProperty<bool>("never_scroll_parent");
+						if(val && *val){
+							watch = false;
+							break;
+						}
+						v = v->parent;
+					}
+					watchingTouch[touch.id] = watch;
 					touchStart[touch.id] = touch;
 					return c;
 				}
