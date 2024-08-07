@@ -553,9 +553,15 @@ bool mui::TextArea::keyPressed( ofKeyEventArgs &key ){
 	;
 	
 #ifdef _WIN32
-	// windows is funny with ctrl shortcuts
-	if (ofGetKeyPressed(OF_KEY_CONTROL) && key.key >= 1 && key.key <= 26) {
-		key.key = key.codepoint = 'a' + (key.key - 1);
+	//  windows is funny with ctrl shortcuts
+	//  this used to be fine: 
+	// if (ofGetKeyPressed(OF_KEY_CONTROL) && key.key >= 1 && key.key <= 26) {
+	//   key.key = key.codepoint = 'a' + (key.key - 1);
+	// }
+	// 
+	// no idea what changed, but now this is fine: 
+	if (ofGetKeyPressed(OF_KEY_CONTROL) && key.keycode >= 'A' && key.keycode <= 'Z' && key.codepoint <= 1) {
+		key.key = key.codepoint = ofGetKeyPressed(OF_KEY_SHIFT)?std::toupper(key.keycode) : std::tolower(key.keycode);
 	}
 #endif
 	
