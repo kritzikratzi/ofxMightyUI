@@ -504,31 +504,29 @@ void mui::TextArea::commit(bool relayoutView){
 	boundingBox.height = baselineSize.height;
 	boundingBox.y = baselineSize.y;
 	
-	if(true/*autoChangeHeight*/){
-		float h = 0;
-		for( int i = (int)lines.size()-1;i>=0;i--){
-			StyledLine & line = lines[i];
-			for(int j = (int)line.elements.size()-1; j>=0; j--){
-				h = MAX(h,line.elements[j].baseLineY);
-			}
+	float h = 0;
+	for( int i = (int)lines.size()-1;i>=0;i--){
+		StyledLine & line = lines[i];
+		for(int j = (int)line.elements.size()-1; j>=0; j--){
+			h = MAX(h,line.elements[j].baseLineY);
 		}
+	}
 		
-		// add one more line! to be sure we have enough space for the decenders
-		if (multiLine) h += baselineSize.height / 3;
+	// add one more line! to be sure we have enough space for the decenders
+	if (multiLine) h += baselineSize.height / 3;
 
-		h = max(minHeight, h - baselineSize.y);
+	h = max(minHeight, h - baselineSize.y);
 
 
-		if (autoChangeHeight) {
+	if (autoChangeHeight) {
+		editor_view->height = h;
+		height = h;
+	}
+	else {
+		h = max(viewportHeight, h); 
+		if (h != editor_view->height) {
 			editor_view->height = h;
-			height = h;
-		}
-		else {
-			h = max(viewportHeight, h); 
-			if (h != editor_view->height) {
-				editor_view->height = h;
-				MUI_ROOT->needsLayout = true;
-			}
+			MUI_ROOT->needsLayout = true;
 		}
 	}
 
@@ -1162,4 +1160,135 @@ void mui::TextAreaView::touchMovedOutside(ofTouchEventArgs &touch) {
 
 bool mui::TextAreaView::mouseScroll(ofMouseEventArgs &args) {
 	return t->mouseScroll(args);
+}
+
+
+
+#pragma mark Implementation of the other types of text areas
+
+mui::TextAreaInteger::TextAreaInteger(int value, float x, float y, float width, float height) : mui::TextArea(ofToString(value),x,y,width,height){
+	multiLine = false;
+	horizontalAlign = mui::Right;
+	selectAllOnFocus = false;
+	onChange.add([&](const std::string & val){
+		int value = ofToInt(val);
+		ofNotifyEvent(onChangeValue, value, this);
+	});
+	
+	onKeyPressed.add([&](ofKeyEventArgs & args) {
+		if (args.key == OF_KEY_RETURN) {
+			setText(ofToString(ofToInt(getText())));
+			return true;
+		}
+		if(args.key == OF_KEY_TAB){
+			setText(ofToString(ofToInt(getText())));
+			//xtodo: select next
+			return true;
+		}
+		return false;
+	});
+	
+	onInsert = [&](std::string text){
+		std::stringstream ss;
+		bool first = true;
+		for( auto c : ofUTF8Iterator(text) ){
+			if(c >= '0' && c <= '9' ) ss << (char) c;
+			if(c == '-' && first && getCursorColumn() == 0) ss << (char) c;
+			first = false;
+		}
+		return ss.str();
+	};
+	
+}
+
+mui::TextAreaInteger::~TextAreaInteger(){
+}
+	
+int mui::TextAreaInteger::getIntegerValue(){
+	return ofToInt(getText());
+}
+
+void mui::TextAreaInteger::setIntegerValue(int value){
+	setText(ofToString(value));
+}
+
+
+mui::TextAreaDouble::TextAreaDouble(double value, float x, float y, float width, float height) : mui::TextArea(ofToString(value),x,y,width,height){
+	multiLine = false;
+	horizontalAlign = mui::Right;
+	selectAllOnFocus = false;
+	onChange.add([&](const std::string & val){
+		double value = ofToDouble(val);
+		ofNotifyEvent(onChangeValue, value, this);
+	});
+	
+	onKeyPressed.add([&](ofKeyEventArgs & args) {
+		if (args.key == OF_KEY_RETURN) {
+			setText(ofToString(ofToDouble(getText())));
+			return true;
+		}
+		if(args.key == OF_KEY_TAB){
+			setText(ofToString(ofToDouble(getText())));
+			//xtodo: select next
+			return true;
+		}
+		return false;
+	});
+	
+	onInsert = [&](std::string text){
+		bool has_dot = getText().find('.') != std::string::npos;
+		
+		std::stringstream ss;
+		bool first = true;
+		for( auto c : ofUTF8Iterator(text) ){
+			if(c >= '0' && c <= '9' ) ss << (char) c;
+			if(c == '-' && first && getCursorColumn() == 0) ss << '-';
+			if(c == '.' && !has_dot ){ ss << '.'; has_dot = true; }
+			first = false;
+		}
+		return ss.str();
+	};
+}
+
+mui::TextAreaDouble::~TextAreaDouble(){
+	
+}
+	
+int mui::TextAreaDouble::getDoubleValue(){
+	return ofToDouble(getText());
+}
+
+void mui::TextAreaDouble::setDoubleValue(double value){
+	setText(ofToString(value));
+}
+
+
+mui::TextField::TextField(std::string text, float x, float y, float width, float height) : mui::TextArea(text,x,y,width,height){
+	multiLine = false;
+	selectAllOnFocus = false;
+	
+	onKeyPressed.add([&](ofKeyEventArgs & args) {
+		if (args.key == OF_KEY_RETURN) {
+			return true;
+		}
+		if(args.key == OF_KEY_TAB){
+			//xtodo: select next
+			return true;
+		}
+		return false;
+	});
+	
+	onInsert = [&](std::string text){
+		std::stringstream ss;
+		for( auto c : ofUTF8Iterator(text) ){
+			if( c == '\n' || c== '\r' || c == '\t' ) continue;
+			
+			ss << utf32_to_utf8(c);
+		}
+		return ss.str();
+	};
+}
+
+mui::TextField::~TextField(){
+	
 }

@@ -28,7 +28,6 @@ mui::Root::Root() : Container( 0, 0, -1, -1 ){
 	INSTANCE = this;
 	ignoreEvents = true;
 	keyboardResponder = nullptr;
-	popupMenu = nullptr;
 	init();
 };
 
@@ -247,11 +246,13 @@ mui::Container * mui::Root::handleTouchDown( ofTouchEventArgs &touch ){
 	lastTouchInteraction[touch.id] = now;
 	
 	//return ( touchResponder[touch.id] = Container::handleTouchDown( copy ) );
-	Container * lastPopup = popupMenu;
+	Container * lastPopup = popupStack.size()>0?popupStack.front().popup : nullptr;
 	touchResponder[touch.id] = nullptr;
 	touchResponder[touch.id] = Container::handleTouchDown( copy );
 	if( touchResponder[touch.id] != keyboardResponder ) keyboardResponder = NULL;
-	if( popupMenu == lastPopup ) removePopupIfNecessary(touchResponder[touch.id]);
+	Container * newPopup = popupStack.size()>0?popupStack.front().popup : nullptr;
+	// was there a click, but the popup is unchanged?
+	if( newPopup == lastPopup ) removePopupIfNecessary(touchResponder[touch.id]);
 	
 	return touchResponder[touch.id]; 
 }
@@ -393,7 +394,7 @@ bool mui::Root::becomeTouchResponder( Container * c, ofTouchEventArgs &touch ){
         
 		touchResponder[touch.id]->onBlur.notify(touchResponder[touch.id]);
 		touchResponder[touch.id]->handleTouchCanceled( touch );
-		touchResponder[touch.id]->singleTouchId = -1; 
+		touchResponder[touch.id]->singleTouchId = -1;
 	}
 	
 	// alright, install new owner
@@ -447,7 +448,14 @@ void mui::Root::removeFromResponders( Container * c ){
 	
 	hoverResponder.erase(c);
 	
-	if(c == popupMenu ) popupMenu = nullptr;
+	for(auto it = popupStack.begin(); it != popupStack.end(); ++it){
+		if(c == it->popup){
+			// removed popup will invalidate the iterators.
+			// we cannot continue beyond this point. fortunately we don't have to.
+			removePopup(c);
+			break;
+		}
+	}
 	// recurse
 	//for(const auto & child : c->children){
 	//	removeFromResponders(child);
@@ -533,11 +541,11 @@ mui::Container * mui::Root::handleKeyPressed( ofKeyEventArgs &event ){
 	// this is a bit awkward, there seems to be a bug in
 	// glfw that re-sends modifier key when they are released.
 	// for now, i'm not fixing this. i really shouldn't be, not here.
+	PopupInfo * popupInfo = popupStack.size()>0?&popupStack.front() : nullptr;
 	
-	if( getKeyPressed(OF_KEY_ESC) && popupMenu != nullptr){
+	if( getKeyPressed(OF_KEY_ESC) && popupInfo != nullptr && popupInfo->escClose){
 		if (keyboardResponder == nullptr || !keyboardResponder->onKeyPressed.notify(event) || !keyboardResponder->keyPressed(event)) {
-			safeRemove(popupMenu);
-			popupMenu = nullptr; 
+			removePopup(popupInfo->popup);
 		}
 		retriggerMouse(); 
 		return this;
@@ -699,55 +707,107 @@ mui::Container * mui::Root::handleMouseReleased( float x, float y, int button ){
 	return handleTouchUp(args);
 }
 
-void mui::Root::showPopupMenu( mui::Container * c, mui::Container * source, ofVec2f pos, mui::HorizontalAlign horizontalAlign, mui::VerticalAlign verticalAlign ){
-	mui::Root::showPopupMenu(c, source, pos.x, pos.y, horizontalAlign, verticalAlign );
+void mui::Root::showPopupMenu( mui::Container * c, mui::Container * source, ofVec2f pos, mui::HorizontalAlign horizontalAlign, mui::VerticalAlign verticalAlign, bool isModal ){
+	mui::Root::showPopupMenu(c, source, pos.x, pos.y, horizontalAlign, verticalAlign, isModal );
 }
 
-void mui::Root::showPopupMenu( mui::Container * c, mui::Container * source, float x, float y, mui::HorizontalAlign horizontalAlign, mui::VerticalAlign verticalAlign ){
-	if(popupMenu != nullptr){
-		popupMenu->visible = false;
-		popupMenu->remove(); 
-		popupMenu = nullptr;
-	}
+void mui::Root::showPopupMenu( mui::Container * c, mui::Container * source, float x, float y, mui::HorizontalAlign horizontalAlign, mui::VerticalAlign verticalAlign, bool isModal ){
+	PopupInfo info;
+	info.popup = c;
+	info.source = source;
+	info.pos = ofVec2f(x,y);
+	info.horizontalAlign = horizontalAlign;
+	info.verticalAlign = verticalAlign;
+	info.isModal = isModal;
+	info.softClose = true;
+	info.escClose = true;
+	info.onClose = nullptr;
+	showPopupMenu(info);
+}
+
+void mui::Root::showPopupMenu(const PopupInfo &info){
+	popNonModalPopups();
+
+	info.popup->visible = true;
+	add(info.popup);
 	
-	if(c == nullptr) return;
+	info.popup->handleLayout();
+	popupStack.push_front(info);
 	
-	c->visible = true; 
-	add(c);
-	c->handleLayout();
-	popupMenu = c;
-	
-	if( source == nullptr ){
-		popupMenu->x = x;
-		popupMenu->y = y;
-	}
-	else{
-		ofPoint p = source->getGlobalPosition();
-		popupMenu->x = p.x + x;
-		popupMenu->y = p.y + y;
-	}
-	
-	switch(horizontalAlign){
-		case mui::Left: break;
-		case mui::Right: popupMenu->x -= popupMenu->width; break;
-		case mui::Center: popupMenu->x -= popupMenu->width/2; break;
-	}
-	switch(verticalAlign){
-		case mui::Top: break;
-		case mui::Bottom: popupMenu->y -= popupMenu->height; break;
-		case mui::Middle: popupMenu->y -= popupMenu->height/2; break;
-	}
-	
-	popupMenu->x = ofClamp(popupMenu->x, 1, width - popupMenu->width );
-	popupMenu->y = ofClamp(popupMenu->y, 1, height - popupMenu->height );
+	alignPopup(info);
 }
 
 void mui::Root::removePopup(mui::Container * popup) {
-	if (this->popupMenu == popup) {
-		popup->visible = false; 
-		safeRemove(popup); 
-		popup = nullptr;
+	auto it = std::find_if(popupStack.begin(), popupStack.end(), [popup](const PopupInfo & info){
+		return info.popup == popup;
+	});
+	
+	if(it != popupStack.end()){
+		it = popupStack.begin();
+		while(it != popupStack.end()){
+			PopupInfo info = *it; // copy!
+			bool found = info.popup == popup;
+			it = popupStack.erase(it);
+
+			info.popup->visible = false;
+			if(info.onClose) info.onClose(info);
+			safeRemove(info.popup);
+			
+			if(found) break;
+		}
 	}
+}
+
+void mui::Root::popNonModalPopups(){
+	// iterate from top to bottom
+	while(popupStack.size()>0){
+		PopupInfo info = popupStack.front(); // copy!
+		if(info.isModal) break;
+		
+		info.popup->visible = false;
+		safeRemove(info.popup);
+		if(info.onClose) info.onClose(info);
+		
+		// at this point we should no longer be in the front
+		// because safeRemove() calls removeFromResponders()
+		// which should erase the popup
+		// let's double check!
+		if(popupStack.size()>0 && popupStack.front().popup == info.popup){
+			popupStack.pop_front();
+		}
+	}
+}
+
+void mui::Root::alignAllPopups(){
+	for(auto it = popupStack.rbegin(); it != popupStack.rend(); ++it){
+		alignPopup(*it);
+	}
+}
+
+void mui::Root::alignPopup(const PopupInfo & info){
+	if( info.source == nullptr || !info.source->visible){
+		info.popup->x = info.pos.x;
+		info.popup->y = info.pos.y;
+	}
+	else{
+		ofPoint p = info.source->getGlobalPosition();
+		info.popup->x = p.x + info.pos.x;
+		info.popup->y = p.y + info.pos.y;
+	}
+	
+	switch(info.horizontalAlign){
+		case mui::Left: break;
+		case mui::Right: info.popup->x -= info.popup->width; break;
+		case mui::Center: info.popup->x -= info.popup->width/2; break;
+	}
+	switch(info.verticalAlign){
+		case mui::Top: break;
+		case mui::Bottom: info.popup->y -= info.popup->height; break;
+		case mui::Middle: info.popup->y -= info.popup->height/2; break;
+	}
+	
+	info.popup->x = ofClamp(info.popup->x, 1, width - info.popup->width );
+	info.popup->y = ofClamp(info.popup->y, 1, height - info.popup->height );
 }
 
 
@@ -838,19 +898,19 @@ bool mui::Root::of_fileDragEvent( ofDragInfo &args ){
 }
 
 void mui::Root::removePopupIfNecessary( mui::Container * target ){
-	if(popupMenu != nullptr ){
+	Container * lastPopup = popupStack.size()>0?popupStack.front().popup : nullptr;
+
+	if(lastPopup != nullptr ){
 		if(target != nullptr ){
 			// is the popup somehow a parent of what was clicked?
 			while(target != nullptr){
-				if( target == popupMenu ){
+				if( target == lastPopup ){
 					return;
 				}
 				target = target->parent;
 			}
+			
+			removePopup(lastPopup);
 		}
-		
-		popupMenu->visible = false;
-		safeRemove(popupMenu);
-		popupMenu = nullptr;
 	}
 }

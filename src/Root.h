@@ -24,8 +24,23 @@ namespace mui{
 		
 		Container * keyboardResponder;
 		std::set<Container*> hoverResponder;
-		Container * popupMenu;
-		bool manageCursor{true}; 
+		
+		struct PopupInfo{
+			mui::Container * popup;
+			mui::Container * source;
+			ofVec2f pos;
+			mui::HorizontalAlign horizontalAlign = mui::Left;
+			mui::VerticalAlign verticalAlign = mui::Top;
+			
+			bool isModal{false}; // when a modal is open, other popups can be pushed on top of it.
+			bool softClose{true}; // can be closed by clicking outside the area of the popup
+			bool escClose{true}; // can be closed by clicking outside the area of the popup
+
+			std::function<void(const PopupInfo&)> onClose;
+		};
+		std::deque<PopupInfo> popupStack;
+		
+		bool manageCursor{true};
 		
 		virtual void init(); 
 		virtual void retriggerMouse();
@@ -51,9 +66,15 @@ namespace mui{
 		virtual Container * handleMouseReleased( float x, float y, int button );
 		
 		// shows a container as a popup menu
-		virtual void showPopupMenu( mui::Container * c, mui::Container * source, ofVec2f pos,  mui::HorizontalAlign horizontalAlign = mui::Left, mui::VerticalAlign verticalAlign = mui::Top );
-		virtual void showPopupMenu( mui::Container * popupMenu, mui::Container * source, float x, float y, mui::HorizontalAlign horizontalAlign = mui::Left, mui::VerticalAlign verticalAlign = mui::Top );
+		virtual void showPopupMenu( mui::Container * c, mui::Container * source, ofVec2f pos,  mui::HorizontalAlign horizontalAlign = mui::Left, mui::VerticalAlign verticalAlign = mui::Top, bool isModal = false );
+		virtual void showPopupMenu( mui::Container * popupMenu, mui::Container * source, float x, float y, mui::HorizontalAlign horizontalAlign = mui::Left, mui::VerticalAlign verticalAlign = mui::Top, bool isModal = false );
+		virtual void showPopupMenu( const PopupInfo & info );
+
 		virtual void removePopup(mui::Container * popup);
+		virtual void popNonModalPopups();
+
+		virtual void alignAllPopups();
+		virtual void alignPopup(const PopupInfo & p);
 
 		
 		ofRectangle convertNativeToMui( const ofRectangle rect );

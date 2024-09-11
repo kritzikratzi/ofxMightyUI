@@ -171,6 +171,9 @@ namespace mui{
 
 		friend class TextAreaView;
 		friend class TextAreaInternal;
+		friend class TextAreaInteger;
+		friend class TextAreaDouble;
+		friend class TextField;
 	};
 
 
@@ -193,6 +196,36 @@ namespace mui{
 		mui::TextArea * t; 
 	};
 
+
+	class TextAreaInteger : public mui::TextArea{
+	public:
+		TextAreaInteger(int value = 0, float x = 0, float y = 0, float width = 200, float height = 20);
+		~TextAreaInteger();
+		
+		mui::EventHandler<int> onChangeValue{ this };
+		
+		int getIntegerValue();
+		void setIntegerValue(int value);
+	};
+
+	class TextAreaDouble : public mui::TextArea{
+	public:
+		TextAreaDouble(double value = 0, float x = 0, float y = 0, float width = 200, float height = 20);
+		~TextAreaDouble();
+		
+		mui::EventHandler<double> onChangeValue{ this };
+
+		int getDoubleValue();
+		void setDoubleValue(double value);
+	};
+
+	class TextField : public mui::TextArea{
+	public:
+		TextField(std::string text = "", float x = 0, float y = 0, float width = 200, float height = 20);
+		~TextField();
+	};
+
 };
+
 
 #endif
