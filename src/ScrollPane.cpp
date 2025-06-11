@@ -47,7 +47,7 @@ void mui::ScrollPaneView::handleDraw(){
 		inter = inter.getIntersection(ofRectangle(0, -y, width, owner->viewportHeight));
 	}
 	else if(viewType == Type::top){
-		inter = inter.getIntersection(ofRectangle(-x, 0, owner->viewportHeight, height));
+		inter = inter.getIntersection(ofRectangle(-x, 0, owner->viewportWidth, height));
 	}
 	
 	mui::Helpers::pushScissor( this, inter );
@@ -133,42 +133,14 @@ void mui::ScrollPane::handleLayout(){
 //--------------------------------------------------------------
 void mui::ScrollPane::commit(bool relayoutViews){
 	if(relayoutViews){
-		view->handleLayout();
-		if(overlay) overlay->handleLayout();
+		//view->handleLayout();
+		//if(overlay) overlay->handleLayout();
+		handleLayout();
 	}
-	
-	ofRectangle bounds = getViewBoundingBox();
-	
-	viewportWidth = canScrollY? (width-15):width;
-	viewportHeight = canScrollX? (height-15):height;
-	float effectivePinWidth = leftMenu?leftMenu->width : 0;
-	float effectivePinHeight = topMenu?topMenu->height : 0;
-	viewportWidth -= effectivePinWidth;
-	viewportHeight -= effectivePinHeight;
-	
-	viewportWidth = fmaxf(0, viewportWidth);
-	viewportHeight = fmaxf(0, viewportHeight);
-	
-	minScrollX = fminf( 0, bounds.x );
-	minScrollY = fminf( 0, bounds.y ); 
-	maxScrollX = fmaxf( 0, bounds.x + bounds.width + padRight - viewportWidth );
-	maxScrollY = fmaxf( 0, bounds.y + bounds.height + padBottom - viewportHeight );
-	
-	wantsToScrollX = maxScrollX != 0 || minScrollX != 0;
-	wantsToScrollY = maxScrollY != 0 || minScrollY != 0; 
-	
-	//TODO: make this -15 (the bars) optional!
-	viewportWidth = (!canScrollY || (!wantsToScrollY && barStyleY == IF_NEEDED))?(width-effectivePinWidth):viewportWidth;
-	viewportHeight = (!canScrollX || (!wantsToScrollX && barStyleX == IF_NEEDED))?(height-effectivePinHeight):viewportHeight;
-	
-	view->width = fmaxf( viewportWidth, canScrollX?(maxScrollX + viewportWidth):0);
-	view->height = fmaxf( viewportHeight, maxScrollY + viewportHeight);
-	
-	if(overlay){
-		overlay->width = view->width;
-		overlay->height = view->height;
+	else{
+		layout();
 	}
-	
+		
 	// todo: trigger layout (again!) when size changed?
 	
 	bool inBoundsX = minScrollX <= currentScrollX && currentScrollX <= maxScrollX;
@@ -473,6 +445,44 @@ void mui::ScrollPane::update(){
 void mui::ScrollPane::draw(){
 }
 
+void mui::ScrollPane::layout(){
+	ofRectangle bounds = getViewBoundingBox();
+	
+	viewportWidth = canScrollY? (width-15):width;
+	viewportHeight = canScrollX? (height-15):height;
+	float effectivePinWidth = leftMenu?leftMenu->width : 0;
+	float effectivePinHeight = topMenu?topMenu->height : 0;
+	viewportWidth -= effectivePinWidth;
+	viewportHeight -= effectivePinHeight;
+	
+	viewportWidth = fmaxf(0, viewportWidth);
+	viewportHeight = fmaxf(0, viewportHeight);
+	
+	minScrollX = fminf( 0, bounds.x );
+	minScrollY = fminf( 0, bounds.y );
+	maxScrollX = fmaxf( 0, bounds.x + bounds.width + padRight - viewportWidth );
+	maxScrollY = fmaxf( 0, bounds.y + bounds.height + padBottom - viewportHeight );
+	
+	wantsToScrollX = maxScrollX != 0 || minScrollX != 0;
+	wantsToScrollY = maxScrollY != 0 || minScrollY != 0;
+	
+	//TODO: make this -15 (the bars) optional!
+	viewportWidth = (!canScrollY || (!wantsToScrollY && barStyleY == IF_NEEDED))?(width-effectivePinWidth):viewportWidth;
+	viewportHeight = (!canScrollX || (!wantsToScrollX && barStyleX == IF_NEEDED))?(height-effectivePinHeight):viewportHeight;
+	
+	view->width = fmaxf( viewportWidth, canScrollX?(maxScrollX + viewportWidth):0);
+	view->height = fmaxf( viewportHeight, maxScrollY + viewportHeight);
+	
+	if(topMenu){
+		topMenu->width = viewportWidth;
+	}
+	
+	if(overlay){
+		overlay->width = view->width;
+		overlay->height = view->height;
+	}
+}
+
 
 //--------------------------------------------------------------
 void mui::ScrollPane::drawBackground(){
@@ -486,22 +496,27 @@ void mui::ScrollPane::handleDraw(){
 	// make the -7 (scrollbars) optional
 	Container::handleDraw();
 	
-	if( visible && minScrollY != maxScrollY && canScrollY ){
-		float x0 = x+width - 8; 
+	bool sx = (minScrollX != maxScrollX && canScrollX);
+	bool sy = (minScrollY != maxScrollY && canScrollY);
+	
+	if( visible && sy ){
+		float h = height - (sx?8:0);
+		float x0 = x+width - 8;
 		float xmid = x+width - 6; 
 		float w = 5; 
-		ofDrawLine(xmid, y+2, xmid, y+height-2 );
-		float scrubberHeight = ofClamp(height*height/(maxScrollY - minScrollY), 10, height/2);
-		float scrubberPos = ofMap(currentScrollY, minScrollY, maxScrollY, 2, height-2-scrubberHeight);
+		ofDrawLine(xmid, y+2, xmid, y+h-2 );
+		float scrubberHeight = ofClamp(h*h/(maxScrollY - minScrollY), 10, h/2);
+		float scrubberPos = ofMap(currentScrollY, minScrollY, maxScrollY, 2, h-2-scrubberHeight);
 		ofDrawRectangle(x0, y+scrubberPos, w, scrubberHeight );
 	}
-	if( visible && minScrollX != maxScrollX && canScrollX ){
+	if( visible && sx ){
+		float w = width - (sx?8:0);
 		float y0 = y+height - 8;
 		float ymid = y+height - 6;
 		float h = 5;
-		ofDrawLine(x+2, ymid, x+width-2, ymid );
-		float scrubberWidth = ofClamp(width*width/(maxScrollX - minScrollX), 10, width/2);
-		float scrubberPos = ofMap(currentScrollX, minScrollX, maxScrollX, 2, width-2-scrubberWidth);
+		ofDrawLine(x+2, ymid, x+w-2, ymid );
+		float scrubberWidth = ofClamp(w*w/(maxScrollX - minScrollX), 10, w/2);
+		float scrubberPos = ofMap(currentScrollX, minScrollX, maxScrollX, 2, w-2-scrubberWidth);
 		ofDrawRectangle(x+scrubberPos, y0, scrubberWidth, 5 );
 	}
 }

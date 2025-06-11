@@ -72,6 +72,7 @@ namespace mui{
 		virtual ofRectangle getViewBoundingBox();
 		virtual void update();
 		virtual void draw();
+		virtual void layout();
 		virtual void drawBackground();
 		virtual void handleDraw();
 		virtual void handleLayout();
