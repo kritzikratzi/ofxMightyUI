@@ -448,6 +448,7 @@ void mui::TextArea::commit(bool relayoutView){
 		return; 
 	}
 	lines = Helpers::getFontStash().layoutLines(blocks, std::max(1.0f,softWrap?editor_view->width:9999999));
+	onTextLayout.notify(lines);
 	lineNumberSourceToDisplay.clear();
 	lineNumberDisplayToSource.clear();
 	

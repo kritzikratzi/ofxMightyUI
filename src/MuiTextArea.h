@@ -47,6 +47,7 @@ namespace mui{
 		mui::EventHandlerConsumable<uint32_t> onCharacterAdded{ this };
 		mui::EventHandler<string> onCursorMoved{ this };
 		mui::EventHandler<ofTouchEventArgs> onContextClick{ this };
+		mui::EventHandler<vector<StyledLine>> onTextLayout{ this };
 
 		float minHeight = 20;
 		float autoChangeHeight = false;
