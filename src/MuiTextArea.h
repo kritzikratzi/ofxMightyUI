@@ -80,8 +80,8 @@ namespace mui{
 
 		// changes text + commit
 		const string getText();
-		void setText(string text);
-		void setTextAndNotify(string text);
+		void setText(string text, bool resetUndoState = false);
+		void setTextAndNotify(string text, bool resetUndoState = false);
 		string getSelectedText();
 
 		void insertTextAtCursor(string text, bool select = false);

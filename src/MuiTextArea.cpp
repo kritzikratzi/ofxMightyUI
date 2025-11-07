@@ -369,16 +369,26 @@ const string mui::TextArea::getText(){
 	return text;
 }
 
-void mui::TextArea::setText( string text ){
-	state->select_start = 0;
-	state->select_end = strlenWithLineStarts;
-	state->cursor = state->select_end;
+void mui::TextArea::setText( string text, bool resetUndoState ){
 	vector<uint32_t> text_utf32 = utf8_to_utf32(text);
-	stb_textedit_paste(this, state, text_utf32.size()?&text_utf32[0]:nullptr, (int)text_utf32.size());
+	if(resetUndoState){
+		state->select_start = 0;
+		state->select_end = strlenWithLineStarts;
+		state->cursor = state->select_end;
+		stb_textedit_paste(this, state, nullptr, 0);
+		stb_textedit_clear_state(state, multiLine?0:1);
+		stb_textedit_paste(this, state, text_utf32.size()?&text_utf32[0]:nullptr, (int)text_utf32.size());
+	}
+	else{
+		state->select_start = 0;
+		state->select_end = strlenWithLineStarts;
+		state->cursor = state->select_end;
+		stb_textedit_paste(this, state, text_utf32.size()?&text_utf32[0]:nullptr, (int)text_utf32.size());
+	}
 }
 
-void mui::TextArea::setTextAndNotify( string text ){
-	setText(text);
+void mui::TextArea::setTextAndNotify( string text, bool resetUndoState ){
+	setText(text, resetUndoState);
 	ofNotifyEvent(onChange, text, this);
 }
 
@@ -447,7 +457,17 @@ void mui::TextArea::commit(bool relayoutView){
 	if(isnan(editor_view->width)){
 		return; 
 	}
-	lines = Helpers::getFontStash().layoutLines(blocks, std::max(1.0f,softWrap?editor_view->width:9999999));
+	
+	float padx = 2;
+	float pady = 2;
+	lines = Helpers::getFontStash().layoutLines(blocks, std::max(1.0f,softWrap?(editor_view->width-2*padx):9999999));
+	for(auto & l : lines){
+		for(auto & e : l.elements){
+			e.x += padx;
+			e.baseLineY += pady;
+		}
+	}
+	
 	onTextLayout.notify(lines);
 	lineNumberSourceToDisplay.clear();
 	lineNumberDisplayToSource.clear();
