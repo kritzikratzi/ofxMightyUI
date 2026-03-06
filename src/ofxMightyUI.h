@@ -23,7 +23,8 @@
 #include "SegmentedSelect.h"
 #include "Image.h"
 
-void mui_init();
+void mui_init(); // init everything
+void mui_init_paths(); // init only path setup
 
 ofVec2f muiGetMousePos();
 ofVec2f muiGetMousePos(mui::Container * translateToContainer); 

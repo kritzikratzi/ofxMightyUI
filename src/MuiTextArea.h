@@ -80,11 +80,13 @@ namespace mui{
 
 		// changes text + commit
 		const string getText();
+		const string getTextLine(int line); // count starts at 0, but should be display to users at 1. this ignores soft wrapped lines
 		void setText(string text, bool resetUndoState = false);
 		void setTextAndNotify(string text, bool resetUndoState = false);
 		string getSelectedText();
 
 		void insertTextAtCursor(string text, bool select = false);
+		void insertTextAtCursorIgnoringOverlap(string text, bool select = false);
 
 		int getCursorLine();
 		int getCursorColumn();

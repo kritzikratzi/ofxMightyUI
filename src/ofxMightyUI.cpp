@@ -20,18 +20,54 @@
 	#include "ofAppGLFWWindow.h"
 #endif
 
-void mui_init(){
-	#if TARGET_OS_IPHONE
-	if( mui::MuiConfig::detectRetina ){
-		ofAppiOSWindow * w = ofAppiOSWindow::getInstance();
-		if( w->isRetinaEnabled() ){
-			mui::MuiConfig::scaleFactor = 2;
-			mui::MuiConfig::useRetinaAssets = true;
-		}
-	}
-	#endif
+static bool did_init_paths = false;
+static bool did_init_rest = false;
 
-    std::filesystem::path appPath;
+void mui_init(){
+	if(did_init_rest) return;
+	did_init_rest = true;
+
+	mui_init_paths();
+
+	#if TARGET_OS_IPHONE
+		if( mui::MuiConfig::detectRetina ){
+			ofAppiOSWindow * w = ofAppiOSWindow::getInstance();
+			if( w->isRetinaEnabled() ){
+				mui::MuiConfig::scaleFactor = 2;
+				mui::MuiConfig::useRetinaAssets = true;
+			}
+		}
+	#elif TARGET_OS_MAC
+		if( mui::MuiConfig::detectRetina ){
+			ofAppGLFWWindow * window = dynamic_cast<ofAppGLFWWindow*>(ofGetWindowPtr());
+			if( window != NULL ){
+				mui::MuiConfig::scaleFactor = window->getPixelScreenCoordScale();
+			}
+		}
+	#elif _WIN32
+		if (mui::MuiConfig::detectRetina) {
+			SetProcessDPIAware(); //true
+			HDC screen = GetDC(NULL);
+			double hPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSX);
+			double vPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSY);
+			ReleaseDC(NULL, screen);
+			float dpi = (hPixelsPerInch + vPixelsPerInch) * 0.5/96.0;
+			mui::MuiConfig::scaleFactor = dpi;
+			cout << "scale factor = " << dpi << endl;
+		}
+	#else
+	#endif
+	
+	mui::Helpers::getFontStash().setup(mui::MuiConfig::fontAtlasSize );
+	mui::Helpers::getFontStash().pixelDensity = mui::MuiConfig::scaleFactor;
+	mui::Helpers::getFontStash().fontScale = 1.3;
+}
+
+void mui_init_paths(){
+	if(did_init_paths) return;
+	did_init_paths = true;
+	
+	std::filesystem::path appPath;
 	
 	#if TARGET_OS_IPHONE
 		// http://www.cocoabuilder.com/archive/cocoa/193451-finding-out-executable-location-from-c-program.html
@@ -74,35 +110,16 @@ void mui_init(){
 		CFRelease(url);
 		CFRelease(absolute);
 		appPath = result;
-		if(result != NULL ) free(result); 
+		if(result != NULL ) free(result);
 		appPath = appPath.parent_path().parent_path().append("Resources");
 	
-		if( mui::MuiConfig::detectRetina ){
-			ofAppGLFWWindow * window = dynamic_cast<ofAppGLFWWindow*>(ofGetWindowPtr());
-			if( window != NULL ){
-				mui::MuiConfig::scaleFactor = window->getPixelScreenCoordScale();
-			}
-		}
 	#elif _WIN32
-		if (mui::MuiConfig::detectRetina) {
-			SetProcessDPIAware(); //true
-			HDC screen = GetDC(NULL);
-			double hPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSX);
-			double vPixelsPerInch = GetDeviceCaps(screen, LOGPIXELSY);
-			ReleaseDC(NULL, screen);
-			float dpi = (hPixelsPerInch + vPixelsPerInch) * 0.5/96.0;
-			mui::MuiConfig::scaleFactor = dpi;
-			cout << "scale factor = " << dpi << endl;
-		}
 		appPath = ofToDataPath("./", true);
 	#else
 		appPath = ofToDataPath("./", true);
 	#endif
 	
-    mui::MuiConfig::dataPath = std::filesystem::absolute(appPath);
-	mui::Helpers::getFontStash().setup(mui::MuiConfig::fontAtlasSize );
-	mui::Helpers::getFontStash().pixelDensity = mui::MuiConfig::scaleFactor;
-	mui::Helpers::getFontStash().fontScale = 1.3;
+	mui::MuiConfig::dataPath = std::filesystem::absolute(appPath);
 }
 
 float muiGetDefaultDisplayScaling(){

@@ -369,6 +369,46 @@ const string mui::TextArea::getText(){
 	return text;
 }
 
+const string mui::TextArea::getTextLine(int lineNr){
+	if(lineNr<0) return "";
+	
+	size_t iter_line = 0;
+	
+	std::vector<uint32_t> result;
+	bool found = false;
+	
+	for( auto c : ofUTF8Iterator(text) ){
+		
+		if(lineNr == iter_line){
+			found = true;
+		}
+		
+		if(c == '\n'){
+			if(found){
+				break;
+			}
+			else{
+				iter_line ++;
+			}
+		}
+		else if(found){
+			result.push_back(c);
+		}
+	}
+	
+	if(found){
+		stringstream str;
+		int len = 0;
+		for( uint32_t c : result){
+			str << utf32_to_utf8(c);
+		}
+		return str.str();
+	}
+	else{
+		return "";
+	}
+}
+
 void mui::TextArea::setText( string text, bool resetUndoState ){
 	vector<uint32_t> text_utf32 = utf8_to_utf32(text);
 	if(resetUndoState){
@@ -865,6 +905,39 @@ void mui::TextArea::insertTextAtCursor(string text, bool select){
 	}
 
 	ofNotifyEvent(onChange, this->text, this);
+}
+
+void mui::TextArea::insertTextAtCursorIgnoringOverlap(string text, bool select){
+	std::vector<uint32_t> insert_32 = utf8_to_utf32(text);
+	std::vector<uint32_t> line_32 = utf8_to_utf32(getTextLine(getCursorLine()));
+	
+	int match_max = (int)insert_32.size();
+	int start = getCursorColumn();
+	
+	for(int match_len = match_max; match_len >= 0; match_len --){
+		bool ok = true;
+		for(int i = 0; i < match_len; i++){
+			int idx_insert = i;
+			int idx_line = start - match_len + i;
+			bool fits = idx_line>0 && idx_insert < insert_32.size() && idx_line < line_32.size();
+			if(fits == false || insert_32[idx_insert] != line_32[idx_line]){
+				ok = false;
+				break;
+			}
+		}
+		
+		if(ok){
+			// wow!
+			std::stringstream result;
+			for(int i = match_len; i < insert_32.size(); i++){
+				result << utf32_to_utf8(insert_32[i]);
+			}
+			insertTextAtCursor(result.str(), select);
+			return;
+		}
+	}
+	
+	insertTextAtCursor(text, select);
 }
 
 
