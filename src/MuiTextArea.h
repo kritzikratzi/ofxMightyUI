@@ -218,7 +218,7 @@ namespace mui{
 		
 		mui::EventHandler<double> onChangeValue{ this };
 
-		int getDoubleValue();
+		double getDoubleValue();
 		void setDoubleValue(double value);
 	};
 

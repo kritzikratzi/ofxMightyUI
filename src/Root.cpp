@@ -154,6 +154,18 @@ void mui::Root::handleUpdate(){
 	
 }
 
+void mui::Root::setupBackingSurface(bool updateViewport){
+	if(updateViewport){
+		ofGetCurrentRenderer()->viewport(0,0,width*mui::MuiConfig::scaleFactor,height*mui::MuiConfig::scaleFactor,false);
+	}
+	ofSetupScreenOrtho();
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//ofTranslate(0, (-1 + 1) * height);
+	ofScale(mui::MuiConfig::scaleFactor);
+}
+
 //--------------------------------------------------------------
 void mui::Root::handleDraw(){
 	ofSetupScreenOrtho(); 

@@ -46,7 +46,11 @@ namespace mui{
 		virtual void retriggerMouse();
 		virtual void handleUpdate();
 		virtual void handleDraw();
-		
+
+		// sets up the backing drawing surface (orthographic view, no depths tests, viewport, etc.)
+		// this is always called inside Root::handleDraw()
+		virtual void setupBackingSurface(bool updateViewport);
+
 		// touch events
 		virtual Container * handleTouchDown( ofTouchEventArgs &touch );
 		virtual Container * handleTouchMoved( ofTouchEventArgs &touch );

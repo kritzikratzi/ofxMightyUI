@@ -79,7 +79,10 @@ namespace mui{
 	class ToggleButton;
 
 	class FilePicker;
-	class TextArea; 
+	class TextArea;
+	class TextAreaDouble;
+	class TextAreaInteger;
+	class TextField;
 	
 	namespace data{
 		// http://stackoverflow.com/a/25109643

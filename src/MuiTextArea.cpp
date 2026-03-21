@@ -1348,7 +1348,7 @@ mui::TextAreaDouble::~TextAreaDouble(){
 	
 }
 	
-int mui::TextAreaDouble::getDoubleValue(){
+double mui::TextAreaDouble::getDoubleValue(){
 	return ofToDouble(getText());
 }
 
